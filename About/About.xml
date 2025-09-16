@@ -16,5 +16,6 @@
 	</loadBefore>
 	<loadAfter>
 		<li>brrainz.harmony</li>
+		<li>garethp.modlistconfigurator</li>
 	</loadAfter>
 </ModMetaData>

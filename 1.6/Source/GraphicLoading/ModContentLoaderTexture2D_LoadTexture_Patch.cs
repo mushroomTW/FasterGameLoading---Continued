@@ -8,7 +8,7 @@ using Verse;
 
 namespace FasterGameLoading
 {
- [HarmonyPatch(typeof(ModContentLoader<Texture2D>), "LoadTexture")]
+    [HarmonyPatch(typeof(ModContentLoader<Texture2D>), "LoadTexture")]
     public static class ModContentLoaderTexture2D_LoadTexture_Patch
     {
         public static Dictionary<string, string> loadedTexturesThisSession = new Dictionary<string, string>();
@@ -28,26 +28,6 @@ namespace FasterGameLoading
             {
                 var path = fullPath.Substring(index);
                 loadedTexturesThisSession[path] = fullPath;
-                if (FasterGameLoadingSettings.loadedTexturesSinceLastSession.TryGetValue(path, out var otherPath) && fullPath != otherPath)
-                {
-                    var texture = new Texture2D(2, 2);
-                    texture.name = Path.GetFileNameWithoutExtension(file.Name);
-                    __result = texture;
-                    //foreach (var mod in ModLister.AllInstalledMods)
-                    //{
-                    //    if (fullPath.Contains(mod.RootDir.FullName))
-                    //    {
-                    //        foreach (var otherMod in ModLister.AllInstalledMods)
-                    //        {
-                    //            if (otherPath.Contains(otherMod.RootDir.FullName))
-                    //            {
-                    //                Log.Message(mod.Name + " - Preventing loading " + texture.name + ", already replaced with " + otherMod.Name);
-                    //            }
-                    //        }
-                    //    }
-                    //}
-                    return false;
-                }
             }
             return true;
         }

@@ -14,7 +14,7 @@ namespace FasterGameLoading
 
     public class DelayedActions : MonoBehaviour
     {
-        public float MaxImpactThisFrame => Current.Game != null ? 0.001f : 0.05f;
+        public float MaxImpactThisFrame => Current.Game != null ? 0.008f : 0.05f;
         public List<(ThingDef def, Action action)> graphicsToLoad = new();
         public List<(BuildableDef def, Action action)> iconsToLoad = new();
         public Queue<(SubSoundDef def, Action action)> subSoundDefToResolve = new();

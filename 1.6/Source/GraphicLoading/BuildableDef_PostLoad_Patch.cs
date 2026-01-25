@@ -28,7 +28,7 @@ namespace FasterGameLoading
                 }
             }
         }
-    
+
         public static void ExecuteDelayed(Action action, BuildableDef def)
         {
             if (def is ThingDef thingDef && thingDef.ShouldBeLoadedImmediately())
@@ -43,11 +43,43 @@ namespace FasterGameLoading
 
         public static bool ShouldBeLoadedImmediately(this ThingDef thingDef)
         {
-            return thingDef.IsBlueprint 
-                || thingDef.graphicData != null && thingDef.graphicData.Linked 
-                || thingDef.thingClass != null && thingDef.thingClass.Name == "Building_Pipe"
-                || typeof(Medicine).IsAssignableFrom(thingDef.thingClass) 
-                || thingDef.orderedTakeGroup?.defName == "Medicine";
+            // 基礎建築和藍圖必須立即載入
+            if (thingDef.IsBlueprint || thingDef.IsFrame)
+                return true;
+
+            // 連接型圖形（如牆壁、管道）必須立即載入
+            if (thingDef.graphicData != null && thingDef.graphicData.Linked)
+                return true;
+
+            // 特殊建築類型
+            if (thingDef.thingClass != null && thingDef.thingClass.Name == "Building_Pipe")
+                return true;
+
+            // 醫療用品
+            if (typeof(Medicine).IsAssignableFrom(thingDef.thingClass)
+                || thingDef.orderedTakeGroup?.defName == "Medicine")
+                return true;
+
+            // 武器和裝備 - 殖民者常用物品
+            if (thingDef.IsWeapon || thingDef.IsApparel)
+                return true;
+
+            // 食物 - 使用 ingestible 屬性檢查（避免在 PostLoad 階段訪問 StatDef）
+            if (thingDef.ingestible != null || thingDef.IsStuff)
+                return true;
+
+            // 殖民者和動物
+            if (thingDef.race != null)
+                return true;
+
+            // 常見家具和工作台
+            if (thingDef.thingCategories != null && thingDef.thingCategories.Any(cat =>
+                cat.defName.Contains("Furniture") ||
+                cat.defName.Contains("Production") ||
+                cat.defName.Contains("Security")))
+                return true;
+
+            return false;
         }
     }
 }

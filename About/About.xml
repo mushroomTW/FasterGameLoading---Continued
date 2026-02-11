@@ -8,6 +8,7 @@
   <packageId>Taranchuk.FasterGameLoading</packageId>
   <description>
 Original mod: https://github.com/Taranchuk/FasterGameLoading
+This mod: https://github.com/mushroomTW/FasterGameLoading---Continued.git
 Maintained fork with improvements and bug fixes.
 
 This mod significantly speeds up game loading through various optimization technologies, especially suitable for players with many mods. Key features include:
@@ -15,7 +16,7 @@ This mod significantly speeds up game loading through various optimization techn
 1. **Early Mod Content Loading**: Preloads mod content during idle periods at startup. May cause brief unresponsiveness during loading - this is expected behavior.
 2. **Delayed Graphic Loading (Advanced)**: Defers loading of non-essential graphics until gameplay. Essential items (weapons, apparel, food, pawns, linked buildings, medicine, furniture) are loaded immediately to prevent visual issues. Other graphics load gradually in the background with minimal performance impact.
 3. **Adaptive Static Atlas Baking (Advanced)**: Improved atlas baking that dynamically adjusts batch sizes based on GPU performance. Can be disabled if you experience specific issues, though this may reduce in-game rendering performance (lower TPS).
-4. **Texture Optimization Tool**: Built-in tool to downscale high-resolution textures and clean up redundant DDS files.
+4. **Texture Optimization Tool**: Tool to downscale high-resolution textures. Downscaled versions are stored in a separate cache directory; original mod files are never modified. You can clear the cache at any time to restore original textures.
 
 
 Note: Delayed loading may cause temporary texture placeholders when first entering a game. These will resolve as graphics load in the background.
@@ -28,7 +29,7 @@ Note: Delayed loading may cause temporary texture placeholders when first enteri
 1. **早期模組內容載入**：在啟動的閒置期間預先載入模組內容。可能會導致載入過程中出現短暫的無回應，屬於預期現象。
 2. **延遲圖形載入（進階選項）**：延遲載入非必要圖形至遊戲進行中。必要物品（武器、服裝、食物、人物、連接型建築、醫療用品、家具）會立即載入以避免視覺問題。其他圖形會在背景逐漸載入，對效能影響極小。
 3. **自適應靜態圖集烘焙（進階選項）**：改進的圖集烘焙功能，會根據 GPU 效能動態調整批次大小。如遇特定問題可停用，但可能會降低遊戲內渲染效能（較低 TPS）。
-4. **紋理優化工具**：內建工具可縮小高解析度紋理並清理多餘的 DDS 檔案。
+4. **紋理優化工具**：可縮小高解析度紋理。縮小後的版本儲存在獨立的快取目錄中，不會修改原始模組檔案。隨時可清除快取以還原原始紋理。
 
 備註：延遲載入可能導致初次進入遊戲時出現暫時性的紋理佔位圖，待圖形在背景載入完成後即會恢復正常。
   </description>

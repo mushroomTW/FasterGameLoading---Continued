@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using RimWorld.IO;
 using System;
 using System.Collections.Generic;
@@ -18,6 +18,20 @@ namespace FasterGameLoading
             var fullPath = file.FullPath;
             if (savedTextures.TryGetValue(fullPath, out __result))
             {
+                __state = false;
+                return false;
+            }
+
+            // 檢查是否有磁碟快取的縮放版本
+            if (TextureResize.resizedTextureCache.TryGetValue(fullPath, out var cachePath)
+                && File.Exists(cachePath))
+            {
+                var data = File.ReadAllBytes(cachePath);
+                __result = new Texture2D(2, 2, TextureFormat.RGBA32, true);
+                __result.LoadImage(data);
+                __result.name = Path.GetFileNameWithoutExtension(fullPath);
+                __result.Compress(true);
+                savedTextures[fullPath] = __result;
                 __state = false;
                 return false;
             }

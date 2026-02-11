@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "/n+mopDpOIU=",
+  "success": true,
+  "projectFilePath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\1.6\\Source\\FasterGameLoading.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\mushroomMaster\\.nuget\\packages\\krafs.publicizer\\2.3.0\\krafs.publicizer.2.3.0.nupkg.sha512",
+    "C:\\Users\\mushroomMaster\\.nuget\\packages\\krafs.rimworld.ref\\1.6.4633\\krafs.rimworld.ref.1.6.4633.nupkg.sha512",
+    "C:\\Users\\mushroomMaster\\.nuget\\packages\\lib.harmony\\2.4.2\\lib.harmony.2.4.2.nupkg.sha512"
+  ],
+  "logs": []
+}

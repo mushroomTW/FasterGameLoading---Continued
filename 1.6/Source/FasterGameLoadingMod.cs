@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Xml;
@@ -24,7 +24,7 @@ namespace FasterGameLoading
 
         public override string SettingsCategory()
         {
-            return this.Content.Name;
+            return "FGL_ModName".Translate();
         }
 
         public override void DoSettingsWindowContents(Rect inRect)

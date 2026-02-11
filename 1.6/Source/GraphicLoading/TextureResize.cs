@@ -1,8 +1,10 @@
-﻿using RimWorld;
+using RimWorld;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using UnityEngine;
 using Verse;
 
@@ -10,6 +12,45 @@ namespace FasterGameLoading
 {
     public static class TextureResize
     {
+        public static Dictionary<string, string> resizedTextureCache = new Dictionary<string, string>();
+        private static readonly object cacheLock = new object();
+
+        public static string CacheDirectory => Path.Combine(GenFilePaths.SaveDataFolderPath, "FasterGameLoading", "TextureCache");
+
+        public static string GetCachePath(string originalPath)
+        {
+            using (var md5 = MD5.Create())
+            {
+                var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(originalPath));
+                var sb = new StringBuilder();
+                foreach (var b in hash)
+                {
+                    sb.Append(b.ToString("x2"));
+                }
+                return Path.Combine(CacheDirectory, sb.ToString() + ".png");
+            }
+        }
+
+        public static void ClearCache()
+        {
+            try
+            {
+                if (Directory.Exists(CacheDirectory))
+                {
+                    Directory.Delete(CacheDirectory, true);
+                }
+                lock (cacheLock)
+                {
+                    resizedTextureCache.Clear();
+                }
+                Log.Message("[FasterGameLoading] Texture cache cleared.");
+            }
+            catch (Exception ex)
+            {
+                Log.Error("[FasterGameLoading] Failed to clear texture cache: " + ex.Message);
+            }
+        }
+
         public enum TextureType
         {
             None, Building, Pawn, Weapon, Apparel, Item, Plant, Tree, Terrain, Mote, Filth, Projectile, UI, Other
@@ -33,6 +74,10 @@ namespace FasterGameLoading
 
         public static void DoTextureResizing()
         {
+            // 清除舊快取，重新建立
+            ClearCache();
+            Directory.CreateDirectory(CacheDirectory);
+
             foreach (var value in Enum.GetValues(typeof(TextureType)).Cast<TextureType>())
             {
                 textures[value] = new();
@@ -193,8 +238,11 @@ namespace FasterGameLoading
                 {
                     ResizeTexture(entry.Key, entry.Value);
                 });
-                Log.Warning("Downscaled " + texturesToResize.Count + " textures");
+                Log.Warning("Downscaled " + texturesToResize.Count + " textures (cached, originals untouched)");
             }
+
+            // 持久化快取對照表
+            LoadedModManager.GetMod<FasterGameLoadingMod>().WriteSettings();
         }
 
         public static void ResizeTexture(string path, int targetSize)
@@ -210,17 +258,16 @@ namespace FasterGameLoading
                 g.DrawImage(image, 0, 0, newWidth, newHeight);
                 g.Dispose();
                 image.Dispose();
-                newImage.Save(path);
+                var cachePath = GetCachePath(path);
+                newImage.Save(cachePath);
                 newImage.Dispose();
-                var ddsPath = Path.ChangeExtension(path, ".dds");
-                if (File.Exists(ddsPath))
+                lock (cacheLock)
                 {
-                    File.Delete(ddsPath);
+                    resizedTextureCache[path] = cachePath;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                //Log.Error("Error resizing " + path + " - " + ex.ToString());
             }
 
         }

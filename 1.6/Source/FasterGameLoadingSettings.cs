@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -52,6 +52,23 @@ namespace FasterGameLoading
                     TextureResize.DoTextureResizing();
                 }, "GoBack".Translate()));
             }
+
+            // 還原紋理按鈕（清除快取）+ 狀態顯示
+            ls.Gap(4f);
+            var cacheCount = TextureResize.resizedTextureCache.Count;
+            var cacheStatusText = cacheCount > 0
+                ? "FGL_TextureCacheStatus_Active".Translate(cacheCount)
+                : "FGL_TextureCacheStatus_Empty".Translate();
+            ls.Label(cacheStatusText);
+            ls.Gap(4f);
+            if (ls.ButtonText("FGL_ClearTextureCache".Translate()))
+            {
+                Find.WindowStack.Add(new Dialog_MessageBox("FGL_ClearTextureCacheConfirmation".Translate(), "Confirm".Translate(), delegate
+                {
+                    TextureResize.ClearCache();
+                    LoadedModManager.GetMod<FasterGameLoadingMod>().WriteSettings();
+                }, "GoBack".Translate()));
+            }
             ls.End();
         }
 
@@ -64,6 +81,7 @@ namespace FasterGameLoading
             Scribe_Collections.Look(ref successfulXMLPathesSinceLastSession, "successfulXMLPathesSinceLastSession", LookMode.Value);
             Scribe_Collections.Look(ref failedXMLPathesSinceLastSession, "failedXMLPathesSinceLastSession", LookMode.Value);
             Scribe_Collections.Look(ref modsInLastSession, "modsInLastSession", LookMode.Value);
+            Scribe_Collections.Look(ref TextureResize.resizedTextureCache, "resizedTextureCache", LookMode.Value, LookMode.Value);
             Scribe_Values.Look(ref disableStaticAtlasesBaking, "disableStaticAtlasesBaking");
             Scribe_Values.Look(ref delayGraphicLoading, "delayGraphicLoading", false);
             Scribe_Values.Look(ref earlyModContentLoading, "earlyModContentLoading", true);
@@ -74,12 +92,14 @@ namespace FasterGameLoading
                 failedXMLPathesSinceLastSession ??= new HashSet<string>();
                 successfulXMLPathesSinceLastSession ??= new HashSet<string>();
                 modsInLastSession ??= new List<string>();
+                TextureResize.resizedTextureCache ??= new Dictionary<string, string>();
                 if (!modsInLastSession.SequenceEqual(ModsConfig.ActiveModsInLoadOrder.Select(x => x.packageIdLowerCase)))
                 {
                     loadedTexturesSinceLastSession.Clear();
                     loadedTypesByFullNameSinceLastSession.Clear();
                     failedXMLPathesSinceLastSession.Clear();
                     successfulXMLPathesSinceLastSession.Clear();
+                    TextureResize.ClearCache();
                 }
             }
         }

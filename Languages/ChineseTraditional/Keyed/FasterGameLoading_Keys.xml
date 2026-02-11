@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
+    <FGL_ModName>更快的遊戲載入 - Continued</FGL_ModName>
+
     <!-- Settings -->
     <FGL_EarlyModContentLoading>在遊戲空閒期間提早載入模組內容。啟用後，遊戲在載入期間可能會變得無回應，但這是預期現象。如果遇到任何問題，請停用此選項。</FGL_EarlyModContentLoading>
     <FGL_DelayGraphicLoading>延遲圖形和圖示載入至遊戲執行時（進階選項）。這可以加快初始載入速度，但可能導致暫時性的紋理問題。延遲載入已經過優化以提升效能。僅在您有大量高解析度紋理 mod 且了解取捨時啟用。</FGL_DelayGraphicLoading>
     <FGL_DisableStaticAtlasesBaking>停用靜態紋理圖集烘焙（進階選項）。這可以稍微加快初始載入速度，但會降低遊戲內渲染效能（較低 TPS）。圖集系統已優化，能更好地配合延遲載入。除非遇到特定問題，否則不建議啟用。</FGL_DisableStaticAtlasesBaking>
 
     <!-- Texture Resizing -->
-    <FGL_TextureResizingExplanation>某些模組可能包含大量高解析度紋理，載入需很長時間。使用此功能縮小高解析度紋理。\n
-        此外，RimPy 生成的 dds 檔案將被一併刪除，因此您可以再次使用此工具執行紋理壓縮。\n
+    <FGL_TextureResizingExplanation>某些模組可能包含大量高解析度紋理，載入需很長時間。使用此功能縮小高解析度紋理。原始檔案不會被修改；縮小後的版本會儲存在獨立的快取目錄中，並在下次啟動時自動載入。\n
         以下類型紋理將縮小至目標大小：\n
         建築 - 256px\n
         人物 (Pawn) - 256px\n
@@ -18,5 +19,9 @@
         樹木 - 256px\n
         地形 - 1024px</FGL_TextureResizingExplanation>
     <FGL_DownscaleTextures>縮小紋理</FGL_DownscaleTextures>
-    <FGL_TextureResizingConfirmation>是否執行紋理縮小？此操作可以通過重新下載模組來還原。</FGL_TextureResizingConfirmation>
+    <FGL_TextureResizingConfirmation>是否執行紋理縮小？縮小後的紋理將單獨快取，不會修改原始模組檔案。</FGL_TextureResizingConfirmation>
+    <FGL_ClearTextureCache>清除紋理快取</FGL_ClearTextureCache>
+    <FGL_ClearTextureCacheConfirmation>是否清除所有已快取的縮小紋理？下次啟動時將使用原始紋理。</FGL_ClearTextureCacheConfirmation>
+    <FGL_TextureCacheStatus_Active>紋理快取已啟用：已快取 {0} 張紋理。</FGL_TextureCacheStatus_Active>
+    <FGL_TextureCacheStatus_Empty>紋理快取為空。尚未執行過紋理縮小。</FGL_TextureCacheStatus_Empty>
 </LanguageData>

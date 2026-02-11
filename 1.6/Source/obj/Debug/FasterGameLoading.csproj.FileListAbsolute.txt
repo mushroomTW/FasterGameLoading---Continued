@@ -1,0 +1,5 @@
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading\1.6\Assemblies\FasterGameLoading.dll
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading\1.6\Source\obj\Debug\FasterGameLoading.csproj.AssemblyReference.cache
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading\1.6\Source\obj\Debug\FasterGameLoading.GeneratedMSBuildEditorConfig.editorconfig
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading\1.6\Source\obj\Debug\FasterGameLoading.csproj.CoreCompileInputs.cache
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading\1.6\Source\obj\Debug\FasterGameLoading.dll

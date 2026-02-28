@@ -8,4 +8,6 @@ This mod significantly speeds up game loading through various optimization techn
 4. **Texture Optimization Tool**: Built-in tool to downscale high-resolution textures and clean up redundant DDS files.
 
 
-Note: Delayed loading may cause temporary texture placeholders when first entering a game. These will resolve as graphics load in the background.
+Note: 
+Switching languages ​​using this mod will cause an error; simply restart the game.
+Delayed loading may cause temporary texture placeholders when first entering a game. These will resolve as graphics load in the background.

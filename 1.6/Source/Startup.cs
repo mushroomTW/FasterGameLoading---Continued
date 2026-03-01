@@ -66,7 +66,7 @@ namespace FasterGameLoading
         /// To avoid this, we renamed Languages/ to LanguageData/ (which RimWorld
         /// won't auto-load) and inject translations here, after Core is fully loaded.
         /// </summary>
-        private static void InjectTranslations()
+        internal static void InjectTranslations()
         {
             try
             {
@@ -118,7 +118,7 @@ namespace FasterGameLoading
             }
         }
 
-        private static void LoadKeyedTranslationsFromFile(string filePath, LoadedLanguage language)
+        internal static void LoadKeyedTranslationsFromFile(string filePath, LoadedLanguage language)
         {
             var doc = new XmlDocument();
             doc.Load(filePath);

@@ -19,7 +19,6 @@ This mod significantly speeds up game loading through various optimization techn
 4. **Texture Optimization Tool**: Tool to downscale high-resolution textures. Downscaled versions are stored in a separate cache directory; original mod files are never modified. You can clear the cache at any time to restore original textures.
 
 Note: 
-Switching languages ​​using this mod will cause an error; simply restart the game.
 Delayed loading may cause temporary texture placeholders when first entering a game. These will resolve as graphics load in the background.
 
 此為持續維護的分支版本，包含改進與錯誤修復。
@@ -32,7 +31,6 @@ Delayed loading may cause temporary texture placeholders when first entering a g
 4. **紋理優化工具**：可縮小高解析度紋理。縮小後的版本儲存在獨立的快取目錄中，不會修改原始模組檔案。隨時可清除快取以還原原始紋理。
 
 備註：
-使用此模組切換語言會導致錯誤；只需重新啟動遊戲即可。
 延遲載入可能導致初次進入遊戲時出現暫時性的紋理佔位圖，待圖形在背景載入完成後即會恢復正常。
   </description>
   <loadBefore>

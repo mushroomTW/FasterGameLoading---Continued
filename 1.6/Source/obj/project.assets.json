@@ -16,7 +16,7 @@
           "build/Krafs.Publicizer.targets": {}
         }
       },
-      "Krafs.Rimworld.Ref/1.6.4633": {
+      "Krafs.Rimworld.Ref/1.6.4739-beta": {
         "type": "package",
         "compile": {
           "ref/net472/Assembly-CSharp-firstpass.dll": {},
@@ -161,17 +161,17 @@
         "krafs.publicizer.nuspec"
       ]
     },
-    "Krafs.Rimworld.Ref/1.6.4633": {
-      "sha512": "wbUZCLBFHnNJ9IT4ighta1wrsBI9i/gRrfixPNfsMLlPvd/lksz+yv8H3Os7EIpT3O3wOkXgN3LGt8UHncWpzQ==",
+    "Krafs.Rimworld.Ref/1.6.4739-beta": {
+      "sha512": "Vzot3JJ1YMHFTRYqo1a90XbjOPh8ok/nvonn4JXUWv3MYL6MTZkuAZhD6fLJ4u44WMArsnVrDuWU1GBVQvd3Rg==",
       "type": "package",
-      "path": "krafs.rimworld.ref/1.6.4633",
+      "path": "krafs.rimworld.ref/1.6.4739-beta",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "LICENSE.md",
         "README.md",
         "icon.png",
-        "krafs.rimworld.ref.1.6.4633.nupkg.sha512",
+        "krafs.rimworld.ref.1.6.4739-beta.nupkg.sha512",
         "krafs.rimworld.ref.nuspec",
         "ref/net472/Assembly-CSharp-firstpass.dll",
         "ref/net472/Assembly-CSharp.dll",
@@ -346,11 +346,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\1.6\\Source\\FasterGameLoading.csproj",
+      "projectUniqueName": "c:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\1.6\\Source\\FasterGameLoading.csproj",
       "projectName": "FasterGameLoading",
-      "projectPath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\1.6\\Source\\FasterGameLoading.csproj",
+      "projectPath": "c:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\1.6\\Source\\FasterGameLoading.csproj",
       "packagesPath": "C:\\Users\\mushroomMaster\\.nuget\\packages\\",
-      "outputPath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\1.6\\Source\\obj\\",
+      "outputPath": "c:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\1.6\\Source\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\mushroomMaster\\AppData\\Roaming\\NuGet\\NuGet.Config",

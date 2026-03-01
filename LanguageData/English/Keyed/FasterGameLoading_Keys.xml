@@ -8,15 +8,15 @@
     <FGL_DisableStaticAtlasesBaking>Disable static texture atlas baking (ADVANCED). This can slightly speed up initial loading, but will reduce in-game rendering performance (lower TPS). The atlas system is now optimized to work better with delayed loading. Not recommended unless you experience specific issues.</FGL_DisableStaticAtlasesBaking>
 
     <!-- Texture Resizing -->
-    <FGL_TextureResizingExplanation>Some mods may contain a lot of high-res textures that take a long time to load. Use this to downscale hi-res textures. Original files will NOT be modified; downscaled versions are stored in a separate cache and loaded automatically on next startup. \n
-        Following textures will be reduced down to target size: \n
-        Building - 256px\n
-        Pawn - 256px\n
-        Apparel - 128px \n
-        Weapon - 128px\n
-        Item - 128px\n
-        Plant - 128px\n
-        Tree - 256px\n
+    <FGL_TextureResizingExplanation>Some mods may contain a lot of high-res textures that take a long time to load. Use this to downscale hi-res textures. Original files will NOT be modified; downscaled versions are stored in a separate cache and loaded automatically on next startup.
+        Following textures will be reduced down to target size:
+        Building - 256px
+        Pawn - 256px
+        Apparel - 128px
+        Weapon - 128px
+        Item - 128px
+        Plant - 128px
+        Tree - 256px
         Terrain - 1024px</FGL_TextureResizingExplanation>
     <FGL_DownscaleTextures>Downscale textures</FGL_DownscaleTextures>
     <FGL_TextureResizingConfirmation>Perform texture downscaling? Downscaled textures will be cached separately; original mod files will not be modified.</FGL_TextureResizingConfirmation>

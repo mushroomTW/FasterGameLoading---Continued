@@ -41,5 +41,6 @@ Delayed loading may cause temporary texture placeholders when first entering a g
   <loadAfter>
     <li>brrainz.harmony</li>
     <li>garethp.modlistconfigurator</li>
+    <li>ilyvion.LoadingProgress</li>
   </loadAfter>
 </ModMetaData>

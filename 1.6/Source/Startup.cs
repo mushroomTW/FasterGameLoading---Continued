@@ -16,9 +16,27 @@ namespace FasterGameLoading
         [HarmonyTargetMethod]
         public static MethodBase TargetMethod()
         {
-            return ModsConfig.ActiveModsInLoadOrder.Any(x => x.Name == "BetterLoading")
-                ? AccessTools.Method("BetterLoading.BetterLoadingMain:CreateTimingReport")
-                : (MethodBase)AccessTools.Method(typeof(StaticConstructorOnStartupUtility), "CallAll");
+            // Loading Progress — 它用 transpiler 替換 CallAll，需要 patch 其 Interject 入口
+            if (ModsConfig.ActiveModsInLoadOrder.Any(x => x.PackageId.Equals(
+                "ilyvion.LoadingProgress", StringComparison.OrdinalIgnoreCase)))
+            {
+                try
+                {
+                    var method = AccessTools.Method(
+                        "ilyvion.LoadingProgress.StaticConstructorOnStartupUtilityReplacement:Interject");
+                    if (method != null)
+                    {
+                        Log.Message("[FasterGameLoading] Detected Loading Progress, patching Interject method.");
+                        return method;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Warning("[FasterGameLoading] Failed to resolve Loading Progress target method, falling back: " + ex.Message);
+                }
+            }
+
+            return AccessTools.Method(typeof(StaticConstructorOnStartupUtility), "CallAll");
         }
 
         public static void Postfix()

@@ -26,14 +26,27 @@ namespace FasterGameLoading
             if (TextureResize.resizedTextureCache.TryGetValue(fullPath, out var cachePath)
                 && File.Exists(cachePath))
             {
-                var data = File.ReadAllBytes(cachePath);
-                __result = new Texture2D(2, 2, TextureFormat.RGBA32, true);
-                __result.LoadImage(data);
-                __result.name = Path.GetFileNameWithoutExtension(fullPath);
-                __result.Compress(true);
-                savedTextures[fullPath] = __result;
-                __state = false;
-                return false;
+                try
+                {
+                    var data = File.ReadAllBytes(cachePath);
+                    var tex = new Texture2D(2, 2, TextureFormat.RGBA32, true);
+                    if (tex.LoadImage(data) && tex.width > 0 && tex.height > 0)
+                    {
+                        tex.name = Path.GetFileNameWithoutExtension(fullPath);
+                        tex.Compress(true);
+                        savedTextures[fullPath] = tex;
+                        __result = tex;
+                        __state = false;
+                        return false;
+                    }
+                    // 載入出來的紋理無效，移除快取記錄
+                    TextureResize.resizedTextureCache.Remove(fullPath);
+                }
+                catch (Exception)
+                {
+                    // 快取檔案損壞，移除快取記錄，走正常載入
+                    TextureResize.resizedTextureCache.Remove(fullPath);
+                }
             }
 
             __state = true;

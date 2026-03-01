@@ -30,8 +30,16 @@ namespace FasterGameLoading
                     ModContentPack_ReloadContentInt_Patch.loadedMods.Contains(x) is false).FirstOrDefault();
                 if (modToLoad != null)
                 {
-                    modToLoad.ReloadContentInt();
-                    ModContentPack_ReloadContentInt_Patch.loadedMods.Add(modToLoad);
+                    try
+                    {
+                        modToLoad.ReloadContentInt();
+                        ModContentPack_ReloadContentInt_Patch.loadedMods.Add(modToLoad);
+                    }
+                    catch (Exception ex)
+                    {
+                        // 載入失敗時不加入 loadedMods，讓正式流程可以重試
+                        Log.Warning("[FasterGameLoading] Early loading failed for " + modToLoad.PackageIdPlayerFacing + ", will retry in normal flow: " + ex.Message);
+                    }
                 }
             }
         }

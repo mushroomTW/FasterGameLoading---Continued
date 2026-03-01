@@ -23,6 +23,13 @@ namespace FasterGameLoading
             // 清除圖形快取（引用了已銷毀的 cachedGraphic）
             GraphicData_Init_Patch.savedGraphics.Clear();
 
+            // 清除 XML path 快取（不同語言可能有不同的有效 XPath）
+            XmlNode_SelectSingleNode_Patch.failedXMLPathesThisSession.Clear();
+            XmlNode_SelectSingleNode_Patch.successfulXMLPathesThisSession.Clear();
+
+            // 清除 mod 引用快取（ModContentPack 實例可能被重建）
+            FasterGameLoadingSettings.modsByPackageIds.Clear();
+
             // 重置延遲載入狀態
             DelayedActions.AllGraphicLoaded = false;
             if (FasterGameLoadingMod.delayedActions != null)

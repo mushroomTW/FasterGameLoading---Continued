@@ -16,6 +16,9 @@ namespace FasterGameLoading
             // 允許 ReloadContentInt 重新執行
             ModContentPack_ReloadContentInt_Patch.loadedMods.Clear();
 
+            // 允許 AssetBundle ReloadAll 重新執行
+            ModAssetBundlesHandler_ReloadAll_Patch.reloadedHandlers.Clear();
+
             // 清除紋理快取（Texture2D 物件會被 Unity 銷毀）
             ModContentLoaderTexture2D_LoadTexture_Patch.savedTextures.Clear();
             ModContentLoaderTexture2D_LoadTexture_Patch.loadedTexturesThisSession.Clear();

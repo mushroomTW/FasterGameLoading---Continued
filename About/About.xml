@@ -5,7 +5,7 @@
   <supportedVersions>
     <li>1.6</li>
   </supportedVersions>
-  <packageId>Taranchuk.FasterGameLoading.Continued</packageId>
+  <packageId>Taranchuk.FasterGameLoading</packageId>
   <description>
 Original mod: https://github.com/Taranchuk/FasterGameLoading
 This mod: https://github.com/mushroomTW/FasterGameLoading---Continued.git
@@ -39,6 +39,5 @@ Delayed loading may cause temporary texture placeholders when first entering a g
   <loadAfter>
     <li>brrainz.harmony</li>
     <li>garethp.modlistconfigurator</li>
-    <li>ilyvion.LoadingProgress</li>
   </loadAfter>
 </ModMetaData>

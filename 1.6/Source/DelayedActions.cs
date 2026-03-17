@@ -104,16 +104,18 @@ namespace FasterGameLoading
 
                 var bakeStopwatch = new Stopwatch();
 
-                foreach (var kvp in GlobalTextureAtlasManager.buildQueue)
+                var buildQueueSnapshot = GlobalTextureAtlasManager.buildQueue.ToList();
+                foreach (var kvp in buildQueueSnapshot)
                 {
                     var key = kvp.Key;
-                    var allTexturesForThisGroup = kvp.Value.Item1;
+                    var allTexturesForThisGroup = kvp.Value.Item1.ToList();
 
                     int pixelsInCurrentSlice = 0;
                     var batchForNextBake = new List<(Texture2D main, Texture2D mask)>();
 
                     foreach (Texture2D texture in allTexturesForThisGroup)
                     {
+                        if (texture == null) continue;
                         Texture2D mask = key.hasMask && GlobalTextureAtlasManager.buildQueueMasks.TryGetValue(texture, out var m) ? m : null;
                         batchForNextBake.Add((texture, mask));
                         pixelsInCurrentSlice += texture.width * texture.height;
@@ -133,64 +135,76 @@ namespace FasterGameLoading
                     }
                     void FlushBatch()
                     {
-                        var staticTextureAtlas = new StaticTextureAtlas(key);
-                        // Bake doesn't work when have only 1 texture, it just stopped here
-                        // Make it use the original texture
-                        // not sure how to remove texture from using static atlas
-                        // and yes, because of it, using the initial 64x setup actually never bake the atlases
-                        // No baking, No tearing
-                        if (batchForNextBake.Count == 1)
+                        try
                         {
-                            staticTextureAtlas.colorTexture = batchForNextBake.First().main;
-                            if (key.hasMask)
-                            {
-                                staticTextureAtlas.maskTexture = batchForNextBake.First().mask;
-                            }
-                            staticTextureAtlas.BuildMeshesForUvs([new(0, 0, 1, 1)]);
-                            bakeStopwatch.Reset();
-                        }
-                        else
-                        {
+                            var staticTextureAtlas = new StaticTextureAtlas(key);
+                            // Always call Insert() to register textures in insertedTextures list
                             foreach (var (main, msk) in batchForNextBake)
                             {
                                 staticTextureAtlas.Insert(main, msk);
                             }
 
-                            bakeStopwatch.Restart();
-                            staticTextureAtlas.Bake();
-                            bakeStopwatch.Stop();
+                            if (batchForNextBake.Count == 1)
+                            {
+                                // Bake() doesn't work with single texture - set texture directly
+                                staticTextureAtlas.colorTexture = batchForNextBake[0].main;
+                                if (key.hasMask)
+                                {
+                                    staticTextureAtlas.maskTexture = batchForNextBake[0].mask;
+                                }
+                                staticTextureAtlas.BuildMeshesForUvs([new(0, 0, 1, 1)]);
+                                bakeStopwatch.Reset();
+                            }
+                            else
+                            {
+                                bakeStopwatch.Restart();
+                                staticTextureAtlas.Bake();
+                                bakeStopwatch.Stop();
+                            }
+
+                            GlobalTextureAtlasManager.staticTextureAtlases.Add(staticTextureAtlas);
+                            double secondsElapsed = bakeStopwatch.Elapsed.TotalSeconds;
+                            if (secondsElapsed > 0)
+                            {
+                                float latestBakeSpeed = (float)(pixelsInCurrentSlice / secondsElapsed);
+                                measuredBakeSpeed_PixelsPerSecond = Mathf.Lerp(measuredBakeSpeed_PixelsPerSecond, latestBakeSpeed, ADAPTATION_FACTOR);
+                                float newSliceSize = measuredBakeSpeed_PixelsPerSecond * TARGET_BAKE_TIME_SECONDS;
+                                adaptivePixelsPerSlice = (int)
+                                    (((int)Mathf.Clamp(newSliceSize, MIN_PIXELS_PER_SLICE, MAX_PIXELS_PER_SLICE))
+                                    .FloorToPowerOfTwo() * PACK_DENSITY);
+                            }
                         }
-
-
-                        GlobalTextureAtlasManager.staticTextureAtlases.Add(staticTextureAtlas);
-                        double secondsElapsed = bakeStopwatch.Elapsed.TotalSeconds;
-                        if (secondsElapsed > 0)
+                        catch (Exception ex)
                         {
-                            float latestBakeSpeed = (float)(pixelsInCurrentSlice / secondsElapsed);
-                            measuredBakeSpeed_PixelsPerSecond = Mathf.Lerp(measuredBakeSpeed_PixelsPerSecond, latestBakeSpeed, ADAPTATION_FACTOR);
-                            float newSliceSize = measuredBakeSpeed_PixelsPerSecond * TARGET_BAKE_TIME_SECONDS;
-                            //First make it rectangle, then apply density to it
-                            adaptivePixelsPerSlice = (int)
-                                (((int)Mathf.Clamp(newSliceSize, MIN_PIXELS_PER_SLICE, MAX_PIXELS_PER_SLICE))
-                                .FloorToPowerOfTwo() * PACK_DENSITY);
+                            Log.Error("[FasterGameLoading] Error baking atlas batch: " + ex);
                         }
                     }
                 }
+                // Prevent vanilla BakeStaticAtlases from re-processing the same queue
+                GlobalTextureAtlasManager.buildQueue.Clear();
+                GlobalTextureAtlasManager.buildQueueMasks.Clear();
                 #endregion
                 Log.Warning("Finished baking StaticAtlases - " + DateTime.Now.ToString());
             }
-            if (Current.Game != null)
+            try
             {
-                foreach (var map in Find.Maps)
+                if (Current.Game != null)
                 {
-                    if (map.mapDrawer.sections != null)
+                    foreach (var map in Find.Maps)
                     {
-                        foreach (var thing in map.listerThings.ThingsOfDefs(loadedDefs))
+                        if (map.mapDrawer.sections != null)
                         {
-                            map.mapDrawer.MapMeshDirty(thing.Position, MapMeshFlagDefOf.Things | MapMeshFlagDefOf.Buildings);
+                            foreach (var thing in map.listerThings.ThingsOfDefs(loadedDefs))
+                            {
+                                map.mapDrawer.MapMeshDirty(thing.Position, MapMeshFlagDefOf.Things | MapMeshFlagDefOf.Buildings);
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.Error("[FasterGameLoading] Error updating map mesh: " + ex);
             }
 
             count = 0;

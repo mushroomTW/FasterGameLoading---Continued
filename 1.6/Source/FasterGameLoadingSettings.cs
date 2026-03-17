@@ -16,7 +16,7 @@ namespace FasterGameLoading
         public static HashSet<string> failedXMLPathesSinceLastSession = new HashSet<string>();
         public static bool delayGraphicLoading = false;
         public static bool earlyModContentLoading = true;
-        public static bool disableStaticAtlasesBaking = false;
+        public static bool StaticAtlasesBaking = false;
         public static ModContentPack GetModContent(string packageId)
         {
             var packageLower = packageId.ToLower();
@@ -34,7 +34,7 @@ namespace FasterGameLoading
             ls.Begin(inRect);
             ls.CheckboxLabeled("FGL_EarlyModContentLoading".Translate(), ref earlyModContentLoading);
             ls.CheckboxLabeled("FGL_DelayGraphicLoading".Translate(), ref delayGraphicLoading);
-            ls.CheckboxLabeled("FGL_DisableStaticAtlasesBaking".Translate(), ref disableStaticAtlasesBaking);
+            ls.CheckboxLabeled("FGL_StaticAtlasesBaking".Translate(), ref StaticAtlasesBaking);
             ls.Gap(12f);
 
             // 紋理縮放說明文字
@@ -82,7 +82,7 @@ namespace FasterGameLoading
             Scribe_Collections.Look(ref failedXMLPathesSinceLastSession, "failedXMLPathesSinceLastSession", LookMode.Value);
             Scribe_Collections.Look(ref modsInLastSession, "modsInLastSession", LookMode.Value);
             Scribe_Collections.Look(ref TextureResize.resizedTextureCache, "resizedTextureCache", LookMode.Value, LookMode.Value);
-            Scribe_Values.Look(ref disableStaticAtlasesBaking, "disableStaticAtlasesBaking");
+            Scribe_Values.Look(ref StaticAtlasesBaking, "StaticAtlasesBaking");
             Scribe_Values.Look(ref delayGraphicLoading, "delayGraphicLoading", false);
             Scribe_Values.Look(ref earlyModContentLoading, "earlyModContentLoading", true);
             if (Scribe.mode == LoadSaveMode.PostLoadInit)

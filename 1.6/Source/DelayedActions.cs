@@ -80,7 +80,7 @@ namespace FasterGameLoading
                 }
             }
             Log.Warning("Finished loading graphics - " + DateTime.Now.ToString());
-            if (!FasterGameLoadingSettings.disableStaticAtlasesBaking)
+            if (FasterGameLoadingSettings.StaticAtlasesBaking)
             {
                 AllGraphicLoaded = true;//Icon Doesn't matter
                 Log.Warning("Starting baking StaticAtlases - " + DateTime.Now.ToString());

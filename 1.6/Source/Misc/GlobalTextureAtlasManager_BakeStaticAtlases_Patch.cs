@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using Verse;
 
 namespace FasterGameLoading
@@ -8,7 +8,7 @@ namespace FasterGameLoading
     {
         public static bool Prefix()
         {
-            return !FasterGameLoadingSettings.disableStaticAtlasesBaking
+            return FasterGameLoadingSettings.StaticAtlasesBaking
             && DelayedActions.AllGraphicLoaded;
         }
     }

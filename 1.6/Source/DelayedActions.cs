@@ -48,7 +48,7 @@ namespace FasterGameLoading
         {
             stopwatch.Start();
             var count = 0;
-            Log.Warning("Starting loading graphics: " + graphicsToLoad.Count + " - " + DateTime.Now.ToString());
+            Log.Message("Starting loading graphics: " + graphicsToLoad.Count + " - " + DateTime.Now.ToString());
             List<ThingDef> loadedDefs = [];
             while (graphicsToLoad.Any())
             {
@@ -64,7 +64,7 @@ namespace FasterGameLoading
                 }
                 catch (Exception ex)
                 {
-                    Error("Error loading graphic for " + def, ex);
+                    Log.Warning("Error loading graphic for " + def + ": " + ex);
                 }
                 count++;
                 if (ElapsedMaxImpact)
@@ -79,11 +79,11 @@ namespace FasterGameLoading
                     def.plant.PostLoadSpecial(def);
                 }
             }
-            Log.Warning("Finished loading graphics - " + DateTime.Now.ToString());
+            Log.Message("Finished loading graphics - " + DateTime.Now.ToString());
             if (FasterGameLoadingSettings.StaticAtlasesBaking)
             {
                 AllGraphicLoaded = true;//Icon Doesn't matter
-                Log.Warning("Starting baking StaticAtlases - " + DateTime.Now.ToString());
+                Log.Message("Starting baking StaticAtlases - " + DateTime.Now.ToString());
                 #region BakeAtlas (Adaptive)
                 const float TARGET_BAKE_TIME_SECONDS = 0.008f;
                 const float ADAPTATION_FACTOR = 0.2f;
@@ -176,7 +176,7 @@ namespace FasterGameLoading
                         }
                         catch (Exception ex)
                         {
-                            Log.Error("[FasterGameLoading] Error baking atlas batch: " + ex);
+                            Log.Warning("[FasterGameLoading] Error baking atlas batch: " + ex);
                         }
                     }
                 }
@@ -184,7 +184,7 @@ namespace FasterGameLoading
                 GlobalTextureAtlasManager.buildQueue.Clear();
                 GlobalTextureAtlasManager.buildQueueMasks.Clear();
                 #endregion
-                Log.Warning("Finished baking StaticAtlases - " + DateTime.Now.ToString());
+                Log.Message("Finished baking StaticAtlases - " + DateTime.Now.ToString());
             }
             try
             {
@@ -204,12 +204,12 @@ namespace FasterGameLoading
             }
             catch (Exception ex)
             {
-                Log.Error("[FasterGameLoading] Error updating map mesh: " + ex);
+                Log.Warning("[FasterGameLoading] Error updating map mesh: " + ex);
             }
 
             count = 0;
 
-            Log.Warning("Starting loading icons: " + iconsToLoad.Count + " - " + DateTime.Now.ToString());
+            Log.Message("Starting loading icons: " + iconsToLoad.Count + " - " + DateTime.Now.ToString());
             while (iconsToLoad.Any())
             {
                 if (UnityData.IsInMainThread is false)
@@ -225,7 +225,7 @@ namespace FasterGameLoading
                     }
                     catch (Exception ex)
                     {
-                        Error("Error loading icon for " + def, ex);
+                        Log.Warning("Error loading icon for " + def + ": " + ex);
                     }
                     count++;
 
@@ -238,10 +238,10 @@ namespace FasterGameLoading
                 }
             }
 
-            Log.Warning("Finished loading icons - " + DateTime.Now.ToString());
+            Log.Message("Finished loading icons - " + DateTime.Now.ToString());
 
             count = 0;
-            Log.Warning("Starting resolving SubSoundDefs: " + subSoundDefToResolve.Count + " - " + DateTime.Now.ToString());
+            Log.Message("Starting resolving SubSoundDefs: " + subSoundDefToResolve.Count + " - " + DateTime.Now.ToString());
             while (subSoundDefToResolve.Any())
             {
                 var (def, action) = subSoundDefToResolve.Dequeue();
@@ -251,7 +251,7 @@ namespace FasterGameLoading
                 }
                 catch (Exception ex)
                 {
-                    Error("Error resolving AudioGrain for " + def, ex);
+                    Log.Warning("Error resolving AudioGrain for " + def + ": " + ex);
                 }
                 count++;
                 if (ElapsedMaxImpact)
@@ -262,7 +262,7 @@ namespace FasterGameLoading
                 }
             }
             SoundStarter_Patch.Unpatch();
-            Log.Warning("Finished resolving SubSoundDefs - " + DateTime.Now.ToString());
+            Log.Message("Finished resolving SubSoundDefs - " + DateTime.Now.ToString());
 
             stopwatch.Stop();
             this.enabled = false;

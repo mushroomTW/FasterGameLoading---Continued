@@ -16,7 +16,7 @@
           "build/Krafs.Publicizer.targets": {}
         }
       },
-      "Krafs.Rimworld.Ref/1.6.4739-beta": {
+      "Krafs.Rimworld.Ref/1.6.4759-beta": {
         "type": "package",
         "compile": {
           "ref/net472/Assembly-CSharp-firstpass.dll": {},
@@ -161,17 +161,17 @@
         "krafs.publicizer.nuspec"
       ]
     },
-    "Krafs.Rimworld.Ref/1.6.4739-beta": {
-      "sha512": "Vzot3JJ1YMHFTRYqo1a90XbjOPh8ok/nvonn4JXUWv3MYL6MTZkuAZhD6fLJ4u44WMArsnVrDuWU1GBVQvd3Rg==",
+    "Krafs.Rimworld.Ref/1.6.4759-beta": {
+      "sha512": "n1H4DpucdYoaac5TogDrl0KRRy8O6giEK2/WcV/6kBxNWuZW2Lx3JLvMz869qrxTn1C1VQI9d4Aohdxrm/gxTg==",
       "type": "package",
-      "path": "krafs.rimworld.ref/1.6.4739-beta",
+      "path": "krafs.rimworld.ref/1.6.4759-beta",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "LICENSE.md",
         "README.md",
         "icon.png",
-        "krafs.rimworld.ref.1.6.4739-beta.nupkg.sha512",
+        "krafs.rimworld.ref.1.6.4759-beta.nupkg.sha512",
         "krafs.rimworld.ref.nuspec",
         "ref/net472/Assembly-CSharp-firstpass.dll",
         "ref/net472/Assembly-CSharp.dll",
@@ -365,6 +365,7 @@
       },
       "frameworks": {
         "net48": {
+          "framework": "net48",
           "targetAlias": "net48",
           "projectReferences": {}
         }
@@ -383,6 +384,7 @@
     },
     "frameworks": {
       "net48": {
+        "framework": "net48",
         "targetAlias": "net48",
         "dependencies": {
           "Krafs.Publicizer": {
@@ -401,7 +403,7 @@
             "version": "[2.*, )"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.200-preview.0.26103.119\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201\\RuntimeIdentifierGraph.json"
       }
     }
   }

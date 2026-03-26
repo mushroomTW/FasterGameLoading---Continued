@@ -9,5 +9,4 @@ This mod significantly speeds up game loading through various optimization techn
 
 
 Note: 
-Switching languages ​​using this mod will cause an error; simply restart the game.
 Delayed loading may cause temporary texture placeholders when first entering a game. These will resolve as graphics load in the background.

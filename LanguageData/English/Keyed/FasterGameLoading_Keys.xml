@@ -3,9 +3,9 @@
     <FGL_ModName>Faster Game Loading - Continued</FGL_ModName>
 
     <!-- Settings -->
-    <FGL_EarlyModContentLoading>Load mod content early during game idling periods. When enabled, the game might become unresponsive during loading, but it's expected. Disable this if you encounter any issues.</FGL_EarlyModContentLoading>
-    <FGL_DelayGraphicLoading>Delay graphic and icon loading to game runtime (ADVANCED). This can speed up initial loading, but may cause temporary texture issues. The delayed loading is now optimized for better performance. Only enable if you have many high-resolution texture mods and understand the trade-offs.</FGL_DelayGraphicLoading>
-    <FGL_StaticAtlasesBaking>Enable static texture atlas baking (ADVANCED). Bakes textures into atlases for better in-game rendering performance (higher TPS), but slightly increases initial loading time.</FGL_StaticAtlasesBaking>
+    <FGL_EarlyModContentLoading>Load mod content early</FGL_EarlyModContentLoading>
+    <FGL_DelayGraphicLoading>Delay graphic and icon loading</FGL_DelayGraphicLoading>
+    <FGL_StaticAtlasesBaking>Enable static texture atlas baking</FGL_StaticAtlasesBaking>
 
     <!-- Texture Resizing -->
     <FGL_TextureResizingExplanation>Some mods may contain a lot of high-res textures that take a long time to load. Use this to downscale hi-res textures. Original files will NOT be modified; downscaled versions are stored in a separate cache and loaded automatically on next startup.

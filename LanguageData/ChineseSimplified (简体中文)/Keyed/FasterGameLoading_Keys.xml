@@ -3,9 +3,9 @@
     <FGL_ModName>更快的游戏载入 - Continued</FGL_ModName>
 
     <!-- Settings -->
-    <FGL_EarlyModContentLoading>在游戏空闲期间提早载入模组内容。启用后，游戏在载入期间可能会变得无回应，但这是预期现象。如果遇到任何问题，请停用此选项。</FGL_EarlyModContentLoading>
-    <FGL_DelayGraphicLoading>延迟图形和图示载入至游戏运行时（高级选项）。这可以加快初始载入速度，但可能导致暂时性的纹理问题。延迟载入已经过优化以提升性能。仅在您有大量高分辨率纹理 mod 且了解取舍时启用。</FGL_DelayGraphicLoading>
-    <FGL_StaticAtlasesBaking>启用静态纹理图集烘焙（高级选项）。将纹理烘焙为图集以提升游戏内渲染性能（较高 TPS），但会稍微增加初始载入时间。</FGL_StaticAtlasesBaking>
+    <FGL_EarlyModContentLoading>提早载入模组内容</FGL_EarlyModContentLoading>
+    <FGL_DelayGraphicLoading>延迟图形和图示载入</FGL_DelayGraphicLoading>
+    <FGL_StaticAtlasesBaking>启用静态纹理图集烘焙</FGL_StaticAtlasesBaking>
 
     <!-- Texture Resizing -->
     <FGL_TextureResizingExplanation>某些模组可能包含大量高分辨率纹理，载入需很长时间。使用此功能缩小高分辨率纹理。原始文件不会被修改；缩小后的版本会储存在独立的缓存目录中，并在下次启动时自动载入。

@@ -99,9 +99,9 @@ namespace FasterGameLoading
                 }
             }
             Log.Message("Finished loading graphics - " + DateTime.Now.ToString());
+            AllGraphicLoaded = true;
             if (FasterGameLoadingSettings.StaticAtlasesBaking)
             {
-                AllGraphicLoaded = true;//Icon Doesn't matter
                 Log.Message("Starting baking StaticAtlases - " + DateTime.Now.ToString());
                 #region BakeAtlas (Adaptive)
                 const float TARGET_BAKE_TIME_SECONDS = 0.008f;

@@ -7,31 +7,64 @@
   </supportedVersions>
   <packageId>Taranchuk.FasterGameLoading</packageId>
   <description>
-Original mod: https://github.com/Taranchuk/FasterGameLoading
-This mod: https://github.com/mushroomTW/FasterGameLoading---Continued.git
-Maintained fork with improvements and bug fixes.
+Source: https://github.com/Taranchuk/FasterGameLoading
+This fork: https://github.com/mushroomTW/FasterGameLoading---Continued.git
 
-This mod significantly speeds up game loading through various optimization technologies, especially suitable for players with many mods. Key features include:
+=== Does loading take forever? This mod is for you! ===
 
-1. **Early Mod Content Loading**: Preloads mod content during idle periods at startup. May cause brief unresponsiveness during loading - this is expected behavior.
-2. **Delayed Graphic Loading (Advanced)**: Defers loading of non-essential graphics until gameplay. Essential items (weapons, apparel, food, pawns, linked buildings, medicine, furniture) are loaded immediately to prevent visual issues. Other graphics load gradually in the background with minimal performance impact.
-3. **Adaptive Static Atlas Baking (Advanced)**: Improved atlas baking that dynamically adjusts batch sizes based on GPU performance. Can be disabled if you experience specific issues, though this may reduce in-game rendering performance (lower TPS).
-4. **Texture Optimization Tool**: Tool to downscale high-resolution textures. Downscaled versions are stored in a separate cache directory; original mod files are never modified. You can clear the cache at any time to restore original textures.
+Sick of staring at the loading screen every time you start RimWorld? This mod cuts down startup time using several tricks that work in the background, so the game loads faster without changing any gameplay.
 
-Note: 
-Delayed loading may cause temporary texture placeholders when first entering a game. These will resolve as graphics load in the background.
+--- What it does ---
 
-此為持續維護的分支版本，包含改進與錯誤修復。
+- Starts loading mod content earlier, during moments the game would otherwise sit idle.
+- Optionally delays non-essential textures (like background objects) until after you enter a game — weapons, clothing, food, pawns, and furniture are always loaded right away so nothing looks broken. (disabled by default)
+- Smarter atlas baking: automatically adjusts how many textures are processed at once based on your GPU speed, instead of using a fixed number that might be too slow or cause hitches. (disabled by default)
+- Texture downscaler: reduces the file size of high-resolution textures to save VRAM and speed up loading. Your original mod files are never touched — downscaled copies are stored in a separate folder, and you can delete them anytime to go back to full quality. (disabled by default)
 
-這款模組透過多種優化技術顯著加快遊戲載入速度，特別適合擁有大量模組的玩家。主要功能包括：
+--- Things to know ---
 
-1. **早期模組內容載入**：在啟動的閒置期間預先載入模組內容。可能會導致載入過程中出現短暫的無回應，屬於預期現象。
-2. **延遲圖形載入（進階選項）**：延遲載入非必要圖形至遊戲進行中。必要物品（武器、服裝、食物、人物、連接型建築、醫療用品、家具）會立即載入以避免視覺問題。其他圖形會在背景逐漸載入，對效能影響極小。
-3. **自適應靜態圖集烘焙（進階選項）**：改進的圖集烘焙功能，會根據 GPU 效能動態調整批次大小。如遇特定問題可停用，但可能會降低遊戲內渲染效能（較低 TPS）。
-4. **紋理優化工具**：可縮小高解析度紋理。縮小後的版本儲存在獨立的快取目錄中，不會修改原始模組檔案。隨時可清除快取以還原原始紋理。
+- The game may briefly freeze or feel unresponsive during startup. This is normal — the mod is doing work in the background.
+- When first entering a game with delayed texture loading enabled, some objects may briefly show as pink/grey placeholders. They fill in within a few seconds.
+- The texture downscaler and atlas baking options are optional. Atlas baking is recommended to leave on — disabling it may reduce in-game performance (lower TPS).
 
-備註：
-延遲載入可能導致初次進入遊戲時出現暫時性的紋理佔位圖，待圖形在背景載入完成後即會恢復正常。
+--- Works well with ---
+
+- Loading Progress
+- DefLoadCache
+- Image Opt
+
+--- Works best with a lot of mods. Zero impact on gameplay or saves. ---
+
+Original mod by Taranchuk. This is a maintained fork with bug fixes and improvements.
+
+===========================
+
+載入畫面讓你等得不耐煩？這款模組就是為此而生。
+
+它透過幾種背景優化手段縮短 RimWorld 的啟動時間，完全不影響遊戲內容與存檔。
+
+--- 功能說明 ---
+
+- 在遊戲啟動的空閒時間提前載入模組內容，減少等待。
+- 可選擇延遲載入非必要貼圖（例如背景物件裝飾），等進入遊戲後才處理。武器、服裝、食物、人物、家具等必要物品仍會立即載入，不會出現問題。（預設關閉）
+- 更聰明的圖集烘焙：根據你的 GPU 速度自動調整每批次處理的貼圖數量，不再用固定值導致卡頓或效率低下。（預設關閉）
+- 貼圖降解析度工具：可縮小高畫質貼圖來節省顯示記憶體與載入時間。原始模組檔案不會被動到——縮小版本存在獨立資料夾，隨時刪除即可還原原始品質。（預設關閉）
+
+--- 注意事項 ---
+
+- 啟動期間遊戲可能短暫無回應，這是正常現象，模組正在背景運作。
+- 開啟延遲貼圖載入後，剛進入遊戲時部分物件可能短暫顯示為粉紅色或灰色佔位圖，幾秒後會自動補齊。
+- 貼圖降解析工具和圖集烘焙均為可選功能。建議保持圖集烘焙開啟——關閉可能導致遊戲內渲染效能下降（TPS 降低）。
+
+--- 推薦搭配使用 ---
+
+- Loading Progress
+- DefLoadCache
+- Image Opt
+
+--- 模組越多效果越明顯，對遊戲內容與存檔零影響。---
+
+原作者：Taranchuk。此為持續維護的分支版本，包含錯誤修復與功能改進。
   </description>
   <loadBefore>
     <li>Ludeon.RimWorld</li>

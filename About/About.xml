@@ -18,14 +18,14 @@ Sick of staring at the loading screen every time you start RimWorld? This mod cu
 
 - Starts loading mod content earlier, during moments the game would otherwise sit idle.
 - Optionally delays non-essential textures (like background objects) until after you enter a game — weapons, clothing, food, pawns, and furniture are always loaded right away so nothing looks broken. (disabled by default)
-- Smarter atlas baking: automatically adjusts how many textures are processed at once based on your GPU speed, instead of using a fixed number that might be too slow or cause hitches. (disabled by default)
+- Smarter atlas baking: by default, uses RimWorld's original baking process. When enabled, automatically adjusts batch sizes based on your GPU speed to reduce loading hitches. Enabling this is optional but recommended for high mod counts.
 - Texture downscaler: reduces the file size of high-resolution textures to save VRAM and speed up loading. Your original mod files are never touched — downscaled copies are stored in a separate folder, and you can delete them anytime to go back to full quality. (disabled by default)
 
 --- Things to know ---
 
 - The game may briefly freeze or feel unresponsive during startup. This is normal — the mod is doing work in the background.
 - When first entering a game with delayed texture loading enabled, some objects may briefly show as pink/grey placeholders. They fill in within a few seconds.
-- The texture downscaler and atlas baking options are optional. Atlas baking is recommended to leave on — disabling it may reduce in-game performance (lower TPS).
+- The texture downscaler and atlas baking options are optional. Atlas baking always runs in some form — disabling the option just uses the vanilla baking process instead of the adaptive one.
 
 --- Works well with ---
 
@@ -46,15 +46,15 @@ Original mod by Taranchuk. This is a maintained fork with bug fixes and improvem
 --- 功能說明 ---
 
 - 在遊戲啟動的空閒時間提前載入模組內容，減少等待。
-- 可選擇延遲載入非必要貼圖（例如背景物件裝飾），等進入遊戲後才處理。武器、服裝、食物、人物、家具等必要物品仍會立即載入，不會出現問題。（預設關閉）
-- 更聰明的圖集烘焙：根據你的 GPU 速度自動調整每批次處理的貼圖數量，不再用固定值導致卡頓或效率低下。（預設關閉）
+- 可選擇延遲載入非必要貼圖（例如背景物件裝飾），等進入遊戲後才處理。武器、服裝、食物、人物、傢俱等必要物品仍會立即載入，不會出現問題。（預設關閉）
+- 更聰明的圖集烘焙：預設使用 RimWorld 原版烘焙流程。開啟後會根據你的 GPU 速度自動調整每批次處理量，減少載入卡頓。此功能為可選，模組量大時建議啟用。
 - 貼圖降解析度工具：可縮小高畫質貼圖來節省顯示記憶體與載入時間。原始模組檔案不會被動到——縮小版本存在獨立資料夾，隨時刪除即可還原原始品質。（預設關閉）
 
 --- 注意事項 ---
 
 - 啟動期間遊戲可能短暫無回應，這是正常現象，模組正在背景運作。
 - 開啟延遲貼圖載入後，剛進入遊戲時部分物件可能短暫顯示為粉紅色或灰色佔位圖，幾秒後會自動補齊。
-- 貼圖降解析工具和圖集烘焙均為可選功能。建議保持圖集烘焙開啟——關閉可能導致遊戲內渲染效能下降（TPS 降低）。
+- 貼圖降解析工具和圖集烘焙均為可選功能。圖集烘焙在任何情況下都會執行——關閉設定只是改用原版烘焙方式，而非停用烘焙。
 
 --- 推薦搭配使用 ---
 

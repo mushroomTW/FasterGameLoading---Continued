@@ -4,8 +4,9 @@
 
     <!-- Settings -->
     <FGL_EarlyModContentLoading>Ранняя загрузка контента</FGL_EarlyModContentLoading>
-    <FGL_DelayGraphicLoading>Отложенная загрузка графики</FGL_DelayGraphicLoading>
-    <FGL_StaticAtlasesBaking>Запекание статических атласов</FGL_StaticAtlasesBaking>
+    <FGL_DelayGraphicLoading>Отложенная загрузка графики (требуется перезапуск)</FGL_DelayGraphicLoading>
+    <FGL_StaticAtlasesBaking>Запекание статических атласов (требуется перезапуск)</FGL_StaticAtlasesBaking>
+    <FGL_RestartRequiredSettings>Изменения отложенной загрузки графики и запекания статических атласов полностью применяются после перезапуска RimWorld.</FGL_RestartRequiredSettings>
 
     <!-- Texture Resizing -->
     <FGL_TextureResizingExplanation>Сжатие HD-текстур значительно ускоряет загрузку. Оригинальные файлы НЕ меняются; уменьшенные версии хранятся в отдельном кэше и загружаются автоматически.

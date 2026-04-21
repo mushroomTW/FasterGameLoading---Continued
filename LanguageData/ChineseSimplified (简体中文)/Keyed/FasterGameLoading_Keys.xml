@@ -4,8 +4,9 @@
 
     <!-- Settings -->
     <FGL_EarlyModContentLoading>提早载入模组内容</FGL_EarlyModContentLoading>
-    <FGL_DelayGraphicLoading>延迟图形和图示载入</FGL_DelayGraphicLoading>
-    <FGL_StaticAtlasesBaking>启用静态纹理图集烘焙</FGL_StaticAtlasesBaking>
+    <FGL_DelayGraphicLoading>延迟图形和图示载入（需要重新启动）</FGL_DelayGraphicLoading>
+    <FGL_StaticAtlasesBaking>启用静态纹理图集烘焙（需要重新启动）</FGL_StaticAtlasesBaking>
+    <FGL_RestartRequiredSettings>延迟图形载入与静态纹理图集烘焙的更改，需要重新启动 RimWorld 才会完整生效。</FGL_RestartRequiredSettings>
 
     <!-- Texture Resizing -->
     <FGL_TextureResizingExplanation>某些模组可能包含大量高分辨率纹理，载入需很长时间。使用此功能缩小高分辨率纹理。原始文件不会被修改；缩小后的版本会储存在独立的缓存目录中，并在下次启动时自动载入。

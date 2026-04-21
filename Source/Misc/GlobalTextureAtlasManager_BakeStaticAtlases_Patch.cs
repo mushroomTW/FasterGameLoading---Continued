@@ -8,9 +8,17 @@ namespace FasterGameLoading
     {
         public static bool Prefix()
         {
-            return FasterGameLoadingSettings.StaticAtlasesBaking
-            && DelayedActions.AllGraphicLoaded;
+            if (!DelayedActions.AllDeferredVisualsLoaded)
+            {
+                return false;
+            }
+
+            if (!FasterGameLoadingSettings.StaticAtlasesBaking)
+            {
+                return true;
+            }
+
+            return DelayedActions.AdaptiveStaticAtlasBakeFailed;
         }
     }
 }
-

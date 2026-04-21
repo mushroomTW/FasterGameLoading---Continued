@@ -34,7 +34,7 @@ namespace FasterGameLoading
             FasterGameLoadingSettings.modsByPackageIds.Clear();
 
             // 重置延遲載入狀態
-            DelayedActions.AllGraphicLoaded = false;
+            DelayedActions.AllDeferredVisualsLoaded = false;
             if (FasterGameLoadingMod.delayedActions != null)
             {
                 FasterGameLoadingMod.delayedActions.graphicsToLoad.Clear();

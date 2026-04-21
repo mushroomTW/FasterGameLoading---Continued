@@ -35,6 +35,8 @@ namespace FasterGameLoading
             ls.CheckboxLabeled("FGL_EarlyModContentLoading".Translate(), ref earlyModContentLoading);
             ls.CheckboxLabeled("FGL_DelayGraphicLoading".Translate(), ref delayGraphicLoading);
             ls.CheckboxLabeled("FGL_StaticAtlasesBaking".Translate(), ref StaticAtlasesBaking);
+            ls.Gap(4f);
+            ls.Label("FGL_RestartRequiredSettings".Translate());
             ls.Gap(12f);
 
             // 紋理縮放說明文字
@@ -105,4 +107,3 @@ namespace FasterGameLoading
         }
     }
 }
-

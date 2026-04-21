@@ -1,5 +1,6 @@
 using HarmonyLib;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -17,10 +18,10 @@ namespace FasterGameLoading
         public static void Postfix()
         {
             FasterGameLoadingSettings.modsInLastSession = ModsConfig.ActiveModsInLoadOrder.Select(x => x.packageIdLowerCase).ToList();
-            FasterGameLoadingSettings.loadedTexturesSinceLastSession = ModContentLoaderTexture2D_LoadTexture_Patch.loadedTexturesThisSession;
-            FasterGameLoadingSettings.loadedTypesByFullNameSinceLastSession = GenTypes_GetTypeInAnyAssemblyInt_Patch.loadedTypesThisSession;
-            FasterGameLoadingSettings.successfulXMLPathesSinceLastSession = XmlNode_SelectSingleNode_Patch.successfulXMLPathesThisSession;
-            FasterGameLoadingSettings.failedXMLPathesSinceLastSession = XmlNode_SelectSingleNode_Patch.failedXMLPathesThisSession;
+            FasterGameLoadingSettings.loadedTexturesSinceLastSession = new Dictionary<string, string>(ModContentLoaderTexture2D_LoadTexture_Patch.loadedTexturesThisSession);
+            FasterGameLoadingSettings.loadedTypesByFullNameSinceLastSession = new Dictionary<string, string>(GenTypes_GetTypeInAnyAssemblyInt_Patch.loadedTypesThisSession);
+            FasterGameLoadingSettings.successfulXMLPathsSinceLastSession = XmlNode_SelectSingleNode_Patch.successfulXMLPathsThisSession;
+            FasterGameLoadingSettings.failedXMLPathsSinceLastSession = XmlNode_SelectSingleNode_Patch.failedXMLPathsThisSession;
             LoadedModManager.GetMod<FasterGameLoadingMod>().WriteSettings();
             InjectTranslations();
             LongEventHandler.toExecuteWhenFinished.Add(delegate

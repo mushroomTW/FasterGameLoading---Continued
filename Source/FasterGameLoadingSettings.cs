@@ -12,8 +12,8 @@ namespace FasterGameLoading
         public static Dictionary<string, ModContentPack> modsByPackageIds = new Dictionary<string, ModContentPack>();
         public static Dictionary<string, string> loadedTypesByFullNameSinceLastSession = new Dictionary<string, string>();
         public static List<string> modsInLastSession = new List<string>();
-        public static HashSet<string> successfulXMLPathesSinceLastSession = new HashSet<string>();
-        public static HashSet<string> failedXMLPathesSinceLastSession = new HashSet<string>();
+        public static HashSet<string> successfulXMLPathsSinceLastSession = new HashSet<string>();
+        public static HashSet<string> failedXMLPathsSinceLastSession = new HashSet<string>();
         public static bool delayGraphicLoading = false;
         public static bool earlyModContentLoading = true;
         public static bool StaticAtlasesBaking = false;
@@ -78,8 +78,8 @@ namespace FasterGameLoading
             base.ExposeData();
             Scribe_Collections.Look(ref loadedTexturesSinceLastSession, "loadedTexturesSinceLastSession", LookMode.Value, LookMode.Value);
             Scribe_Collections.Look(ref loadedTypesByFullNameSinceLastSession, "loadedTypesByFullNameSinceLastSession", LookMode.Value, LookMode.Value);
-            Scribe_Collections.Look(ref successfulXMLPathesSinceLastSession, "successfulXMLPathesSinceLastSession", LookMode.Value);
-            Scribe_Collections.Look(ref failedXMLPathesSinceLastSession, "failedXMLPathesSinceLastSession", LookMode.Value);
+            Scribe_Collections.Look(ref successfulXMLPathsSinceLastSession, "successfulXMLPathesSinceLastSession", LookMode.Value);
+            Scribe_Collections.Look(ref failedXMLPathsSinceLastSession, "failedXMLPathesSinceLastSession", LookMode.Value);
             Scribe_Collections.Look(ref modsInLastSession, "modsInLastSession", LookMode.Value);
             Scribe_Collections.Look(ref TextureResize.resizedTextureCache, "resizedTextureCache", LookMode.Value, LookMode.Value);
             Scribe_Values.Look(ref StaticAtlasesBaking, "StaticAtlasesBaking");
@@ -89,16 +89,16 @@ namespace FasterGameLoading
             {
                 loadedTexturesSinceLastSession ??= new Dictionary<string, string>();
                 loadedTypesByFullNameSinceLastSession ??= new Dictionary<string, string>();
-                failedXMLPathesSinceLastSession ??= new HashSet<string>();
-                successfulXMLPathesSinceLastSession ??= new HashSet<string>();
+                failedXMLPathsSinceLastSession ??= new HashSet<string>();
+                successfulXMLPathsSinceLastSession ??= new HashSet<string>();
                 modsInLastSession ??= new List<string>();
                 TextureResize.resizedTextureCache ??= new Dictionary<string, string>();
                 if (!modsInLastSession.SequenceEqual(ModsConfig.ActiveModsInLoadOrder.Select(x => x.packageIdLowerCase)))
                 {
                     loadedTexturesSinceLastSession.Clear();
                     loadedTypesByFullNameSinceLastSession.Clear();
-                    failedXMLPathesSinceLastSession.Clear();
-                    successfulXMLPathesSinceLastSession.Clear();
+                    failedXMLPathsSinceLastSession.Clear();
+                    successfulXMLPathsSinceLastSession.Clear();
                     TextureResize.ClearCache();
                 }
             }

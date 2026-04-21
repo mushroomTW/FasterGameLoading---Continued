@@ -15,6 +15,14 @@ namespace FasterGameLoading
         public static Dictionary<string, string> resizedTextureCache = new Dictionary<string, string>();
         private static readonly object cacheLock = new object();
 
+        /// <summary>
+        /// Mods whose textures should be excluded from resizing (e.g. textures contain UI elements).
+        /// </summary>
+        public static readonly HashSet<string> excludedModIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "DerekBickley.LTOColonyGroupsFinal",
+        };
+
         public static string CacheDirectory => Path.Combine(GenFilePaths.SaveDataFolderPath, "FasterGameLoading", "TextureCache");
 
         public static string GetCachePath(string originalPath)
@@ -83,6 +91,10 @@ namespace FasterGameLoading
             // 清除舊快取，重新建立
             ClearCache();
             Directory.CreateDirectory(CacheDirectory);
+
+            texturesByPaths.Clear();
+            texturesByDefs.Clear();
+            texturesByMods.Clear();
 
             foreach (var value in Enum.GetValues(typeof(TextureType)).Cast<TextureType>())
             {
@@ -208,8 +220,7 @@ namespace FasterGameLoading
             {
                 if (texturesByMods.TryGetValue(texture.Key, out var mod))
                 {
-                    // TODO: 考慮改用可設定的排除清單（LTO Colony Groups 的紋理含 UI 元素，不適合縮放）
-                    if (mod.PackageIdPlayerFacing == "DerekBickley.LTOColonyGroupsFinal")
+                    if (excludedModIds.Contains(mod.PackageIdPlayerFacing))
                     {
                         continue;
                     }
@@ -299,8 +310,14 @@ namespace FasterGameLoading
                 shader = ShaderDatabase.CutoutComplex;
             }
             Log_Error_Patch.suppressErrorMessages = true;
-            rec = GraphicDatabase.Get<Graphic_Multi>(path, shader, def.graphicData.drawSize, Color.white);
-            Log_Error_Patch.suppressErrorMessages = false;
+            try
+            {
+                rec = GraphicDatabase.Get<Graphic_Multi>(path, shader, def.graphicData.drawSize, Color.white);
+            }
+            finally
+            {
+                Log_Error_Patch.suppressErrorMessages = false;
+            }
             return true;
         }
 

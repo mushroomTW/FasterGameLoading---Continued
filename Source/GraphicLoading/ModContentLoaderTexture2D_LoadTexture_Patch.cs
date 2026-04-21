@@ -2,6 +2,7 @@ using HarmonyLib;
 using RimWorld.IO;
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.IO;
 using UnityEngine;
 using Verse;
@@ -11,8 +12,8 @@ namespace FasterGameLoading
     [HarmonyPatch(typeof(ModContentLoader<Texture2D>), "LoadTexture")]
     public static class ModContentLoaderTexture2D_LoadTexture_Patch
     {
-        public static Dictionary<string, string> loadedTexturesThisSession = new Dictionary<string, string>();
-        public static Dictionary<string, Texture2D> savedTextures = new Dictionary<string, Texture2D>();
+        public static ConcurrentDictionary<string, string> loadedTexturesThisSession = new ConcurrentDictionary<string, string>();
+        public static ConcurrentDictionary<string, Texture2D> savedTextures = new ConcurrentDictionary<string, Texture2D>();
         public static bool Prefix(VirtualFile file, out bool __state, ref Texture2D __result)
         {
             var fullPath = file.FullPath;

@@ -13,3 +13,8 @@ C:\Users\mushroomMaster\Documents\FasterGameLoading---Continued-Source\obj\Debug
 C:\Users\mushroomMaster\Documents\FasterGameLoading---Continued-Source\obj\Debug\FasterGameLoading.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\mushroomMaster\Documents\FasterGameLoading---Continued-Source\obj\Debug\FasterGameLoading.csproj.CoreCompileInputs.cache
 C:\Users\mushroomMaster\Documents\FasterGameLoading---Continued-Source\obj\Debug\FasterGameLoading.dll
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Source\obj\Debug\FasterGameLoading.csproj.AssemblyReference.cache
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Source\obj\Debug\FasterGameLoading.GeneratedMSBuildEditorConfig.editorconfig
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Source\obj\Debug\FasterGameLoading.csproj.CoreCompileInputs.cache
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Source\obj\Debug\FasterGameLoading.dll
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Assemblies\FasterGameLoading.dll

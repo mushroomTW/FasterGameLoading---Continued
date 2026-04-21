@@ -26,7 +26,7 @@ namespace FasterGameLoading
             InjectTranslations();
             LongEventHandler.toExecuteWhenFinished.Add(delegate
             {
-                FasterGameLoadingMod.delayedActions.StartCoroutine(FasterGameLoadingMod.delayedActions.PerformActions());
+                FasterGameLoadingMod.delayedActions.StartDeferredPipeline();
             });
         }
 

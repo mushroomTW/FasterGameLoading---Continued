@@ -31,7 +31,8 @@ namespace FasterGameLoading
 
         public static void ExecuteDelayed(Action action, BuildableDef def)
         {
-            if (def is ThingDef thingDef && thingDef.ShouldBeLoadedImmediately())
+            if (DelayedActions.LanguageReloadInProgress
+                || def is ThingDef thingDef && thingDef.ShouldBeLoadedImmediately())
             {
                 LongEventHandler.ExecuteWhenFinished(action);
             }

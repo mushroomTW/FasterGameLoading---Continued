@@ -1,0 +1,999 @@
+Mono path[0] = 'C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/Managed'
+Mono config path = 'C:/Program Files (x86)/Steam/steamapps/common/RimWorld/MonoBleedingEdge/etc'
+[PhysX] Initialized MultithreadedTaskDispatcher with 6 workers.
+Initialize engine version: 2022.3.35f1 (011206c7a712)
+[Subsystems] Discovering subsystems at path C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/UnitySubsystems
+GfxDevice: creating device client; threaded=1; jobified=0
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: NVIDIA GeForce RTX 2060 (ID=0x1e89)
+    Vendor:   NVIDIA
+    VRAM:     5945 MB
+    Driver:   32.0.15.9621
+Begin MonoManager ReloadAssembly
+- Loaded All Assemblies, in  0.257 seconds
+- Finished resetting the current domain, in  0.001 seconds
+<RI> Initializing input.
+<RI> Input initialized.
+<RI> Initialized touch support.
+[PhysX] Initialized MultithreadedTaskDispatcher with 6 workers.
+UnloadTime: 0.751000 ms
+Command line arguments: -disable-compute-shaders
+RimWorld 1.6.4633 rev1261
+Mod Blocky Core 1.6(fork) dependency (brrainz.harmony) needs to have <downloadUrl> and/or <steamWorkshopUrl> specified.
+Mod Minecraft 1.6(Forked): targetVersion field is obsolete, use supportedVersions instead.
+Mod One-Click Mine! dependency (brrainz.harmony) needs to have <downloadUrl> and/or <steamWorkshopUrl> specified.
+Mod Milira Halo activator dependency (Ancot.MiliraRace) needs to have <downloadUrl> and/or <steamWorkshopUrl> specified.
+Mod Wood's Muzzle Flash for Cinders of the Embergarden has a dependency (issaczhuang.muzzleflash) with empty display name.
+Mod Wood's Muzzle Flash for Cinders of the Embergarden dependency (issaczhuang.muzzleflash) needs to have <downloadUrl> and/or <steamWorkshopUrl> specified.
+Mod Wood's Muzzle Flash for Cinders of the Embergarden has a dependency (BreadMo.Cinders) with empty display name.
+Mod Wood's Muzzle Flash for Cinders of the Embergarden dependency (BreadMo.Cinders) needs to have <downloadUrl> and/or <steamWorkshopUrl> specified.
+Mod Taste of Vanilla - The Alpha Mythology dependency (sarg.magicalmenagerie) needs to have <downloadUrl> and/or <steamWorkshopUrl> specified.
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-0000019270080970.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-0000019270089610.dll
+Prepatcher: Starting... (vanilla load took 2.642343s)
+[DefLoadCache] FreePatch: injected HookFired + TryLoadCached prefix + 1 SaveToCache postfix(es) into ApplyPatches
+[DefLoadCache] FreePatch: injected ShouldSkipClearPatches prefix into ClearCachedPatches
+[DefLoadCache] FreePatch: injected ShouldSkipErrorCheckPatches prefix into ErrorCheckPatches
+[DefLoadCache] FreePatch: injected ShouldSkipLoadModXML prefix into LoadModXML
+Prepatcher: Game processing took 187.9314ms
+Prepatcher: Serializing patched assemblies
+Prepatcher: Serializing took 1868.7227ms
+Prepatcher: Setting refonly
+Prepatcher: Loading patched assemblies
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-0000019087950040.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-000001927F46B040.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-00000192702988A0.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-0000019270BA4020.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-00000192714184F0.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-0000019271255EE0.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-0000019266FE2010.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-000001927119E010.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-0000019270524010.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-00000192712782F0.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-00000192712A0900.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-0000019270BB1C30.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-0000019270BC9E40.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-000001927F6D9040.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-0000019270BFCA50.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-00000192703AA9F0.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-00000192713C0030.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-0000019270B600B0.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-00000192712D8F10.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-0000019270C1A860.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-000001923FCF7BC0.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-00000192712E4B20.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-00000192708C4D60.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-0000019270C50A70.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-000001923FCFCC00.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-00000192703B8000.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-0000019270782130.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-000001926FF78C50.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-000001927F83D040.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-000001926FF56060.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-0000019270C61280.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-0000019270C9B490.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-000001926FF03840.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-0000019270CB0EA0.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-0000019270CB5EB0.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-0000019270CBC4C0.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-00000192711A8A20.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-000001926FF57670.dll
+Prepatcher: Done loading
+Command line arguments: -disable-compute-shaders
+RimWorld 1.6.4633 rev1261
+Mod Blocky Core 1.6(fork) dependency (brrainz.harmony) needs to have <downloadUrl> and/or <steamWorkshopUrl> specified.
+Mod Minecraft 1.6(Forked): targetVersion field is obsolete, use supportedVersions instead.
+Mod One-Click Mine! dependency (brrainz.harmony) needs to have <downloadUrl> and/or <steamWorkshopUrl> specified.
+Mod Milira Halo activator dependency (Ancot.MiliraRace) needs to have <downloadUrl> and/or <steamWorkshopUrl> specified.
+Mod Wood's Muzzle Flash for Cinders of the Embergarden has a dependency (issaczhuang.muzzleflash) with empty display name.
+Mod Wood's Muzzle Flash for Cinders of the Embergarden dependency (issaczhuang.muzzleflash) needs to have <downloadUrl> and/or <steamWorkshopUrl> specified.
+Mod Wood's Muzzle Flash for Cinders of the Embergarden has a dependency (BreadMo.Cinders) with empty display name.
+Mod Wood's Muzzle Flash for Cinders of the Embergarden dependency (BreadMo.Cinders) needs to have <downloadUrl> and/or <steamWorkshopUrl> specified.
+Mod Taste of Vanilla - The Alpha Mythology dependency (sarg.magicalmenagerie) needs to have <downloadUrl> and/or <steamWorkshopUrl> specified.
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-0000019088D62890.dll
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-000001908A408110.dll
+Prepatcher: Restarted with the patched assembly, going silent.
+[Loading Progress] Loading Progress initialized! Enjoy the rest of your loading experience!
+[Loading Progress] Loaded translations for ChineseSimplified (简体中文) from Loading Progress（简中汉化） from C:\Program Files (x86)\Steam\steamapps\workshop\content\294100\3542771983\Common\Languages\ChineseSimplified (简体中文)\Keyed.
+Fallback handler could not load library C:/Program Files (x86)/Steam/steamapps/common/RimWorld/RimWorldWin64_Data/MonoBleedingEdge/data-00000192A9DAB030.dll
+[RimHUD v1.17.5] Initialized
+[ImageOpt] Successfully loaded Rust library into process memory. ver: 0.1.13
+Mod Iniciado 🔥
+[Analyzer] Loaded version 1.6.0 rev 1
+<color=#66ffb5>[MeleeAnim]</color> Hello, world!
+Build date: 4/13/2026 8:02 AM
+Loaded assemblies (9):
+0BetterFloatMenu, Version=16.0.0.0, Culture=neutral, PublicKeyToken=null,
+0ColourPicker, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null,
+AMRetextureSupport, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null,
+Meta.Numerics, Version=3.1.0.0, Culture=neutral, PublicKeyToken=67d25c65a6631347,
+ModRequestAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null,
+ModRequestAPI.Models, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null,
+Unity.Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=null,
+zAnimationMod, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null,
+zz.AM.PerformanceOptimizerPatch, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+<color=#66ffb5>[MeleeAnim]</color> Scanning 43 mods for animation data...
+<color=#66ffb5>[MeleeAnim]</color> Found 1 mod folders with animation data, total 69 loadable files.
+<color=#66ffb5>[MeleeAnim]</color> <color=#ffa8fc>[Perf.Opt]</color> Loaded Performance Optimizer patch!
+<color=#66ffb5>[MeleeAnim]</color> <color=#ffa8fc>[Perf.Opt]</color> Successfully patched and disabled buggy optimizations.
+[DefLoadCache] Fingerprint computed in 58ms: 3bef49d6f5051752d77efc36b826e984803c4782e915999c2e9d42f889d6a184
+[DefLoadCache] Cache found, skipping mod file loading
+[DefLoadCache] ErrorCheckPatches skipped, cache hit makes patch validation unnecessary
+[DefLoadCache] Built 43 mod asset mappings for cache hit
+Texture '' has dimensions (4266 x 2400) which are not multiples of 4. Compress will not work.
+[DefLoadCache] Rebuilt 14401 def attributions from cache (0 mods not found in live load)
+[DefLoadCache] CacheValidator: validation PASSED, 14401 nodes match baseline
+[DefLoadCache] Cache HIT, loaded 14401 defs from cache in 971ms
+Texture '' has dimensions (4266 x 2400) which are not multiples of 4. Compress will not work.
+[DefLoadCache] Loading complete, total pipeline time: 2636ms
+Texture '' has dimensions (4266 x 2400) which are not multiples of 4. Compress will not work.
+Texture '' has dimensions (4266 x 2400) which are not multiples of 4. Compress will not work.
+Texture '' has dimensions (4266 x 2400) which are not multiples of 4. Compress will not work.
+Texture '' has dimensions (4266 x 2400) which are not multiples of 4. Compress will not work.
+Texture '' has dimensions (4266 x 2400) which are not multiples of 4. Compress will not work.
+Texture '' has dimensions (4266 x 2400) which are not multiples of 4. Compress will not work.
+Texture '' has dimensions (4266 x 2400) which are not multiples of 4. Compress will not work.
+Mod Vanilla Backgrounds Expanded fix did not load any content. Following load folders were used:
+  - C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\Vanilla Backgrounds Expanded fix
+Mod Character Editor Retextured did not load any content. Following load folders were used:
+  - C:\Program Files (x86)\Steam\steamapps\workshop\content\294100\2855844396
+Could not load Texture2D at 'MenuBG_Anomaly' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Biotech' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_DMS_Cinders' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Erica_Aquila_Maru' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Ideology' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Kiiro_Miho' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_R&D&K' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Kurin_Ratkin' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Milira_MoeLotl' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Mincho_Moyo' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Moosesian_Crowju' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Odyssey' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Rab_and_Dra' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Royalty' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Chaoura' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Gynoid' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Idearn' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Littleluna' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Nearmare' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Neuro&Evil' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Silkiera' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Solark' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Anomaly' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Biotech' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_DMS_Cinders' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Erica_Aquila_Maru' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Ideology' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Kiiro_Miho' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_R&D&K' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Kurin_Ratkin' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Milira_MoeLotl' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Mincho_Moyo' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Moosesian_Crowju' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Odyssey' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Rab_and_Dra' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Royalty' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Chaoura' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Gynoid' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Idearn' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Littleluna' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Nearmare' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Neuro&Evil' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Silkiera' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Solark' in any active mod or in base resources.
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF]
+  at VBE.Utils.GetBGRect (UnityEngine.Texture texture) [0x00000] in <93e469b1367b46ccbec8b054e26aae25>:0 
+  at VBE.Utils.DrawBG (UnityEngine.Texture texture) [0x00000] in <93e469b1367b46ccbec8b054e26aae25>:0 
+  at VBE.BackgroundController.DrawTransition () [0x00131] in <93e469b1367b46ccbec8b054e26aae25>:0 
+  at VBE.BackgroundController.DoOverlay () [0x000ac] in <93e469b1367b46ccbec8b054e26aae25>:0 
+  at RimWorld.UI_BackgroundMain.DoOverlay (UnityEngine.Rect bgRect) [0x00101] in <46372f5dadbf4af8939e608076251180>:0 
+    - POSTFIX vanillaexpanded.backgrounds: Void VBE.BackgroundController:DoOverlay()
+  at RimWorld.UI_BackgroundMain.BackgroundOnGUI () [0x000f7] in <46372f5dadbf4af8939e608076251180>:0 
+  at Verse.LongEventHandler.LongEventsOnGUI () [0x00224] in <46372f5dadbf4af8939e608076251180>:0 
+    - TRANSPILER ilyvion.loadingprogress: IEnumerable`1 ilyvion.LoadingProgress.Verse_LongEventHandler_LongEventsOnGUI_Patch:Transpiler(IEnumerable`1 instructions, ILGenerator generator)
+  at Verse.Root.OnGUI () [0x0001c] in <46372f5dadbf4af8939e608076251180>:0 
+    - POSTFIX net.pardeike.rimworld.mod.camera+: Void CameraPlus.Root_OnGUI_Patch:Postfix()
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Could not load Texture2D at 'UI/Abilities/VEF_ControlledBlinking' in any active mod or in base resources.
+Could not load Texture2D at 'UI/Abilities/VEF_ControlledDetonation' in any active mod or in base resources.
+Could not load Texture2D at 'UI/Abilities/VEF_ControlledInvisibility' in any active mod or in base resources.
+Could not load Texture2D at 'UI/CSG/IConduit' for def 'KCSG_PowerConduit' in any active mod or in base resources.
+MatFrom with null sourceTex.
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Could not load Texture2D at 'UI/Designators/export' in any active mod or in base resources.
+Could not load Texture2D at 'UI/Designators/exportFA' in any active mod or in base resources.
+Could not load Texture2D at 'UI/Overlays/Drain' in any active mod or in base resources.
+MatFrom with null sourceTex.
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Translation data for language Simplified Chinese has 18 errors. Generate translation report for more info.
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Could not load Texture2D at 'UI/CSG/help' in any active mod or in base resources.
+Could not load Texture2D at 'UI/Gizmo/AbandonOutpost' in any active mod or in base resources.
+Could not load Texture2D at 'UI/Gizmo/AddToOutpost' in any active mod or in base resources.
+Could not load Texture2D at 'UI/Gizmo/RemovePawnFromOutpost' in any active mod or in base resources.
+Could not load Texture2D at 'UI/Gizmo/CancelAbandonOutpost' in any active mod or in base resources.
+Could not load Texture2D at 'UI/Gizmo/RemoveItemsFromOutpost' in any active mod or in base resources.
+Could not load Texture2D at 'UI/Gizmo/SetUpOutpost' in any active mod or in base resources.
+Could not load Texture2D at 'UI/PS_Less' in any active mod or in base resources.
+Could not load Texture2D at 'UI/PS_Plus' in any active mod or in base resources.
+Could not load Texture2D at 'UI/EmptyImage' in any active mod or in base resources.
+Could not load Texture2D at 'UI/TransferStorageContent' in any active mod or in base resources.
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Could not load Texture2D at 'UI/QualitySelectors/PS_QualitySelect' in any active mod or in base resources.
+Could not load Texture2D at 'UI/TransferStorageContent' in any active mod or in base resources.
+MatFrom with null sourceTex.
+Could not load Texture2D at 'UI/Widgets/VFELogo' in any active mod or in base resources.
+Could not load Texture2D at 'UI/CheckAuto' in any active mod or in base resources.
+Could not load Texture2D at 'UI/Commands/VEF_Hunt' in any active mod or in base resources.
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Could not load Texture2D at 'UI/Widgets/RandomizeIcon' in any active mod or in base resources.
+Could not load Texture2D at 'UI/Overlays/DoorStateButton' in any active mod or in base resources.
+Could not load Texture2D at 'UI/CheckAuto' in any active mod or in base resources.
+Could not load Texture2D at 'InnerColonistMarker' in any active mod or in base resources.
+Could not load Texture2D at 'OuterColonistMarker' in any active mod or in base resources.
+Could not load Texture2D at 'InnerAnimalMarker' in any active mod or in base resources.
+Could not load Texture2D at 'OuterAnimalMarker' in any active mod or in base resources.
+Could not load Texture2D at 'InnerEntityMarker' in any active mod or in base resources.
+Could not load Texture2D at 'OuterEntityMarker' in any active mod or in base resources.
+Could not load Texture2D at 'ColorMarker' in any active mod or in base resources.
+Could not load Texture2D at 'ColorBackgroundPattern' in any active mod or in base resources.
+Could not load Texture2D at 'EditorBackgroundPattern' in any active mod or in base resources.
+Could not load Texture2D at 'SwatchBackgroundPattern' in any active mod or in base resources.
+Could not load Texture2D at 'StepperUp' in any active mod or in base resources.
+Could not load Texture2D at 'StepperDown' in any active mod or in base resources.
+Could not load Texture2D at 'Bracket' in any active mod or in base resources.
+Could not load Texture2D at 'ColumnHeaderPreview' in any active mod or in base resources.
+Could not load Texture2D at 'ColumnHeader' in any active mod or in base resources.
+Could not load Texture2D at 'ColumnHeaderSelected' in any active mod or in base resources.
+Could not load Texture2D at 'TagDelete' in any active mod or in base resources.
+Could not load Texture2D at 'DeleteColorButton' in any active mod or in base resources.
+Could not load Texture2D at 'ValueChanger' in any active mod or in base resources.
+Could not load Texture2D at 'RowDrag' in any active mod or in base resources.
+Could not load Texture2D at 'ColorDrag' in any active mod or in base resources.
+[DefLoadCache] ══════════════════════════════════════════════════
+[DefLoadCache]   DefLoadCache Status (v1.2.0)
+[DefLoadCache]   Result:      Cache HIT
+[DefLoadCache]   Fingerprint: 3bef49d6f5051752d77efc36b826e984803c4782e915999c2e9d42f889d6a184
+[DefLoadCache]   Cache built: 2026-04-21 17:19 UTC
+[DefLoadCache]   Defs loaded: 14,401 (expected: 14,401 ✓)
+[DefLoadCache]   Validation:  PASSED
+[DefLoadCache] 
+[DefLoadCache]   If you are filing a bug report for another mod,
+[DefLoadCache]   please test with DefLoadCache disabled first.
+[DefLoadCache]   Mod Settings → DefLoadCache → "Test without
+[DefLoadCache]   cache (next launch only)", then restart.
+[DefLoadCache] ══════════════════════════════════════════════════
+Could not load Texture2D at 'Background' in any active mod or in base resources.
+[DefLoadCache] NOTE: DefLoadCache is active and used cached data this launch. If investigating a bug, please test with DefLoadCache disabled first. Mod Settings → DefLoadCache → "Test without cache (next launch only)", then restart.
+Could not load Texture2D at 'BackgroundPawn' in any active mod or in base resources.
+Could not load Texture2D at 'BodyType/FemaleHead/North' in any active mod or in base resources.
+Could not load Texture2D at 'BodyType/FemaleHead/South' in any active mod or in base resources.
+Could not load Texture2D at 'BodyType/FemaleHead/West' in any active mod or in base resources.
+Could not load Texture2D at 'BodyType/FemaleHead/East' in any active mod or in base resources.
+Could not load Texture2D at 'BodyType/MaleHead/North' in any active mod or in base resources.
+Could not load Texture2D at 'BodyType/MaleHead/South' in any active mod or in base resources.
+Could not load Texture2D at 'BodyType/MaleHead/West' in any active mod or in base resources.
+Could not load Texture2D at 'BodyType/MaleHead/East' in any active mod or in base resources.
+Could not load Texture2D at 'BodyType/Fat/North' in any active mod or in base resources.
+Could not load Texture2D at 'BodyType/Fat/South' in any active mod or in base resources.
+Could not load Texture2D at 'BodyType/Fat/West' in any active mod or in base resources.
+Could not load Texture2D at 'BodyType/Fat/East' in any active mod or in base resources.
+Could not load Texture2D at 'BodyType/Thin/North' in any active mod or in base resources.
+Could not load Texture2D at 'BodyType/Thin/South' in any active mod or in base resources.
+Could not load Texture2D at 'BodyType/Thin/West' in any active mod or in base resources.
+Could not load Texture2D at 'BodyType/Thin/East' in any active mod or in base resources.
+Could not load Texture2D at 'BodyType/Hulk/North' in any active mod or in base resources.
+Could not load Texture2D at 'BodyType/Hulk/South' in any active mod or in base resources.
+Could not load Texture2D at 'BodyType/Hulk/West' in any active mod or in base resources.
+Could not load Texture2D at 'BodyType/Hulk/East' in any active mod or in base resources.
+Could not load Texture2D at 'BodyType/Female/North' in any active mod or in base resources.
+Could not load Texture2D at 'BodyType/Female/South' in any active mod or in base resources.
+Could not load Texture2D at 'BodyType/Female/West' in any active mod or in base resources.
+Could not load Texture2D at 'BodyType/Female/East' in any active mod or in base resources.
+Could not load Texture2D at 'BodyType/Male/North' in any active mod or in base resources.
+Could not load Texture2D at 'BodyType/Male/South' in any active mod or in base resources.
+Could not load Texture2D at 'BodyType/Male/West' in any active mod or in base resources.
+Could not load Texture2D at 'BodyType/Male/East' in any active mod or in base resources.
+Could not load Texture2D at 'RimHUD/ToggleIcon' in any active mod or in base resources.
+Could not load Texture2D at 'RimHUD/ConfigIcon' in any active mod or in base resources.
+Could not load Texture2D at 'RimHUD/TutorialConfigIcon' in any active mod or in base resources.
+Could not load Texture2D at 'RimHUD/SelfTendOnIcon' in any active mod or in base resources.
+Could not load Texture2D at 'RimHUD/SelfTendOffIcon' in any active mod or in base resources.
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Could not load Texture2D at 'DPA/UI/hueMark' in any active mod or in base resources.
+Could not load Texture2D at 'DPA/UI/hsbMark' in any active mod or in base resources.
+Could not load Texture2D at 'DPA/UI/hueMark' in any active mod or in base resources.
+Could not load Texture2D at 'DPA/UI/hsbMark' in any active mod or in base resources.
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Type Patch_UI_BackgroundMain_DoOverlay probably needs a StaticConstructorOnStartup attribute, because it has a field bgTex of type Texture2D. All assets must be loaded in the main thread.
+Type VideoPlayerUtil probably needs a StaticConstructorOnStartup attribute, because it has a field go of type GameObject. All assets must be loaded in the main thread.
+Type AnimRenderer probably needs a StaticConstructorOnStartup attribute, because it has a field DefaultCutout of type Material. All assets must be loaded in the main thread.
+Type BGRenderer probably needs a StaticConstructorOnStartup attribute, because it has a field layers of type Texture2D[]. All assets must be loaded in the main thread.
+Type Building_DuelSpot probably needs a StaticConstructorOnStartup attribute, because it has a field invisible of type Graphic. All assets must be loaded in the main thread.
+Type GrabUtility probably needs a StaticConstructorOnStartup attribute, because it has a field mpb of type MaterialPropertyBlock. All assets must be loaded in the main thread.
+Type Dialog_AnimationDebugger probably needs a StaticConstructorOnStartup attribute, because it has a field mpb of type MaterialPropertyBlock. All assets must be loaded in the main thread.
+Type GrappleFlyer probably needs a StaticConstructorOnStartup attribute, because it has a field mpb of type MaterialPropertyBlock. All assets must be loaded in the main thread.
+Unloading 5 Unused Serialized files (Serialized files now loaded: 5)
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Unloading 89 unused Assets to reduce memory usage. Loaded Objects now: 16008.
+Total: 178.007600 ms (FindLiveObjects: 0.709900 ms CreateObjectMapping: 0.715000 ms MarkObjects: 176.469200 ms  DeleteObjects: 0.113300 ms)
+
+MVCF successfully applied 0 patches
+Starting loading graphics: 1166 - 4/22/2026 1:20:41 AM
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF]
+  at VBE.Utils.GetBGRect (UnityEngine.Texture texture) [0x00000] in <93e469b1367b46ccbec8b054e26aae25>:0 
+  at VBE.Utils.DrawBG (UnityEngine.Texture texture) [0x00000] in <93e469b1367b46ccbec8b054e26aae25>:0 
+  at VBE.BackgroundController.DrawTransition () [0x00131] in <93e469b1367b46ccbec8b054e26aae25>:0 
+  at VBE.BackgroundController.DoOverlay () [0x000ac] in <93e469b1367b46ccbec8b054e26aae25>:0 
+  at RimWorld.UI_BackgroundMain.DoOverlay (UnityEngine.Rect bgRect) [0x00101] in <46372f5dadbf4af8939e608076251180>:0 
+    - POSTFIX vanillaexpanded.backgrounds: Void VBE.BackgroundController:DoOverlay()
+  at RimWorld.UI_BackgroundMain.BackgroundOnGUI () [0x000f7] in <46372f5dadbf4af8939e608076251180>:0 
+  at Verse.LongEventHandler.LongEventsOnGUI () [0x00224] in <46372f5dadbf4af8939e608076251180>:0 
+    - TRANSPILER ilyvion.loadingprogress: IEnumerable`1 ilyvion.LoadingProgress.Verse_LongEventHandler_LongEventsOnGUI_Patch:Transpiler(IEnumerable`1 instructions, ILGenerator generator)
+  at Verse.Root.OnGUI () [0x0001c] in <46372f5dadbf4af8939e608076251180>:0 
+    - POSTFIX net.pardeike.rimworld.mod.camera+: Void CameraPlus.Root_OnGUI_Patch:Postfix()
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Could not load Texture2D at 'MenuBG_Anomaly' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Biotech' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_DMS_Cinders' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Erica_Aquila_Maru' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Ideology' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Kiiro_Miho' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_R&D&K' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Kurin_Ratkin' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Milira_MoeLotl' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Mincho_Moyo' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Moosesian_Crowju' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Odyssey' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Rab_and_Dra' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Royalty' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Chaoura' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Gynoid' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Idearn' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Littleluna' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Nearmare' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Neuro&Evil' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Silkiera' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Solark' in any active mod or in base resources.
+CharacterEditor v1.6.3 initializing...
+updating labels for simplified chinese...
+loading pawn slot content from file...
+character editor instance created
+checking editor settings...
+bodysizes genes are active
+CharacterEditor v1.6.3 ...done
+CameraPlus: Found mod at C:\Program Files (x86)\Steam\steamapps\workshop\content\294100\867467808
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+<color=#66ffb5>[MeleeAnim]</color> Potential patch conflicts (5):
+<color=#66ffb5>[MeleeAnim]</color> 
+static System.Void Verse.PawnRenderUtility::DrawEquipmentAiming(Verse.Thing eq, UnityEngine.Vector3 drawLoc, System.Single aimAngle)
+Prefixes:
+  [OskarPotocki.VEF] Prefix
+  [OskarPotocki.VEF] Prefix
+  [OskarPotocki.VEF] DrawEquipmentAimingPrefix
+  [co.uk.epicguru.meleeanimation] Prefix
+Transpilers:
+Postfixes:
+
+Verse.PreRenderResults Verse.PawnRenderer::ParallelGetPreRenderResults(UnityEngine.Vector3 drawLoc, System.Nullable`1<Verse.Rot4> rotOverride, System.Boolean neverAimWeapon, System.Boolean disableCache)
+Prefixes:
+  [OskarPotocki.VEF] Prefix
+Transpilers:
+Postfixes:
+  [co.uk.epicguru.meleeanimation] Postfix
+
+System.Void Verse.PawnRenderer::RenderPawnAt(UnityEngine.Vector3 drawLoc, System.Nullable`1<Verse.Rot4> rotOverride, System.Boolean neverAimWeapon)
+Prefixes:
+  [net.pardeike.rimworld.mod.camera+] Prefix
+  [co.uk.epicguru.meleeanimation] Prefix
+Transpilers:
+Postfixes:
+  [co.uk.epicguru.meleeanimation] Postfix
+<color=#66ffb5>[MeleeAnim]</color> Full patch list:
+<color=#66ffb5>[MeleeAnim]</color> 
+static System.Void Verse.PawnRenderUtility::DrawEquipmentAiming(Verse.Thing eq, UnityEngine.Vector3 drawLoc, System.Single aimAngle)
+Prefixes:
+  [OskarPotocki.VEF] Prefix
+  [OskarPotocki.VEF] Prefix
+  [OskarPotocki.VEF] DrawEquipmentAimingPrefix
+  [co.uk.epicguru.meleeanimation] Prefix
+Transpilers:
+Postfixes:
+
+Verse.PreRenderResults Verse.PawnRenderer::ParallelGetPreRenderResults(UnityEngine.Vector3 drawLoc, System.Nullable`1<Verse.Rot4> rotOverride, System.Boolean neverAimWeapon, System.Boolean disableCache)
+Prefixes:
+  [OskarPotocki.VEF] Prefix
+Transpilers:
+Postfixes:
+  [co.uk.epicguru.meleeanimation] Postfix
+
+System.Void Verse.PawnRenderer::RenderPawnAt(UnityEngine.Vector3 drawLoc, System.Nullable`1<Verse.Rot4> rotOverride, System.Boolean neverAimWeapon)
+Prefixes:
+  [net.pardeike.rimworld.mod.camera+] Prefix
+  [co.uk.epicguru.meleeanimation] Prefix
+Transpilers:
+Postfixes:
+  [co.uk.epicguru.meleeanimation] Postfix
+
+System.Void RimWorld.Building_ProximityDetector::RunDetection()
+Prefixes:
+  [co.uk.epicguru.meleeanimation] Prefix
+Transpilers:
+Postfixes:
+  [co.uk.epicguru.meleeanimation] Postfix
+
+static System.Collections.Generic.List`1<Verse.FloatMenuOption> RimWorld.FloatMenuMakerMap::GetOptions(System.Collections.Generic.List`1<Verse.Pawn> selectedPawns, UnityEngine.Vector3 clickPos, RimWorld.FloatMenuContext& context)
+Prefixes:
+Transpilers:
+Postfixes:
+  [co.uk.epicguru.meleeanimation] Postfix
+
+System.Boolean Verse.HediffSet::get_HasHead()
+Prefixes:
+  [co.uk.epicguru.meleeanimation] Prefix
+Transpilers:
+Postfixes:
+
+static System.Boolean RimWorld.InvisibilityUtility::IsPsychologicallyInvisible(Verse.Pawn pawn)
+Prefixes:
+  [co.uk.epicguru.meleeanimation] Prefix
+Transpilers:
+Postfixes:
+
+static System.Void Verse.PawnGenerator::GenerateGearFor(Verse.Pawn pawn, Verse.PawnGenerationRequest request)
+Prefixes:
+Transpilers:
+Postfixes:
+  [co.uk.epicguru.meleeanimation] Postfix
+
+System.Void Verse.PawnRenderer::DrawShadowInternal(UnityEngine.Vector3 drawLoc)
+Prefixes:
+  [co.uk.epicguru.meleeanimation] Prefix
+Transpilers:
+Postfixes:
+
+System.Void Verse.PawnRenderer::ParallelPreRenderPawnAt(UnityEngine.Vector3 drawLoc, System.Nullable`1<Verse.Rot4> rotOverride, System.Boolean neverAimWeapon)
+Prefixes:
+  [co.uk.epicguru.meleeanimation] Prefix
+Transpilers:
+Postfixes:
+
+System.Void Verse.PawnRenderTree::ParallelPreDraw(Verse.PawnDrawParms parms)
+Prefixes:
+  [co.uk.epicguru.meleeanimation] Prefix
+Transpilers:
+Postfixes:
+  [co.uk.epicguru.meleeanimation] Postfix
+
+static Verse.Pawn RimWorld.PawnUtility::PawnBlockingPathAt(Verse.IntVec3 c, Verse.Pawn forPawn, System.Boolean actAsIfHadCollideWithPawnsJob, System.Boolean collideOnlyWithStandingPawns, System.Boolean forPathFinder, System.Boolean useId)
+Prefixes:
+  [co.uk.epicguru.meleeanimation] Prefix
+  [co.uk.epicguru.meleeanimation] Prefix
+Transpilers:
+Postfixes:
+
+System.Void RimWorld.Pawn_ApparelTracker::Notify_ApparelChanged()
+Prefixes:
+  [co.uk.epicguru.meleeanimation] Prefix
+Transpilers:
+Postfixes:
+
+virtual System.Void Verse.Pawn::DrawGUIOverlay()
+Prefixes:
+  [co.uk.epicguru.meleeanimation] Prefix
+Transpilers:
+Postfixes:
+
+System.Void Verse.Pawn_DrawTracker::Notify_MeleeAttackOn(Verse.Thing Target)
+Prefixes:
+  [co.uk.epicguru.meleeanimation] Prefix
+Transpilers:
+Postfixes:
+
+Verse.BattleLogEntry_MeleeCombat RimWorld.Verb_MeleeAttack::CreateCombatLog(System.Func`2<Verse.ManeuverDef, Verse.RulePackDef> rulePackGetter, System.Boolean alwaysShow)
+Prefixes:
+  [co.uk.epicguru.meleeanimation] Prefix
+Transpilers:
+Postfixes:
+
+virtual System.Boolean RimWorld.Verb_MeleeAttack::TryCastShot()
+Prefixes:
+  [co.uk.epicguru.meleeanimation] Prefix
+Transpilers:
+Postfixes:
+
+virtual System.Void PerformanceOptimizer.Optimization_PawnUtility_IsInvisible::DoPatches()
+Prefixes:
+  [co.uk.epicguru.meleeanimation] Prefix
+Transpilers:
+Postfixes:
+
+virtual System.Void PerformanceOptimizer.Optimization_RefreshRate::DrawSettings(Verse.Listing_Standard section)
+Prefixes:
+  [co.uk.epicguru.meleeanimation] Prefix
+Transpilers:
+Postfixes:
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Root level exception in OnGUI(): System.NullReferenceException: Object reference not set to an instance of an object
+[Ref DF92EACF] Duplicate stacktrace, see ref for original
+Failed to load content: [Texture2D] AM/Rope/Rope
+Failed to load content: [Texture2D] AM/Rope/End
+Failed to load content: [Texture2D] AM/Rope/Coiled
+Failed to load content: [Texture2D] AM/BoundPawns/Male
+Failed to load content: [Texture2D] AM/Shadow
+Failed to load content: [Texture2D] AM/Hand
+Failed to load content: [Texture2D] AM/HandClothed
+Failed to load content: [Texture2D] AM/UI/IconExecute
+Failed to load content: [Texture2D] AM/UI/IconGrapple
+Failed to load content: [Texture2D] AM/UI/ExtraGUIWalk
+Failed to load content: [Texture2D] AM/UI/ExtraGUIForce
+Failed to load content: [Texture2D] AM/UI/ExtraGUIWhy
+Failed to load content: [Texture2D] AM/UI/BG/Combined
+Failed to load content: [Texture2D] AM/UI/DuelIcon
+Failed to load content: [Texture2D] AM/UI/HIDE
+Unloading 1 Unused Serialized files (Serialized files now loaded: 7)
+<color=#66ffb5>[MeleeAnim]</color> PreCached all retexture info in 14.5ms
+<color=#66ffb5>[MeleeAnim]</color> Loaded tweak data for 21 weapons.
+<color=#66ffb5>[MeleeAnim]</color> ludeon.rimworld.odyssey 'Odyssey' has 2 missing weapon tweak data.
+<color=#66ffb5>[MeleeAnim]</color> Skipping reporting of missing mod/weapons because user opted out or the feature is disabled by the developer.
+<color=#66ffb5>[MeleeAnim]</color> Successfully patched VBE with custom background renderer.
+<color=#66ffb5>[MeleeAnim]</color> Patched 2 classes that directly inherit from Verb_MeleeAttack in 139.5 ms to detect hits:
+RimWorld.Verb_MeleeApplyHediff from Assembly-CSharp
+RimWorld.Verb_MeleeAttackDamage from Assembly-CSharp
+<color=#66ffb5>[MeleeAnim]</color> Found 0 items of clothing that cover hands, took 0.47 ms:
+CE is trying to create default parameter lists ...
+creating default parameter list for genes...
+250 default entities for genes created
+creating default parameter list for objects...
+1646 default entities for objects created
+creating default parameter list for turrets...
+12 default entities for turrets created
+...lists created
+CE is trying to apply modified parameters...
+no modifications for genes
+Apparel_Parka 修改已加载
+no modifications for lifestages
+...done
+[ShowMeYourHands]: Defined hand definitions of 94 weapons
+[ShowMeYourHands]: Defined hand definitions of 94 weapons
+Could not load Texture2D at 'AM/UI/BG/1' in any active mod or in base resources.
+Could not load Texture2D at 'AM/UI/BG/2' in any active mod or in base resources.
+Could not load Texture2D at 'AM/UI/BG/3' in any active mod or in base resources.
+Could not load Texture2D at 'AM/UI/BG/4' in any active mod or in base resources.
+Could not load Texture2D at 'AM/UI/BG/5' in any active mod or in base resources.
+Could not load Texture2D at 'AM/UI/BG/6' in any active mod or in base resources.
+Could not load Texture2D at 'AM/UI/BG/7' in any active mod or in base resources.
+Could not load Texture2D at 'AM/UI/BG/8' in any active mod or in base resources.
+Could not load Texture2D at 'AM/UI/BG/9' in any active mod or in base resources.
+Could not load Texture2D at 'AM/UI/BG/10' in any active mod or in base resources.
+Could not load Texture2D at 'AM/UI/BG/11' in any active mod or in base resources.
+Could not load Texture2D at 'AM/UI/BG/12' in any active mod or in base resources.
+Could not load Texture2D at 'AM/UI/BG/13' in any active mod or in base resources.
+Exception rendering melee animation background:
+System.NullReferenceException: Object reference not set to an instance of an object
+[Ref 15582332]
+  at AM.UI.BGRenderer.FitRect (UnityEngine.Texture tex, UnityEngine.Rect area, AM.UI.ScaleMode mode, System.Single scale) [0x00001] in <31cef2dec27249e18ee2a05a1a324171>:0 
+  at AM.UI.BGRenderer.DrawMainMenuBackground () [0x000c2] in <31cef2dec27249e18ee2a05a1a324171>:0 
+Unloading 4 unused Assets to reduce memory usage. Loaded Objects now: 19118.
+Total: 182.552000 ms (FindLiveObjects: 0.595900 ms CreateObjectMapping: 0.924600 ms MarkObjects: 180.985700 ms  DeleteObjects: 0.045700 ms)
+
+Unloading 1 Unused Serialized files (Serialized files now loaded: 7)
+Unloading 0 unused Assets to reduce memory usage. Loaded Objects now: 19309.
+Total: 185.158300 ms (FindLiveObjects: 0.872800 ms CreateObjectMapping: 1.053100 ms MarkObjects: 183.201100 ms  DeleteObjects: 0.031100 ms)
+
+Unloading 0 Unused Serialized files (Serialized files now loaded: 7)
+Could not load Texture2D at 'Things/Gas/ThickSmoke' for def 'VEF_FlintlockSmoke' in any active mod or in base resources.
+MatFrom with null sourceTex.
+Could not load Texture2D at 'Motes/Mote_DustPuff' for def 'KCSG_LongMote_DustPuff' in any active mod or in base resources.
+MatFrom with null sourceTex.
+Could not load Texture2D at 'Motes/Mote_FireSmoked' for def 'Mote_Firetrail' in any active mod or in base resources.
+MatFrom with null sourceTex.
+Could not load Texture2D at 'Motes/Mote_Smoke' for def 'Mote_Smoketrail' in any active mod or in base resources.
+MatFrom with null sourceTex.
+Could not load Texture2D at 'Motes/Mote_SmokeGreen' for def 'Mote_GreenSmoketrail' in any active mod or in base resources.
+MatFrom with null sourceTex.
+Could not load Texture2D at 'Things/OutpostDropOffSpot' for def 'VEF_OutpostDeliverySpot' in any active mod or in base resources.
+MatFrom with null sourceTex.
+Finished loading graphics - 4/22/2026 1:20:44 AM
+Starting loading icons: 1620 - 4/22/2026 1:20:44 AM
+Finished loading icons - 4/22/2026 1:20:44 AM
+Starting baking StaticAtlases - 4/22/2026 1:20:44 AM
+Unloading 4 unused Assets to reduce memory usage. Loaded Objects now: 19593.
+Total: 188.410800 ms (FindLiveObjects: 0.643100 ms CreateObjectMapping: 1.009800 ms MarkObjects: 186.555300 ms  DeleteObjects: 0.202500 ms)
+
+Unloading 1 Unused Serialized files (Serialized files now loaded: 7)
+Unloading 1 unused Assets to reduce memory usage. Loaded Objects now: 19679.
+Total: 187.421500 ms (FindLiveObjects: 0.722100 ms CreateObjectMapping: 1.032300 ms MarkObjects: 185.469000 ms  DeleteObjects: 0.197800 ms)
+
+Finished baking StaticAtlases - 4/22/2026 1:20:47 AM
+Starting resolving SubSoundDefs: 1275 - 4/22/2026 1:20:47 AM
+Could not load AudioClip at 'snapback' in any active mod or in base resources.
+Grain couldn't resolve: Clip not found at snapback
+SnapBack SubSound SnapBack_0 has no resolvedGrains.
+Could not load AudioClip at 'swish' in any active mod or in base resources.
+Grain couldn't resolve: Clip not found at swish
+ApplySnap SubSound ApplySnap_0 has no resolvedGrains.
+Could not load AudioClip at 'AM/AnimeUnsheath' in any active mod or in base resources.
+Grain couldn't resolve: Clip not found at AM/AnimeUnsheath
+AM_AnimeUnsheath SubSound AM_AnimeUnsheath_0 has no resolvedGrains.
+Could not load AudioClip at 'AM/Sheath' in any active mod or in base resources.
+Grain couldn't resolve: Clip not found at AM/Sheath
+AM_Sheath SubSound AM_Sheath_0 has no resolvedGrains.
+Could not load AudioClip at 'AM/Dash' in any active mod or in base resources.
+Grain couldn't resolve: Clip not found at AM/Dash
+AM_Dash SubSound AM_Dash_0 has no resolvedGrains.
+Could not load AudioClip at 'AM/TrippleSwingSlow' in any active mod or in base resources.
+Grain couldn't resolve: Clip not found at AM/TrippleSwingSlow
+AM_TrippleSwingSlow SubSound AM_TrippleSwingSlow_0 has no resolvedGrains.
+Could not load AudioClip at 'AM/Clap' in any active mod or in base resources.
+Grain couldn't resolve: Clip not found at AM/Clap
+AM_Clap SubSound AM_Clap_0 has no resolvedGrains.
+Could not load AudioClip at 'AM/MetalSwordClash' in any active mod or in base resources.
+Grain couldn't resolve: Clip not found at AM/MetalSwordClash
+AM_MetalSwordClash SubSound AM_MetalSwordClash_0 has no resolvedGrains.
+Could not load AudioClip at 'AM/StoneSwordClash' in any active mod or in base resources.
+Grain couldn't resolve: Clip not found at AM/StoneSwordClash
+AM_StoneSwordClash SubSound AM_StoneSwordClash_0 has no resolvedGrains.
+Could not load AudioClip at 'AM/WoodSwordClash' in any active mod or in base resources.
+Grain couldn't resolve: Clip not found at AM/WoodSwordClash
+AM_WoodSwordClash SubSound AM_WoodSwordClash_0 has no resolvedGrains.
+Could not load AudioClip at 'AM/SummonWhoosh' in any active mod or in base resources.
+Grain couldn't resolve: Clip not found at AM/SummonWhoosh
+AM_SummonWhoosh SubSound AM_SummonWhoosh_0 has no resolvedGrains.
+Could not load AudioClip at 'AM/SummonWow' in any active mod or in base resources.
+Grain couldn't resolve: Clip not found at AM/SummonWow
+AM_SummonWow SubSound AM_SummonWow_0 has no resolvedGrains.
+Could not load AudioClip at 'AM/FleshHit' in any active mod or in base resources.
+Grain couldn't resolve: Clip not found at AM/FleshHit
+AM_FleshHit SubSound AM_FleshHit_0 has no resolvedGrains.
+Finished resolving SubSoundDefs - 4/22/2026 1:20:49 AM
+Starting patches: 421 - 4/22/2026 1:21:02 AM
+Finished transpiling 419 methods - 4/22/2026 1:21:06 AM
+Could not load Texture2D at 'MenuBG_Anomaly' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Biotech' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_DMS_Cinders' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Erica_Aquila_Maru' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Ideology' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Kiiro_Miho' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_R&D&K' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Kurin_Ratkin' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Milira_MoeLotl' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Mincho_Moyo' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Moosesian_Crowju' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Odyssey' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Rab_and_Dra' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Royalty' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Chaoura' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Gynoid' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Idearn' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Littleluna' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Nearmare' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Neuro&Evil' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Silkiera' in any active mod or in base resources.
+Could not load Texture2D at 'MenuBG_Solark' in any active mod or in base resources.
+Memory Statistics:
+[ALLOC_TEMP_TLS] TLS Allocator
+  StackAllocators : 
+    [ALLOC_TEMP_MAIN]
+      Peak usage frame count: [0-1.0 KB]: 3957 frames, [1.0 KB-2.0 KB]: 12 frames, [2.0 KB-4.0 KB]: 36 frames, [4.0 KB-8.0 KB]: 648 frames, [8.0 KB-16.0 KB]: 13 frames, [16.0 KB-32.0 KB]: 9 frames, [32.0 KB-64.0 KB]: 6 frames, [64.0 KB-128.0 KB]: 3 frames, [128.0 KB-256.0 KB]: 5 frames, [1.0 MB-2.0 MB]: 5 frames, [2.0 MB-4.0 MB]: 1 frames, [4.0 MB-8.0 MB]: 2 frames
+      Initial Block Size 4.0 MB
+      Current Block Size 4.0 MB
+      Peak Allocated Bytes 4.0 MB
+      Overflow Count 32
+    [ALLOC_TEMP_Loading.AsyncRead]
+      Initial Block Size 64.0 KB
+      Current Block Size 120.0 KB
+      Peak Allocated Bytes 117.3 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Loading.PreloadManager]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 3.6 KB
+      Overflow Count 4
+    [ALLOC_TEMP_Background Job.Worker 8]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 9]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_Job.Worker 0]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 176 B
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 10]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 14]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 6]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_Job.Worker 4]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 176 B
+      Overflow Count 0
+    [ALLOC_TEMP_ReadCacheIndex]
+      Initial Block Size 64.0 KB
+      Current Block Size 64.0 KB
+      Peak Allocated Bytes 0.7 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Job.Worker 3]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 160 B
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 12]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_EnlightenWorker] x 3
+      Initial Block Size 64.0 KB
+      Current Block Size 64.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 15]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 1]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 2]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 7]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_UnityGfxDeviceWorker]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 2.8 KB
+      Overflow Count 0
+    [ALLOC_TEMP_AssetGarbageCollectorHelper] x 5
+      Initial Block Size 64.0 KB
+      Current Block Size 64.0 KB
+      Peak Allocated Bytes 138 B
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 5]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 13]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_Job.Worker 1]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 507 B
+      Overflow Count 0
+    [ALLOC_TEMP_Job.Worker 2]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 480 B
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 3]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 11]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 0]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 4]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_BatchDeleteObjects]
+      Initial Block Size 64.0 KB
+      Current Block Size 64.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+[ALLOC_DEFAULT] Dual Thread Allocator
+  Peak main deferred allocation count 34754
+    [ALLOC_BUCKET]
+      Large Block size 4.0 MB
+      Used Block count 1
+      Peak Allocated bytes 4.0 MB
+      Failed Allocations. Bucket layout:
+        16B: 5 Subsections = 5120 buckets. Failed count: 24141
+        32B: 34 Subsections = 17408 buckets. Failed count: 49886
+        48B: 60 Subsections = 20480 buckets. Failed count: 80564
+        64B: 45 Subsections = 11520 buckets. Failed count: 31084
+        80B: 87 Subsections = 17817 buckets. Failed count: 26345
+        96B: 9 Subsections = 1536 buckets. Failed count: 48557
+        112B: 11 Subsections = 1609 buckets. Failed count: 7456
+        128B: 5 Subsections = 640 buckets. Failed count: 8626
+    [ALLOC_DEFAULT_MAIN]
+      Peak usage frame count: [16.0 MB-32.0 MB]: 1453 frames, [32.0 MB-64.0 MB]: 95 frames, [64.0 MB-128.0 MB]: 13 frames, [128.0 MB-256.0 MB]: 3136 frames
+      Requested Block Size 16.0 MB
+      Peak Block count 12
+      Peak Allocated memory 194.5 MB
+      Peak Large allocation bytes 56.0 MB
+    [ALLOC_DEFAULT_THREAD]
+      Peak usage frame count: [8.0 MB-16.0 MB]: 4697 frames
+      Requested Block Size 16.0 MB
+      Peak Block count 2
+      Peak Allocated memory 11.9 MB
+      Peak Large allocation bytes 0 B
+[ALLOC_TEMP_JOB_1_FRAME]
+  Initial Block Size 2.0 MB
+  Used Block Count 0
+  Overflow Count (too large) 0
+  Overflow Count (full) 0
+[ALLOC_TEMP_JOB_2_FRAMES]
+  Initial Block Size 2.0 MB
+  Used Block Count 0
+  Overflow Count (too large) 0
+  Overflow Count (full) 0
+[ALLOC_TEMP_JOB_4_FRAMES (JobTemp)]
+  Initial Block Size 2.0 MB
+  Used Block Count 1
+  Overflow Count (too large) 22
+  Overflow Count (full) 0
+[ALLOC_TEMP_JOB_ASYNC (Background)]
+  Initial Block Size 1.0 MB
+  Used Block Count 1
+  Overflow Count (too large) 0
+  Overflow Count (full) 0
+[ALLOC_GFX] Dual Thread Allocator
+  Peak main deferred allocation count 18
+    [ALLOC_BUCKET]
+      Large Block size 4.0 MB
+      Used Block count 1
+      Peak Allocated bytes 4.0 MB
+      Failed Allocations. Bucket layout:
+        16B: 5 Subsections = 5120 buckets. Failed count: 24141
+        32B: 34 Subsections = 17408 buckets. Failed count: 49886
+        48B: 60 Subsections = 20480 buckets. Failed count: 80564
+        64B: 45 Subsections = 11520 buckets. Failed count: 31084
+        80B: 87 Subsections = 17817 buckets. Failed count: 26345
+        96B: 9 Subsections = 1536 buckets. Failed count: 48557
+        112B: 11 Subsections = 1609 buckets. Failed count: 7456
+        128B: 5 Subsections = 640 buckets. Failed count: 8626
+    [ALLOC_GFX_MAIN]
+      Peak usage frame count: [128.0 KB-256.0 KB]: 1 frames, [2.0 MB-4.0 MB]: 632 frames, [4.0 MB-8.0 MB]: 4002 frames, [8.0 MB-16.0 MB]: 3 frames, [16.0 MB-32.0 MB]: 53 frames, [32.0 MB-64.0 MB]: 5 frames, [64.0 MB-128.0 MB]: 1 frames
+      Requested Block Size 16.0 MB
+      Peak Block count 2
+      Peak Allocated memory 114.1 MB
+      Peak Large allocation bytes 104.1 MB
+    [ALLOC_GFX_THREAD]
+      Peak usage frame count: [0-1.0 KB]: 1311 frames, [1.0 KB-2.0 KB]: 306 frames, [2.0 KB-4.0 KB]: 1 frames, [16.0 KB-32.0 KB]: 3079 frames
+      Requested Block Size 16.0 MB
+      Peak Block count 1
+      Peak Allocated memory 23.0 KB
+      Peak Large allocation bytes 0 B
+[ALLOC_CACHEOBJECTS] Dual Thread Allocator
+  Peak main deferred allocation count 81
+    [ALLOC_BUCKET]
+      Large Block size 4.0 MB
+      Used Block count 1
+      Peak Allocated bytes 4.0 MB
+      Failed Allocations. Bucket layout:
+        16B: 5 Subsections = 5120 buckets. Failed count: 24141
+        32B: 34 Subsections = 17408 buckets. Failed count: 49886
+        48B: 60 Subsections = 20480 buckets. Failed count: 80564
+        64B: 45 Subsections = 11520 buckets. Failed count: 31084
+        80B: 87 Subsections = 17817 buckets. Failed count: 26345
+        96B: 9 Subsections = 1536 buckets. Failed count: 48557
+        112B: 11 Subsections = 1609 buckets. Failed count: 7456
+        128B: 5 Subsections = 640 buckets. Failed count: 8626
+    [ALLOC_CACHEOBJECTS_MAIN]
+      Peak usage frame count: [4.0 MB-8.0 MB]: 1 frames, [8.0 MB-16.0 MB]: 1555 frames, [16.0 MB-32.0 MB]: 3141 frames
+      Requested Block Size 4.0 MB
+      Peak Block count 5
+      Peak Allocated memory 16.9 MB
+      Peak Large allocation bytes 0 B
+    [ALLOC_CACHEOBJECTS_THREAD]
+      Peak usage frame count: [4.0 KB-8.0 KB]: 4579 frames, [32.0 KB-64.0 KB]: 1 frames, [64.0 KB-128.0 KB]: 11 frames, [128.0 KB-256.0 KB]: 6 frames, [256.0 KB-0.5 MB]: 98 frames, [0.5 MB-1.0 MB]: 2 frames
+      Requested Block Size 4.0 MB
+      Peak Block count 1
+      Peak Allocated memory 0.5 MB
+      Peak Large allocation bytes 0 B
+[ALLOC_TYPETREE] Dual Thread Allocator
+  Peak main deferred allocation count 0
+    [ALLOC_BUCKET]
+      Large Block size 4.0 MB
+      Used Block count 1
+      Peak Allocated bytes 4.0 MB
+      Failed Allocations. Bucket layout:
+        16B: 5 Subsections = 5120 buckets. Failed count: 24141
+        32B: 34 Subsections = 17408 buckets. Failed count: 49886
+        48B: 60 Subsections = 20480 buckets. Failed count: 80564
+        64B: 45 Subsections = 11520 buckets. Failed count: 31084
+        80B: 87 Subsections = 17817 buckets. Failed count: 26345
+        96B: 9 Subsections = 1536 buckets. Failed count: 48557
+        112B: 11 Subsections = 1609 buckets. Failed count: 7456
+        128B: 5 Subsections = 640 buckets. Failed count: 8626
+    [ALLOC_TYPETREE_MAIN]
+      Peak usage frame count: [4.0 KB-8.0 KB]: 1 frames, [8.0 KB-16.0 KB]: 985 frames, [16.0 KB-32.0 KB]: 2 frames, [32.0 KB-64.0 KB]: 493 frames, [256.0 KB-0.5 MB]: 3216 frames
+      Requested Block Size 2.0 MB
+      Peak Block count 1
+      Peak Allocated memory 352.5 KB
+      Peak Large allocation bytes 0 B
+    [ALLOC_TYPETREE_THREAD]
+      Peak usage frame count: [0-1.0 KB]: 4697 frames
+      Requested Block Size 2.0 MB
+      Peak Block count 0
+      Peak Allocated memory 0 B
+      Peak Large allocation bytes 0 B

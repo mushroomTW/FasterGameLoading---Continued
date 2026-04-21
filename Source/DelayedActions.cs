@@ -188,9 +188,10 @@ namespace FasterGameLoading
                                 float latestBakeSpeed = (float)(pixelsInCurrentSlice / secondsElapsed);
                                 measuredBakeSpeed_PixelsPerSecond = Mathf.Lerp(measuredBakeSpeed_PixelsPerSecond, latestBakeSpeed, ADAPTATION_FACTOR);
                                 float newSliceSize = measuredBakeSpeed_PixelsPerSecond * TARGET_BAKE_TIME_SECONDS;
-                                adaptivePixelsPerSlice = (int)
-                                    (((int)Mathf.Clamp(newSliceSize, MIN_PIXELS_PER_SLICE, MAX_PIXELS_PER_SLICE))
-                                    .FloorToPowerOfTwo() * PACK_DENSITY);
+                                int adjusted = (int)(newSliceSize * PACK_DENSITY);
+                                adaptivePixelsPerSlice = (int)Mathf.Clamp(
+                                    adjusted.FloorToPowerOfTwo(),
+                                    MIN_PIXELS_PER_SLICE, MAX_PIXELS_PER_SLICE);
                             }
                         }
                         catch (Exception ex)

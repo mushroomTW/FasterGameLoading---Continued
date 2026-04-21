@@ -74,6 +74,12 @@ namespace FasterGameLoading
 
         public static void DoTextureResizing()
         {
+            if (Application.platform != RuntimePlatform.WindowsPlayer &&
+                Application.platform != RuntimePlatform.WindowsEditor)
+            {
+                Log.Warning("[FasterGameLoading] Texture resizing requires Windows (System.Drawing/GDI+). Skipped.");
+                return;
+            }
             // 清除舊快取，重新建立
             ClearCache();
             Directory.CreateDirectory(CacheDirectory);

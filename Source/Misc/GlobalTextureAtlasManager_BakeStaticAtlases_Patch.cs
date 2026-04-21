@@ -8,6 +8,11 @@ namespace FasterGameLoading
     {
         public static bool Prefix()
         {
+            if (DelayedActions.LanguageReloadInProgress)
+            {
+                return true;
+            }
+
             if (!DelayedActions.AllDeferredVisualsLoaded)
             {
                 return false;

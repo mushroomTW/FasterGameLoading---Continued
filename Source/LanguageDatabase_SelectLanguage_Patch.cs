@@ -13,6 +13,15 @@ namespace FasterGameLoading
         /// </summary>
         public static void Prefix()
         {
+            if (FasterGameLoadingMod.delayedActions != null)
+            {
+                FasterGameLoadingMod.delayedActions.BeginLanguageReload();
+            }
+            else
+            {
+                DelayedActions.LanguageReloadInProgress = true;
+            }
+
             // 允許 ReloadContentInt 重新執行
             ModContentPack_ReloadContentInt_Patch.loadedMods.Clear();
 
@@ -32,23 +41,21 @@ namespace FasterGameLoading
 
             // 清除 mod 引用快取（ModContentPack 實例可能被重建）
             FasterGameLoadingSettings.modsByPackageIds.Clear();
+        }
 
-            // 重置延遲載入狀態
-            DelayedActions.AllDeferredVisualsLoaded = false;
-            if (FasterGameLoadingMod.delayedActions != null)
+        public static void Postfix()
+        {
+            LongEventHandler.ExecuteWhenFinished(delegate
             {
-                FasterGameLoadingMod.delayedActions.graphicsToLoad.Clear();
-                FasterGameLoadingMod.delayedActions.iconsToLoad.Clear();
-                FasterGameLoadingMod.delayedActions.subSoundDefToResolve.Clear();
-                FasterGameLoadingMod.delayedActions.ResetEarlyLoading();
-            }
-
-            // 重新啟用 SoundStarter patch（會在 DelayedActions.PerformActions 結束時 unpatch）
-            try
-            {
-                FasterGameLoadingMod.harmony.PatchCategory("SoundStarter");
-            }
-            catch { /* 如果已 patched 就忽略 */ }
+                if (FasterGameLoadingMod.delayedActions != null)
+                {
+                    FasterGameLoadingMod.delayedActions.EndLanguageReload();
+                }
+                else
+                {
+                    DelayedActions.LanguageReloadInProgress = false;
+                }
+            });
         }
     }
 }

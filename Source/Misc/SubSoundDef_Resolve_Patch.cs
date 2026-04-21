@@ -29,6 +29,12 @@ namespace FasterGameLoading
 
         static void ExecuteDelayed(Action action,SubSoundDef def)
         {
+            if (DelayedActions.LanguageReloadInProgress)
+            {
+                LongEventHandler.ExecuteWhenFinished(action);
+                return;
+            }
+
             FasterGameLoadingMod.delayedActions.subSoundDefToResolve.Enqueue((def, action));
         }
     }

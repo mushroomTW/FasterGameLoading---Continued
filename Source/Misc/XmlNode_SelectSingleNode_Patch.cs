@@ -10,7 +10,7 @@ namespace FasterGameLoading
     {
         public static HashSet<string> failedXMLPathsThisSession = new HashSet<string>();
         public static HashSet<string> successfulXMLPathsThisSession = new HashSet<string>();
-        private static readonly object syncLock = new object();
+        internal static readonly object syncLock = new object();
 
         public static bool Prefix(string xpath)
         {

@@ -75,6 +75,7 @@ namespace FasterGameLoading
                 return;
 
             enabled = true;
+            SoundStarter_Patch.Patch();
             performActionsCoroutine = StartCoroutine(PerformActions());
         }
 
@@ -98,6 +99,7 @@ namespace FasterGameLoading
         {
             LanguageReloadInProgress = true;
             CancelDeferredPipeline();
+            SoundStarter_Patch.Patch();
             ResetEarlyLoading();
         }
 

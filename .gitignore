@@ -1,2 +1,9 @@
 .vscode
 .opencode
+Source/obj/
+Source/.vs/
+Source/bin/
+Player.log
+*.user
+*.suo
+*.csproj.user

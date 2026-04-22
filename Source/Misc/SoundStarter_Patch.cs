@@ -43,6 +43,10 @@ namespace FasterGameLoading
     {
       FasterGameLoadingMod.harmony.UnpatchCategory("SoundStarter");
     }
+    internal static void Patch()
+    {
+      FasterGameLoadingMod.harmony.PatchCategory("SoundStarter");
+    }
   }
 
 

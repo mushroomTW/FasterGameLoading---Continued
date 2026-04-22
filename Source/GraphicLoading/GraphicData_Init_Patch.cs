@@ -8,7 +8,7 @@ namespace FasterGameLoading
     public static class GraphicData_Init_Patch
     {
         public static Dictionary<string, List<GraphicData>> savedGraphics = new Dictionary<string, List<GraphicData>>();
-        private static readonly object syncLock = new object();
+        internal static readonly object syncLock = new object();
 
         public static bool Prefix(GraphicData __instance, out bool __state)
         {

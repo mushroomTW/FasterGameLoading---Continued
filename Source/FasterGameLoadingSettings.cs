@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -9,8 +10,9 @@ namespace FasterGameLoading
     public class FasterGameLoadingSettings : ModSettings
     {
         public static Dictionary<string, string> loadedTexturesSinceLastSession = new Dictionary<string, string>();
-        public static Dictionary<string, ModContentPack> modsByPackageIds = new Dictionary<string, ModContentPack>();
+        public static ConcurrentDictionary<string, ModContentPack> modsByPackageIds = new ConcurrentDictionary<string, ModContentPack>();
         public static Dictionary<string, string> loadedTypesByFullNameSinceLastSession = new Dictionary<string, string>();
+        public static readonly object typesCacheLock = new object();
         public static List<string> modsInLastSession = new List<string>();
         public static HashSet<string> successfulXMLPathsSinceLastSession = new HashSet<string>();
         public static HashSet<string> failedXMLPathsSinceLastSession = new HashSet<string>();

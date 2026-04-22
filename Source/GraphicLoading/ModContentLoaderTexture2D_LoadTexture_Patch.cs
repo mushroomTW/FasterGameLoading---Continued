@@ -24,8 +24,12 @@ namespace FasterGameLoading
             }
 
             // 檢查是否有磁碟快取的縮放版本
-            if (TextureResize.resizedTextureCache.TryGetValue(fullPath, out var cachePath)
-                && File.Exists(cachePath))
+            string cachePath = null;
+            lock (TextureResize.cacheLock)
+            {
+                TextureResize.resizedTextureCache.TryGetValue(fullPath, out cachePath);
+            }
+            if (cachePath != null && File.Exists(cachePath))
             {
                 try
                 {
@@ -41,12 +45,18 @@ namespace FasterGameLoading
                         return false;
                     }
                     // 載入出來的紋理無效，移除快取記錄
-                    TextureResize.resizedTextureCache.Remove(fullPath);
+                    lock (TextureResize.cacheLock)
+                    {
+                        TextureResize.resizedTextureCache.Remove(fullPath);
+                    }
                 }
                 catch (Exception)
                 {
                     // 快取檔案損壞，移除快取記錄，走正常載入
-                    TextureResize.resizedTextureCache.Remove(fullPath);
+                    lock (TextureResize.cacheLock)
+                    {
+                        TextureResize.resizedTextureCache.Remove(fullPath);
+                    }
                 }
             }
 

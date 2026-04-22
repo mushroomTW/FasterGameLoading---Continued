@@ -22,9 +22,12 @@ namespace FasterGameLoading
             else
             {
                 __state = new(typeName, false);
-                if (FasterGameLoadingSettings.loadedTypesByFullNameSinceLastSession.TryGetValue(typeName, out var fullName))
+                lock (FasterGameLoadingSettings.typesCacheLock)
                 {
-                    typeName = fullName;
+                    if (FasterGameLoadingSettings.loadedTypesByFullNameSinceLastSession.TryGetValue(typeName, out var fullName))
+                    {
+                        typeName = fullName;
+                    }
                 }
                 return true;
             }

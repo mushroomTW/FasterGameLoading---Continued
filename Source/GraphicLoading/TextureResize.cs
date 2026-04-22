@@ -13,7 +13,7 @@ namespace FasterGameLoading
     public static class TextureResize
     {
         public static Dictionary<string, string> resizedTextureCache = new Dictionary<string, string>();
-        private static readonly object cacheLock = new object();
+        internal static readonly object cacheLock = new object();
 
         /// <summary>
         /// Mods whose textures should be excluded from resizing (e.g. textures contain UI elements).
@@ -422,7 +422,7 @@ namespace FasterGameLoading
             {
                 AddEntry(type, def, linked.subGraphic);
             }
-            else if (def.graphic is Graphic_Collection collection)
+            else if (graphic is Graphic_Collection collection)
             {
                 foreach (var subGraphic in collection.subGraphics)
                 {

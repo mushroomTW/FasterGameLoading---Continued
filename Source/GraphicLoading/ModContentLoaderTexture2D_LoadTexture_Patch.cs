@@ -1,6 +1,7 @@
 using HarmonyLib;
 using RimWorld.IO;
 using System;
+using System.Runtime.CompilerServices;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -13,11 +14,11 @@ namespace FasterGameLoading
     public static class ModContentLoaderTexture2D_LoadTexture_Patch
     {
         public static ConcurrentDictionary<string, string> loadedTexturesThisSession = new ConcurrentDictionary<string, string>();
-        public static ConcurrentDictionary<string, Texture2D> savedTextures = new ConcurrentDictionary<string, Texture2D>();
+        public static ConcurrentDictionary<string, System.WeakReference<Texture2D>> savedTextures = new ConcurrentDictionary<string, System.WeakReference<Texture2D>>();
         public static bool Prefix(VirtualFile file, out bool __state, ref Texture2D __result)
         {
             var fullPath = file.FullPath;
-            if (savedTextures.TryGetValue(fullPath, out __result))
+            if (savedTextures.TryGetValue(fullPath, out var weakRef) && weakRef.TryGetTarget(out __result))
             {
                 __state = false;
                 return false;
@@ -30,12 +31,16 @@ namespace FasterGameLoading
                 try
                 {
                     var data = File.ReadAllBytes(cachePath);
-                    var tex = new Texture2D(2, 2, TextureFormat.RGBA32, true);
+                    // UI 紋理通常不需要 Mipmaps，且關閉可節省顯存與提升清晰度
+                    bool useMipmaps = !fullPath.Contains("/UI/") && !fullPath.Contains("\\UI\\");
+                    var tex = new Texture2D(2, 2, TextureFormat.RGBA32, useMipmaps);
                     if (tex.LoadImage(data) && tex.width > 0 && tex.height > 0)
                     {
                         tex.name = Path.GetFileNameWithoutExtension(fullPath);
                         tex.Compress(true);
-                        savedTextures[fullPath] = tex;
+                        // 關鍵優化：完成壓縮後將其設為不可讀，釋放 RAM 佔用
+                        tex.Apply(true, true);
+                        savedTextures[fullPath] = new System.WeakReference<Texture2D>(tex);
                         __result = tex;
                         __state = false;
                         return false;
@@ -63,9 +68,9 @@ namespace FasterGameLoading
 
         public static void Postfix(VirtualFile file, bool __state, Texture2D __result)
         {
-            if (__state)
+            if (__state && __result != null)
             {
-                savedTextures[file.FullPath] = __result;
+                savedTextures[file.FullPath] = new System.WeakReference<Texture2D>(__result);
             }
         }
     }

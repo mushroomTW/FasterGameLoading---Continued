@@ -91,9 +91,12 @@ namespace FasterGameLoading
                 textures[value] = new();
             }
 
-            foreach (var contentList in ModContentLoaderTexture2D_LoadTexture_Patch.savedTextures)
+            foreach (var kvp in ModContentLoaderTexture2D_LoadTexture_Patch.savedTextures)
             {
-                texturesByPaths[contentList.Value] = contentList.Key;
+                if (kvp.Value.TryGetTarget(out var tex))
+                {
+                    texturesByPaths[tex] = kvp.Key;
+                }
             }
 
             foreach (var mod in LoadedModManager.RunningMods)

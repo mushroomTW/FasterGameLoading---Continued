@@ -8,21 +8,25 @@ namespace FasterGameLoading
     public static class GraphicData_Init_Patch
     {
         public static Dictionary<string, List<GraphicData>> savedGraphics = new Dictionary<string, List<GraphicData>>();
+        private static readonly object syncLock = new object();
         public static bool Prefix(GraphicData __instance, out bool __state)
         {
             __state = false;
             if (__instance.texPath.NullOrEmpty() is false)
             {
-                if (!savedGraphics.TryGetValue(__instance.texPath, out var graphicDatas))
+                lock (syncLock)
                 {
-                    savedGraphics[__instance.texPath] = graphicDatas = new List<GraphicData>();
-                }
-                foreach (var item in graphicDatas)
-                {
-                    if (IsTheSameGraphicData(__instance, item) && item.cachedGraphic != null)
+                    if (!savedGraphics.TryGetValue(__instance.texPath, out var graphicDatas))
                     {
-                        __instance.cachedGraphic = item.cachedGraphic;
-                        return false;
+                        savedGraphics[__instance.texPath] = graphicDatas = new List<GraphicData>();
+                    }
+                    foreach (var item in graphicDatas)
+                    {
+                        if (IsTheSameGraphicData(__instance, item) && item.cachedGraphic != null)
+                        {
+                            __instance.cachedGraphic = item.cachedGraphic;
+                            return false;
+                        }
                     }
                 }
                 __state = true;
@@ -34,9 +38,12 @@ namespace FasterGameLoading
         {
             if (__state && __instance.cachedGraphic != null)
             {
-                if (savedGraphics.TryGetValue(__instance.texPath, out var graphicDatas))
+                lock (syncLock)
                 {
-                    graphicDatas.Add(__instance);
+                    if (savedGraphics.TryGetValue(__instance.texPath, out var graphicDatas))
+                    {
+                        graphicDatas.Add(__instance);
+                    }
                 }
             }
         }

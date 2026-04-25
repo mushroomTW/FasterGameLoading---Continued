@@ -19,7 +19,7 @@
         樹木 - 256px
         地形 - 1024px</FGL_TextureResizingExplanation>
     <FGL_DownscaleTextures>縮小紋理</FGL_DownscaleTextures>
-    <FGL_TextureResizingConfirmation>是否執行紋理縮小？縮小後的紋理將單獨快取，不會修改原始模組檔案。</FGL_TextureResizingConfirmation>
+    <FGL_TextureResizingConfirmation>是否執行紋理縮小？縮小後的紋理將單獨快取，不會修改原始模組檔案。(需要重新啟動一次)</FGL_TextureResizingConfirmation>
     <FGL_ClearTextureCache>清除紋理快取</FGL_ClearTextureCache>
     <FGL_ClearTextureCacheConfirmation>是否清除所有已快取的縮小紋理？下次啟動時將使用原始紋理。</FGL_ClearTextureCacheConfirmation>
     <FGL_TextureCacheStatus_Active>紋理快取已啟用：已快取 {0} 張紋理。</FGL_TextureCacheStatus_Active>

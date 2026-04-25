@@ -1,20 +1,6 @@
-c:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading\1.6\Assemblies\FasterGameLoading.dll
-c:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading\1.6\Source\obj\Release\FasterGameLoading.csproj.AssemblyReference.cache
-c:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading\1.6\Source\obj\Release\FasterGameLoading.GeneratedMSBuildEditorConfig.editorconfig
-c:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading\1.6\Source\obj\Release\FasterGameLoading.csproj.CoreCompileInputs.cache
-c:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading\1.6\Source\obj\Release\FasterGameLoading.dll
-C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\1.6\Assemblies\FasterGameLoading.dll
-C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\1.6\Source\obj\Release\FasterGameLoading.csproj.AssemblyReference.cache
-C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\1.6\Source\obj\Release\FasterGameLoading.GeneratedMSBuildEditorConfig.editorconfig
-C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\1.6\Source\obj\Release\FasterGameLoading.csproj.CoreCompileInputs.cache
-C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\1.6\Source\obj\Release\FasterGameLoading.dll
-C:\Users\mushroomMaster\Documents\Assemblies\FasterGameLoading.dll
-C:\Users\mushroomMaster\Documents\FasterGameLoading---Continued-Source\obj\Release\FasterGameLoading.csproj.AssemblyReference.cache
-C:\Users\mushroomMaster\Documents\FasterGameLoading---Continued-Source\obj\Release\FasterGameLoading.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\mushroomMaster\Documents\FasterGameLoading---Continued-Source\obj\Release\FasterGameLoading.csproj.CoreCompileInputs.cache
-C:\Users\mushroomMaster\Documents\FasterGameLoading---Continued-Source\obj\Release\FasterGameLoading.dll
 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Assemblies\FasterGameLoading.dll
 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Source\obj\Release\FasterGameLoading.csproj.AssemblyReference.cache
 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Source\obj\Release\FasterGameLoading.GeneratedMSBuildEditorConfig.editorconfig
 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Source\obj\Release\FasterGameLoading.csproj.CoreCompileInputs.cache
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Source\obj\Release\FasterGa.ED22E405.Up2Date
 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Source\obj\Release\FasterGameLoading.dll

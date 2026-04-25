@@ -19,7 +19,7 @@
         Tree - 256px
         Terrain - 1024px</FGL_TextureResizingExplanation>
     <FGL_DownscaleTextures>Downscale textures</FGL_DownscaleTextures>
-    <FGL_TextureResizingConfirmation>Perform texture downscaling? Downscaled textures will be cached separately; original mod files will not be modified.</FGL_TextureResizingConfirmation>
+    <FGL_TextureResizingConfirmation>Perform texture downscaling? Downscaled textures will be cached separately; original mod files will not be modified.(requires restart once)</FGL_TextureResizingConfirmation>
     <FGL_ClearTextureCache>Clear texture cache</FGL_ClearTextureCache>
     <FGL_ClearTextureCacheConfirmation>Clear all cached downscaled textures? Original textures will be used on next startup.</FGL_ClearTextureCacheConfirmation>
     <FGL_TextureCacheStatus_Active>Texture cache active: {0} textures cached.</FGL_TextureCacheStatus_Active>

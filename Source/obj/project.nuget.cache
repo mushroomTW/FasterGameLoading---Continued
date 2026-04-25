@@ -1,12 +1,18 @@
 {
   "version": 2,
-  "dgSpecHash": "q1WQrbPyVQQ=",
+  "dgSpecHash": "NI8DEHE83lo=",
   "success": true,
   "projectFilePath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\mushroomMaster\\.nuget\\packages\\krafs.publicizer\\2.3.0\\krafs.publicizer.2.3.0.nupkg.sha512",
-    "C:\\Users\\mushroomMaster\\.nuget\\packages\\krafs.rimworld.ref\\1.6.4759-beta\\krafs.rimworld.ref.1.6.4759-beta.nupkg.sha512",
-    "C:\\Users\\mushroomMaster\\.nuget\\packages\\lib.harmony\\2.4.2\\lib.harmony.2.4.2.nupkg.sha512"
+    "C:\\Users\\mushroomMaster\\.nuget\\packages\\krafs.rimworld.ref\\1.6.4633\\krafs.rimworld.ref.1.6.4633.nupkg.sha512",
+    "C:\\Users\\mushroomMaster\\.nuget\\packages\\lib.harmony\\2.4.2\\lib.harmony.2.4.2.nupkg.sha512",
+    "C:\\Users\\mushroomMaster\\.nuget\\packages\\sixlabors.imagesharp\\2.1.13\\sixlabors.imagesharp.2.1.13.nupkg.sha512",
+    "C:\\Users\\mushroomMaster\\.nuget\\packages\\system.buffers\\4.5.1\\system.buffers.4.5.1.nupkg.sha512",
+    "C:\\Users\\mushroomMaster\\.nuget\\packages\\system.memory\\4.5.4\\system.memory.4.5.4.nupkg.sha512",
+    "C:\\Users\\mushroomMaster\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512",
+    "C:\\Users\\mushroomMaster\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\5.0.0\\system.runtime.compilerservices.unsafe.5.0.0.nupkg.sha512",
+    "C:\\Users\\mushroomMaster\\.nuget\\packages\\system.text.encoding.codepages\\5.0.0\\system.text.encoding.codepages.5.0.0.nupkg.sha512"
   ],
   "logs": []
 }

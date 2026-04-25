@@ -1,4 +1,7 @@
 using RimWorld;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Formats.Png;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,6 +10,7 @@ using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
 using Verse;
+using Color = UnityEngine.Color;
 
 namespace FasterGameLoading
 {
@@ -74,12 +78,6 @@ namespace FasterGameLoading
 
         public static void DoTextureResizing()
         {
-            if (Application.platform != RuntimePlatform.WindowsPlayer &&
-                Application.platform != RuntimePlatform.WindowsEditor)
-            {
-                Log.Warning("[FasterGameLoading] Texture resizing requires Windows (System.Drawing/GDI+). Skipped.");
-                return;
-            }
             // 清除舊快取，重新建立
             ClearCache();
             Directory.CreateDirectory(CacheDirectory);
@@ -139,15 +137,15 @@ namespace FasterGameLoading
                 }
                 foreach (var style in styleDef.thingDefStyles)
                 {
-                    var type = GetTextureType(style.thingDef);
-                    AddEntry(type, style.thingDef, style.styleDef.Graphic);
-                    if (style.styleDef.wornGraphicPath.NullOrEmpty() is false)
+                    var type = GetTextureType(style.ThingDef);
+                    AddEntry(type, style.ThingDef, style.StyleDef.Graphic);
+                    if (style.StyleDef.wornGraphicPath.NullOrEmpty() is false)
                     {
                         foreach (var bodyType in DefDatabase<BodyTypeDef>.AllDefs)
                         {
-                            if (TryGetGraphicApparel(style.thingDef, style.styleDef.wornGraphicPath, bodyType, out var graphic))
+                            if (TryGetGraphicApparel(style.ThingDef, style.StyleDef.wornGraphicPath, bodyType, out var graphic))
                             {
-                                AddEntry(type, style.thingDef, graphic);
+                                AddEntry(type, style.ThingDef, graphic);
                             }
                         }
                     }
@@ -213,10 +211,10 @@ namespace FasterGameLoading
                 if (texturesByMods.TryGetValue(texture.Key, out var mod))
                 {
                     // TODO: 考慮改用可設定的排除清單（LTO Colony Groups 的紋理含 UI 元素，不適合縮放）
-                    if (mod.PackageIdPlayerFacing == "DerekBickley.LTOColonyGroupsFinal")
+                    /*if (mod.PackageIdPlayerFacing == "DerekBickley.LTOColonyGroupsFinal")
                     {
                         continue;
-                    }
+                    }*/
                 }
                 if (texture.Key.width > 128)
                 {
@@ -260,15 +258,13 @@ namespace FasterGameLoading
         {
             try
             {
-                using var image = System.Drawing.Image.FromFile(path);
+                using var image = Image.Load(path);
                 double ratio = image.Height > image.Width ? (double)targetSize / image.Height : (double)targetSize / image.Width;
                 int newWidth = (int)(image.Width * ratio);
                 int newHeight = (int)(image.Height * ratio);
-                using var newImage = new System.Drawing.Bitmap(newWidth, newHeight);
-                using var g = System.Drawing.Graphics.FromImage(newImage);
-                g.DrawImage(image, 0, 0, newWidth, newHeight);
+                image.Mutate(x => x.Resize(newWidth, newHeight));
                 var cachePath = GetCachePath(path);
-                newImage.Save(cachePath);
+                image.Save(cachePath);
                 lock (cacheLock)
                 {
                     resizedTextureCache[path] = cachePath;
@@ -278,8 +274,8 @@ namespace FasterGameLoading
             {
                 Log.Warning("[FasterGameLoading] Failed to resize texture: " + path + " - " + ex.Message);
             }
-
         }
+
         public static bool TryGetGraphicApparel(ThingDef def, string wornGraphicPath, BodyTypeDef bodyType, out Graphic rec)
         {
             if (bodyType == BodyTypeDefOf.Baby && def.apparel.developmentalStageFilter.HasFlag(DevelopmentalStage.Baby) is false
@@ -447,4 +443,3 @@ namespace FasterGameLoading
         }
     }
 }
-

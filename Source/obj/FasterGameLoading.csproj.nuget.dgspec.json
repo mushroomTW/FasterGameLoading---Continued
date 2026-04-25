@@ -52,14 +52,18 @@
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[2.*, )"
+              "version": "[2.3.0, )"
             },
             "Krafs.Rimworld.Ref": {
               "target": "Package",
-              "version": "[1.6.*-*, )"
+              "version": "[1.6.4633, )"
             },
             "Lib.Harmony": {
               "include": "Compile, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "target": "Package",
+              "version": "[2.*, )"
+            },
+            "SixLabors.ImageSharp": {
               "target": "Package",
               "version": "[2.*, )"
             }

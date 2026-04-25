@@ -19,7 +19,7 @@
         Деревья — 256px
         Покрытия — 1024px</FGL_TextureResizingExplanation>
     <FGL_DownscaleTextures>Сжать текстуры</FGL_DownscaleTextures>
-    <FGL_TextureResizingConfirmation>Выполнить сжатие текстур? Будут созданы отдельные кэшированные копии, файлы модов не будут изменены.</FGL_TextureResizingConfirmation>
+    <FGL_TextureResizingConfirmation>Выполнить сжатие текстур? Будут созданы отдельные кэшированные копии, файлы модов не будут изменены.(требует перезапуска раз)</FGL_TextureResizingConfirmation>
     <FGL_ClearTextureCache>Очистить кэш текстур</FGL_ClearTextureCache>
     <FGL_ClearTextureCacheConfirmation>Удалить все сжатые копии текстур? При следующем запуске будут использоваться оригиналы.</FGL_ClearTextureCacheConfirmation>
     <FGL_TextureCacheStatus_Active>Кэш активен: {0} текстур.</FGL_TextureCacheStatus_Active>

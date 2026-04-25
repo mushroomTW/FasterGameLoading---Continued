@@ -3,8 +3,8 @@
   "WorkspaceRootPath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{97FA1308-3ED7-41D8-827D-0CC3A3291EE8}|FasterGameLoading.csproj|c:\\program files (x86)\\steam\\steamapps\\common\\rimworld\\mods\\fastergameloading---continued\\source\\fastergameloadingmod.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{97FA1308-3ED7-41D8-827D-0CC3A3291EE8}|FasterGameLoading.csproj|solutionrelative:fastergameloadingmod.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{97FA1308-3ED7-41D8-827D-0CC3A3291EE8}|FasterGameLoading.csproj|c:\\program files (x86)\\steam\\steamapps\\common\\rimworld\\mods\\fastergameloading---continued\\source\\graphicloading\\textureresize.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{97FA1308-3ED7-41D8-827D-0CC3A3291EE8}|FasterGameLoading.csproj|solutionrelative:graphicloading\\textureresize.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -23,14 +23,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "FasterGameLoadingMod.cs",
-              "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoadingMod.cs",
-              "RelativeDocumentMoniker": "FasterGameLoadingMod.cs",
-              "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoadingMod.cs",
-              "RelativeToolTip": "FasterGameLoadingMod.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAJAAAAAAAAAA==",
+              "Title": "TextureResize.cs",
+              "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\GraphicLoading\\TextureResize.cs",
+              "RelativeDocumentMoniker": "GraphicLoading\\TextureResize.cs",
+              "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\GraphicLoading\\TextureResize.cs",
+              "RelativeToolTip": "GraphicLoading\\TextureResize.cs",
+              "ViewState": "AgIAABYAAAAAAAAAAAAAwCUAAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-25T11:32:21.027Z",
+              "WhenOpened": "2026-04-25T16:00:11.838Z",
               "EditorCaption": ""
             }
           ]

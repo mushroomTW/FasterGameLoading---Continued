@@ -5,14 +5,14 @@ using System.Xml;
 
 namespace FasterGameLoading
 {
-    [HarmonyPatch(typeof(XmlNode), nameof(XmlNode.SelectSingleNode), new Type[] {typeof(string)})]
+    [HarmonyPatch(typeof(XmlNode), nameof(XmlNode.SelectSingleNode), new Type[] { typeof(string) })]
     public static class XmlNode_SelectSingleNode_Patch
     {
-        public static HashSet<string> failedXMLPathesThisSession = new HashSet<string>();
-        public static HashSet<string> successfulXMLPathesThisSession = new HashSet<string>();
+        public static HashSet<string> failedXMLPathsThisSession = new HashSet<string>();
+        public static HashSet<string> successfulXMLPathsThisSession = new HashSet<string>();
         public static bool Prefix(string xpath)
         {
-            if (FasterGameLoadingSettings.failedXMLPathesSinceLastSession.Contains(xpath) && !FasterGameLoadingSettings.successfulXMLPathesSinceLastSession.Contains(xpath))
+            if (FasterGameLoadingSettings.failedXMLPathsSinceLastSession.Contains(xpath) && !FasterGameLoadingSettings.successfulXMLPathsSinceLastSession.Contains(xpath))
             {
                 return false;
             }
@@ -22,11 +22,11 @@ namespace FasterGameLoading
         {
             if (__result is null)
             {
-                failedXMLPathesThisSession.Add(xpath);
+                failedXMLPathsThisSession.Add(xpath);
             }
             else
             {
-                successfulXMLPathesThisSession.Add(xpath);
+                successfulXMLPathsThisSession.Add(xpath);
             }
         }
     }

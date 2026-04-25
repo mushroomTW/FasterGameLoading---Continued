@@ -6,6 +6,7 @@ namespace FasterGameLoading
     [HarmonyPatch]
     public static class DisableLogObsoleteMethodPatchErrors
     {
+        /*
         public static MethodBase targetMethod;
         public static bool Prepare()
         {
@@ -20,7 +21,7 @@ namespace FasterGameLoading
         public static bool Prefix()
         {
             return false;
-        }
+        }*/
     }
 }
 

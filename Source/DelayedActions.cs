@@ -70,7 +70,7 @@ namespace FasterGameLoading
         {
             stopwatch.Start();
             var count = 0;
-            Log.Message("Starting loading graphics: " + graphicsToLoad.Count + " - " + DateTime.Now.ToString());
+            Log.Message("[FasterGameLoading] Starting loading graphics: " + graphicsToLoad.Count + " - " + DateTime.Now.ToString());
             List<ThingDef> loadedDefs = [];
             while (graphicsToLoad.Count > 0)
             {
@@ -86,7 +86,7 @@ namespace FasterGameLoading
                 }
                 catch (Exception ex)
                 {
-                    Log.Warning("Error loading graphic for " + def + ": " + ex);
+                    Log.Warning("[FasterGameLoading] Error loading graphic for " + def + ": " + ex);
                 }
                 count++;
                 if (ElapsedMaxImpact)
@@ -98,7 +98,7 @@ namespace FasterGameLoading
 
                 def.plant?.PostLoadSpecial(def);
             }
-            Log.Message("Finished loading graphics - " + DateTime.Now.ToString());
+            Log.Message("[FasterGameLoading] Finished loading graphics - " + DateTime.Now.ToString());
 
             AdaptiveStaticAtlasBakeFailed = false;
             AllDeferredVisualsLoaded = true;
@@ -254,7 +254,7 @@ namespace FasterGameLoading
 
             count = 0;
 
-            Log.Message("Starting loading icons: " + iconsToLoad.Count + " - " + DateTime.Now.ToString());
+            Log.Message("[FasterGameLoading] Starting loading icons: " + iconsToLoad.Count + " - " + DateTime.Now.ToString());
             while (iconsToLoad.Count > 0)
             {
                 if (UnityData.IsInMainThread is false)
@@ -270,7 +270,7 @@ namespace FasterGameLoading
                     }
                     catch (Exception ex)
                     {
-                        Log.Warning("Error loading icon for " + def + ": " + ex);
+                        Log.Warning("[FasterGameLoading] Error loading icon for " + def + ": " + ex);
                     }
                     count++;
 
@@ -283,10 +283,10 @@ namespace FasterGameLoading
                 }
             }
 
-            Log.Message("Finished loading icons - " + DateTime.Now.ToString());
+            Log.Message("[FasterGameLoading] Finished loading icons - " + DateTime.Now.ToString());
 
             count = 0;
-            Log.Message("Starting resolving SubSoundDefs: " + subSoundDefToResolve.Count + " - " + DateTime.Now.ToString());
+            Log.Message("[FasterGameLoading] Starting resolving SubSoundDefs: " + subSoundDefToResolve.Count + " - " + DateTime.Now.ToString());
             while (subSoundDefToResolve.Count > 0)
             {
                 var (def, action) = subSoundDefToResolve.Dequeue();
@@ -296,7 +296,7 @@ namespace FasterGameLoading
                 }
                 catch (Exception ex)
                 {
-                    Log.Warning("Error resolving AudioGrain for " + def + ": " + ex);
+                    Log.Warning("[FasterGameLoading] Error resolving AudioGrain for " + def + ": " + ex);
                 }
                 count++;
                 if (ElapsedMaxImpact)
@@ -307,7 +307,7 @@ namespace FasterGameLoading
                 }
             }
             SoundStarter_Patch.Unpatch();
-            Log.Message("Finished resolving SubSoundDefs - " + DateTime.Now.ToString());
+            Log.Message("[FasterGameLoading] Finished resolving SubSoundDefs - " + DateTime.Now.ToString());
 
             stopwatch.Stop();
             this.enabled = false;
@@ -316,7 +316,7 @@ namespace FasterGameLoading
 
         private IEnumerator PerformAdaptiveStaticAtlasBake()
         {
-            Log.Message("Starting baking StaticAtlases - " + DateTime.Now.ToString());
+            Log.Message("[FasterGameLoading] Starting baking StaticAtlases - " + DateTime.Now.ToString());
             const float TARGET_BAKE_TIME_SECONDS = 0.008f;
             const float ADAPTATION_FACTOR = 0.2f;
             // Player won't notice this initial lag (Hopefully)
@@ -441,7 +441,7 @@ namespace FasterGameLoading
             // Prevent vanilla BakeStaticAtlases from re-processing the same queue
             GlobalTextureAtlasManager.buildQueue.Clear();
             GlobalTextureAtlasManager.buildQueueMasks.Clear();
-            Log.Message("Finished baking StaticAtlases - " + DateTime.Now.ToString());
+            Log.Message("[FasterGameLoading] Finished baking StaticAtlases - " + DateTime.Now.ToString());
         }
 
         public void Error(string message, Exception ex)

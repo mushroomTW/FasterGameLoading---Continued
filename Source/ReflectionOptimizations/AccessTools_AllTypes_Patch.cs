@@ -1,33 +1,42 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Verse;
 
 namespace FasterGameLoading
 {
     [HarmonyPatch(typeof(AccessTools), "AllTypes")]
     public static class AccessTools_AllTypes_Patch
     {
-        public static List<Type> allTypesCached;
-        public static bool Prefix(ref IEnumerable<Type> __result)
+        private static Task<List<Type>> allTypesCached;
+
+        public static void Preload()
         {
-            if (allTypesCached is null)
+            if (allTypesCached != null) return;
+
+            allTypesCached = Task.Run(() =>
             {
-                return true;
-            }
-            else
-            {
-                __result = allTypesCached;
-                return false;
-            }
+                var types = AppDomain.CurrentDomain.GetAssemblies()
+                    .SelectMany(assembly =>
+                    {
+                        try { return AccessTools.GetTypesFromAssembly(assembly); }
+                        catch { return Array.Empty<Type>(); }
+                    }).ToList();
+                return types;
+            });
         }
 
-        public static void Postfix(IEnumerable<Type> __result)
+        public static bool Prefix(ref IEnumerable<Type> __result)
         {
-            if (allTypesCached is null)
+            if (allTypesCached == null)
             {
-                allTypesCached = __result.ToList();
+                Preload();
             }
+
+            __result = allTypesCached.Result;
+            return false;
         }
     }
 }

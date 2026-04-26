@@ -15,6 +15,7 @@ namespace FasterGameLoading
             delayedActions = gameObject.AddComponent<DelayedActions>();
             settings = this.GetSettings<FasterGameLoadingSettings>();
             harmony = new Harmony("FasterGameLoadingMod");
+            AccessTools_AllTypes_Patch.Preload();
             harmony.PatchAll();
         }
 

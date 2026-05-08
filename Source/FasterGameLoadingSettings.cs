@@ -18,8 +18,8 @@ namespace FasterGameLoading
         public static bool earlyModContentLoading = true;
         public static bool StaticAtlasesBaking = false;
         public static List<float> historicalBakeSpeeds = new List<float>();
-        private const int HISTORY_SIZE = 5;  // Keep last 5 sessions
-        private static readonly float[] WEIGHTS = {0.4f, 0.3f, 0.2f, 0.1f};  // Weights for most recent 4 sessions
+        public const int HISTORY_SIZE = 5;
+        public static readonly float[] WEIGHTS = {0.4f, 0.3f, 0.2f, 0.1f};
         public static ModContentPack GetModContent(string packageId)
         {
             var packageLower = packageId.ToLower();
@@ -96,6 +96,7 @@ namespace FasterGameLoading
                 failedXMLPathsSinceLastSession ??= new HashSet<string>();
                 successfulXMLPathsSinceLastSession ??= new HashSet<string>();
                 modsInLastSession ??= new List<string>();
+                historicalBakeSpeeds ??= new List<float>();
                 TextureResize.resizedTextureCache ??= new Dictionary<string, string>();
                 if (!modsInLastSession.SequenceEqual(ModsConfig.ActiveModsInLoadOrder.Select(x => x.packageIdLowerCase)))
                 {

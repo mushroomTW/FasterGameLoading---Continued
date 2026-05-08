@@ -25,7 +25,6 @@ Sick of staring at the loading screen every time you start RimWorld? This mod cu
 
 - The game may briefly freeze or feel unresponsive during startup. This is normal — the mod is doing work in the background.
 - When first entering a game with delayed texture loading enabled, some objects may briefly show as pink/grey placeholders. They fill in within a few seconds.
-- The texture downscaler and atlas baking options are optional. Atlas baking always runs in some form — disabling the option just uses the vanilla baking process instead of the adaptive one.
 
 --- Works well with ---
 
@@ -54,7 +53,6 @@ Original mod by Taranchuk. This is a maintained fork with bug fixes and improvem
 
 - 啟動期間遊戲可能短暫無回應，這是正常現象，模組正在背景運作。
 - 開啟延遲貼圖載入後，剛進入遊戲時部分物件可能短暫顯示為粉紅色或灰色佔位圖，幾秒後會自動補齊。
-- 貼圖降解析工具和圖集烘焙均為可選功能。圖集烘焙在任何情況下都會執行——關閉設定只是改用原版烘焙方式，而非停用烘焙。
 
 --- 推薦搭配使用 ---
 

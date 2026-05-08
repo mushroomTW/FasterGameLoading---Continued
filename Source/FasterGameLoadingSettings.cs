@@ -16,7 +16,7 @@ namespace FasterGameLoading
         public static HashSet<string> failedXMLPathsSinceLastSession = new HashSet<string>();
         public static bool delayGraphicLoading = false;
         public static bool earlyModContentLoading = true;
-        public static bool StaticAtlasesBaking = false;
+        public static bool StaticAtlasesBaking = true;
         public static List<float> historicalBakeSpeeds = new List<float>();
         public const int HISTORY_SIZE = 5;
         public static readonly float[] WEIGHTS = {0.4f, 0.3f, 0.2f, 0.1f};

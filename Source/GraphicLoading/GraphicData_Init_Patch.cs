@@ -1,4 +1,5 @@
 using HarmonyLib;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Verse;
 
@@ -7,26 +8,19 @@ namespace FasterGameLoading
     [HarmonyPatch(typeof(GraphicData), "Init")]
     public static class GraphicData_Init_Patch
     {
-        public static Dictionary<string, List<GraphicData>> savedGraphics = new Dictionary<string, List<GraphicData>>();
-        private static readonly object syncLock = new object();
+        public static ConcurrentDictionary<string, List<GraphicData>> savedGraphics = new ConcurrentDictionary<string, List<GraphicData>>();
         public static bool Prefix(GraphicData __instance, out bool __state)
         {
             __state = false;
             if (__instance.texPath.NullOrEmpty() is false)
             {
-                lock (syncLock)
+                var graphicDatas = savedGraphics.GetOrAdd(__instance.texPath, _ => new List<GraphicData>());
+                foreach (var item in graphicDatas)
                 {
-                    if (!savedGraphics.TryGetValue(__instance.texPath, out var graphicDatas))
+                    if (IsTheSameGraphicData(__instance, item) && item.cachedGraphic != null)
                     {
-                        savedGraphics[__instance.texPath] = graphicDatas = new List<GraphicData>();
-                    }
-                    foreach (var item in graphicDatas)
-                    {
-                        if (IsTheSameGraphicData(__instance, item) && item.cachedGraphic != null)
-                        {
-                            __instance.cachedGraphic = item.cachedGraphic;
-                            return false;
-                        }
+                        __instance.cachedGraphic = item.cachedGraphic;
+                        return false;
                     }
                 }
                 __state = true;
@@ -38,12 +32,9 @@ namespace FasterGameLoading
         {
             if (__state && __instance.cachedGraphic != null)
             {
-                lock (syncLock)
+                if (savedGraphics.TryGetValue(__instance.texPath, out var graphicDatas))
                 {
-                    if (savedGraphics.TryGetValue(__instance.texPath, out var graphicDatas))
-                    {
-                        graphicDatas.Add(__instance);
-                    }
+                    graphicDatas.Add(__instance);
                 }
             }
         }

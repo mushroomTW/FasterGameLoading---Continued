@@ -3,6 +3,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Formats.Png;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,21 +19,25 @@ namespace FasterGameLoading
     {
         public static Dictionary<string, string> resizedTextureCache = new Dictionary<string, string>();
         private static readonly object cacheLock = new object();
+        private static readonly ConcurrentDictionary<string, string> md5HashCache = new ConcurrentDictionary<string, string>();
 
         public static string CacheDirectory => Path.Combine(GenFilePaths.SaveDataFolderPath, "FasterGameLoading", "TextureCache");
 
         public static string GetCachePath(string originalPath)
         {
-            using (var md5 = MD5.Create())
+            return md5HashCache.GetOrAdd(originalPath, path =>
             {
-                var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(originalPath));
-                var sb = new StringBuilder();
-                foreach (var b in hash)
+                using (var md5 = MD5.Create())
                 {
-                    sb.Append(b.ToString("x2"));
+                    var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(path));
+                    var sb = new StringBuilder();
+                    foreach (var b in hash)
+                    {
+                        sb.Append(b.ToString("x2"));
+                    }
+                    return Path.Combine(CacheDirectory, sb.ToString() + ".png");
                 }
-                return Path.Combine(CacheDirectory, sb.ToString() + ".png");
-            }
+            });
         }
 
         public static void ClearCache()

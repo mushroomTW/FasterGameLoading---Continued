@@ -6,14 +6,16 @@ namespace FasterGameLoading
     public static class Utils
     {
 
-        public static List<Thing> ThingsOfDefs(this ListerThings listerThings,IEnumerable<ThingDef> defs) {
-            List<Thing> outThings = [];
-            foreach (var def in defs) {
+        public static List<Thing> ThingsOfDefs(this ListerThings listerThings, IEnumerable<ThingDef> defs)
+        {
+            List<Thing> outThings = new List<Thing>();
+            foreach (var def in defs)
+            {
                 if (listerThings.listsByDef.TryGetValue(def, out var things))
                 {
                     outThings.AddRange(things);
                 }
-                
+
             }
             return outThings;
         }

@@ -3,8 +3,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using UnityEngine;
 using Verse;
 using Verse.Sound;
@@ -24,6 +26,7 @@ namespace FasterGameLoading
         private Stopwatch stopwatch = new();
         private Queue<ModContentPack> pendingEarlyLoads;
         private bool earlyLoadingComplete;
+        private Task fileWarmupTask;
         private bool ElapsedMaxImpact => (float)stopwatch.ElapsedTicks / Stopwatch.Frequency >= MaxImpactThisFrame;
         public void LateUpdate()
         {
@@ -32,11 +35,23 @@ namespace FasterGameLoading
 
             if (pendingEarlyLoads == null)
             {
-                pendingEarlyLoads = new Queue<ModContentPack>(
-                    LoadedModManager.RunningMods.Where(x =>
-                        !ModContentPack_ReloadContentInt_Patch.loadedMods.Contains(x)));
+                var modsToLoad = LoadedModManager.RunningMods
+                    .Where(x => !ModContentPack_ReloadContentInt_Patch.loadedMods.Contains(x))
+                    .ToList();
+                pendingEarlyLoads = new Queue<ModContentPack>(modsToLoad);
+
+                // 背景預熱 OS 檔案快取，讓主執行緒的 ReloadContentInt I/O 命中記憶體
+                fileWarmupTask = Task.Run(() =>
+                {
+                    foreach (var mod in modsToLoad)
+                    {
+                        try { Directory.GetFiles(mod.RootDir, "*", SearchOption.AllDirectories); }
+                        catch { }
+                    }
+                });
             }
 
+            stopwatch.Restart();
             while (pendingEarlyLoads.Count > 0)
             {
                 var modToLoad = pendingEarlyLoads.Dequeue();
@@ -52,16 +67,20 @@ namespace FasterGameLoading
                     // 載入失敗時不加入 loadedMods，讓正式流程可以重試
                     Log.Warning("[FasterGameLoading] Early loading failed for " + modToLoad.PackageIdPlayerFacing + ", will retry in normal flow: " + ex.Message);
                 }
-                return; // 每幀只載入一個 mod
+                // 用完時間預算就讓出這幀，下幀繼續
+                if (ElapsedMaxImpact)
+                    return;
             }
 
             earlyLoadingComplete = true;
+            fileWarmupTask = null;
         }
 
         public void ResetEarlyLoading()
         {
             pendingEarlyLoads = null;
             earlyLoadingComplete = false;
+            fileWarmupTask = null;
             AllDeferredVisualsLoaded = false;
             AdaptiveStaticAtlasBakeFailed = false;
         }

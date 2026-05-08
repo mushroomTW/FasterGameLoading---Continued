@@ -224,7 +224,27 @@ namespace FasterGameLoading
             // Personal Experience 0.7-0.9 can reduce empty spaces in a texture atlas
             const float PACK_DENSITY = 0.8f;
 
-            float measuredBakeSpeed_PixelsPerSecond = 2_000_000f;
+            float measuredBakeSpeed_PixelsPerSecond;
+            if (FasterGameLoadingSettings.historicalBakeSpeeds.Count == 0)
+            {
+                // First run - use existing conservative estimate
+                measuredBakeSpeed_PixelsPerSecond = 2_000_000f;
+            }
+            else
+            {
+                // Calculate weighted average from history
+                float weightedSum = 0f;
+                float weightSum = 0f;
+                int count = Math.Min(FasterGameLoadingSettings.historicalBakeSpeeds.Count, FasterGameLoadingSettings.WEIGHTS.Length);
+                
+                for (int i = 0; i < count; i++)
+                {
+                    weightedSum += FasterGameLoadingSettings.historicalBakeSpeeds[i] * FasterGameLoadingSettings.WEIGHTS[i];
+                    weightSum += FasterGameLoadingSettings.WEIGHTS[i];
+                }
+                
+                measuredBakeSpeed_PixelsPerSecond = weightedSum / weightSum;
+            }
             int adaptivePixelsPerSlice = INITIAL_PIXELS_PER_SLICE;
             var bakeStopwatch = new Stopwatch();
             var buildQueueSnapshot = GlobalTextureAtlasManager.buildQueue.ToList();
@@ -329,6 +349,15 @@ namespace FasterGameLoading
             foreach (var staticTextureAtlas in atlasesToCommit)
             {
                 GlobalTextureAtlasManager.staticTextureAtlases.Add(staticTextureAtlas);
+            }
+
+            // Add current session's final speed to history
+            FasterGameLoadingSettings.historicalBakeSpeeds.Insert(0, measuredBakeSpeed_PixelsPerSecond);
+
+            // Maintain history size limit
+            if (FasterGameLoadingSettings.historicalBakeSpeeds.Count > FasterGameLoadingSettings.HISTORY_SIZE)
+            {
+                FasterGameLoadingSettings.historicalBakeSpeeds.RemoveAt(FasterGameLoadingSettings.HISTORY_SIZE);
             }
 
             // Prevent vanilla BakeStaticAtlases from re-processing the same queue

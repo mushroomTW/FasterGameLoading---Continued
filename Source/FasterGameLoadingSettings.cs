@@ -17,6 +17,9 @@ namespace FasterGameLoading
         public static bool delayGraphicLoading = false;
         public static bool earlyModContentLoading = true;
         public static bool StaticAtlasesBaking = false;
+        public static List<float> historicalBakeSpeeds = new List<float>();
+        private const int HISTORY_SIZE = 5;  // Keep last 5 sessions
+        private static readonly float[] WEIGHTS = {0.4f, 0.3f, 0.2f, 0.1f};  // Weights for most recent 4 sessions
         public static ModContentPack GetModContent(string packageId)
         {
             var packageLower = packageId.ToLower();
@@ -82,6 +85,7 @@ namespace FasterGameLoading
             Scribe_Collections.Look(ref failedXMLPathsSinceLastSession, "failedXMLPathsSinceLastSession", LookMode.Value);
             Scribe_Collections.Look(ref modsInLastSession, "modsInLastSession", LookMode.Value);
             Scribe_Collections.Look(ref TextureResize.resizedTextureCache, "resizedTextureCache", LookMode.Value, LookMode.Value);
+            Scribe_Collections.Look(ref historicalBakeSpeeds, "historicalBakeSpeeds", LookMode.Value, LookMode.Value);
             Scribe_Values.Look(ref StaticAtlasesBaking, "StaticAtlasesBaking");
             Scribe_Values.Look(ref delayGraphicLoading, "delayGraphicLoading", false);
             Scribe_Values.Look(ref earlyModContentLoading, "earlyModContentLoading", true);

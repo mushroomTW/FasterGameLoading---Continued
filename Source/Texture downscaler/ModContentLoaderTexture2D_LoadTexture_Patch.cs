@@ -1,9 +1,7 @@
 using HarmonyLib;
 using RimWorld.IO;
 using System;
-using System.Runtime.CompilerServices;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using Verse;
@@ -24,33 +22,42 @@ namespace FasterGameLoading
                 return false;
             }
 
-            // 檢查是否有磁碟快取的縮放版本
             if (TextureResize.resizedTextureCache.TryGetValue(fullPath, out var cachePath)
                 && File.Exists(cachePath))
             {
                 try
                 {
                     var data = File.ReadAllBytes(cachePath);
-                    // UI 紋理通常不需要 Mipmaps，且關閉可節省顯存與提升清晰度
                     bool useMipmaps = !fullPath.Contains("/UI/") && !fullPath.Contains("\\UI\\");
                     var tex = new Texture2D(2, 2, TextureFormat.RGBA32, useMipmaps);
-                    if (tex.LoadImage(data) && tex.width > 0 && tex.height > 0)
+                    var textureAccepted = false;
+
+                    try
                     {
-                        tex.name = Path.GetFileNameWithoutExtension(fullPath);
-                        tex.Compress(true);
-                        // 關鍵優化：完成壓縮後將其設為不可讀，釋放 RAM 佔用
-                        tex.Apply(true, true);
-                        savedTextures[fullPath] = new System.WeakReference<Texture2D>(tex);
-                        __result = tex;
-                        __state = false;
-                        return false;
+                        if (tex.LoadImage(data) && tex.width > 0 && tex.height > 0)
+                        {
+                            tex.name = Path.GetFileNameWithoutExtension(fullPath);
+                            tex.Compress(true);
+                            tex.Apply(true, true);
+                            savedTextures[fullPath] = new System.WeakReference<Texture2D>(tex);
+                            __result = tex;
+                            __state = false;
+                            textureAccepted = true;
+                            return false;
+                        }
                     }
-                    // 載入出來的紋理無效，移除快取記錄
+                    finally
+                    {
+                        if (!textureAccepted)
+                        {
+                            UnityEngine.Object.Destroy(tex);
+                        }
+                    }
+
                     TextureResize.resizedTextureCache.Remove(fullPath);
                 }
                 catch (Exception)
                 {
-                    // 快取檔案損壞，移除快取記錄，走正常載入
                     TextureResize.resizedTextureCache.Remove(fullPath);
                 }
             }

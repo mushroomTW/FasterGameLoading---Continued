@@ -80,6 +80,8 @@ namespace FasterGameLoading
 
         public static void DoTextureResizing()
         {
+            try
+            {
             // 清除舊快取，重新建立
             ClearCache();
             Directory.CreateDirectory(CacheDirectory);
@@ -257,6 +259,22 @@ namespace FasterGameLoading
 
             // 持久化快取對照表
             LoadedModManager.GetMod<FasterGameLoadingMod>().WriteSettings();
+            }
+            finally
+            {
+                ClearTextureScanData();
+            }
+        }
+
+        private static void ClearTextureScanData()
+        {
+            texturesByPaths.Clear();
+            texturesByDefs.Clear();
+            texturesByMods.Clear();
+            foreach (var value in textures.Values)
+            {
+                value.Clear();
+            }
         }
 
         public static void ResizeTexture(Texture source, string path, int targetSize)

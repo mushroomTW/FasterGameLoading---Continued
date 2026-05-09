@@ -104,6 +104,7 @@ namespace FasterGameLoading
 
                     if (!GlobalTextureAtlasManager.buildQueue.ContainsKey(key))
                     {
+                        DestroyAtlases(cachedAtlases);
                         return false;
                     }
 
@@ -121,33 +122,71 @@ namespace FasterGameLoading
                         else
                         {
                             Log.Warning("[FasterGameLoading] Texture missing from queue during cache load: " + texName);
+                            DestroyAtlases(cachedAtlases);
                             return false;
                         }
                     }
 
                     var colorPath = Path.Combine(CacheDirectory, info.colorFile);
-                    if (!File.Exists(colorPath)) return false;
+                    if (!File.Exists(colorPath))
+                    {
+                        DestroyAtlases(cachedAtlases);
+                        return false;
+                    }
                     var colorBytes = File.ReadAllBytes(colorPath);
                     var colorTex = new Texture2D(info.width, info.height, (TextureFormat)info.format, false);
-                    colorTex.LoadRawTextureData(colorBytes);
-                    colorTex.Apply(true, true);
-                    colorTex.name = "StaticAtlas_" + info.group;
-                    atlas.colorTexture = colorTex;
+                    try
+                    {
+                        colorTex.LoadRawTextureData(colorBytes);
+                        colorTex.Apply(true, true);
+                        colorTex.name = "StaticAtlas_" + info.group;
+                        atlas.colorTexture = colorTex;
+                    }
+                    catch
+                    {
+                        UnityEngine.Object.Destroy(colorTex);
+                        DestroyAtlases(cachedAtlases);
+                        throw;
+                    }
 
                     if (info.hasMask && !string.IsNullOrEmpty(info.maskFile))
                     {
                         var maskPath = Path.Combine(CacheDirectory, info.maskFile);
-                        if (!File.Exists(maskPath)) return false;
-                        var maskBytes = File.ReadAllBytes(maskPath);
+                        if (!File.Exists(maskPath))
+                        {
+                            DestroyAtlasTextures(atlas);
+                            DestroyAtlases(cachedAtlases);
+                            return false;
+                        }
                         var maskTex = new Texture2D(info.width, info.height, (TextureFormat)info.format, false);
-                        maskTex.LoadRawTextureData(maskBytes);
-                        maskTex.Apply(true, true);
-                        maskTex.name = "StaticAtlasMask_" + info.group;
-                        atlas.maskTexture = maskTex;
+                        try
+                        {
+                            var maskBytes = File.ReadAllBytes(maskPath);
+                            maskTex.LoadRawTextureData(maskBytes);
+                            maskTex.Apply(true, true);
+                            maskTex.name = "StaticAtlasMask_" + info.group;
+                            atlas.maskTexture = maskTex;
+                        }
+                        catch
+                        {
+                            UnityEngine.Object.Destroy(maskTex);
+                            DestroyAtlasTextures(atlas);
+                            DestroyAtlases(cachedAtlases);
+                            throw;
+                        }
                     }
 
-                    buildMeshesMethod.Invoke(atlas, new object[] { info.uvRects.ToArray() });
-                    cachedAtlases.Add(atlas);
+                    try
+                    {
+                        buildMeshesMethod.Invoke(atlas, new object[] { info.uvRects.ToArray() });
+                        cachedAtlases.Add(atlas);
+                    }
+                    catch
+                    {
+                        DestroyAtlasTextures(atlas);
+                        DestroyAtlases(cachedAtlases);
+                        throw;
+                    }
                 }
 
                 foreach (var atlas in cachedAtlases)
@@ -164,6 +203,29 @@ namespace FasterGameLoading
             {
                 Log.Warning("[FasterGameLoading] Cache load error: " + e);
                 return false;
+            }
+        }
+
+        private static void DestroyAtlases(List<StaticTextureAtlas> atlases)
+        {
+            foreach (var atlas in atlases)
+            {
+                DestroyAtlasTextures(atlas);
+            }
+            atlases.Clear();
+        }
+
+        private static void DestroyAtlasTextures(StaticTextureAtlas atlas)
+        {
+            if (atlas?.colorTexture != null)
+            {
+                UnityEngine.Object.Destroy(atlas.colorTexture);
+                atlas.colorTexture = null;
+            }
+            if (atlas?.maskTexture != null)
+            {
+                UnityEngine.Object.Destroy(atlas.maskTexture);
+                atlas.maskTexture = null;
             }
         }
 
@@ -276,23 +338,35 @@ namespace FasterGameLoading
             }
 
             // Fallback for unreadable textures
-            RenderTexture rt = RenderTexture.GetTemporary(tex.width, tex.height, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Default);
-            Graphics.Blit(tex, rt);
-            RenderTexture previous = RenderTexture.active;
-            RenderTexture.active = rt;
-            
-            TextureFormat fallbackFormat = TextureFormat.RGBA32;
-            Texture2D readable = new Texture2D(tex.width, tex.height, fallbackFormat, false);
-            readable.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
-            readable.Apply(false, false);
-            
-            RenderTexture.active = previous;
-            RenderTexture.ReleaseTemporary(rt);
-            
-            format = fallbackFormat;
-            var result = readable.GetRawTextureData();
-            UnityEngine.Object.Destroy(readable);
-            return result;
+            RenderTexture rt = null;
+            Texture2D readable = null;
+            var previous = RenderTexture.active;
+            try
+            {
+                rt = RenderTexture.GetTemporary(tex.width, tex.height, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Default);
+                Graphics.Blit(tex, rt);
+                RenderTexture.active = rt;
+
+                TextureFormat fallbackFormat = TextureFormat.RGBA32;
+                readable = new Texture2D(tex.width, tex.height, fallbackFormat, false);
+                readable.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
+                readable.Apply(false, false);
+
+                format = fallbackFormat;
+                return readable.GetRawTextureData();
+            }
+            finally
+            {
+                RenderTexture.active = previous;
+                if (rt != null)
+                {
+                    RenderTexture.ReleaseTemporary(rt);
+                }
+                if (readable != null)
+                {
+                    UnityEngine.Object.Destroy(readable);
+                }
+            }
         }
     }
 }

@@ -244,6 +244,7 @@ namespace FasterGameLoading
             SoundStarter_Patch.Unpatch();
             Log.Message("[FasterGameLoading] Finished resolving SubSoundDefs");
 
+            GraphicData_Init_Patch.savedGraphics.Clear();
             stopwatch.Stop();
             this.enabled = false;
             yield return null;

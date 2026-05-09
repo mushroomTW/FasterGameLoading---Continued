@@ -89,7 +89,7 @@ namespace FasterGameLoading
         {
             stopwatch.Start();
             var count = 0;
-            Log.Message("[FasterGameLoading] Starting loading graphics: " + graphicsToLoad.Count + " - " + DateTime.Now.ToString());
+            Log.Message("[FasterGameLoading] Starting loading graphics: " + graphicsToLoad.Count);
             List<ThingDef> loadedDefs = new List<ThingDef>();
             while (graphicsToLoad.Count > 0)
             {
@@ -117,30 +117,53 @@ namespace FasterGameLoading
 
                 def.plant?.PostLoadSpecial(def);
             }
-            Log.Message("[FasterGameLoading] Finished loading graphics - " + DateTime.Now.ToString());
+            Log.Message("[FasterGameLoading] Finished loading graphics");
 
             AdaptiveStaticAtlasBakeFailed = false;
             AllDeferredVisualsLoaded = true;
             if (FasterGameLoadingSettings.StaticAtlasesBaking)
             {
-                var adaptiveBake = PerformAdaptiveStaticAtlasBake();
-                while (adaptiveBake.MoveNext())
+                if (FasterGameLoadingSettings.atlasCaching && StaticAtlasCache.TryLoadFromCache())
                 {
-                    yield return adaptiveBake.Current;
+                    Log.Message("[FasterGameLoading] Static atlases loaded from cache (Raw DXT bytes)");
                 }
-
-                if (AdaptiveStaticAtlasBakeFailed)
+                else
                 {
-                    Log.Message("[FasterGameLoading] Falling back to deferred vanilla static atlas baking - " + DateTime.Now.ToString());
-                    GlobalTextureAtlasManager.BakeStaticAtlases();
-                    Log.Message("[FasterGameLoading] Finished deferred vanilla static atlas baking - " + DateTime.Now.ToString());
+                    // Remember queue hash before bake modifies it
+                    string queueHash = null;
+                    if (FasterGameLoadingSettings.atlasCaching)
+                    {
+                        queueHash = StaticAtlasCache.ComputeQueueHash();
+                    }
+
+                    var adaptiveBake = PerformAdaptiveStaticAtlasBake();
+                    while (adaptiveBake.MoveNext())
+                    {
+                        yield return adaptiveBake.Current;
+                    }
+
+                    if (AdaptiveStaticAtlasBakeFailed)
+                    {
+                        Log.Message("[FasterGameLoading] Falling back to deferred vanilla static atlas baking");
+                        GlobalTextureAtlasManager.BakeStaticAtlases();
+                        Log.Message("[FasterGameLoading] Finished deferred vanilla static atlas baking");
+                    }
+
+                    if (FasterGameLoadingSettings.atlasCaching && !AdaptiveStaticAtlasBakeFailed && queueHash != null)
+                    {
+                        var saveCache = StaticAtlasCache.SaveToCacheCoroutine(GlobalTextureAtlasManager.staticTextureAtlases, queueHash);
+                        while (saveCache.MoveNext())
+                        {
+                            yield return saveCache.Current;
+                        }
+                    }
                 }
             }
             else
             {
-                Log.Message("[FasterGameLoading] Starting deferred vanilla static atlas baking - " + DateTime.Now.ToString());
+                Log.Message("[FasterGameLoading] Starting deferred vanilla static atlas baking");
                 GlobalTextureAtlasManager.BakeStaticAtlases();
-                Log.Message("[FasterGameLoading] Finished deferred vanilla static atlas baking - " + DateTime.Now.ToString());
+                Log.Message("[FasterGameLoading] Finished deferred vanilla static atlas baking");
             }
 
             try
@@ -166,7 +189,7 @@ namespace FasterGameLoading
 
             count = 0;
 
-            Log.Message("[FasterGameLoading] Starting loading icons: " + iconsToLoad.Count + " - " + DateTime.Now.ToString());
+            Log.Message("[FasterGameLoading] Starting loading icons: " + iconsToLoad.Count);
             while (iconsToLoad.Count > 0)
             {
                 if (UnityData.IsInMainThread is false)
@@ -195,10 +218,10 @@ namespace FasterGameLoading
                 }
             }
 
-            Log.Message("[FasterGameLoading] Finished loading icons - " + DateTime.Now.ToString());
+            Log.Message("[FasterGameLoading] Finished loading icons");
 
             count = 0;
-            Log.Message("[FasterGameLoading] Starting resolving SubSoundDefs: " + subSoundDefToResolve.Count + " - " + DateTime.Now.ToString());
+            Log.Message("[FasterGameLoading] Starting resolving SubSoundDefs: " + subSoundDefToResolve.Count);
             while (subSoundDefToResolve.Count > 0)
             {
                 var (def, action) = subSoundDefToResolve.Dequeue();
@@ -219,7 +242,7 @@ namespace FasterGameLoading
                 }
             }
             SoundStarter_Patch.Unpatch();
-            Log.Message("[FasterGameLoading] Finished resolving SubSoundDefs - " + DateTime.Now.ToString());
+            Log.Message("[FasterGameLoading] Finished resolving SubSoundDefs");
 
             stopwatch.Stop();
             this.enabled = false;
@@ -228,7 +251,7 @@ namespace FasterGameLoading
 
         private IEnumerator PerformAdaptiveStaticAtlasBake()
         {
-            Log.Message("[FasterGameLoading] Starting baking StaticAtlases - " + DateTime.Now.ToString());
+            Log.Message("[FasterGameLoading] Starting baking StaticAtlases");
             const float TARGET_BAKE_TIME_SECONDS = 0.008f;
             const float ADAPTATION_FACTOR = 0.2f;
             // Player won't notice this initial lag (Hopefully)
@@ -382,7 +405,7 @@ namespace FasterGameLoading
             // Prevent vanilla BakeStaticAtlases from re-processing the same queue
             GlobalTextureAtlasManager.buildQueue.Clear();
             GlobalTextureAtlasManager.buildQueueMasks.Clear();
-            Log.Message("[FasterGameLoading] Finished baking StaticAtlases - " + DateTime.Now.ToString());
+            Log.Message("[FasterGameLoading] Finished baking StaticAtlases");
         }
 
         public void Error(string message, Exception ex)

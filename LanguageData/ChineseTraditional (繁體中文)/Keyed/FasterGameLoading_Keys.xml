@@ -6,6 +6,9 @@
     <FGL_EarlyModContentLoading>提早載入模組內容</FGL_EarlyModContentLoading>
     <FGL_DelayGraphicLoading>延遲圖形和圖示載入（需要重新啟動）</FGL_DelayGraphicLoading>
     <FGL_StaticAtlasesBaking>更聰明的圖集烘焙（需要重新啟動）</FGL_StaticAtlasesBaking>
+    <FGL_AtlasCaching>靜態圖集快取（需要重新啟動）</FGL_AtlasCaching>
+    <FGL_ClearAtlasCache>清除圖集快取</FGL_ClearAtlasCache>
+    <FGL_ClearAtlasCacheConfirmation>是否清除已快取的靜態圖集？</FGL_ClearAtlasCacheConfirmation>
 
     <!-- Texture Resizing -->
     <FGL_TextureResizingExplanation>某些模組可能包含大量高解析度紋理，載入需很長時間。使用此功能縮小高解析度紋理。原始檔案不會被修改；縮小後的版本會儲存在獨立的快取目錄中，並在下次啟動時自動載入。

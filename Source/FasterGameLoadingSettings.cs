@@ -17,6 +17,7 @@ namespace FasterGameLoading
         public static bool delayGraphicLoading = false;
         public static bool earlyModContentLoading = true;
         public static bool StaticAtlasesBaking = true;
+        public static bool atlasCaching = true;
         public static List<float> historicalBakeSpeeds = new List<float>();
         public const int HISTORY_SIZE = 5;
         public static readonly float[] WEIGHTS = {0.4f, 0.3f, 0.2f, 0.1f};
@@ -38,6 +39,7 @@ namespace FasterGameLoading
             ls.CheckboxLabeled("FGL_EarlyModContentLoading".Translate(), ref earlyModContentLoading);
             ls.CheckboxLabeled("FGL_DelayGraphicLoading".Translate(), ref delayGraphicLoading);
             ls.CheckboxLabeled("FGL_StaticAtlasesBaking".Translate(), ref StaticAtlasesBaking);
+            ls.CheckboxLabeled("FGL_AtlasCaching".Translate(), ref atlasCaching);
             ls.Gap(12f);
 
             // 紋理縮放說明文字
@@ -72,6 +74,17 @@ namespace FasterGameLoading
                     LoadedModManager.GetMod<FasterGameLoadingMod>().WriteSettings();
                 }, "GoBack".Translate()));
             }
+
+            // Atlas Cache clear button
+            ls.Gap(4f);
+            if (ls.ButtonText("FGL_ClearAtlasCache".Translate()))
+            {
+                Find.WindowStack.Add(new Dialog_MessageBox("FGL_ClearAtlasCacheConfirmation".Translate(), "Confirm".Translate(), delegate
+                {
+                    StaticAtlasCache.ClearCache();
+                }, "GoBack".Translate()));
+            }
+
             ls.End();
         }
 
@@ -87,6 +100,7 @@ namespace FasterGameLoading
             Scribe_Collections.Look(ref TextureResize.resizedTextureCache, "resizedTextureCache", LookMode.Value, LookMode.Value);
             Scribe_Collections.Look(ref historicalBakeSpeeds, "historicalBakeSpeeds", LookMode.Value, LookMode.Value);
             Scribe_Values.Look(ref StaticAtlasesBaking, "StaticAtlasesBaking");
+            Scribe_Values.Look(ref atlasCaching, "atlasCaching", true);
             Scribe_Values.Look(ref delayGraphicLoading, "delayGraphicLoading", false);
             Scribe_Values.Look(ref earlyModContentLoading, "earlyModContentLoading", true);
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
@@ -105,6 +119,7 @@ namespace FasterGameLoading
                     failedXMLPathsSinceLastSession.Clear();
                     successfulXMLPathsSinceLastSession.Clear();
                     TextureResize.ClearCache();
+                    StaticAtlasCache.ClearCache();
                 }
             }
         }

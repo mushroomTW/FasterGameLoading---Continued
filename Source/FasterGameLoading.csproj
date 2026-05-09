@@ -49,7 +49,6 @@
 <ExcludeAssets>runtime</ExcludeAssets>
 <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 </PackageReference>
-<PackageReference Include="SixLabors.ImageSharp" Version="2.*" />
   </ItemGroup>
   <PropertyGroup>
     <!-- Disable automatic generation of assembly attributes -->

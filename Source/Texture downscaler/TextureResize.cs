@@ -1,7 +1,4 @@
 using RimWorld;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Processing;
-using SixLabors.ImageSharp.Formats.Png;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -213,7 +210,7 @@ namespace FasterGameLoading
                 }
             }
 
-            List<KeyValuePair<string, int>> texturesToResize = new List<KeyValuePair<string, int>>();
+            List<(Texture source, string path, int targetSize)> texturesToResize = new List<(Texture source, string path, int targetSize)>();
             foreach (var texture in texturesByPaths)
             {
                 if (texturesByMods.TryGetValue(texture.Key, out var mod))
@@ -232,7 +229,7 @@ namespace FasterGameLoading
                         {
                             if (texture.Key.width > targetSizes[TextureType.Terrain] || texture.Key.height > targetSizes[TextureType.Terrain])
                             {
-                                texturesToResize.Add(new(texture.Value, targetSizes[TextureType.Terrain]));
+                                texturesToResize.Add((texture.Key, texture.Value, targetSizes[TextureType.Terrain]));
                             }
                         }
                         else if (value.Key is ThingDef thingDef && thingDef.graphicData != null)
@@ -242,7 +239,7 @@ namespace FasterGameLoading
                                 var type = GetTextureType(thingDef);
                                 if (targetSizes.TryGetValue(type, out var targetSize) && (texture.Key.width > targetSize || texture.Key.height > targetSize))
                                 {
-                                    texturesToResize.Add(new(texture.Value, targetSize));
+                                    texturesToResize.Add((texture.Key, texture.Value, targetSize));
                                 }
                             }
                         }
@@ -251,10 +248,10 @@ namespace FasterGameLoading
             }
             if (texturesToResize.Any())
             {
-                GenThreading.ParallelForEach(texturesToResize, delegate (KeyValuePair<string, int> entry)
+                foreach (var entry in texturesToResize)
                 {
-                    ResizeTexture(entry.Key, entry.Value);
-                });
+                    ResizeTexture(entry.source, entry.path, entry.targetSize);
+                }
                 Log.Warning("Downscaled " + texturesToResize.Count + " textures (cached, originals untouched)");
             }
 
@@ -262,17 +259,18 @@ namespace FasterGameLoading
             LoadedModManager.GetMod<FasterGameLoadingMod>().WriteSettings();
         }
 
-        public static void ResizeTexture(string path, int targetSize)
+        public static void ResizeTexture(Texture source, string path, int targetSize)
         {
             try
             {
-                using var image = Image.Load(path);
-                double ratio = image.Height > image.Width ? (double)targetSize / image.Height : (double)targetSize / image.Width;
-                int newWidth = (int)(image.Width * ratio);
-                int newHeight = (int)(image.Height * ratio);
-                image.Mutate(x => x.Resize(newWidth, newHeight));
+                if (source == null || source.width <= 0 || source.height <= 0)
+                    return;
+
+                double ratio = source.height > source.width ? (double)targetSize / source.height : (double)targetSize / source.width;
+                int newWidth = Math.Max(1, (int)Math.Round(source.width * ratio));
+                int newHeight = Math.Max(1, (int)Math.Round(source.height * ratio));
                 var cachePath = GetCachePath(path);
-                image.Save(cachePath);
+                File.WriteAllBytes(cachePath, ResizeTextureToPng(source, newWidth, newHeight));
                 lock (cacheLock)
                 {
                     resizedTextureCache[path] = cachePath;
@@ -281,6 +279,33 @@ namespace FasterGameLoading
             catch (Exception ex)
             {
                 Log.Warning("[FasterGameLoading] Failed to resize texture: " + path + " - " + ex.Message);
+            }
+        }
+
+        private static byte[] ResizeTextureToPng(Texture source, int width, int height)
+        {
+            var previous = RenderTexture.active;
+            var renderTexture = RenderTexture.GetTemporary(width, height, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Default);
+            Texture2D readable = null;
+
+            try
+            {
+                Graphics.Blit(source, renderTexture);
+                RenderTexture.active = renderTexture;
+
+                readable = new Texture2D(width, height, TextureFormat.RGBA32, false);
+                readable.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+                readable.Apply(false, false);
+                return readable.EncodeToPNG();
+            }
+            finally
+            {
+                RenderTexture.active = previous;
+                RenderTexture.ReleaseTemporary(renderTexture);
+                if (readable != null)
+                {
+                    UnityEngine.Object.Destroy(readable);
+                }
             }
         }
 

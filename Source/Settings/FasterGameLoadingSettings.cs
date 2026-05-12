@@ -60,7 +60,7 @@ namespace FasterGameLoading
 
             // 還原紋理按鈕（清除快取）+ 狀態顯示
             ls.Gap(4f);
-            var cacheCount = TextureResize.resizedTextureCache.Count;
+            var cacheCount = TextureResize.CacheCount;
             var cacheStatusText = cacheCount > 0
                 ? "FGL_TextureCacheStatus_Active".Translate(cacheCount)
                 : "FGL_TextureCacheStatus_Empty".Translate();
@@ -112,7 +112,17 @@ namespace FasterGameLoading
                 modsInLastSession ??= new List<string>();
                 historicalBakeSpeeds ??= new List<float>();
                 TextureResize.resizedTextureCache ??= new Dictionary<string, string>();
-                if (!modsInLastSession.SequenceEqual(ModsConfig.ActiveModsInLoadOrder.Select(x => x.packageIdLowerCase)))
+
+                // 使用 hash 比較偵測 mod 組合變更，避免 O(n) SequenceEqual
+                int currentHash = 0;
+                foreach (var mod in ModsConfig.ActiveModsInLoadOrder)
+                    unchecked { currentHash = currentHash * 31 + mod.packageIdLowerCase.GetHashCode(); }
+
+                int lastHash = 0;
+                foreach (var modId in modsInLastSession)
+                    unchecked { lastHash = lastHash * 31 + modId.GetHashCode(); }
+
+                if (currentHash != lastHash)
                 {
                     loadedTexturesSinceLastSession.Clear();
                     loadedTypesByFullNameSinceLastSession.Clear();

@@ -10,6 +10,13 @@ namespace FasterGameLoading
     {
         public static Dictionary<string, Type> cachedResults = new Dictionary<string, Type>();
         public static Dictionary<string, string> loadedTypesThisSession = new Dictionary<string, string>();
+
+        public static void ClearCache()
+        {
+            cachedResults.Clear();
+            loadedTypesThisSession.Clear();
+        }
+
         public static bool Prefix(ref Type __result, out (string, bool) __state, ref string typeName)
         {
             if (cachedResults.TryGetValue(typeName, out var result))

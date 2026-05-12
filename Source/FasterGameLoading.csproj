@@ -49,6 +49,7 @@
 <ExcludeAssets>runtime</ExcludeAssets>
 <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 </PackageReference>
+
   </ItemGroup>
   <PropertyGroup>
     <!-- Disable automatic generation of assembly attributes -->

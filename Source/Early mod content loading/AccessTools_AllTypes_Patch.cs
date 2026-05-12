@@ -10,13 +10,12 @@ namespace FasterGameLoading
     [HarmonyPatch(typeof(AccessTools), "AllTypes")]
     public static class AccessTools_AllTypes_Patch
     {
-        private static Task<List<Type>> allTypesCached;
+        private static volatile List<Type> allTypesCached;
+        private static readonly object typesLock = new();
 
         public static void Preload()
         {
-            if (allTypesCached != null) return;
-
-            allTypesCached = Task.Run(() =>
+            Task.Run(() =>
             {
                 var types = AppDomain.CurrentDomain.GetAssemblies()
                     .SelectMany(assembly =>
@@ -24,19 +23,38 @@ namespace FasterGameLoading
                         try { return AccessTools.GetTypesFromAssembly(assembly); }
                         catch { return Array.Empty<Type>(); }
                     }).ToList();
-                return types;
+                lock (typesLock)
+                {
+                    allTypesCached = types;
+                }
             });
         }
 
         public static bool Prefix(ref IEnumerable<Type> __result)
         {
-            if (allTypesCached == null)
+            var cached = allTypesCached;
+            if (cached != null)
             {
-                Preload();
+                __result = cached;
+                return false;
             }
-
-            __result = allTypesCached.Result;
-            return false;
+            lock (typesLock)
+            {
+                cached = allTypesCached;
+                if (cached != null)
+                {
+                    __result = cached;
+                    return false;
+                }
+                allTypesCached = AppDomain.CurrentDomain.GetAssemblies()
+                    .SelectMany(assembly =>
+                    {
+                        try { return AccessTools.GetTypesFromAssembly(assembly); }
+                        catch { return Array.Empty<Type>(); }
+                    }).ToList();
+                __result = allTypesCached;
+                return false;
+            }
         }
     }
 }

@@ -33,6 +33,10 @@ namespace FasterGameLoading
             // 清除 mod 引用快取（ModContentPack 實例可能被重建）
             FasterGameLoadingSettings.modsByPackageIds.Clear();
 
+            // 清除型別查詢快取
+            GenTypes_GetTypeInAnyAssemblyInt_Patch.ClearCache();
+            GenTypes_AllLeafSubclasses_Patch.ClearCache();
+
             // 重置延遲載入狀態
             DelayedActions.AllDeferredVisualsLoaded = false;
             if (FasterGameLoadingMod.delayedActions != null)

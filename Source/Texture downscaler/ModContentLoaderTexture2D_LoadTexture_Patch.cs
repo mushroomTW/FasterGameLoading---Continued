@@ -3,6 +3,7 @@ using RimWorld.IO;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
+using System.Threading;
 using UnityEngine;
 using Verse;
 
@@ -13,6 +14,9 @@ namespace FasterGameLoading
     {
         public static ConcurrentDictionary<string, string> loadedTexturesThisSession = new ConcurrentDictionary<string, string>();
         public static ConcurrentDictionary<string, System.WeakReference<Texture2D>> savedTextures = new ConcurrentDictionary<string, System.WeakReference<Texture2D>>();
+        public static int cacheLoadHits;
+        public static int cacheLoadFailures;
+
         public static bool Prefix(VirtualFile file, out bool __state, ref Texture2D __result)
         {
             var fullPath = file.FullPath;
@@ -22,8 +26,7 @@ namespace FasterGameLoading
                 return false;
             }
 
-            if (TextureResize.resizedTextureCache.TryGetValue(fullPath, out var cachePath)
-                && File.Exists(cachePath))
+            if (TextureResize.TryGetCachedTexturePath(fullPath, out var cachePath))
             {
                 try
                 {
@@ -40,6 +43,7 @@ namespace FasterGameLoading
                             tex.Compress(true);
                             tex.Apply(true, true);
                             savedTextures[fullPath] = new System.WeakReference<Texture2D>(tex);
+                            Interlocked.Increment(ref cacheLoadHits);
                             __result = tex;
                             __state = false;
                             textureAccepted = true;
@@ -54,11 +58,13 @@ namespace FasterGameLoading
                         }
                     }
 
-                    TextureResize.resizedTextureCache.Remove(fullPath);
+                    TextureResize.RemoveCachedTexturePath(fullPath);
+                    Interlocked.Increment(ref cacheLoadFailures);
                 }
                 catch (Exception)
                 {
-                    TextureResize.resizedTextureCache.Remove(fullPath);
+                    TextureResize.RemoveCachedTexturePath(fullPath);
+                    Interlocked.Increment(ref cacheLoadFailures);
                 }
             }
 

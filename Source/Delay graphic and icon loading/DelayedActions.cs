@@ -40,12 +40,16 @@ namespace FasterGameLoading
                     .ToList();
                 pendingEarlyLoads = new Queue<ModContentPack>(modsToLoad);
 
-                // 背景預熱 OS 檔案快取，讓主執行緒的 ReloadContentInt I/O 命中記憶體
+                // 背景預熱 OS 檔案快取，只枚舉 ReloadContentInt 會實際讀取的檔案型別
                 fileWarmupTask = Task.Run(() =>
                 {
                     foreach (var mod in modsToLoad)
                     {
-                        try { Directory.GetFiles(mod.RootDir, "*", SearchOption.AllDirectories); }
+                        try
+                        {
+                            foreach (var ext in new[] { "*.xml", "*.dll", "*.dylib", "*.so" })
+                                Directory.GetFiles(mod.RootDir, ext, SearchOption.AllDirectories);
+                        }
                         catch { }
                     }
                 });

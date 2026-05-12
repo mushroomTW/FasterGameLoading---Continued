@@ -10,27 +10,38 @@ namespace FasterGameLoading
     public static class GenTypes_AllLeafSubclasses_Patch
     {
         public static Dictionary<Type, HashSet<Type>> keyValuePairs = new Dictionary<Type, HashSet<Type>>();
+
+        public static void ClearCache()
+        {
+            keyValuePairs.Clear();
+        }
+
         public static bool Prefix(ref IEnumerable<Type> __result, Type baseType)
         {
             if (!keyValuePairs.TryGetValue(baseType, out var final))
             {
-                var subClasses = baseType.AllSubclasses().ToHashSet(); // o(n)
-                final = new HashSet<Type>(subClasses);
+                var subClasses = baseType.AllSubclasses().ToHashSet();
+
+                // 計數每個型別作為「其他子類別的基底型別」的次數
+                var baseTypeCounts = new Dictionary<Type, int>();
                 foreach (var sub in subClasses)
                 {
-                    if (!final.Contains(sub)) continue;
-                    var type = sub.BaseType;
-                    while (type != null)
+                    var directBase = sub.BaseType;
+                    if (subClasses.Contains(directBase))
                     {
-                        if (final.Contains(type))
-                        {
-                            final.Remove(type);
-                        }
-                        else
-                        {
-                            break;
-                        }
-                        type = type.BaseType;
+                        baseTypeCounts[directBase] = baseTypeCounts.TryGetValue(directBase, out var count)
+                            ? count + 1
+                            : 1;
+                    }
+                }
+
+                // 沒有被任何子類別引用為基底型別的，即為 leaf
+                final = new HashSet<Type>();
+                foreach (var sub in subClasses)
+                {
+                    if (!baseTypeCounts.ContainsKey(sub))
+                    {
+                        final.Add(sub);
                     }
                 }
                 keyValuePairs[baseType] = final;
@@ -40,4 +51,3 @@ namespace FasterGameLoading
         }
     }
 }
-

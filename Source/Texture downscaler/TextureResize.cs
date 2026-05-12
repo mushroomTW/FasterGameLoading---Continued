@@ -7,6 +7,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Profiling;
 using Verse;
 using Color = UnityEngine.Color;
 
@@ -19,22 +20,97 @@ namespace FasterGameLoading
         private static readonly ConcurrentDictionary<string, string> md5HashCache = new ConcurrentDictionary<string, string>();
 
         public static string CacheDirectory => Path.Combine(GenFilePaths.SaveDataFolderPath, "FasterGameLoading", "TextureCache");
+        private static string BuildCacheDirectory(string suffix) => Path.Combine(GenFilePaths.SaveDataFolderPath, "FasterGameLoading", suffix);
+        private static string activeCacheDirectory = CacheDirectory;
 
         public static string GetCachePath(string originalPath)
         {
-            return md5HashCache.GetOrAdd(originalPath, path =>
+            return md5HashCache.GetOrAdd(GetCacheKey(originalPath), key =>
             {
                 using (var md5 = MD5.Create())
                 {
-                    var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(path));
+                    var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(key));
                     var sb = new StringBuilder();
                     foreach (var b in hash)
                     {
                         sb.Append(b.ToString("x2"));
                     }
-                    return Path.Combine(CacheDirectory, sb.ToString() + ".png");
+                    return Path.Combine(activeCacheDirectory, sb.ToString() + ".png");
                 }
             });
+        }
+
+        private static string GetCacheKey(string originalPath)
+        {
+            try
+            {
+                var file = new FileInfo(originalPath);
+                if (file.Exists)
+                {
+                    return originalPath + "|" + file.Length + "|" + file.LastWriteTimeUtc.Ticks;
+                }
+            }
+            catch
+            {
+                // Fall back to the path-only key for virtual or inaccessible files.
+            }
+            return originalPath;
+        }
+
+        public static int CacheCount
+        {
+            get
+            {
+                lock (cacheLock)
+                {
+                    return resizedTextureCache.Count;
+                }
+            }
+        }
+
+        public static bool TryGetCachedTexturePath(string originalPath, out string cachePath)
+        {
+            lock (cacheLock)
+            {
+                if (resizedTextureCache.TryGetValue(originalPath, out cachePath)
+                    && File.Exists(cachePath)
+                    && IsCacheFresh(originalPath, cachePath))
+                {
+                    return true;
+                }
+
+                if (cachePath != null)
+                {
+                    resizedTextureCache.Remove(originalPath);
+                }
+            }
+
+            cachePath = null;
+            return false;
+        }
+
+        private static bool IsCacheFresh(string originalPath, string cachePath)
+        {
+            try
+            {
+                if (!File.Exists(originalPath))
+                {
+                    return true;
+                }
+                return File.GetLastWriteTimeUtc(cachePath) >= File.GetLastWriteTimeUtc(originalPath);
+            }
+            catch
+            {
+                return true;
+            }
+        }
+
+        public static void RemoveCachedTexturePath(string originalPath)
+        {
+            lock (cacheLock)
+            {
+                resizedTextureCache.Remove(originalPath);
+            }
         }
 
         public static void ClearCache()
@@ -77,14 +153,30 @@ namespace FasterGameLoading
         public static Dictionary<Texture, string> texturesByPaths = new();
         public static Dictionary<Texture, KeyValuePair<BuildableDef, string>> texturesByDefs = new();
         public static Dictionary<Texture, ModContentPack> texturesByMods = new();
+        private static long lastOriginalPixelCount;
+        private static long lastDownscaledPixelCount;
 
         public static void DoTextureResizing()
         {
+            var previousCacheMap = new Dictionary<string, string>(resizedTextureCache);
+            var previousCacheDirectory = activeCacheDirectory;
+            var stagingDirectory = BuildCacheDirectory("TextureCache_New");
+            var beforeMemory = CaptureTextureMemorySnapshot();
+            lastOriginalPixelCount = 0;
+            lastDownscaledPixelCount = 0;
             try
             {
-            // 清除舊快取，重新建立
-            ClearCache();
-            Directory.CreateDirectory(CacheDirectory);
+            md5HashCache.Clear();
+            activeCacheDirectory = stagingDirectory;
+            if (Directory.Exists(stagingDirectory))
+            {
+                Directory.Delete(stagingDirectory, true);
+            }
+            Directory.CreateDirectory(stagingDirectory);
+            lock (cacheLock)
+            {
+                resizedTextureCache.Clear();
+            }
 
             texturesByPaths.Clear();
             texturesByDefs.Clear();
@@ -95,13 +187,7 @@ namespace FasterGameLoading
                 textures[value] = new();
             }
 
-            foreach (var kvp in ModContentLoaderTexture2D_LoadTexture_Patch.savedTextures)
-            {
-                if (kvp.Value.TryGetTarget(out var tex))
-                {
-                    texturesByPaths[tex] = kvp.Key;
-                }
-            }
+            RefreshTexturePathMap();
 
             foreach (var mod in LoadedModManager.RunningMods)
             {
@@ -223,29 +309,15 @@ namespace FasterGameLoading
                         continue;
                     }*/
                 }
-                if (texture.Key.width > 128)
+                var sourceWidth = texture.Key.width;
+                var sourceHeight = texture.Key.height;
+                TryGetOriginalTextureDimensions(texture.Value, ref sourceWidth, ref sourceHeight);
+
+                if (texturesByDefs.TryGetValue(texture.Key, out var value)
+                    && TryGetResizeTarget(texture.Key, value.Key, out var targetSize)
+                    && (sourceWidth > targetSize || sourceHeight > targetSize))
                 {
-                    if (texturesByDefs.TryGetValue(texture.Key, out var value))
-                    {
-                        if (value.Key is TerrainDef)
-                        {
-                            if (texture.Key.width > targetSizes[TextureType.Terrain] || texture.Key.height > targetSizes[TextureType.Terrain])
-                            {
-                                texturesToResize.Add((texture.Key, texture.Value, targetSizes[TextureType.Terrain]));
-                            }
-                        }
-                        else if (value.Key is ThingDef thingDef && thingDef.graphicData != null)
-                        {
-                            if (thingDef.graphicData.drawSize.x + thingDef.graphicData.drawSize.y <= 8)
-                            {
-                                var type = GetTextureType(thingDef);
-                                if (targetSizes.TryGetValue(type, out var targetSize) && (texture.Key.width > targetSize || texture.Key.height > targetSize))
-                                {
-                                    texturesToResize.Add((texture.Key, texture.Value, targetSize));
-                                }
-                            }
-                        }
-                    }
+                    texturesToResize.Add((texture.Key, texture.Value, targetSize));
                 }
             }
             if (texturesToResize.Any())
@@ -255,6 +327,23 @@ namespace FasterGameLoading
                     ResizeTexture(entry.source, entry.path, entry.targetSize);
                 }
                 Log.Warning("Downscaled " + texturesToResize.Count + " textures (cached, originals untouched)");
+                ReplaceTextureCacheDirectory(stagingDirectory);
+                LogResizeSummary(beforeMemory, CaptureTextureMemorySnapshot(), texturesToResize.Count);
+            }
+            else
+            {
+                lock (cacheLock)
+                {
+                    resizedTextureCache = previousCacheMap;
+                }
+                activeCacheDirectory = previousCacheDirectory;
+                md5HashCache.Clear();
+                if (Directory.Exists(stagingDirectory))
+                {
+                    Directory.Delete(stagingDirectory, true);
+                }
+                Log.Warning("[FasterGameLoading] No full-size textures found to downscale. Existing texture cache was left unchanged.");
+                LogResizeSummary(beforeMemory, CaptureTextureMemorySnapshot(), 0);
             }
 
             // 持久化快取對照表
@@ -264,6 +353,26 @@ namespace FasterGameLoading
             {
                 ClearTextureScanData();
             }
+        }
+
+        private static void ReplaceTextureCacheDirectory(string stagingDirectory)
+        {
+            if (Directory.Exists(CacheDirectory))
+            {
+                Directory.Delete(CacheDirectory, true);
+            }
+            Directory.Move(stagingDirectory, CacheDirectory);
+            var updatedCacheMap = new Dictionary<string, string>();
+            foreach (var kvp in resizedTextureCache)
+            {
+                updatedCacheMap[kvp.Key] = Path.Combine(CacheDirectory, Path.GetFileName(kvp.Value));
+            }
+            lock (cacheLock)
+            {
+                resizedTextureCache = updatedCacheMap;
+            }
+            activeCacheDirectory = CacheDirectory;
+            md5HashCache.Clear();
         }
 
         private static void ClearTextureScanData()
@@ -279,16 +388,20 @@ namespace FasterGameLoading
 
         public static void ResizeTexture(Texture source, string path, int targetSize)
         {
+            Texture2D originalTexture = null;
             try
             {
-                if (source == null || source.width <= 0 || source.height <= 0)
+                var resizeSource = TryLoadOriginalTexture(path, out originalTexture) ? originalTexture : source;
+                if (resizeSource == null || resizeSource.width <= 0 || resizeSource.height <= 0)
                     return;
 
-                double ratio = source.height > source.width ? (double)targetSize / source.height : (double)targetSize / source.width;
-                int newWidth = Math.Max(1, (int)Math.Round(source.width * ratio));
-                int newHeight = Math.Max(1, (int)Math.Round(source.height * ratio));
+                double ratio = resizeSource.height > resizeSource.width ? (double)targetSize / resizeSource.height : (double)targetSize / resizeSource.width;
+                int newWidth = Math.Max(1, (int)Math.Round(resizeSource.width * ratio));
+                int newHeight = Math.Max(1, (int)Math.Round(resizeSource.height * ratio));
+                lastOriginalPixelCount += (long)resizeSource.width * resizeSource.height;
+                lastDownscaledPixelCount += (long)newWidth * newHeight;
                 var cachePath = GetCachePath(path);
-                File.WriteAllBytes(cachePath, ResizeTextureToPng(source, newWidth, newHeight));
+                File.WriteAllBytes(cachePath, ResizeTextureToPng(resizeSource, newWidth, newHeight));
                 lock (cacheLock)
                 {
                     resizedTextureCache[path] = cachePath;
@@ -297,6 +410,162 @@ namespace FasterGameLoading
             catch (Exception ex)
             {
                 Log.Warning("[FasterGameLoading] Failed to resize texture: " + path + " - " + ex.Message);
+            }
+            finally
+            {
+                if (originalTexture != null)
+                {
+                    DestroyTemporaryUnityObject(originalTexture);
+                }
+            }
+        }
+
+        private static bool TryLoadOriginalTexture(string path, out Texture2D texture)
+        {
+            texture = null;
+            try
+            {
+                if (!File.Exists(path))
+                {
+                    return false;
+                }
+
+                var data = File.ReadAllBytes(path);
+                texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+                if (texture.LoadImage(data) && texture.width > 0 && texture.height > 0)
+                {
+                    texture.name = Path.GetFileNameWithoutExtension(path);
+                    return true;
+                }
+            }
+            catch
+            {
+            }
+
+            if (texture != null)
+            {
+                DestroyTemporaryUnityObject(texture);
+                texture = null;
+            }
+            return false;
+        }
+
+        private static bool TryGetOriginalTextureDimensions(string path, ref int width, ref int height)
+        {
+            Texture2D original = null;
+            try
+            {
+                if (!TryLoadOriginalTexture(path, out original))
+                {
+                    return false;
+                }
+
+                width = original.width;
+                height = original.height;
+                return true;
+            }
+            finally
+            {
+                if (original != null)
+                {
+                    DestroyTemporaryUnityObject(original);
+                }
+            }
+        }
+
+        private static TextureMemorySnapshot CaptureTextureMemorySnapshot()
+        {
+            var snapshot = new TextureMemorySnapshot
+            {
+                graphicsDriverBytes = Profiler.GetAllocatedMemoryForGraphicsDriver()
+            };
+
+            foreach (var tex in Resources.FindObjectsOfTypeAll<Texture2D>())
+            {
+                if (tex == null)
+                {
+                    continue;
+                }
+
+                snapshot.textureCount++;
+                snapshot.estimatedTextureBytes += EstimateTextureBytes(tex);
+            }
+
+            return snapshot;
+        }
+
+        private static long EstimateTextureBytes(Texture2D texture)
+        {
+            long pixels = (long)texture.width * texture.height;
+            long bytes = pixels * BytesPerPixel(texture.format);
+            if (texture.mipmapCount > 1)
+            {
+                bytes = bytes * 4 / 3;
+            }
+            return bytes;
+        }
+
+        private static int BytesPerPixel(TextureFormat format)
+        {
+            switch (format)
+            {
+                case TextureFormat.Alpha8:
+                    return 1;
+                case TextureFormat.RGB24:
+                    return 3;
+                case TextureFormat.DXT1:
+                case TextureFormat.BC4:
+                    return 1;
+                case TextureFormat.DXT5:
+                case TextureFormat.BC5:
+                case TextureFormat.BC6H:
+                case TextureFormat.BC7:
+                case TextureFormat.RGBA32:
+                case TextureFormat.ARGB32:
+                case TextureFormat.BGRA32:
+                    return 4;
+                default:
+                    return 4;
+            }
+        }
+
+        private static void LogResizeSummary(TextureMemorySnapshot before, TextureMemorySnapshot after, int resizedCount)
+        {
+            Log.Message("[FasterGameLoading] Texture downscale summary: resized=" + resizedCount
+                + ", sourcePixels=" + lastOriginalPixelCount
+                + ", downscaledPixels=" + lastDownscaledPixelCount
+                + ", estimatedSaved=" + FormatBytes((lastOriginalPixelCount - lastDownscaledPixelCount) * 4)
+                + ", textureObjects=" + before.textureCount + "->" + after.textureCount
+                + ", estimatedTextureMemory=" + FormatBytes(before.estimatedTextureBytes) + "->" + FormatBytes(after.estimatedTextureBytes)
+                + ", graphicsDriverMemory=" + FormatBytes(before.graphicsDriverBytes) + "->" + FormatBytes(after.graphicsDriverBytes));
+        }
+
+        private static string FormatBytes(long bytes)
+        {
+            return (bytes / 1024f / 1024f).ToString("F1") + " MiB";
+        }
+
+        private struct TextureMemorySnapshot
+        {
+            public int textureCount;
+            public long estimatedTextureBytes;
+            public long graphicsDriverBytes;
+        }
+
+        private static void DestroyTemporaryUnityObject(UnityEngine.Object obj)
+        {
+            if (obj == null)
+            {
+                return;
+            }
+
+            try
+            {
+                UnityEngine.Object.DestroyImmediate(obj);
+            }
+            catch
+            {
+                UnityEngine.Object.Destroy(obj);
             }
         }
 
@@ -322,7 +591,7 @@ namespace FasterGameLoading
                 RenderTexture.ReleaseTemporary(renderTexture);
                 if (readable != null)
                 {
-                    UnityEngine.Object.Destroy(readable);
+                    DestroyTemporaryUnityObject(readable);
                 }
             }
         }
@@ -427,9 +696,9 @@ namespace FasterGameLoading
             {
                 if (def.uiIcon != null)
                 {
-                    if (texturesByPaths.TryGetValue(def.uiIcon, out var fullPath))
+                    if (TryGetTexturePath(def.uiIcon, out var fullPath))
                     {
-                        textures[type].Add(new KeyValuePair<BuildableDef, string>(def, fullPath));
+                        AddEntry(TextureType.UI, def, fullPath, def.uiIcon);
                     }
                 }
             }
@@ -472,7 +741,7 @@ namespace FasterGameLoading
         }
         private static void GetMatTexture(TextureType type, BuildableDef def, Material mat)
         {
-            if (mat?.mainTexture != null && texturesByPaths.TryGetValue(mat.mainTexture, out var fullPath))
+            if (mat?.mainTexture != null && TryGetTexturePath(mat.mainTexture, out var fullPath))
             {
                 AddEntry(type, def, fullPath, mat.mainTexture);
                 Texture2D mask = null;
@@ -480,12 +749,66 @@ namespace FasterGameLoading
                 {
                     mask = (Texture2D)mat.GetTexture(ShaderPropertyIDs.MaskTex);
                 }
-                if (mask != null && texturesByPaths.TryGetValue(mask, out var maskPath))
+                if (mask != null && TryGetTexturePath(mask, out var maskPath))
                 {
                     AddEntry(type, def, maskPath, mask);
                 }
             }
         }
+
+        private static bool TryGetResizeTarget(Texture texture, BuildableDef def, out int targetSize)
+        {
+            if (def is TerrainDef)
+            {
+                targetSize = targetSizes[TextureType.Terrain];
+                return true;
+            }
+
+            if (def is ThingDef thingDef && thingDef.graphicData != null
+                && thingDef.graphicData.drawSize.x + thingDef.graphicData.drawSize.y <= 8)
+            {
+                return targetSizes.TryGetValue(GetTextureType(thingDef), out targetSize);
+            }
+
+            targetSize = 0;
+            return false;
+        }
+
+        private static void RefreshTexturePathMap()
+        {
+            foreach (var kvp in ModContentLoaderTexture2D_LoadTexture_Patch.savedTextures)
+            {
+                if (kvp.Value.TryGetTarget(out var tex))
+                {
+                    texturesByPaths[tex] = kvp.Key;
+                }
+            }
+        }
+
+        private static bool TryGetTexturePath(Texture texture, out string fullPath)
+        {
+            if (texture != null && texturesByPaths.TryGetValue(texture, out fullPath))
+            {
+                return true;
+            }
+
+            if (texture != null)
+            {
+                foreach (var kvp in ModContentLoaderTexture2D_LoadTexture_Patch.savedTextures)
+                {
+                    if (kvp.Value.TryGetTarget(out var savedTexture) && ReferenceEquals(savedTexture, texture))
+                    {
+                        fullPath = kvp.Key;
+                        texturesByPaths[texture] = fullPath;
+                        return true;
+                    }
+                }
+            }
+
+            fullPath = null;
+            return false;
+        }
+
         private static void AddEntry(TextureType type, BuildableDef def, string fullPath, Texture texture)
         {
             var entry = new KeyValuePair<BuildableDef, string>(def, fullPath);

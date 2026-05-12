@@ -33,6 +33,7 @@ namespace FasterGameLoading
             public int width;
             public int height;
             public int format;
+            public int maskFormat;
             public string colorFile;
             public string maskFile;
             public List<string> textureNames = new List<string>();
@@ -158,7 +159,8 @@ namespace FasterGameLoading
                             DestroyAtlases(cachedAtlases);
                             return false;
                         }
-                        var maskTex = new Texture2D(info.width, info.height, (TextureFormat)info.format, false);
+                        var maskFormat = info.maskFormat != 0 ? info.maskFormat : info.format;
+                        var maskTex = new Texture2D(info.width, info.height, (TextureFormat)maskFormat, false);
                         try
                         {
                             var maskBytes = File.ReadAllBytes(maskPath);
@@ -255,7 +257,7 @@ namespace FasterGameLoading
 
                 var atlasTexturesField = AccessTools.Field(typeof(StaticTextureAtlas), "textures");
                 var atlasTextures = (List<Texture2D>)atlasTexturesField.GetValue(atlas);
-                
+
                 var texNames = atlasTextures.Select(t => t.name).ToList();
 
                 foreach (var tex in atlasTextures)
@@ -302,8 +304,7 @@ namespace FasterGameLoading
                     try
                     {
                         var maskBytes = GetRawBytesSafe(atlas.maskTexture, out var newFormatMask);
-                        // Assuming mask format is same as color format for simplicity, or we can add maskFormat to AtlasInfo.
-                        // Actually mask formats are usually the same. Let's just save the bytes.
+                        info.maskFormat = (int)newFormatMask;
                         File.WriteAllBytes(Path.Combine(CacheDirectory, info.maskFile), maskBytes);
                     }
                     catch (Exception e)

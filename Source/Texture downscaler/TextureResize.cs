@@ -173,195 +173,195 @@ namespace FasterGameLoading
             lastDownscaledPixelCount = 0;
             try
             {
-            md5HashCache.Clear();
-            activeCacheDirectory = stagingDirectory;
-            if (Directory.Exists(stagingDirectory))
-            {
-                Directory.Delete(stagingDirectory, true);
-            }
-            Directory.CreateDirectory(stagingDirectory);
-            lock (cacheLock)
-            {
-                resizedTextureCache.Clear();
-            }
-
-            texturesByPaths.Clear();
-            texturesByDefs.Clear();
-            texturesByMods.Clear();
-
-            foreach (var value in Enum.GetValues(typeof(TextureType)).Cast<TextureType>())
-            {
-                textures[value] = new();
-            }
-
-            RefreshTexturePathMap();
-
-            foreach (var mod in LoadedModManager.RunningMods)
-            {
-                foreach (var texture in mod.textures.contentList.Values)
-                {
-                    texturesByMods[texture] = mod;
-                }
-            }
-
-            foreach (var pawnKind in DefDatabase<PawnKindDef>.AllDefs)
-            {
-                var modContent = pawnKind.modContentPack;
-                if (modContent != null && modContent.IsOfficialMod)
-                {
-                    continue;
-                }
-                if (pawnKind.lifeStages != null)
-                {
-                    foreach (var lifeStage in pawnKind.lifeStages)
-                    {
-                        if (lifeStage.bodyGraphicData != null)
-                        {
-                            AddEntry(TextureType.Pawn, pawnKind.race, lifeStage.bodyGraphicData.Graphic);
-                            if (lifeStage.dessicatedBodyGraphicData != null)
-                            {
-                                AddEntry(TextureType.Pawn, pawnKind.race, lifeStage.dessicatedBodyGraphicData.Graphic);
-                            }
-                        }
-                    }
-                }
-
-            }
-
-            foreach (var styleDef in DefDatabase<StyleCategoryDef>.AllDefs)
-            {
-                var modContent = styleDef.modContentPack;
-                if (modContent != null && modContent.IsOfficialMod)
-                {
-                    continue;
-                }
-                foreach (var style in styleDef.thingDefStyles)
-                {
-                    var type = GetTextureType(style.ThingDef);
-                    AddEntry(type, style.ThingDef, style.StyleDef.Graphic);
-                    if (style.StyleDef.wornGraphicPath.NullOrEmpty() is false)
-                    {
-                        foreach (var bodyType in DefDatabase<BodyTypeDef>.AllDefs)
-                        {
-                            if (TryGetGraphicApparel(style.ThingDef, style.StyleDef.wornGraphicPath, bodyType, out var graphic))
-                            {
-                                AddEntry(type, style.ThingDef, graphic);
-                            }
-                        }
-                    }
-                }
-            }
-
-            foreach (var def in DefDatabase<BuildableDef>.AllDefs)
-            {
-                var modContent = def.modContentPack;
-                if (modContent != null && modContent.IsOfficialMod)
-                {
-                    continue;
-                }
-                if (def is TerrainDef terrain)
-                {
-                    FillEntry(TextureType.Terrain, def);
-                }
-                else if (def is ThingDef thingDef)
-                {
-                    var type = GetTextureType(thingDef);
-                    FillEntry(type, thingDef);
-                    if (type == TextureType.Apparel)
-                    {
-                        foreach (var bodyType in DefDatabase<BodyTypeDef>.AllDefs)
-                        {
-                            if (TryGetGraphicApparel(thingDef, thingDef.apparel.wornGraphicPath, bodyType, out var graphic))
-                            {
-                                AddEntry(type, def, graphic);
-                            }
-                            if (thingDef.apparel.wornGraphicPaths != null)
-                            {
-                                foreach (var path in thingDef.apparel.wornGraphicPaths)
-                                {
-                                    if (TryGetGraphicApparel(thingDef, path, bodyType, out var graphic2))
-                                    {
-                                        AddEntry(type, def, graphic2);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else if (type == TextureType.Plant || type == TextureType.Tree)
-                    {
-                        if (thingDef.plant.leaflessGraphic != null)
-                        {
-                            AddEntry(type, def, thingDef.plant.leaflessGraphic);
-                        }
-                        if (thingDef.plant.immatureGraphic != null)
-                        {
-                            AddEntry(type, def, thingDef.plant.immatureGraphic);
-                        }
-                        if (thingDef.plant.pollutedGraphic != null)
-                        {
-                            AddEntry(type, def, thingDef.plant.pollutedGraphic);
-                        }
-                    }
-                }
-            }
-
-            List<TextureResizeCandidate> texturesToResize = new List<TextureResizeCandidate>();
-            foreach (var texture in texturesByPaths)
-            {
-                if (texturesByMods.TryGetValue(texture.Key, out var mod))
-                {
-                    // TODO: 考慮改用可設定的排除清單（LTO Colony Groups 的紋理含 UI 元素，不適合縮放）
-                    /*if (mod.PackageIdPlayerFacing == "DerekBickley.LTOColonyGroupsFinal")
-                    {
-                        continue;
-                    }*/
-                }
-                var sourceWidth = texture.Key.width;
-                var sourceHeight = texture.Key.height;
-                TryGetImageDimensions(texture.Value, ref sourceWidth, ref sourceHeight);
-
-                if (texturesByDefs.TryGetValue(texture.Key, out var value)
-                    && TryGetResizeTarget(texture.Key, value.Key, out var targetSize)
-                    && (sourceWidth > targetSize || sourceHeight > targetSize))
-                {
-                    texturesToResize.Add(new TextureResizeCandidate
-                    {
-                        source = texture.Key,
-                        path = texture.Value,
-                        targetSize = targetSize,
-                        originalWidth = sourceWidth,
-                        originalHeight = sourceHeight
-                    });
-                }
-            }
-            if (texturesToResize.Any())
-            {
-                foreach (var entry in texturesToResize)
-                {
-                    ResizeTexture(entry);
-                }
-                Log.Warning("Downscaled " + texturesToResize.Count + " textures (cached, originals untouched)");
-                ReplaceTextureCacheDirectory(stagingDirectory);
-                LogResizeSummary(texturesToResize.Count);
-            }
-            else
-            {
-                lock (cacheLock)
-                {
-                    resizedTextureCache = previousCacheMap;
-                }
-                activeCacheDirectory = previousCacheDirectory;
                 md5HashCache.Clear();
+                activeCacheDirectory = stagingDirectory;
                 if (Directory.Exists(stagingDirectory))
                 {
                     Directory.Delete(stagingDirectory, true);
                 }
-                Log.Warning("[FasterGameLoading] No full-size textures found to downscale. Existing texture cache was left unchanged.");
-                LogResizeSummary(0);
-            }
+                Directory.CreateDirectory(stagingDirectory);
+                lock (cacheLock)
+                {
+                    resizedTextureCache.Clear();
+                }
 
-            // 持久化快取對照表
-            LoadedModManager.GetMod<FasterGameLoadingMod>().WriteSettings();
+                texturesByPaths.Clear();
+                texturesByDefs.Clear();
+                texturesByMods.Clear();
+
+                foreach (var value in Enum.GetValues(typeof(TextureType)).Cast<TextureType>())
+                {
+                    textures[value] = new();
+                }
+
+                RefreshTexturePathMap();
+
+                foreach (var mod in LoadedModManager.RunningMods)
+                {
+                    foreach (var texture in mod.textures.contentList.Values)
+                    {
+                        texturesByMods[texture] = mod;
+                    }
+                }
+
+                foreach (var pawnKind in DefDatabase<PawnKindDef>.AllDefs)
+                {
+                    var modContent = pawnKind.modContentPack;
+                    if (modContent != null && modContent.IsOfficialMod)
+                    {
+                        continue;
+                    }
+                    if (pawnKind.lifeStages != null)
+                    {
+                        foreach (var lifeStage in pawnKind.lifeStages)
+                        {
+                            if (lifeStage.bodyGraphicData != null)
+                            {
+                                AddEntry(TextureType.Pawn, pawnKind.race, lifeStage.bodyGraphicData.Graphic);
+                                if (lifeStage.dessicatedBodyGraphicData != null)
+                                {
+                                    AddEntry(TextureType.Pawn, pawnKind.race, lifeStage.dessicatedBodyGraphicData.Graphic);
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+                foreach (var styleDef in DefDatabase<StyleCategoryDef>.AllDefs)
+                {
+                    var modContent = styleDef.modContentPack;
+                    if (modContent != null && modContent.IsOfficialMod)
+                    {
+                        continue;
+                    }
+                    foreach (var style in styleDef.thingDefStyles)
+                    {
+                        var type = GetTextureType(style.ThingDef);
+                        AddEntry(type, style.ThingDef, style.StyleDef.Graphic);
+                        if (style.StyleDef.wornGraphicPath.NullOrEmpty() is false)
+                        {
+                            foreach (var bodyType in DefDatabase<BodyTypeDef>.AllDefs)
+                            {
+                                if (TryGetGraphicApparel(style.ThingDef, style.StyleDef.wornGraphicPath, bodyType, out var graphic))
+                                {
+                                    AddEntry(type, style.ThingDef, graphic);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                foreach (var def in DefDatabase<BuildableDef>.AllDefs)
+                {
+                    var modContent = def.modContentPack;
+                    if (modContent != null && modContent.IsOfficialMod)
+                    {
+                        continue;
+                    }
+                    if (def is TerrainDef terrain)
+                    {
+                        FillEntry(TextureType.Terrain, def);
+                    }
+                    else if (def is ThingDef thingDef)
+                    {
+                        var type = GetTextureType(thingDef);
+                        FillEntry(type, thingDef);
+                        if (type == TextureType.Apparel)
+                        {
+                            foreach (var bodyType in DefDatabase<BodyTypeDef>.AllDefs)
+                            {
+                                if (TryGetGraphicApparel(thingDef, thingDef.apparel.wornGraphicPath, bodyType, out var graphic))
+                                {
+                                    AddEntry(type, def, graphic);
+                                }
+                                if (thingDef.apparel.wornGraphicPaths != null)
+                                {
+                                    foreach (var path in thingDef.apparel.wornGraphicPaths)
+                                    {
+                                        if (TryGetGraphicApparel(thingDef, path, bodyType, out var graphic2))
+                                        {
+                                            AddEntry(type, def, graphic2);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else if (type == TextureType.Plant || type == TextureType.Tree)
+                        {
+                            if (thingDef.plant.leaflessGraphic != null)
+                            {
+                                AddEntry(type, def, thingDef.plant.leaflessGraphic);
+                            }
+                            if (thingDef.plant.immatureGraphic != null)
+                            {
+                                AddEntry(type, def, thingDef.plant.immatureGraphic);
+                            }
+                            if (thingDef.plant.pollutedGraphic != null)
+                            {
+                                AddEntry(type, def, thingDef.plant.pollutedGraphic);
+                            }
+                        }
+                    }
+                }
+
+                List<TextureResizeCandidate> texturesToResize = new List<TextureResizeCandidate>();
+                foreach (var texture in texturesByPaths)
+                {
+                    if (texturesByMods.TryGetValue(texture.Key, out var mod))
+                    {
+                        // TODO: 考慮改用可設定的排除清單（LTO Colony Groups 的紋理含 UI 元素，不適合縮放）
+                        /*if (mod.PackageIdPlayerFacing == "DerekBickley.LTOColonyGroupsFinal")
+                        {
+                            continue;
+                        }*/
+                    }
+                    var sourceWidth = texture.Key.width;
+                    var sourceHeight = texture.Key.height;
+                    TryGetImageDimensions(texture.Value, ref sourceWidth, ref sourceHeight);
+
+                    if (texturesByDefs.TryGetValue(texture.Key, out var value)
+                        && TryGetResizeTarget(texture.Key, value.Key, out var targetSize)
+                        && (sourceWidth > targetSize || sourceHeight > targetSize))
+                    {
+                        texturesToResize.Add(new TextureResizeCandidate
+                        {
+                            source = texture.Key,
+                            path = texture.Value,
+                            targetSize = targetSize,
+                            originalWidth = sourceWidth,
+                            originalHeight = sourceHeight
+                        });
+                    }
+                }
+                if (texturesToResize.Any())
+                {
+                    foreach (var entry in texturesToResize)
+                    {
+                        ResizeTexture(entry);
+                    }
+                    Log.Warning("Downscaled " + texturesToResize.Count + " textures (cached, originals untouched)");
+                    ReplaceTextureCacheDirectory(stagingDirectory);
+                    LogResizeSummary(texturesToResize.Count);
+                }
+                else
+                {
+                    lock (cacheLock)
+                    {
+                        resizedTextureCache = previousCacheMap;
+                    }
+                    activeCacheDirectory = previousCacheDirectory;
+                    md5HashCache.Clear();
+                    if (Directory.Exists(stagingDirectory))
+                    {
+                        Directory.Delete(stagingDirectory, true);
+                    }
+                    Log.Warning("[FasterGameLoading] No full-size textures found to downscale. Existing texture cache was left unchanged.");
+                    LogResizeSummary(0);
+                }
+
+                // 持久化快取對照表
+                LoadedModManager.GetMod<FasterGameLoadingMod>().WriteSettings();
             }
             finally
             {
@@ -477,9 +477,7 @@ namespace FasterGameLoading
 
                 using (var stream = File.OpenRead(path))
                 {
-                    return TryReadPngDimensions(stream, ref width, ref height)
-                        || TryReadJpegDimensions(stream, ref width, ref height)
-                        || TryReadDdsDimensions(stream, ref width, ref height);
+                    return TryReadPngDimensions(stream, ref width, ref height);
                 }
             }
             catch
@@ -507,92 +505,9 @@ namespace FasterGameLoading
             return width > 0 && height > 0;
         }
 
-        private static bool TryReadJpegDimensions(Stream stream, ref int width, ref int height)
-        {
-            stream.Position = 0;
-            if (stream.ReadByte() != 0xFF || stream.ReadByte() != 0xD8)
-            {
-                return false;
-            }
-
-            while (stream.Position < stream.Length)
-            {
-                int markerPrefix = stream.ReadByte();
-                if (markerPrefix != 0xFF)
-                {
-                    continue;
-                }
-
-                int marker = stream.ReadByte();
-                while (marker == 0xFF)
-                {
-                    marker = stream.ReadByte();
-                }
-
-                if (marker < 0)
-                {
-                    return false;
-                }
-
-                if (marker == 0x01 || marker == 0xD9 || (marker >= 0xD0 && marker <= 0xD7))
-                {
-                    continue;
-                }
-
-                int segmentLength = ReadBigEndianUInt16(stream);
-                if (segmentLength < 2 || stream.Position + segmentLength - 2 > stream.Length)
-                {
-                    return false;
-                }
-
-                if ((marker >= 0xC0 && marker <= 0xC3) || (marker >= 0xC5 && marker <= 0xC7)
-                    || (marker >= 0xC9 && marker <= 0xCB) || (marker >= 0xCD && marker <= 0xCF))
-                {
-                    stream.ReadByte();
-                    height = ReadBigEndianUInt16(stream);
-                    width = ReadBigEndianUInt16(stream);
-                    return width > 0 && height > 0;
-                }
-
-                stream.Position += segmentLength - 2;
-            }
-
-            return false;
-        }
-
-        private static bool TryReadDdsDimensions(Stream stream, ref int width, ref int height)
-        {
-            stream.Position = 0;
-            var header = new byte[20];
-            if (stream.Read(header, 0, header.Length) != header.Length)
-            {
-                return false;
-            }
-
-            if (header[0] != 0x44 || header[1] != 0x44 || header[2] != 0x53 || header[3] != 0x20)
-            {
-                return false;
-            }
-
-            height = BitConverter.ToInt32(header, 12);
-            width = BitConverter.ToInt32(header, 16);
-            return width > 0 && height > 0;
-        }
-
         private static int ReadBigEndianInt32(byte[] bytes, int offset)
         {
             return (bytes[offset] << 24) | (bytes[offset + 1] << 16) | (bytes[offset + 2] << 8) | bytes[offset + 3];
-        }
-
-        private static int ReadBigEndianUInt16(Stream stream)
-        {
-            int high = stream.ReadByte();
-            int low = stream.ReadByte();
-            if (high < 0 || low < 0)
-            {
-                return -1;
-            }
-            return (high << 8) | low;
         }
 
         private static void LogResizeSummary(int resizedCount)

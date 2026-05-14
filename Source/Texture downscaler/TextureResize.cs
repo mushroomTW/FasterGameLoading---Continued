@@ -589,15 +589,7 @@ namespace FasterGameLoading
             {
                 shader = ShaderDatabase.CutoutComplex;
             }
-            Log_Error_Patch.suppressErrorMessages = true;
-            try
-            {
-                rec = GraphicDatabase.Get<Graphic_Multi>(path, shader, def.graphicData.drawSize, Color.white);
-            }
-            finally
-            {
-                Log_Error_Patch.suppressErrorMessages = false;
-            }
+            rec = GraphicDatabase.Get<Graphic_Multi>(path, shader, def.graphicData.drawSize, Color.white);
             return true;
         }
 

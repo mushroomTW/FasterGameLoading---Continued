@@ -19,8 +19,12 @@ namespace FasterGameLoading
             FasterGameLoadingSettings.loadedTypesByFullNameSinceLastSession = GenTypes_GetTypeInAnyAssemblyInt_Patch.loadedTypesThisSession;
             FasterGameLoadingSettings.successfulXMLPathsSinceLastSession = XmlNode_SelectSingleNode_Patch.successfulXMLPathsThisSession;
             FasterGameLoadingSettings.failedXMLPathsSinceLastSession = XmlNode_SelectSingleNode_Patch.failedXMLPathsThisSession;
-            LoadedModManager.GetMod<FasterGameLoadingMod>().WriteSettings();
-            TranslationInjector.InjectTranslations();
+TranslationInjector.InjectTranslations();
+            // 將設定寫入排到載入完成後，避免同步阻塞啟動過程
+            LongEventHandler.toExecuteWhenFinished.Add(delegate
+            {
+                LoadedModManager.GetMod<FasterGameLoadingMod>().WriteSettings();
+            });
             LongEventHandler.toExecuteWhenFinished.Add(delegate
             {
                 FasterGameLoadingMod.delayedActions.StartCoroutine(FasterGameLoadingMod.delayedActions.PerformActions());

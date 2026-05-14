@@ -3,10 +3,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using UnityEngine;
 using Verse;
 using Verse.Sound;
@@ -26,12 +24,21 @@ namespace FasterGameLoading
         private Stopwatch stopwatch = new();
         private Queue<ModContentPack> pendingEarlyLoads;
         private bool earlyLoadingComplete;
-        private Task fileWarmupTask;
+        private int consecutiveTimeouts;
+        private const int TIMEOUT_THRESHOLD = 3;
+        private int skipFrames;
+        private const int SKIP_FRAME_COUNT = 5;
         private bool ElapsedMaxImpact => (float)stopwatch.ElapsedTicks / Stopwatch.Frequency >= MaxImpactThisFrame;
         public void LateUpdate()
         {
             if (earlyLoadingComplete || !FasterGameLoadingSettings.earlyModContentLoading)
                 return;
+
+            if (skipFrames > 0)
+            {
+                skipFrames--;
+                return;
+            }
 
             if (pendingEarlyLoads == null)
             {
@@ -39,20 +46,6 @@ namespace FasterGameLoading
                     .Where(x => !ModContentPack_ReloadContentInt_Patch.loadedMods.Contains(x))
                     .ToList();
                 pendingEarlyLoads = new Queue<ModContentPack>(modsToLoad);
-
-                // 背景預熱 OS 檔案快取，只枚舉 ReloadContentInt 會實際讀取的檔案型別
-                fileWarmupTask = Task.Run(() =>
-                {
-                    foreach (var mod in modsToLoad)
-                    {
-                        try
-                        {
-                            foreach (var ext in new[] { "*.xml", "*.dll", "*.dylib", "*.so" })
-                                Directory.GetFiles(mod.RootDir, ext, SearchOption.AllDirectories);
-                        }
-                        catch { }
-                    }
-                });
             }
 
             stopwatch.Restart();
@@ -73,20 +66,32 @@ namespace FasterGameLoading
                 }
                 // 用完時間預算就讓出這幀，下幀繼續
                 if (ElapsedMaxImpact)
+                {
+                    consecutiveTimeouts++;
+                    if (consecutiveTimeouts >= TIMEOUT_THRESHOLD)
+                    {
+                        consecutiveTimeouts = 0;
+                        skipFrames = SKIP_FRAME_COUNT;
+                    }
                     return;
+                }
+                else
+                {
+                    consecutiveTimeouts = 0;
+                }
             }
 
             earlyLoadingComplete = true;
-            fileWarmupTask = null;
         }
 
         public void ResetEarlyLoading()
         {
             pendingEarlyLoads = null;
             earlyLoadingComplete = false;
-            fileWarmupTask = null;
             AllDeferredVisualsLoaded = false;
             AdaptiveStaticAtlasBakeFailed = false;
+            consecutiveTimeouts = 0;
+            skipFrames = 0;
         }
 
         public IEnumerator PerformActions()
@@ -101,25 +106,28 @@ namespace FasterGameLoading
                 {
                     yield return 0;
                 }
-                var (def, action) = graphicsToLoad.Dequeue();
-                try
+                // 批次處理：在時間預算內盡量多處理項目
+                while (graphicsToLoad.Count > 0 && !ElapsedMaxImpact)
                 {
-                    action();
-                    loadedDefs.Add(def);
+                    var (def, action) = graphicsToLoad.Dequeue();
+                    try
+                    {
+                        action();
+                        loadedDefs.Add(def);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Warning("[FasterGameLoading] Error loading graphic for " + def + ": " + ex);
+                    }
+                    count++;
+                    def.plant?.PostLoadSpecial(def);
                 }
-                catch (Exception ex)
+
+                if (graphicsToLoad.Count > 0)
                 {
-                    Log.Warning("[FasterGameLoading] Error loading graphic for " + def + ": " + ex);
-                }
-                count++;
-                if (ElapsedMaxImpact)
-                {
-                    count = 0;
                     yield return 0;
                     stopwatch.Restart();
                 }
-
-                def.plant?.PostLoadSpecial(def);
             }
             Log.Message("[FasterGameLoading] Finished loading graphics");
 
@@ -200,25 +208,28 @@ namespace FasterGameLoading
                 {
                     yield return 0;
                 }
-                var (def, action) = iconsToLoad.Dequeue();
-                if (def.uiIcon == BaseContent.BadTex)
+                // 批次處理：在時間預算內盡量多處理項目
+                while (iconsToLoad.Count > 0 && !ElapsedMaxImpact)
                 {
-                    try
+                    var (def, action) = iconsToLoad.Dequeue();
+                    if (def.uiIcon == BaseContent.BadTex)
                     {
-                        action();
+                        try
+                        {
+                            action();
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Warning("[FasterGameLoading] Error loading icon for " + def + ": " + ex);
+                        }
+                        count++;
                     }
-                    catch (Exception ex)
-                    {
-                        Log.Warning("[FasterGameLoading] Error loading icon for " + def + ": " + ex);
-                    }
-                    count++;
+                }
 
-                    if (ElapsedMaxImpact)
-                    {
-                        count = 0;
-                        yield return 0;
-                        stopwatch.Restart();
-                    }
+                if (iconsToLoad.Count > 0)
+                {
+                    yield return 0;
+                    stopwatch.Restart();
                 }
             }
 
@@ -228,19 +239,23 @@ namespace FasterGameLoading
             Log.Message("[FasterGameLoading] Starting resolving SubSoundDefs: " + subSoundDefToResolve.Count);
             while (subSoundDefToResolve.Count > 0)
             {
-                var (def, action) = subSoundDefToResolve.Dequeue();
-                try
+                // 批次處理：在時間預算內盡量多處理項目
+                while (subSoundDefToResolve.Count > 0 && !ElapsedMaxImpact)
                 {
-                    action();
+                    var (def, action) = subSoundDefToResolve.Dequeue();
+                    try
+                    {
+                        action();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Warning("[FasterGameLoading] Error resolving AudioGrain for " + def + ": " + ex);
+                    }
+                    count++;
                 }
-                catch (Exception ex)
+
+                if (subSoundDefToResolve.Count > 0)
                 {
-                    Log.Warning("[FasterGameLoading] Error resolving AudioGrain for " + def + ": " + ex);
-                }
-                count++;
-                if (ElapsedMaxImpact)
-                {
-                    count = 0;
                     yield return 0;
                     stopwatch.Restart();
                 }
@@ -419,4 +434,3 @@ namespace FasterGameLoading
         }
     }
 }
-

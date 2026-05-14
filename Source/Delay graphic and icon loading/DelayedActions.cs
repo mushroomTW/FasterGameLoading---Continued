@@ -200,6 +200,7 @@ namespace FasterGameLoading
             }
 
             count = 0;
+            stopwatch.Restart();
 
             Log.Message("[FasterGameLoading] Starting loading icons: " + iconsToLoad.Count);
             while (iconsToLoad.Count > 0)
@@ -236,6 +237,7 @@ namespace FasterGameLoading
             Log.Message("[FasterGameLoading] Finished loading icons");
 
             count = 0;
+            stopwatch.Restart();
             Log.Message("[FasterGameLoading] Starting resolving SubSoundDefs: " + subSoundDefToResolve.Count);
             while (subSoundDefToResolve.Count > 0)
             {

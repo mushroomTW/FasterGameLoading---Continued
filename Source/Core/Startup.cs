@@ -17,8 +17,7 @@ namespace FasterGameLoading
                 + ", failures: " + ModContentLoaderTexture2D_LoadTexture_Patch.cacheLoadFailures
                 + ", configured entries: " + TextureResize.CacheCount);
             FasterGameLoadingSettings.loadedTypesByFullNameSinceLastSession = GenTypes_GetTypeInAnyAssemblyInt_Patch.loadedTypesThisSession;
-            FasterGameLoadingSettings.successfulXMLPathsSinceLastSession = XmlNode_SelectSingleNode_Patch.successfulXMLPathsThisSession;
-            FasterGameLoadingSettings.failedXMLPathsSinceLastSession = XmlNode_SelectSingleNode_Patch.failedXMLPathsThisSession;
+            FasterGameLoadingSettings.xmlPathsSinceLastSession = new System.Collections.Generic.Dictionary<string, bool>(XmlNode_SelectSingleNode_Patch.xmlPathsThisSession);
 TranslationInjector.InjectTranslations();
             // 將設定寫入排到載入完成後，避免同步阻塞啟動過程
             LongEventHandler.toExecuteWhenFinished.Add(delegate

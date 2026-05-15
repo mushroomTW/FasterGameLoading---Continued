@@ -12,8 +12,7 @@ namespace FasterGameLoading
         public static Dictionary<string, ModContentPack> modsByPackageIds = new Dictionary<string, ModContentPack>();
         public static Dictionary<string, string> loadedTypesByFullNameSinceLastSession = new Dictionary<string, string>();
         public static List<string> modsInLastSession = new List<string>();
-        public static HashSet<string> successfulXMLPathsSinceLastSession = new HashSet<string>();
-        public static HashSet<string> failedXMLPathsSinceLastSession = new HashSet<string>();
+        public static Dictionary<string, bool> xmlPathsSinceLastSession = new Dictionary<string, bool>();
         public static bool delayGraphicLoading = false;
         public static bool earlyModContentLoading = true;
         public static bool StaticAtlasesBaking = true;
@@ -94,8 +93,7 @@ namespace FasterGameLoading
             base.ExposeData();
             Scribe_Collections.Look(ref loadedTexturesSinceLastSession, "loadedTexturesSinceLastSession", LookMode.Value, LookMode.Value);
             Scribe_Collections.Look(ref loadedTypesByFullNameSinceLastSession, "loadedTypesByFullNameSinceLastSession", LookMode.Value, LookMode.Value);
-            Scribe_Collections.Look(ref successfulXMLPathsSinceLastSession, "successfulXMLPathsSinceLastSession", LookMode.Value);
-            Scribe_Collections.Look(ref failedXMLPathsSinceLastSession, "failedXMLPathsSinceLastSession", LookMode.Value);
+            Scribe_Collections.Look(ref xmlPathsSinceLastSession, "xmlPathsSinceLastSession", LookMode.Value, LookMode.Value);
             Scribe_Collections.Look(ref modsInLastSession, "modsInLastSession", LookMode.Value);
             Scribe_Collections.Look(ref TextureResize.resizedTextureCache, "resizedTextureCache", LookMode.Value, LookMode.Value);
             Scribe_Collections.Look(ref historicalBakeSpeeds, "historicalBakeSpeeds", LookMode.Value, LookMode.Value);
@@ -107,8 +105,7 @@ namespace FasterGameLoading
             {
                 loadedTexturesSinceLastSession ??= new Dictionary<string, string>();
                 loadedTypesByFullNameSinceLastSession ??= new Dictionary<string, string>();
-                failedXMLPathsSinceLastSession ??= new HashSet<string>();
-                successfulXMLPathsSinceLastSession ??= new HashSet<string>();
+                xmlPathsSinceLastSession ??= new Dictionary<string, bool>();
                 modsInLastSession ??= new List<string>();
                 historicalBakeSpeeds ??= new List<float>();
                 TextureResize.resizedTextureCache ??= new Dictionary<string, string>();
@@ -126,8 +123,7 @@ namespace FasterGameLoading
                 {
                     loadedTexturesSinceLastSession.Clear();
                     loadedTypesByFullNameSinceLastSession.Clear();
-                    failedXMLPathsSinceLastSession.Clear();
-                    successfulXMLPathsSinceLastSession.Clear();
+                    xmlPathsSinceLastSession.Clear();
                     TextureResize.ClearCache();
                     StaticAtlasCache.ClearCache();
                 }

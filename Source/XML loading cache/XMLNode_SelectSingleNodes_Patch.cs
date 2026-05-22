@@ -14,10 +14,15 @@ namespace FasterGameLoading
         /// </summary>
         public static ConcurrentDictionary<string, bool> xmlPathsThisSession = new ConcurrentDictionary<string, bool>();
 
+        static XmlNode_SelectSingleNode_Patch()
+        {
+            CacheResetter.Register(() => xmlPathsThisSession.Clear());
+        }
+
         public static bool Prefix(string xpath)
         {
             // 單一次 TryGetValue 查詢，取代原先兩次 Contains 呼叫
-            if (FasterGameLoadingSettings.xmlPathsSinceLastSession.TryGetValue(xpath, out bool succeeded) && !succeeded)
+            if (SessionCache.xmlPathsSinceLastSession.TryGetValue(xpath, out bool succeeded) && !succeeded)
             {
                 return false;
             }

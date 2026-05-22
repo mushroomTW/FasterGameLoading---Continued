@@ -11,7 +11,7 @@ namespace FasterGameLoading
         public static bool Prefix(ref Type __result, out (bool, string) __state, ref string name)
         {
             var oldName = name;
-            if (FasterGameLoadingSettings.loadedTypesByFullNameSinceLastSession.TryGetValue(name, out var fullName))
+            if (SessionCache.loadedTypesByFullNameSinceLastSession.TryGetValue(name, out var fullName))
             {
                 name = fullName;
             }
@@ -35,7 +35,7 @@ namespace FasterGameLoading
                 GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults[name] = __result;
                 if (__result != null && __result.FullName != name)
                 {
-                    FasterGameLoadingSettings.loadedTypesByFullNameSinceLastSession[__state.Item2] = __result.FullName;
+                    SessionCache.loadedTypesByFullNameSinceLastSession[__state.Item2] = __result.FullName;
                     GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults[__result.FullName] = __result;
                 }
             }

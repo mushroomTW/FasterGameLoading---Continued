@@ -11,6 +11,11 @@ namespace FasterGameLoading
         public static Dictionary<string, Type> cachedResults = new Dictionary<string, Type>();
         public static Dictionary<string, string> loadedTypesThisSession = new Dictionary<string, string>();
 
+        static GenTypes_GetTypeInAnyAssemblyInt_Patch()
+        {
+            CacheResetter.Register(() => ClearCache());
+        }
+
         public static void ClearCache()
         {
             cachedResults.Clear();
@@ -28,7 +33,7 @@ namespace FasterGameLoading
             else
             {
                 __state = new(typeName, false);
-                if (FasterGameLoadingSettings.loadedTypesByFullNameSinceLastSession.TryGetValue(typeName, out var fullName))
+                if (SessionCache.loadedTypesByFullNameSinceLastSession.TryGetValue(typeName, out var fullName))
                 {
                     typeName = fullName;
                 }

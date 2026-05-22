@@ -11,6 +11,11 @@ namespace FasterGameLoading
     {
         public static Dictionary<Type, HashSet<Type>> keyValuePairs = new Dictionary<Type, HashSet<Type>>();
 
+        static GenTypes_AllLeafSubclasses_Patch()
+        {
+            CacheResetter.Register(() => ClearCache());
+        }
+
         public static void ClearCache()
         {
             keyValuePairs.Clear();

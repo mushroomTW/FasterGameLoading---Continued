@@ -10,49 +10,14 @@ namespace FasterGameLoading
         /// 語言切換會觸發 ClearAllPlayData + LoadAllPlayData，
         /// Unity 的 Texture2D 物件會被銷毀，但我們的快取仍持有 C# 引用（已成 null）。
         /// 必須清除所有快取，讓重載流程完整執行。
+        ///
+        /// 各目錄的快取清理邏輯已分散註冊至 CacheResetter，
+        /// 新增快取時只需在該類別加一行 CacheResetter.Register(...) 即可，
+        /// 不需要再修改這裡。
         /// </summary>
         public static void Prefix()
         {
-            // 允許 ReloadContentInt 重新執行
-            ModContentPack_ReloadContentInt_Patch.loadedMods.Clear();
-
-            // 允許 AssetBundle ReloadAll 重新執行
-            ModAssetBundlesHandler_ReloadAll_Patch.reloadedHandlers.Clear();
-
-            // 清除紋理快取（Texture2D 物件會被 Unity 銷毀）
-            ModContentLoaderTexture2D_LoadTexture_Patch.savedTextures.Clear();
-            ModContentLoaderTexture2D_LoadTexture_Patch.loadedTexturesThisSession.Clear();
-
-            // 清除圖形快取（引用了已銷毀的 cachedGraphic）
-            GraphicData_Init_Patch.savedGraphics.Clear();
-
-            // 清除 XML path 快取（不同語言可能有不同的有效 XPath）
-            XmlNode_SelectSingleNode_Patch.xmlPathsThisSession.Clear();
-
-            // 清除 mod 引用快取（ModContentPack 實例可能被重建）
-            FasterGameLoadingSettings.modsByPackageIds.Clear();
-
-            // 清除型別查詢快取
-            GenTypes_GetTypeInAnyAssemblyInt_Patch.ClearCache();
-            GenTypes_AllLeafSubclasses_Patch.ClearCache();
-
-            // 重置延遲載入狀態
-            DelayedActions.AllDeferredVisualsLoaded = false;
-            if (FasterGameLoadingMod.delayedActions != null)
-            {
-                FasterGameLoadingMod.delayedActions.StopAllCoroutines(); // 確保舊協程停止
-                FasterGameLoadingMod.delayedActions.graphicsToLoad.Clear();
-                FasterGameLoadingMod.delayedActions.iconsToLoad.Clear();
-                FasterGameLoadingMod.delayedActions.subSoundDefToResolve.Clear();
-                FasterGameLoadingMod.delayedActions.ResetEarlyLoading();
-            }
-
-            // 重新啟用 SoundStarter patch（會在 DelayedActions.PerformActions 結束時 unpatch）
-            try
-            {
-                FasterGameLoadingMod.harmony.PatchCategory("SoundStarter");
-            }
-            catch { /* 如果已 patched 就忽略 */ }
+            CacheResetter.ResetAll();
         }
     }
 }

@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{97FA1308-3ED7-41D8-827D-0CC3A3291EE8}|FasterGameLoading.csproj|c:\\program files (x86)\\steam\\steamapps\\common\\rimworld\\mods\\fastergameloading---continued\\source\\early mod content loading\\alienracescompat.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{97FA1308-3ED7-41D8-827D-0CC3A3291EE8}|FasterGameLoading.csproj|solutionrelative:early mod content loading\\alienracescompat.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{97FA1308-3ED7-41D8-827D-0CC3A3291EE8}|FasterGameLoading.csproj|c:\\program files (x86)\\steam\\steamapps\\common\\rimworld\\mods\\fastergameloading---continued\\source\\texture downscaler\\textureresize.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{97FA1308-3ED7-41D8-827D-0CC3A3291EE8}|FasterGameLoading.csproj|solutionrelative:texture downscaler\\textureresize.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
@@ -23,12 +27,25 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "AlienRacesCompat.cs",
+              "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\Early mod content loading\\AlienRacesCompat.cs",
+              "RelativeDocumentMoniker": "Early mod content loading\\AlienRacesCompat.cs",
+              "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\Early mod content loading\\AlienRacesCompat.cs",
+              "RelativeToolTip": "Early mod content loading\\AlienRacesCompat.cs",
+              "ViewState": "AgIAADkAAAAAAAAAAAAIwFIAAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-21T13:42:29.322Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "TextureResize.cs",
               "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\Texture downscaler\\TextureResize.cs",
               "RelativeDocumentMoniker": "Texture downscaler\\TextureResize.cs",
               "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\Texture downscaler\\TextureResize.cs",
               "RelativeToolTip": "Texture downscaler\\TextureResize.cs",
-              "ViewState": "AgIAACwCAAAAAAAAAAAIwEoCAAAyAAAAAAAAAA==",
+              "ViewState": "AgIAAEMBAAAAAAAAAAAiwGIBAAA7AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-05-14T09:54:48.017Z",
               "EditorCaption": ""

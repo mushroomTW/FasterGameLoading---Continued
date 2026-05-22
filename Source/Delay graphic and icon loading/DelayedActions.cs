@@ -21,6 +21,16 @@ namespace FasterGameLoading
 
         public static bool AllDeferredVisualsLoaded = false;
         public static bool AdaptiveStaticAtlasBakeFailed = false;
+
+        static DelayedActions()
+        {
+            CacheResetter.Register(() =>
+            {
+                AllDeferredVisualsLoaded = false;
+                AdaptiveStaticAtlasBakeFailed = false;
+            });
+        }
+
         private Stopwatch stopwatch = new();
         private Queue<ModContentPack> pendingEarlyLoads;
         private bool earlyLoadingComplete;
@@ -289,7 +299,7 @@ namespace FasterGameLoading
             const float PACK_DENSITY = 0.8f;
 
             float measuredBakeSpeed_PixelsPerSecond;
-            if (FasterGameLoadingSettings.historicalBakeSpeeds.Count == 0)
+            if (SessionCache.historicalBakeSpeeds.Count == 0)
             {
                 // First run - use existing conservative estimate
                 measuredBakeSpeed_PixelsPerSecond = 2_000_000f;
@@ -299,12 +309,11 @@ namespace FasterGameLoading
                 // Calculate weighted average from history
                 float weightedSum = 0f;
                 float weightSum = 0f;
-                int count = Math.Min(FasterGameLoadingSettings.historicalBakeSpeeds.Count, FasterGameLoadingSettings.WEIGHTS.Length);
-                
+                int count = Math.Min(SessionCache.historicalBakeSpeeds.Count, SessionCache.WEIGHTS.Length);
                 for (int i = 0; i < count; i++)
                 {
-                    weightedSum += FasterGameLoadingSettings.historicalBakeSpeeds[i] * FasterGameLoadingSettings.WEIGHTS[i];
-                    weightSum += FasterGameLoadingSettings.WEIGHTS[i];
+                    weightedSum += SessionCache.historicalBakeSpeeds[i] * SessionCache.WEIGHTS[i];
+                    weightSum += SessionCache.WEIGHTS[i];
                 }
                 
                 measuredBakeSpeed_PixelsPerSecond = weightedSum / weightSum;
@@ -416,12 +425,10 @@ namespace FasterGameLoading
             }
 
             // Add current session's final speed to history
-            FasterGameLoadingSettings.historicalBakeSpeeds.Insert(0, measuredBakeSpeed_PixelsPerSecond);
-
-            // Maintain history size limit
-            if (FasterGameLoadingSettings.historicalBakeSpeeds.Count > FasterGameLoadingSettings.HISTORY_SIZE)
+            SessionCache.historicalBakeSpeeds.Insert(0, measuredBakeSpeed_PixelsPerSecond);
+            if (SessionCache.historicalBakeSpeeds.Count > SessionCache.HISTORY_SIZE)
             {
-                FasterGameLoadingSettings.historicalBakeSpeeds.RemoveAt(FasterGameLoadingSettings.HISTORY_SIZE);
+                SessionCache.historicalBakeSpeeds.RemoveAt(SessionCache.HISTORY_SIZE);
             }
 
             // Prevent vanilla BakeStaticAtlases from re-processing the same queue

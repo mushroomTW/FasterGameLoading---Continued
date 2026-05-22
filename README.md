@@ -1,4 +1,5 @@
 [![RimWorld 1.6](https://img.shields.io/badge/RimWorld-1.6-brightgreen.svg)](http://rimworldgame.com/)
+
 === Does loading take forever? This mod is for you! ===
 
 Sick of staring at the loading screen every time you start RimWorld? This mod cuts down startup time using several tricks that work in the background, so the game loads faster without changing any gameplay.

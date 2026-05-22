@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -8,28 +7,19 @@ namespace FasterGameLoading
 {
     public class FasterGameLoadingSettings : ModSettings
     {
-        public static Dictionary<string, string> loadedTexturesSinceLastSession = new Dictionary<string, string>();
-        public static Dictionary<string, ModContentPack> modsByPackageIds = new Dictionary<string, ModContentPack>();
-        public static Dictionary<string, string> loadedTypesByFullNameSinceLastSession = new Dictionary<string, string>();
-        public static List<string> modsInLastSession = new List<string>();
-        public static Dictionary<string, bool> xmlPathsSinceLastSession = new Dictionary<string, bool>();
+        // ── 使用者可設定的功能開關 ──
+
+        /// <summary>延遲非必要圖形/圖示載入（預設關閉）</summary>
         public static bool delayGraphicLoading = false;
+
+        /// <summary>提早載入 Mod 內容（預設開啟）</summary>
         public static bool earlyModContentLoading = true;
+
+        /// <summary>自適應靜態圖集烘焙（預設開啟）</summary>
         public static bool StaticAtlasesBaking = true;
+
+        /// <summary>圖集快取（預設關閉）</summary>
         public static bool atlasCaching = false;
-        public static List<float> historicalBakeSpeeds = new List<float>();
-        public const int HISTORY_SIZE = 5;
-        public static readonly float[] WEIGHTS = { 0.4f, 0.3f, 0.2f, 0.1f };
-        public static ModContentPack GetModContent(string packageId)
-        {
-            var packageLower = packageId.ToLower();
-            if (!modsByPackageIds.TryGetValue(packageLower, out var mod))
-            {
-                modsByPackageIds[packageLower] = mod = LoadedModManager.RunningModsListForReading.FirstOrDefault(x =>
-                    x.PackageIdPlayerFacing.ToLower() == packageLower);
-            }
-            return mod;
-        }
 
         public static void DoSettingsWindowContents(Rect inRect)
         {
@@ -51,7 +41,7 @@ namespace FasterGameLoading
             ls.Gap(4f);
             if (ls.ButtonText("FGL_DownscaleTextures".Translate()))
             {
-                Find.WindowStack.Add(new Dialog_MessageBox("FGL_TextureResizingConfirmation".Translate(), "Confirm".Translate(), delegate
+                Find.WindowStack.Add(new Dialog_MessageBox("FGL_DownscaleTexturesConfirmation".Translate(), "Confirm".Translate(), delegate
                 {
                     TextureResize.DoTextureResizing();
                 }, "GoBack".Translate()));
@@ -87,48 +77,21 @@ namespace FasterGameLoading
             ls.End();
         }
 
-
         public override void ExposeData()
         {
             base.ExposeData();
-            Scribe_Collections.Look(ref loadedTexturesSinceLastSession, "loadedTexturesSinceLastSession", LookMode.Value, LookMode.Value);
-            Scribe_Collections.Look(ref loadedTypesByFullNameSinceLastSession, "loadedTypesByFullNameSinceLastSession", LookMode.Value, LookMode.Value);
-            Scribe_Collections.Look(ref xmlPathsSinceLastSession, "xmlPathsSinceLastSession", LookMode.Value, LookMode.Value);
-            Scribe_Collections.Look(ref modsInLastSession, "modsInLastSession", LookMode.Value);
-            Scribe_Collections.Look(ref TextureResize.resizedTextureCache, "resizedTextureCache", LookMode.Value, LookMode.Value);
-            Scribe_Collections.Look(ref historicalBakeSpeeds, "historicalBakeSpeeds", LookMode.Value, LookMode.Value);
+
+            // 使用者設定
             Scribe_Values.Look(ref StaticAtlasesBaking, "StaticAtlasesBaking", true);
             Scribe_Values.Look(ref atlasCaching, "atlasCaching", false);
             Scribe_Values.Look(ref delayGraphicLoading, "delayGraphicLoading", false);
             Scribe_Values.Look(ref earlyModContentLoading, "earlyModContentLoading", true);
-            if (Scribe.mode == LoadSaveMode.PostLoadInit)
-            {
-                loadedTexturesSinceLastSession ??= new Dictionary<string, string>();
-                loadedTypesByFullNameSinceLastSession ??= new Dictionary<string, string>();
-                xmlPathsSinceLastSession ??= new Dictionary<string, bool>();
-                modsInLastSession ??= new List<string>();
-                historicalBakeSpeeds ??= new List<float>();
-                TextureResize.resizedTextureCache ??= new Dictionary<string, string>();
 
-                // 使用 hash 比較偵測 mod 組合變更，避免 O(n) SequenceEqual
-                int currentHash = 0;
-                foreach (var mod in ModsConfig.ActiveModsInLoadOrder)
-                    unchecked { currentHash = currentHash * 31 + mod.packageIdLowerCase.GetHashCode(); }
+            // 紋理快取
+            Scribe_Collections.Look(ref TextureResize.resizedTextureCache, "resizedTextureCache", LookMode.Value, LookMode.Value);
 
-                int lastHash = 0;
-                foreach (var modId in modsInLastSession)
-                    unchecked { lastHash = lastHash * 31 + modId.GetHashCode(); }
-
-                if (currentHash != lastHash)
-                {
-                    loadedTexturesSinceLastSession.Clear();
-                    loadedTypesByFullNameSinceLastSession.Clear();
-                    xmlPathsSinceLastSession.Clear();
-                    TextureResize.ClearCache();
-                    StaticAtlasCache.ClearCache();
-                }
-            }
+            // 跨 session 快取資料委派給 SessionCache
+            SessionCache.ExposeData();
         }
     }
 }
-

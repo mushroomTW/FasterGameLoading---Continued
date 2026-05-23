@@ -71,8 +71,6 @@ namespace FasterGameLoading
                     current.renderQueue == other.renderQueue &&
                     current.maskPath == other.maskPath)
                 {
-                    //current.damageData == other.damageData &&
-                    //current.shadowData == other.shadowData;
                     return true;
                 }
             }

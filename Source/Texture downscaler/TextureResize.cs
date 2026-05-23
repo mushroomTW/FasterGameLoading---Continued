@@ -49,9 +49,9 @@ namespace FasterGameLoading
                     return originalPath + "|" + file.Length + "|" + file.LastWriteTimeUtc.Ticks;
                 }
             }
-            catch
+            catch (Exception)
             {
-                // Fall back to the path-only key for virtual or inaccessible files.
+                // 無法讀取檔案資訊（路徑過長、權限不足等），改用純路徑作為快取鍵
             }
             return originalPath;
         }
@@ -345,14 +345,6 @@ namespace FasterGameLoading
             var texturesToResize = new List<TextureResizeCandidate>();
             foreach (var texture in texturesByPaths)
             {
-                if (texturesByMods.TryGetValue(texture.Key, out var mod))
-                {
-                    // TODO: 考慮改用可設定的排除清單（LTO Colony Groups 的紋理含 UI 元素，不適合縮放）
-                    /*if (mod.PackageIdPlayerFacing == "DerekBickley.LTOColonyGroupsFinal")
-                    {
-                        continue;
-                    }*/
-                }
                 var sourceWidth = texture.Key.width;
                 var sourceHeight = texture.Key.height;
                 TryGetImageDimensions(texture.Value, ref sourceWidth, ref sourceHeight);

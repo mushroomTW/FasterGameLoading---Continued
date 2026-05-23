@@ -1,49 +1,44 @@
 using HarmonyLib;
-using System;
-using System.Collections.Generic;
 using Verse;
 using Verse.Sound;
 
 namespace FasterGameLoading
 {
-  // Blocks play sound errors before SubSoundDef Resolved
-  [HarmonyPatchCategory("SoundStarter")]
-  [HarmonyPatch]
-  internal static class SoundStarter_Patch
-  {
-    [HarmonyPatch(typeof(SoundStarter))]
-    [HarmonyPatch("PlayOneShotOnCamera")]
-    [HarmonyPrefix]
-    static bool PlayOneShotOnCamera_Patch()
+    /// <summary>
+    /// 在 SubSoundDef 尚未解析完畢前，攔截所有聲音播放請求。
+    /// 避免提早播放導致 NullReferenceException 或播放損壞的音效。
+    /// 解析完成後由 World_FinalizeInit_Patch 呼叫 Unpatch() 恢復正常。
+    /// </summary>
+    [HarmonyPatchCategory("SoundStarter")]
+    [HarmonyPatch]
+    internal static class SoundStarter_Patch
     {
-      return false;
-    }
-    [HarmonyPatch(typeof(SoundStarter))]
-    [HarmonyPatch("PlayOneShot")]
-    [HarmonyPrefix]
-    static bool PlayOneShot_Patch()
-    {
-      return false;
-    }
-    [HarmonyPatch(typeof(SoundStarter))]
-    [HarmonyPatch("TrySpawnSustainer")]
-    [HarmonyPrefix]
-    static bool TrySpawnSustainer_Patch(ref Sustainer __result)
-    {
-      __result = null;
-      return false;
-    }
-    [HarmonyPatch(typeof(SubSoundDef), nameof(SubSoundDef.TryPlay))]
-    [HarmonyPrefix]
-    static bool TryPlay_Patch()
-    {
-      return false;
-    }
-    internal static void Unpatch()
-    {
-      FasterGameLoadingMod.harmony.UnpatchCategory("SoundStarter");
-    }
-  }
+        [HarmonyPatch(typeof(SoundStarter), "PlayOneShotOnCamera")]
+        [HarmonyPrefix]
+        static bool PlayOneShotOnCamera_Patch() => false;
 
+        [HarmonyPatch(typeof(SoundStarter), "PlayOneShot")]
+        [HarmonyPrefix]
+        static bool PlayOneShot_Patch() => false;
 
+        [HarmonyPatch(typeof(SoundStarter), "TrySpawnSustainer")]
+        [HarmonyPrefix]
+        static bool TrySpawnSustainer_Patch(ref Sustainer __result)
+        {
+            __result = null;
+            return false;
+        }
+
+        [HarmonyPatch(typeof(SubSoundDef), nameof(SubSoundDef.TryPlay))]
+        [HarmonyPrefix]
+        static bool TryPlay_Patch() => false;
+
+        /// <summary>
+        /// 取消此類別中所有 Harmony patch，恢復正常聲音播放。
+        /// </summary>
+        internal static void Unpatch()
+        {
+            FasterGameLoadingMod.harmony.UnpatchCategory("SoundStarter");
+        }
+    }
 }

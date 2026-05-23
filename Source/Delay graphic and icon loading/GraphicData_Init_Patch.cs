@@ -5,15 +5,24 @@ using Verse;
 
 namespace FasterGameLoading
 {
+    /// <summary>
+    /// 攔截 GraphicData.Init 以快取和重複使用完全相同的 GraphicData 實例。
+    /// 相同 texPath 且有相同參數的 GraphicData 會跳過重複的 Init 呼叫，
+    /// 直接複用已快取的 cachedGraphic。
+    /// </summary>
     [HarmonyPatch(typeof(GraphicData), "Init")]
     public static class GraphicData_Init_Patch
     {
+        /// <summary>
+        /// 以 texPath 為鍵的快取，值為所有使用該 texPath 的 GraphicData 列表。
+        /// </summary>
         public static ConcurrentDictionary<string, List<GraphicData>> savedGraphics = new ConcurrentDictionary<string, List<GraphicData>>();
 
         static GraphicData_Init_Patch()
         {
             CacheResetter.Register(() => savedGraphics.Clear());
         }
+
         public static bool Prefix(GraphicData __instance, out bool __state)
         {
             __state = false;
@@ -44,6 +53,11 @@ namespace FasterGameLoading
             }
         }
 
+        /// <summary>
+        /// 比較兩個 GraphicData 的關鍵屬性是否完全相同。
+        /// 只比較可直接存取的值型別欄位；shaderParameters 或 asymmetricLink
+        /// 不為 null 時需要深度比較（目前尚未實作），直接視為不同以避免快取錯誤。
+        /// </summary>
         public static bool IsSameGraphicData(GraphicData current, GraphicData other)
         {
             if (current.shaderParameters is null && other.shaderParameters is null
@@ -75,6 +89,6 @@ namespace FasterGameLoading
                 }
             }
             return false;
-        } 
+        }
     }
 }

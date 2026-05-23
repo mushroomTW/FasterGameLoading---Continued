@@ -5,6 +5,11 @@ using Verse;
 
 namespace FasterGameLoading
 {
+    /// <summary>
+    /// 攔截 AccessTools.TypeByName 以使用跨 session 快取。
+    /// 優先查詢上次 session 中記錄的完整型別名稱對照表，
+    /// 再查詢本次 session 的執行期快取。
+    /// </summary>
     [HarmonyPatch(typeof(AccessTools), "TypeByName")]
     public static class AccessTools_TypeByName_Patch
     {

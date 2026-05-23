@@ -4,24 +4,38 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 using Verse;
 using Verse.Sound;
 
 namespace FasterGameLoading
 {
-
+    /// <summary>
+    /// 延遲動作管理器 — 掛載於獨立的 GameObject 上，負責：
+    /// 1. 在 LateUpdate 中利用時間預算提早載入 Mod 內容。
+    /// 2. 在遊戲進入後依序執行延遲的圖形、圖示、聲音解析以及自適應圖集烘焙。
+    /// </summary>
     public class DelayedActions : MonoBehaviour
     {
+        // ── 每幀時間預算 ──
+        /// <summary>遊戲中每幀最多佔用 8ms，主選單中最多 50ms。</summary>
         public float MaxImpactThisFrame => Current.Game != null ? 0.008f : 0.05f;
+
+        // ── 延遲佇列 ──
+        /// <summary>待載入的圖形清單（ThingDef + 其載入委派）。</summary>
         public Queue<(ThingDef def, Action action)> graphicsToLoad = new();
+        /// <summary>待載入的圖示清單（BuildableDef + 其載入委派）。</summary>
         public Queue<(BuildableDef def, Action action)> iconsToLoad = new();
+        /// <summary>待解析的 SubSoundDef 清單。</summary>
         public Queue<(SubSoundDef def, Action action)> subSoundDefToResolve = new();
 
+        // ── 全域狀態旗標 ──
+        /// <summary>所有延遲視覺效果是否已載入完成。</summary>
         public static bool AllDeferredVisualsLoaded = false;
+        /// <summary>自適應靜態圖集烘焙是否失敗（fallback 到原始流程）。</summary>
         public static bool AdaptiveStaticAtlasBakeFailed = false;
 
+        /// <summary>靜態建構子：註冊快取重置時的回呼。</summary>
         static DelayedActions()
         {
             CacheResetter.Register(() =>
@@ -31,6 +45,7 @@ namespace FasterGameLoading
             });
         }
 
+        // ── 提早載入狀態 ──
         private Stopwatch stopwatch = new();
         private Queue<ModContentPack> pendingEarlyLoads;
         private bool earlyLoadingComplete;
@@ -38,10 +53,23 @@ namespace FasterGameLoading
         private const int TIMEOUT_THRESHOLD = 3;
         private int skipFrames;
         private const int SKIP_FRAME_COUNT = 5;
+
+        /// <summary>目前幀的時間預算是否已耗盡。</summary>
         private bool OverBudget => (float)stopwatch.ElapsedTicks / Stopwatch.Frequency >= MaxImpactThisFrame;
+
+        // ════════════════════════════════════════════════════════════════
+        //  提早載入 Mod 內容（LateUpdate 時間預算排程）
+        // ════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// 每幀執行，利用空閒時間預先載入尚未處理的 Mod 內容。
+        /// 每個 Mod 的 ReloadContentInt 完成後立即加入 loadedMods，
+        /// 避免正式的 ReloadContentInt 階段重複載入。
+        /// 若連續數幀皆超過時間預算，會主動跳過幾幀以讓遊戲維持響應。
+        /// </summary>
         public void LateUpdate()
         {
-            if (earlyLoadingComplete || !FasterGameLoadingSettings.earlyModContentLoading)
+            if (earlyLoadingComplete || !FasterGameLoadingSettings.EarlyModContentLoading)
                 return;
 
             if (skipFrames > 0)
@@ -74,6 +102,7 @@ namespace FasterGameLoading
                     // 載入失敗時不加入 loadedMods，讓正式流程可以重試
                     Log.Warning("[FasterGameLoading] Early loading failed for " + modToLoad.PackageIdPlayerFacing + ", will retry in normal flow: " + ex.Message);
                 }
+
                 // 用完時間預算就讓出這幀，下幀繼續
                 if (OverBudget)
                 {
@@ -94,6 +123,9 @@ namespace FasterGameLoading
             earlyLoadingComplete = true;
         }
 
+        /// <summary>
+        /// 重置提早載入狀態（語言切換時由 CacheResetter 觸發）。
+        /// </summary>
         public void ResetEarlyLoading()
         {
             pendingEarlyLoads = null;
@@ -104,6 +136,14 @@ namespace FasterGameLoading
             skipFrames = 0;
         }
 
+        // ════════════════════════════════════════════════════════════════
+        //  遊戲進入後的延遲動作主協程
+        // ════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// 主協程：依序執行所有延遲的載入動作。
+        /// 由 Startup.Postfix 排入 LongEventHandler.toExecuteWhenFinished 觸發。
+        /// </summary>
         public IEnumerator PerformActions()
         {
             var loadedDefs = new List<ThingDef>();
@@ -119,14 +159,18 @@ namespace FasterGameLoading
             yield return null;
         }
 
+        // ════════════════════════════════════════════════════════════════
+        //  子協程 — 圖形載入、圖集烘焙、圖示載入、聲音解析
+        // ════════════════════════════════════════════════════════════════
+
         /// <summary>
         /// 在時間預算內批次載入延遲的圖形紋理。
+        /// 超過時間預算時暫停，下幀繼續。
         /// </summary>
         private IEnumerator LoadDeferredGraphicsCoroutine(List<ThingDef> loadedDefs)
         {
             stopwatch.Start();
-            int count = 0;
-            Log.Message("[FasterGameLoading] Starting loading graphics: " + graphicsToLoad.Count);
+            Log.Message("[FasterGameLoading] Starting deferred graphics: " + graphicsToLoad.Count);
             while (graphicsToLoad.Count > 0)
             {
                 if (UnityData.IsInMainThread is false)
@@ -145,7 +189,6 @@ namespace FasterGameLoading
                     {
                         Log.Warning("[FasterGameLoading] Error loading graphic for " + def + ": " + ex);
                     }
-                    count++;
                     def.plant?.PostLoadSpecial(def);
                 }
 
@@ -155,26 +198,29 @@ namespace FasterGameLoading
                     stopwatch.Restart();
                 }
             }
-            Log.Message("[FasterGameLoading] Finished loading graphics");
+            Log.Message("[FasterGameLoading] Deferred graphics loaded");
         }
 
         /// <summary>
-        /// 執行靜態圖集烘焙（自適應或快取還原）。
+        /// 執行靜態圖集烘焙。
+        /// 優先嘗試從快取載入，若無快取則執行自適應烘焙，
+        /// 烘焙失敗時 fallback 到原始流程。
         /// </summary>
         private IEnumerator BakeDeferredAtlasesCoroutine()
         {
             AdaptiveStaticAtlasBakeFailed = false;
             AllDeferredVisualsLoaded = true;
+
             if (FasterGameLoadingSettings.StaticAtlasesBaking)
             {
-                if (FasterGameLoadingSettings.atlasCaching && StaticAtlasCache.TryLoadFromCache())
+                if (FasterGameLoadingSettings.AtlasCaching && StaticAtlasCache.TryLoadFromCache())
                 {
                     Log.Message("[FasterGameLoading] Static atlases loaded from cache (Raw DXT bytes)");
                 }
                 else
                 {
                     string queueHash = null;
-                    if (FasterGameLoadingSettings.atlasCaching)
+                    if (FasterGameLoadingSettings.AtlasCaching)
                     {
                         queueHash = StaticAtlasCache.ComputeQueueHash();
                     }
@@ -187,14 +233,15 @@ namespace FasterGameLoading
 
                     if (AdaptiveStaticAtlasBakeFailed)
                     {
-                        Log.Message("[FasterGameLoading] Falling back to deferred vanilla static atlas baking");
+                        Log.Message("[FasterGameLoading] Adaptive bake failed, falling back to vanilla static atlas baking");
                         GlobalTextureAtlasManager.BakeStaticAtlases();
-                        Log.Message("[FasterGameLoading] Finished deferred vanilla static atlas baking");
+Log.Message("[FasterGameLoading] Vanilla static atlas baking complete");
                     }
 
-                    if (FasterGameLoadingSettings.atlasCaching && !AdaptiveStaticAtlasBakeFailed && queueHash != null)
+                    if (FasterGameLoadingSettings.AtlasCaching && !AdaptiveStaticAtlasBakeFailed && queueHash != null)
                     {
-                        var saveCache = StaticAtlasCache.SaveToCacheCoroutine(GlobalTextureAtlasManager.staticTextureAtlases, queueHash);
+                        var saveCache = StaticAtlasCache.SaveToCacheCoroutine(
+                            GlobalTextureAtlasManager.staticTextureAtlases, queueHash);
                         while (saveCache.MoveNext())
                         {
                             yield return saveCache.Current;
@@ -206,12 +253,13 @@ namespace FasterGameLoading
             {
                 Log.Message("[FasterGameLoading] Starting deferred vanilla static atlas baking");
                 GlobalTextureAtlasManager.BakeStaticAtlases();
-                Log.Message("[FasterGameLoading] Finished deferred vanilla static atlas baking");
+                Log.Message("[FasterGameLoading] Deferred vanilla static atlas baking complete");
             }
         }
 
         /// <summary>
-        /// 將已載入的圖形標記為需要重新繪製地圖網格。
+        /// 將已載入的圖形標記為需要重新繪製地圖網格，
+        /// 確保延遲載入的圖形在地圖上立即顯示。
         /// </summary>
         private IEnumerator UpdateMapMeshForLoadedDefs(List<ThingDef> loadedDefs)
         {
@@ -225,7 +273,8 @@ namespace FasterGameLoading
                         {
                             foreach (var thing in map.listerThings.ThingsOfDefs(loadedDefs))
                             {
-                                map.mapDrawer.MapMeshDirty(thing.Position, MapMeshFlagDefOf.Things | MapMeshFlagDefOf.Buildings);
+                                map.mapDrawer.MapMeshDirty(thing.Position,
+                                    MapMeshFlagDefOf.Things | MapMeshFlagDefOf.Buildings);
                             }
                         }
                     }
@@ -240,13 +289,12 @@ namespace FasterGameLoading
 
         /// <summary>
         /// 在時間預算內批次載入延遲的圖示紋理。
+        /// 只處理 uiIcon 尚未被正確載入的項目（仍為 BadTex）。
         /// </summary>
         private IEnumerator LoadDeferredIconsCoroutine()
         {
-            int count = 0;
             stopwatch.Restart();
-
-            Log.Message("[FasterGameLoading] Starting loading icons: " + iconsToLoad.Count);
+            Log.Message("[FasterGameLoading] Starting deferred icons: " + iconsToLoad.Count);
             while (iconsToLoad.Count > 0)
             {
                 if (UnityData.IsInMainThread is false)
@@ -266,7 +314,6 @@ namespace FasterGameLoading
                         {
                             Log.Warning("[FasterGameLoading] Error loading icon for " + def + ": " + ex);
                         }
-                        count++;
                     }
                 }
 
@@ -276,18 +323,17 @@ namespace FasterGameLoading
                     stopwatch.Restart();
                 }
             }
-
-            Log.Message("[FasterGameLoading] Finished loading icons");
+            Log.Message("[FasterGameLoading] Deferred icons loaded");
         }
 
         /// <summary>
-        /// 在時間預算內批次解析延遲的 SubSoundDef，完成後解除聲音攔截 patch。
+        /// 在時間預算內批次解析延遲的 SubSoundDef。
+        /// 完成後由 World_FinalizeInit_Patch 負責解除 SoundStarter 攔截。
         /// </summary>
         private IEnumerator ResolveSubSoundDefsCoroutine()
         {
-            int count = 0;
             stopwatch.Restart();
-            Log.Message("[FasterGameLoading] Starting resolving SubSoundDefs: " + subSoundDefToResolve.Count);
+            Log.Message("[FasterGameLoading] Starting SubSoundDef resolution: " + subSoundDefToResolve.Count);
             while (subSoundDefToResolve.Count > 0)
             {
                 while (subSoundDefToResolve.Count > 0 && !OverBudget)
@@ -301,7 +347,6 @@ namespace FasterGameLoading
                     {
                         Log.Warning("[FasterGameLoading] Error resolving AudioGrain for " + def + ": " + ex);
                     }
-                    count++;
                 }
 
                 if (subSoundDefToResolve.Count > 0)
@@ -310,36 +355,43 @@ namespace FasterGameLoading
                     stopwatch.Restart();
                 }
             }
-            SoundStarter_Patch.Unpatch();
-            Log.Message("[FasterGameLoading] Finished resolving SubSoundDefs");
+            Log.Message("[FasterGameLoading] SubSoundDef resolution complete");
         }
 
+        // ════════════════════════════════════════════════════════════════
+        //  自適應圖集烘焙
+        // ════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// 自適應靜態圖集烘焙 — 根據 GPU 烘焙速度動態調整批次大小，
+        /// 以「每個 slice 約 8ms」為目標，避免單幀卡頓。
+        /// 使用加權移動平均追蹤歷史烘焙速度，並在每 slice 後即時調整。
+        /// </summary>
         private IEnumerator PerformAdaptiveStaticAtlasBake()
         {
-            Log.Message("[FasterGameLoading] Starting baking StaticAtlases");
+            Log.Message("[FasterGameLoading] Starting adaptive static atlas bake");
+
             const float TARGET_BAKE_TIME_SECONDS = 0.008f;
             const float ADAPTATION_FACTOR = 0.2f;
-            // Player won't notice this initial lag (Hopefully)
+            // 初始保守估計：1024×1024 像素
             const int INITIAL_PIXELS_PER_SLICE = 1024 * 1024;
-            // I dont think atlas smaller than 1024x makes any sense for render optimization
-            // the original 64x will logs out every texture divided
-            // use ShowMoreActions/DumpStaticAtlases while in game map to see dumped atlases
-            // dont know why we cant use this action in main menu
+            // 圖集小於 1024×1024 對渲染最佳化沒有意義
             const int MIN_PIXELS_PER_SLICE = 1024 * 1024;
-            // For those who have good gpus
+            // 高效能 GPU 的上限
             const int MAX_PIXELS_PER_SLICE = 4096 * 4096;
-            // Personal Experience 0.7-0.9 can reduce empty spaces in a texture atlas
+            // 0.7–0.9 可減少圖集中的空白區域
             const float PACK_DENSITY = 0.8f;
 
+            // ── 計算預估烘焙速度 ──
             float measuredBakeSpeed_PixelsPerSecond;
             if (SessionCache.historicalBakeSpeeds.Count == 0)
             {
-                // First run - use existing conservative estimate
+                // 初次執行：使用保守估計值
                 measuredBakeSpeed_PixelsPerSecond = 2_000_000f;
             }
             else
             {
-                // Calculate weighted average from history
+                // 從歷史記錄計算加權移動平均
                 float weightedSum = 0f;
                 float weightSum = 0f;
                 int count = Math.Min(SessionCache.historicalBakeSpeeds.Count, SessionCache.WEIGHTS.Length);
@@ -348,35 +400,41 @@ namespace FasterGameLoading
                     weightedSum += SessionCache.historicalBakeSpeeds[i] * SessionCache.WEIGHTS[i];
                     weightSum += SessionCache.WEIGHTS[i];
                 }
-                
                 measuredBakeSpeed_PixelsPerSecond = weightedSum / weightSum;
             }
+
             int adaptivePixelsPerSlice = INITIAL_PIXELS_PER_SLICE;
             var bakeStopwatch = new Stopwatch();
             var buildQueueSnapshot = GlobalTextureAtlasManager.buildQueue.ToList();
-            List<StaticTextureAtlas> atlasesToCommit = new List<StaticTextureAtlas>();
+            var atlasesToCommit = new List<StaticTextureAtlas>();
 
             foreach (var kvp in buildQueueSnapshot)
             {
                 var key = kvp.Key;
                 var allTexturesForThisGroup = kvp.Value.Item1.ToList();
+
                 int pixelsInCurrentSlice = 0;
                 var batchForNextBake = new List<(Texture2D main, Texture2D mask)>();
                 var bakedAtlasesForGroup = new List<StaticTextureAtlas>();
 
                 foreach (Texture2D texture in allTexturesForThisGroup)
                 {
-                    if (texture == null)
-                    {
-                        continue;
-                    }
+                    if (texture == null) continue;
 
-                    Texture2D mask = key.hasMask && GlobalTextureAtlasManager.buildQueueMasks.TryGetValue(texture, out var m) ? m : null;
+                    Texture2D mask = key.hasMask
+                        && GlobalTextureAtlasManager.buildQueueMasks.TryGetValue(texture, out var m)
+                        ? m : null;
+
                     batchForNextBake.Add((texture, mask));
                     pixelsInCurrentSlice += texture.width * texture.height;
+
                     if (pixelsInCurrentSlice >= adaptivePixelsPerSlice)
                     {
-                        if (!TryBakeBatch())
+                        if (!TryBakeSingleBatch(key, batchForNextBake, bakedAtlasesForGroup,
+                                bakeStopwatch, pixelsInCurrentSlice,
+                                ref measuredBakeSpeed_PixelsPerSecond, ref adaptivePixelsPerSlice,
+                                TARGET_BAKE_TIME_SECONDS, ADAPTATION_FACTOR,
+                                MIN_PIXELS_PER_SLICE, MAX_PIXELS_PER_SLICE, PACK_DENSITY))
                         {
                             yield break;
                         }
@@ -387,92 +445,123 @@ namespace FasterGameLoading
                     }
                 }
 
+                // 處理最後一批未滿一個 slice 的紋理
                 if (batchForNextBake.Count > 0)
                 {
-                    if (!TryBakeBatch())
+                    if (!TryBakeSingleBatch(key, batchForNextBake, bakedAtlasesForGroup,
+                            bakeStopwatch, pixelsInCurrentSlice,
+                            ref measuredBakeSpeed_PixelsPerSecond, ref adaptivePixelsPerSlice,
+                            TARGET_BAKE_TIME_SECONDS, ADAPTATION_FACTOR,
+                            MIN_PIXELS_PER_SLICE, MAX_PIXELS_PER_SLICE, PACK_DENSITY))
                     {
                         yield break;
                     }
-
                     yield return null;
                 }
 
-                atlasesToCommit.AddRange(bakedAtlasesForGroup);
-
-                bool TryBakeBatch()
+                // 將此 group 的所有烘焙結果放入全域清單
+                foreach (var atlas in bakedAtlasesForGroup)
                 {
-                    try
-                    {
-                        var staticTextureAtlas = new StaticTextureAtlas(key);
-                        foreach (var (main, msk) in batchForNextBake)
-                        {
-                            staticTextureAtlas.Insert(main, msk);
-                        }
-
-                        if (batchForNextBake.Count == 1)
-                        {
-                            // Bake() doesn't work with single texture - set texture directly
-                            staticTextureAtlas.colorTexture = batchForNextBake[0].main;
-                            if (key.hasMask)
-                            {
-                                staticTextureAtlas.maskTexture = batchForNextBake[0].mask;
-                            }
-
-                            staticTextureAtlas.BuildMeshesForUvs([new(0, 0, 1, 1)]);
-                            bakeStopwatch.Reset();
-                        }
-                        else
-                        {
-                            bakeStopwatch.Restart();
-                            staticTextureAtlas.Bake();
-                            bakeStopwatch.Stop();
-                        }
-
-                        bakedAtlasesForGroup.Add(staticTextureAtlas);
-                        double secondsElapsed = bakeStopwatch.Elapsed.TotalSeconds;
-                        if (secondsElapsed > 0)
-                        {
-                            float latestBakeSpeed = (float)(pixelsInCurrentSlice / secondsElapsed);
-                            measuredBakeSpeed_PixelsPerSecond = Mathf.Lerp(measuredBakeSpeed_PixelsPerSecond, latestBakeSpeed, ADAPTATION_FACTOR);
-                            float newSliceSize = measuredBakeSpeed_PixelsPerSecond * TARGET_BAKE_TIME_SECONDS;
-                            int adjusted = (int)(newSliceSize * PACK_DENSITY);
-                            adaptivePixelsPerSlice = (int)Mathf.Clamp(
-                                adjusted.FloorToPowerOfTwo(),
-                                MIN_PIXELS_PER_SLICE, MAX_PIXELS_PER_SLICE);
-                        }
-
-                        return true;
-                    }
-                    catch (Exception ex)
-                    {
-                        AdaptiveStaticAtlasBakeFailed = true;
-                        Log.Warning("[FasterGameLoading] Error baking atlas batch: " + ex);
-                        return false;
-                    }
+                    atlasesToCommit.Add(atlas);
                 }
             }
 
+            // 提交所有烘焙完成的圖集
             foreach (var staticTextureAtlas in atlasesToCommit)
             {
                 GlobalTextureAtlasManager.staticTextureAtlases.Add(staticTextureAtlas);
             }
 
-            // Add current session's final speed to history
+            // 將本次 session 的最終速度記錄到歷史
             SessionCache.historicalBakeSpeeds.Insert(0, measuredBakeSpeed_PixelsPerSecond);
             if (SessionCache.historicalBakeSpeeds.Count > SessionCache.HISTORY_SIZE)
             {
                 SessionCache.historicalBakeSpeeds.RemoveAt(SessionCache.HISTORY_SIZE);
             }
 
-            // Prevent vanilla BakeStaticAtlases from re-processing the same queue
+            // 清除原始 buildQueue，防止 vanilla 重複處理
             GlobalTextureAtlasManager.buildQueue.Clear();
             GlobalTextureAtlasManager.buildQueueMasks.Clear();
-            Log.Message("[FasterGameLoading] Finished baking StaticAtlases");
+            Log.Message("[FasterGameLoading] Adaptive static atlas bake complete");
         }
 
+        // ════════════════════════════════════════════════════════════════
+        //  輔助方法
+        private static bool TryBakeSingleBatch(
+            TextureAtlasGroupKey key,
+            List<(Texture2D main, Texture2D mask)> batch,
+            List<StaticTextureAtlas> bakedAtlases,
+            Stopwatch bakeStopwatch,
+            int pixelsInThisSlice,
+            ref float measuredBakeSpeed,
+            ref int adaptivePixelsPerSlice,
+            float targetBakeTime,
+            float adaptationFactor,
+            int minPixelsPerSlice,
+            int maxPixelsPerSlice,
+            float packDensity)
+        {
+            try
+            {
+                var atlas = new StaticTextureAtlas(key);
+                foreach (var (main, msk) in batch)
+                {
+                    atlas.Insert(main, msk);
+                }
+
+                if (batch.Count == 1)
+                {
+                    // Bake() 不支援單一紋理，直接設定
+                    atlas.colorTexture = batch[0].main;
+                    if (key.hasMask)
+                    {
+                        atlas.maskTexture = batch[0].mask;
+                    }
+                    atlas.BuildMeshesForUvs([new Rect(0, 0, 1, 1)]);
+                    bakeStopwatch.Reset();
+                }
+                else
+                {
+                    bakeStopwatch.Restart();
+                    atlas.Bake();
+                    bakeStopwatch.Stop();
+                }
+
+                bakedAtlases.Add(atlas);
+
+                // 根據實際烘焙時間調整下個 slice 的大小
+                double secondsElapsed = bakeStopwatch.Elapsed.TotalSeconds;
+                if (secondsElapsed > 0)
+                {
+                    float latestBakeSpeed = (float)(pixelsInThisSlice / secondsElapsed);
+                    measuredBakeSpeed = Mathf.Lerp(measuredBakeSpeed, latestBakeSpeed, adaptationFactor);
+                    float newSliceSize = measuredBakeSpeed * targetBakeTime;
+                    int adjusted = (int)(newSliceSize * packDensity);
+                    adaptivePixelsPerSlice = (int)Mathf.Clamp(
+                        adjusted.FloorToPowerOfTwo(),
+                        minPixelsPerSlice, maxPixelsPerSlice);
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                AdaptiveStaticAtlasBakeFailed = true;
+                Log.Warning("[FasterGameLoading] Error baking atlas batch: " + ex);
+                return false;
+            }
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        //  輔助方法
+        // ════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// 記錄錯誤訊息，包含完整堆疊追蹤。
+        /// </summary>
         public void Error(string message, Exception ex)
         {
-            Log.Error(message + " - " + ex + " - " + new StackTrace());
+            Log.Error("[FasterGameLoading] " + message + " - " + ex + " - " + new StackTrace());
         }
     }
 }

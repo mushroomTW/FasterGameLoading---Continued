@@ -6,6 +6,11 @@ using Verse;
 
 namespace FasterGameLoading
 {
+    /// <summary>
+    /// 攔截 GenTypes.AllLeafSubclasses 並快取結果。
+    /// 計算給定基底型別的所有葉子子類別（未被其他子類別繼承的型別），
+    /// 避免每次查詢時都遍歷所有型別。
+    /// </summary>
     [HarmonyPatch(typeof(GenTypes), "AllLeafSubclasses")]
     public static class GenTypes_AllLeafSubclasses_Patch
     {

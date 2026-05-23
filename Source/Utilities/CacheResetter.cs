@@ -34,7 +34,7 @@ namespace FasterGameLoading
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("[FasterGameLoading] CacheResetter 執行清理時發生例外: " + ex);
+                    Log.Error("[FasterGameLoading] CacheResetter error during cleanup: " + ex);
                 }
             }
         }

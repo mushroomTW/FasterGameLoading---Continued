@@ -7,10 +7,15 @@ using Verse;
 
 namespace FasterGameLoading
 {
+    /// <summary>
+    /// 攔截 BuildableDef.PostLoad 中的 LongEventHandler.ExecuteWhenFinished 呼叫，
+    /// 保持 UI 圖示在 RimWorld 原本的載入時機解析，避免選單顯示 BadTex 紅叉。
+    /// </summary>
     [HarmonyPatch(typeof(BuildableDef), "PostLoad")]
     public static class BuildableDef_PostLoad_Patch
     {
-        public static bool Prepare() => FasterGameLoadingSettings.delayGraphicLoading;
+        public static bool Prepare() => FasterGameLoadingSettings.DelayGraphicLoading;
+
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> codeInstructions)
         {
             var execute = AccessTools.Method(typeof(LongEventHandler), nameof(LongEventHandler.ExecuteWhenFinished));
@@ -19,6 +24,7 @@ namespace FasterGameLoading
             {
                 if (code.Calls(execute))
                 {
+                    // Replace ExecuteWhenFinished(action) with ExecuteDelayed(action, this)
                     yield return new CodeInstruction(OpCodes.Ldarg_0);
                     yield return new CodeInstruction(OpCodes.Call, executeDelayed);
                 }
@@ -29,18 +35,20 @@ namespace FasterGameLoading
             }
         }
 
+        /// <summary>
+        ///BuildableDef UI 圖示在早期 UI 設定期間透過指定和架構選單讀取。
+        ///延遲它們會在 BaseContent.BadTex 上留下許多定義，顯示為紅色叉子。
+        /// </summary>
         public static void ExecuteDelayed(Action action, BuildableDef def)
         {
-            if (def is ThingDef thingDef && thingDef.ShouldBeLoadedImmediately())
-            {
-                LongEventHandler.ExecuteWhenFinished(action);
-            }
-            else
-            {
-                FasterGameLoadingMod.delayedActions.iconsToLoad.Enqueue((def, action));
-            }
+            LongEventHandler.ExecuteWhenFinished(action);
         }
 
+        /// <summary>
+        /// 判斷此 ThingDef 的圖示是否需要立即載入。
+        /// 武器、裝備、食物、建築、殖民者等常用類型立即載入，
+        /// 其餘（如背景裝飾物）則延遲載入。
+        /// </summary>
         public static bool ShouldBeLoadedImmediately(this ThingDef thingDef)
         {
             // 基礎建築和藍圖必須立即載入

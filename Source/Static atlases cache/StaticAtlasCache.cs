@@ -11,20 +11,30 @@ using Verse;
 
 namespace FasterGameLoading
 {
+    /// <summary>
+    /// 靜態圖集快取系統：將烘焙完成的圖集以原始 DXT 位元組儲存到磁碟，
+    /// 下次啟動時直接讀取還原，跳過耗時的烘焙過程。
+    /// 使用 MD5 hash 驗證 mod 組合與 buildQueue 的一致性。
+    /// </summary>
     public static class StaticAtlasCache
     {
+        /// <summary>快取儲存目錄。</summary>
         public static string CacheDirectory => Path.Combine(GenFilePaths.SaveDataFolderPath, "FasterGameLoading", "AtlasCache");
         private static string ManifestPath => Path.Combine(CacheDirectory, "manifest.json");
 
+        /// <summary>快取清單版本號。</summary>
         [Serializable]
         public class Manifest
         {
             public int version = 2;
+            /// <summary>目前載入的 mod 組合 hash。</summary>
             public string modsHash;
+            /// <summary>buildQueue 內容 hash。</summary>
             public string queueHash;
             public List<AtlasInfo> atlases = new List<AtlasInfo>();
         }
 
+        /// <summary>單一圖集的描述資訊（用於 JSON 序列化）。</summary>
         [Serializable]
         public class AtlasInfo
         {
@@ -40,6 +50,7 @@ namespace FasterGameLoading
             public List<Rect> uvRects = new List<Rect>();
         }
 
+        /// <summary>清除所有圖集快取（目錄 + 檔案）。</summary>
         public static void ClearCache()
         {
             try
@@ -56,6 +67,7 @@ namespace FasterGameLoading
             }
         }
 
+        /// <summary>計算目前載入 mod 組合的 MD5 hash，用於驗證快取是否過期。</summary>
         private static string ComputeModsHash()
         {
             var activeMods = ModsConfig.ActiveModsInLoadOrder.Select(x => x.packageIdLowerCase).ToList();
@@ -64,6 +76,7 @@ namespace FasterGameLoading
             return string.Concat(md5.ComputeHash(Encoding.UTF8.GetBytes(str)).Select(b => b.ToString("x2")));
         }
 
+        /// <summary>計算 buildQueue 的 MD5 hash，用於驗證快取是否過期。</summary>
         public static string ComputeQueueHash()
         {
             var sb = new StringBuilder();
@@ -81,9 +94,15 @@ namespace FasterGameLoading
             return string.Concat(md5.ComputeHash(Encoding.UTF8.GetBytes(sb.ToString())).Select(b => b.ToString("x2")));
         }
 
+        /// <summary>
+        /// 嘗試從磁碟快取還原靜態圖集。
+        /// 驗證 manifest 版本、mod 組合 hash、buildQueue hash 一致後，
+        /// 直接以原始 DXT 位元組重建紋理並插入對應的 buildQueue。
+        /// 任一驗證失敗或載入出錯時回傳 false。
+        /// </summary>
         public static bool TryLoadFromCache()
         {
-            if (!FasterGameLoadingSettings.atlasCaching || !File.Exists(ManifestPath))
+            if (!FasterGameLoadingSettings.AtlasCaching || !File.Exists(ManifestPath))
                 return false;
 
             try
@@ -202,11 +221,12 @@ namespace FasterGameLoading
             }
             catch (Exception e)
             {
-                Log.Warning("[FasterGameLoading] Cache load error: " + e);
+Log.Warning("[FasterGameLoading] Cache load error: " + e);
                 return false;
             }
         }
 
+        /// <summary>銷毀列表中的所有圖集並清除列表。</summary>
         private static void DestroyAtlases(List<StaticTextureAtlas> atlases)
         {
             foreach (var atlas in atlases)
@@ -216,6 +236,7 @@ namespace FasterGameLoading
             atlases.Clear();
         }
 
+        /// <summary>銷毀單一圖集中所關聯的紋理物件。</summary>
         private static void DestroyAtlasTextures(StaticTextureAtlas atlas)
         {
             if (atlas?.colorTexture != null)
@@ -230,9 +251,13 @@ namespace FasterGameLoading
             }
         }
 
+        /// <summary>
+        /// 將靜態圖集儲存到磁碟快取。使用協程分批寫入以避免單幀卡頓。
+        /// 優先使用 GetRawTextureData，失敗時 fallback 到 RenderTexture 方案。
+        /// </summary>
         public static IEnumerator SaveToCacheCoroutine(List<StaticTextureAtlas> atlases, string queueHash)
         {
-            if (!FasterGameLoadingSettings.atlasCaching) yield break;
+            if (!FasterGameLoadingSettings.AtlasCaching) yield break;
 
             Directory.CreateDirectory(CacheDirectory);
 
@@ -313,9 +338,13 @@ namespace FasterGameLoading
             }
 
             File.WriteAllText(ManifestPath, JsonUtility.ToJson(manifest, true));
-            Log.Message("[FasterGameLoading] Saved static atlas cache.");
+            Log.Message("[FasterGameLoading] Static atlas cache saved.");
         }
 
+        /// <summary>
+        /// 安全地從 Texture2D 取得原始位元組。
+        /// 優先使用 GetRawTextureData，若無法直接讀取則透過 RenderTexture 進行 GPU→CPU 複製。
+        /// </summary>
         private static byte[] GetRawBytesSafe(Texture2D tex, out TextureFormat format)
         {
             format = tex.format;
@@ -332,7 +361,7 @@ namespace FasterGameLoading
                 // 無法直接讀取紋理資料，改用 RenderTexture fallback
             }
 
-            // Fallback for unreadable textures
+            // 無法直接取得 RawTextureData，改用 RenderTexture 進行 GPU→CPU 複製
             RenderTexture rt = null;
             Texture2D readable = null;
             var previous = RenderTexture.active;

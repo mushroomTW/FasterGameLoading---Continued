@@ -12,16 +12,30 @@ using Color = UnityEngine.Color;
 
 namespace FasterGameLoading
 {
+    /// <summary>
+    /// 紋理降質管理器：將高解析度紋理縮小以節省 VRAM 並加速載入。
+    /// 原始 Mod 檔案不會被修改 — 降質副本儲存在獨立的快取目錄中。
+    /// </summary>
     public static class TextureResize
     {
+        // ════════════════════════════════════════════════════════════════
+        //  快取管理
+        // ════════════════════════════════════════════════════════════════
+
+        /// <summary>原始路徑 → 降質快取路徑的對照表（會透過 Scribe 持久化）。</summary>
         public static Dictionary<string, string> resizedTextureCache = new Dictionary<string, string>();
         private static readonly object cacheLock = new object();
         private static readonly ConcurrentDictionary<string, string> md5HashCache = new ConcurrentDictionary<string, string>();
 
+        /// <summary>紋理快取的根目錄。</summary>
         public static string CacheDirectory => Path.Combine(GenFilePaths.SaveDataFolderPath, "FasterGameLoading", "TextureCache");
         private static string BuildCacheDirectory(string suffix) => Path.Combine(GenFilePaths.SaveDataFolderPath, "FasterGameLoading", suffix);
         private static string activeCacheDirectory = CacheDirectory;
 
+        /// <summary>
+        /// 根據原始檔案路徑產生 MD5 快取檔案路徑。
+        /// 快取鍵結合路徑、檔案大小和最後修改時間，確保原始檔案變更時自動失效。
+        /// </summary>
         public static string GetCachePath(string originalPath)
         {
             return md5HashCache.GetOrAdd(GetCacheKey(originalPath), key =>
@@ -56,6 +70,7 @@ namespace FasterGameLoading
             return originalPath;
         }
 
+        /// <summary>目前快取的紋理數量（執行緒安全）。</summary>
         public static int CacheCount
         {
             get
@@ -67,6 +82,10 @@ namespace FasterGameLoading
             }
         }
 
+        /// <summary>
+        /// 嘗試取得指定原始路徑對應的快取紋理路徑。
+        /// 自動檢查快取是否過期（原始檔案比快取檔案新時視為失效）。
+        /// </summary>
         public static bool TryGetCachedTexturePath(string originalPath, out string cachePath)
         {
             lock (cacheLock)
@@ -88,6 +107,9 @@ namespace FasterGameLoading
             return false;
         }
 
+        /// <summary>
+        /// 檢查快取是否比原始檔案更新。若無法讀取檔案時間則視為失效。
+        /// </summary>
         private static bool IsCacheFresh(string originalPath, string cachePath)
         {
             try
@@ -100,11 +122,11 @@ namespace FasterGameLoading
             }
             catch (Exception)
             {
-                // 無法比對檔案時間 → 視為快取失效，強制重新生成
                 return false;
             }
         }
 
+        /// <summary>移除指定原始路徑的快取項目。</summary>
         public static void RemoveCachedTexturePath(string originalPath)
         {
             lock (cacheLock)
@@ -113,6 +135,7 @@ namespace FasterGameLoading
             }
         }
 
+        /// <summary>清除所有紋理快取（檔案 + 記憶體對照表）。</summary>
         public static void ClearCache()
         {
             try
@@ -133,10 +156,17 @@ namespace FasterGameLoading
             }
         }
 
+        // ════════════════════════════════════════════════════════════════
+        //  紋理類型與目標尺寸
+        // ════════════════════════════════════════════════════════════════
+
+        /// <summary>紋理分類，用於決定降質目標尺寸。</summary>
         public enum TextureType
         {
             None, Building, Pawn, Weapon, Apparel, Item, Plant, Tree, Terrain, Mote, Filth, Projectile, UI, Other
         }
+
+        /// <summary>各紋理類型的降質目標尺寸（較長邊會縮放至此尺寸）。</summary>
         public static Dictionary<TextureType, int> targetSizes = new Dictionary<TextureType, int>
         {
             { TextureType.Building, 256 },
@@ -149,13 +179,18 @@ namespace FasterGameLoading
             { TextureType.Terrain, 1024 },
         };
 
+        /// <summary>按紋理類型分類的紋理條目。</summary>
         public static Dictionary<TextureType, List<KeyValuePair<BuildableDef, string>>> textures = new();
+        /// <summary>紋理 → 檔案路徑的對照表。</summary>
         public static Dictionary<Texture, string> texturesByPaths = new();
+        /// <summary>紋理 → (Def, 路徑) 的對照表。</summary>
         public static Dictionary<Texture, KeyValuePair<BuildableDef, string>> texturesByDefs = new();
+        /// <summary>紋理 → 來源 Mod 的對照表。</summary>
         public static Dictionary<Texture, ModContentPack> texturesByMods = new();
         private static long lastOriginalPixelCount;
         private static long lastDownscaledPixelCount;
 
+        /// <summary>單一紋理的縮放候選資訊。</summary>
         private struct TextureResizeCandidate
         {
             public Texture source;
@@ -165,6 +200,15 @@ namespace FasterGameLoading
             public int originalHeight;
         }
 
+        // ════════════════════════════════════════════════════════════════
+        //  主要流程
+        // ════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// 執行完整紋理降質流程：
+        /// 掃描所有已載入的紋理 → 計算縮放候選 → 批次降質 → 替換快取目錄。
+        /// 失敗時自動還原先前的快取狀態。
+        /// </summary>
         public static void DoTextureResizing()
         {
             var previousCacheMap = new Dictionary<string, string>(resizedTextureCache);
@@ -185,7 +229,7 @@ namespace FasterGameLoading
                     {
                         ResizeTexture(entry);
                     }
-                    Log.Warning("Downscaled " + texturesToResize.Count + " textures (cached, originals untouched)");
+                    Log.Warning("[FasterGameLoading] Downscaled " + texturesToResize.Count + " textures (cached, originals untouched)");
                     ReplaceTextureCacheDirectory(stagingDirectory);
                     LogResizeSummary(texturesToResize.Count);
                 }
@@ -222,15 +266,34 @@ namespace FasterGameLoading
             texturesByMods.Clear();
         }
 
+        // ════════════════════════════════════════════════════════════════
+        //  紋理掃描
+        // ════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// 掃描所有已載入的紋理，按類型分類並建立對照表。
+        /// 只處理非官方 Mod 的紋理（IsOfficialMod = false）。
+        /// </summary>
         private static void BuildTextureScanData()
+        {
+            InitializeScanContainers();
+            RefreshTexturePathMap();
+            BuildModTextureMap();
+            ScanPawnTextures();
+            ScanStyleTextures();
+            ScanBuildableTextures();
+        }
+
+        private static void InitializeScanContainers()
         {
             foreach (var value in Enum.GetValues(typeof(TextureType)).Cast<TextureType>())
             {
                 textures[value] = new();
             }
+        }
 
-            RefreshTexturePathMap();
-
+        private static void BuildModTextureMap()
+        {
             foreach (var mod in LoadedModManager.RunningMods)
             {
                 foreach (var texture in mod.textures.contentList.Values)
@@ -238,37 +301,39 @@ namespace FasterGameLoading
                     texturesByMods[texture] = mod;
                 }
             }
+        }
 
+        /// <summary>掃描所有 PawnKindDef 的種族紋理與生命階段圖形。</summary>
+        private static void ScanPawnTextures()
+        {
             foreach (var pawnKind in DefDatabase<PawnKindDef>.AllDefs)
             {
                 var modContent = pawnKind.modContentPack;
-                if (modContent != null && modContent.IsOfficialMod)
+                if (modContent != null && modContent.IsOfficialMod) continue;
+                if (pawnKind.lifeStages == null) continue;
+
+                foreach (var lifeStage in pawnKind.lifeStages)
                 {
-                    continue;
-                }
-                if (pawnKind.lifeStages != null)
-                {
-                    foreach (var lifeStage in pawnKind.lifeStages)
+                    if (lifeStage.bodyGraphicData != null)
                     {
-                        if (lifeStage.bodyGraphicData != null)
+                        AddEntry(TextureType.Pawn, pawnKind.race, lifeStage.bodyGraphicData.Graphic);
+                        if (lifeStage.dessicatedBodyGraphicData != null)
                         {
-                            AddEntry(TextureType.Pawn, pawnKind.race, lifeStage.bodyGraphicData.Graphic);
-                            if (lifeStage.dessicatedBodyGraphicData != null)
-                            {
-                                AddEntry(TextureType.Pawn, pawnKind.race, lifeStage.dessicatedBodyGraphicData.Graphic);
-                            }
+                            AddEntry(TextureType.Pawn, pawnKind.race, lifeStage.dessicatedBodyGraphicData.Graphic);
                         }
                     }
                 }
             }
+        }
 
+        /// <summary>掃描所有 StyleCategoryDef 的外觀圖形。</summary>
+        private static void ScanStyleTextures()
+        {
             foreach (var styleDef in DefDatabase<StyleCategoryDef>.AllDefs)
             {
                 var modContent = styleDef.modContentPack;
-                if (modContent != null && modContent.IsOfficialMod)
-                {
-                    continue;
-                }
+                if (modContent != null && modContent.IsOfficialMod) continue;
+
                 foreach (var style in styleDef.thingDefStyles)
                 {
                     var type = GetTextureType(style.ThingDef);
@@ -285,14 +350,16 @@ namespace FasterGameLoading
                     }
                 }
             }
+        }
 
+        /// <summary>掃描所有 BuildableDef 的建物/物品/植物紋理。</summary>
+        private static void ScanBuildableTextures()
+        {
             foreach (var def in DefDatabase<BuildableDef>.AllDefs)
             {
                 var modContent = def.modContentPack;
-                if (modContent != null && modContent.IsOfficialMod)
-                {
-                    continue;
-                }
+                if (modContent != null && modContent.IsOfficialMod) continue;
+
                 if (def is TerrainDef terrain)
                 {
                     FillEntry(TextureType.Terrain, def);
@@ -301,45 +368,56 @@ namespace FasterGameLoading
                 {
                     var type = GetTextureType(thingDef);
                     FillEntry(type, thingDef);
-                    if (type == TextureType.Apparel)
+                    ScanApparelVariants(type, def, thingDef);
+                    ScanPlantVariants(type, def, thingDef);
+                }
+            }
+        }
+
+        /// <summary>掃描服裝的多種穿著外觀變體（含 wornGraphicPaths）。</summary>
+        private static void ScanApparelVariants(TextureType type, BuildableDef def, ThingDef thingDef)
+        {
+            if (type != TextureType.Apparel) return;
+
+            foreach (var bodyType in DefDatabase<BodyTypeDef>.AllDefs)
+            {
+                if (TryGetGraphicApparel(thingDef, thingDef.apparel.wornGraphicPath, bodyType, out var graphic))
+                {
+                    AddEntry(type, def, graphic);
+                }
+                if (thingDef.apparel.wornGraphicPaths != null)
+                {
+                    foreach (var path in thingDef.apparel.wornGraphicPaths)
                     {
-                        foreach (var bodyType in DefDatabase<BodyTypeDef>.AllDefs)
+                        if (TryGetGraphicApparel(thingDef, path, bodyType, out var graphic2))
                         {
-                            if (TryGetGraphicApparel(thingDef, thingDef.apparel.wornGraphicPath, bodyType, out var graphic))
-                            {
-                                AddEntry(type, def, graphic);
-                            }
-                            if (thingDef.apparel.wornGraphicPaths != null)
-                            {
-                                foreach (var path in thingDef.apparel.wornGraphicPaths)
-                                {
-                                    if (TryGetGraphicApparel(thingDef, path, bodyType, out var graphic2))
-                                    {
-                                        AddEntry(type, def, graphic2);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else if (type == TextureType.Plant || type == TextureType.Tree)
-                    {
-                        if (thingDef.plant.leaflessGraphic != null)
-                        {
-                            AddEntry(type, def, thingDef.plant.leaflessGraphic);
-                        }
-                        if (thingDef.plant.immatureGraphic != null)
-                        {
-                            AddEntry(type, def, thingDef.plant.immatureGraphic);
-                        }
-                        if (thingDef.plant.pollutedGraphic != null)
-                        {
-                            AddEntry(type, def, thingDef.plant.pollutedGraphic);
+                            AddEntry(type, def, graphic2);
                         }
                     }
                 }
             }
         }
 
+        /// <summary>掃描植物的特殊圖形變體（落葉、未成熟、受汙染）。</summary>
+        private static void ScanPlantVariants(TextureType type, BuildableDef def, ThingDef thingDef)
+        {
+            if (type != TextureType.Plant && type != TextureType.Tree) return;
+
+            if (thingDef.plant.leaflessGraphic != null)
+                AddEntry(type, def, thingDef.plant.leaflessGraphic);
+            if (thingDef.plant.immatureGraphic != null)
+                AddEntry(type, def, thingDef.plant.immatureGraphic);
+            if (thingDef.plant.pollutedGraphic != null)
+                AddEntry(type, def, thingDef.plant.pollutedGraphic);
+        }
+
+        // ════════════════════════════════════════════════════════════════
+        //  縮放候選與執行
+        // ════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// 篩選需要縮放的紋理：尺寸超過目標尺寸且 drawSize 總和 ≤ 8 的紋理。
+        /// </summary>
         private static List<TextureResizeCandidate> BuildResizeCandidates()
         {
             var texturesToResize = new List<TextureResizeCandidate>();
@@ -371,10 +449,7 @@ namespace FasterGameLoading
             string previousCacheDirectory,
             string stagingDirectory)
         {
-            lock (cacheLock)
-            {
-                resizedTextureCache = previousCacheMap;
-            }
+            lock (cacheLock) { resizedTextureCache = previousCacheMap; }
             activeCacheDirectory = previousCacheDirectory;
             md5HashCache.Clear();
             if (Directory.Exists(stagingDirectory))
@@ -385,6 +460,7 @@ namespace FasterGameLoading
             LogResizeSummary(0);
         }
 
+        /// <summary>將暫存目錄替換為正式快取目錄。</summary>
         private static void ReplaceTextureCacheDirectory(string stagingDirectory)
         {
             if (Directory.Exists(CacheDirectory))
@@ -397,47 +473,43 @@ namespace FasterGameLoading
             {
                 updatedCacheMap[kvp.Key] = Path.Combine(CacheDirectory, Path.GetFileName(kvp.Value));
             }
-            lock (cacheLock)
-            {
-                resizedTextureCache = updatedCacheMap;
-            }
+            lock (cacheLock) { resizedTextureCache = updatedCacheMap; }
             activeCacheDirectory = CacheDirectory;
             md5HashCache.Clear();
         }
 
+        /// <summary>清理掃描階段的暫存資料。</summary>
         private static void ClearTextureScanData()
         {
             texturesByPaths.Clear();
             texturesByDefs.Clear();
             texturesByMods.Clear();
-            foreach (var value in textures.Values)
-            {
-                value.Clear();
-            }
+            foreach (var value in textures.Values) { value.Clear(); }
         }
 
+        /// <summary>
+        /// 執行單一紋理降質：載入原始 PNG → 按比例縮放 → 輸出 PNG 到快取目錄。
+        /// </summary>
         private static void ResizeTexture(TextureResizeCandidate candidate)
         {
             Texture2D originalTexture = null;
             try
             {
                 var resizeSource = TryLoadOriginalTexture(candidate.path, out originalTexture) ? originalTexture : candidate.source;
-                if (resizeSource == null || resizeSource.width <= 0 || resizeSource.height <= 0)
-                    return;
+                if (resizeSource == null || resizeSource.width <= 0 || resizeSource.height <= 0) return;
 
                 var sourceWidth = originalTexture != null ? resizeSource.width : candidate.originalWidth;
                 var sourceHeight = originalTexture != null ? resizeSource.height : candidate.originalHeight;
-                double ratio = sourceHeight > sourceWidth ? (double)candidate.targetSize / sourceHeight : (double)candidate.targetSize / sourceWidth;
+                double ratio = sourceHeight > sourceWidth
+                    ? (double)candidate.targetSize / sourceHeight
+                    : (double)candidate.targetSize / sourceWidth;
                 int newWidth = Math.Max(1, (int)Math.Round(sourceWidth * ratio));
                 int newHeight = Math.Max(1, (int)Math.Round(sourceHeight * ratio));
                 lastOriginalPixelCount += (long)sourceWidth * sourceHeight;
                 lastDownscaledPixelCount += (long)newWidth * newHeight;
                 var cachePath = GetCachePath(candidate.path);
                 File.WriteAllBytes(cachePath, ResizeTextureToPng(resizeSource, newWidth, newHeight));
-                lock (cacheLock)
-                {
-                    resizedTextureCache[candidate.path] = cachePath;
-                }
+                lock (cacheLock) { resizedTextureCache[candidate.path] = cachePath; }
             }
             catch (Exception ex)
             {
@@ -445,23 +517,17 @@ namespace FasterGameLoading
             }
             finally
             {
-                if (originalTexture != null)
-                {
-                    DestroyTemporaryUnityObject(originalTexture);
-                }
+                if (originalTexture != null) DestroyTemporaryUnityObject(originalTexture);
             }
         }
 
+        /// <summary>嘗試從磁碟載入原始 PNG 紋理。失敗時回傳 false，由呼叫端使用記憶體中的版本。</summary>
         private static bool TryLoadOriginalTexture(string path, out Texture2D texture)
         {
             texture = null;
             try
             {
-                if (!File.Exists(path))
-                {
-                    return false;
-                }
-
+                if (!File.Exists(path)) return false;
                 var data = File.ReadAllBytes(path);
                 texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
                 if (texture.LoadImage(data) && texture.width > 0 && texture.height > 0)
@@ -470,53 +536,37 @@ namespace FasterGameLoading
                     return true;
                 }
             }
-            catch (Exception)
-            {
-                // 載入原始紋理失敗，後續會使用記憶體中的版本 fallback
-            }
+            catch (Exception) { /* fallback 到記憶體中的版本 */ }
 
-            if (texture != null)
-            {
-                DestroyTemporaryUnityObject(texture);
-                texture = null;
-            }
+            if (texture != null) { DestroyTemporaryUnityObject(texture); texture = null; }
             return false;
         }
 
+        // ════════════════════════════════════════════════════════════════
+        //  PNG 解析工具
+        // ════════════════════════════════════════════════════════════════
+
+        /// <summary>嘗試從 PNG 檔案標頭讀取尺寸（不載入完整圖片）。</summary>
         private static bool TryGetImageDimensions(string path, ref int width, ref int height)
         {
             try
             {
-                if (!File.Exists(path))
-                {
-                    return false;
-                }
-
+                if (!File.Exists(path)) return false;
                 using (var stream = File.OpenRead(path))
                 {
                     return TryReadPngDimensions(stream, ref width, ref height);
                 }
             }
-            catch (Exception)
-            {
-                // 無法讀取 PNG 標頭，放棄尺寸判斷
-                return false;
-            }
+            catch (Exception) { return false; }
         }
 
+        /// <summary>從 PNG 檔案串流讀取 IHDR chunk 中的寬高。</summary>
         private static bool TryReadPngDimensions(Stream stream, ref int width, ref int height)
         {
             stream.Position = 0;
             var header = new byte[24];
-            if (stream.Read(header, 0, header.Length) != header.Length)
-            {
-                return false;
-            }
-
-            if (header[0] != 0x89 || header[1] != 0x50 || header[2] != 0x4E || header[3] != 0x47)
-            {
-                return false;
-            }
+            if (stream.Read(header, 0, header.Length) != header.Length) return false;
+            if (header[0] != 0x89 || header[1] != 0x50 || header[2] != 0x4E || header[3] != 0x47) return false;
 
             width = ReadBigEndianInt32(header, 16);
             height = ReadBigEndianInt32(header, 20);
@@ -527,6 +577,10 @@ namespace FasterGameLoading
         {
             return (bytes[offset] << 24) | (bytes[offset + 1] << 16) | (bytes[offset + 2] << 8) | bytes[offset + 3];
         }
+
+        // ════════════════════════════════════════════════════════════════
+        //  紋理操作工具
+        // ════════════════════════════════════════════════════════════════
 
         private static void LogResizeSummary(int resizedCount)
         {
@@ -541,24 +595,20 @@ namespace FasterGameLoading
             return (bytes / 1024f / 1024f).ToString("F1") + " MiB";
         }
 
+        /// <summary>
+        /// 安全銷毀暫存 Unity 物件。先嘗試 DestroyImmediate，失敗時改用 Destroy。
+        /// </summary>
         private static void DestroyTemporaryUnityObject(UnityEngine.Object obj)
         {
-            if (obj == null)
-            {
-                return;
-            }
-
-            try
-            {
-                UnityEngine.Object.DestroyImmediate(obj);
-            }
-            catch (Exception)
-            {
-                // DestroyImmediate 失敗（跨執行緒等情境），改用非立即銷毀
-                UnityEngine.Object.Destroy(obj);
-            }
+            if (obj == null) return;
+            try { UnityEngine.Object.DestroyImmediate(obj); }
+            catch (Exception) { UnityEngine.Object.Destroy(obj); }
         }
 
+        /// <summary>
+        /// 使用 RenderTexture 將來源紋理縮放到目標尺寸，輸出為 PNG 位元組陣列。
+        /// </summary>
+        /// <summary>透過 RenderTexture 將來源紋理縮放至指定尺寸並輸出 PNG。</summary>
         private static byte[] ResizeTextureToPng(Texture source, int width, int height)
         {
             var previous = RenderTexture.active;
@@ -569,7 +619,6 @@ namespace FasterGameLoading
             {
                 Graphics.Blit(source, renderTexture);
                 RenderTexture.active = renderTexture;
-
                 readable = new Texture2D(width, height, TextureFormat.RGBA32, false);
                 readable.ReadPixels(new Rect(0, 0, width, height), 0, 0);
                 readable.Apply(false, false);
@@ -579,13 +628,18 @@ namespace FasterGameLoading
             {
                 RenderTexture.active = previous;
                 RenderTexture.ReleaseTemporary(renderTexture);
-                if (readable != null)
-                {
-                    DestroyTemporaryUnityObject(readable);
-                }
+                if (readable != null) DestroyTemporaryUnityObject(readable);
             }
         }
 
+        // ════════════════════════════════════════════════════════════════
+        //  服裝圖形輔助
+        // ════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// 嘗試取得指定身體類型的穿著外觀圖形。
+        /// 考量發育階段過濾、圖層類型、pack 渲染模式等。
+        /// </summary>
         public static bool TryGetGraphicApparel(ThingDef def, string wornGraphicPath, BodyTypeDef bodyType, out Graphic rec)
         {
             if (bodyType == BodyTypeDefOf.Baby && def.apparel.developmentalStageFilter.HasFlag(DevelopmentalStage.Baby) is false
@@ -612,6 +666,7 @@ namespace FasterGameLoading
             return true;
         }
 
+        /// <summary>判斷此服裝是否需要以 pack 模式渲染（Utility 層預設為 true）。</summary>
         public static bool RenderAsPack(ThingDef def)
         {
             if (def.apparel.LastLayer.IsUtilityLayer)
@@ -625,102 +680,81 @@ namespace FasterGameLoading
             return false;
         }
 
+        // ════════════════════════════════════════════════════════════════
+        //  紋理類型判斷
+        // ════════════════════════════════════════════════════════════════
+
+        /// <summary>根據 ThingDef 的屬性判斷其紋理類型。</summary>
         private static TextureType GetTextureType(ThingDef thingDef)
         {
-            if (thingDef.building != null)
+            if (thingDef.building != null) return TextureType.Building;
+            if (thingDef.IsWeapon) return TextureType.Weapon;
+            if (thingDef.IsApparel) return TextureType.Apparel;
+            if (thingDef.IsPlant)
             {
-                return TextureType.Building;
+                return thingDef.plant.IsTree ? TextureType.Tree : TextureType.Plant;
             }
-            else if (thingDef.IsWeapon)
-            {
-                return TextureType.Weapon;
-            }
-            else if (thingDef.IsApparel)
-            {
-                return TextureType.Apparel;
-            }
-            else if (thingDef.IsPlant)
-            {
-                if (thingDef.plant.IsTree)
-                {
-                    return TextureType.Tree;
-                }
-                return TextureType.Plant;
-            }
-            else if (thingDef.projectile != null)
-            {
-                return TextureType.Projectile;
-            }
-            else if (thingDef.category == ThingCategory.Mote)
-            {
-                return TextureType.Mote;
-            }
-            else if (thingDef.category == ThingCategory.Filth)
-            {
-                return TextureType.Filth;
-            }
-            else if (thingDef.category == ThingCategory.Item)
-            {
-                return TextureType.Item;
-            }
-            else if (thingDef.race != null)
-            {
-                return TextureType.Pawn;
-            }
+            if (thingDef.projectile != null) return TextureType.Projectile;
+            if (thingDef.category == ThingCategory.Mote) return TextureType.Mote;
+            if (thingDef.category == ThingCategory.Filth) return TextureType.Filth;
+            if (thingDef.category == ThingCategory.Item) return TextureType.Item;
+            if (thingDef.race != null) return TextureType.Pawn;
             return TextureType.None;
         }
 
+        // ════════════════════════════════════════════════════════════════
+        //  紋理條目管理
+        // ════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// 將 Def 的圖形和 UI 圖示加入紋理條目。
+        /// </summary>
         private static void FillEntry(TextureType type, BuildableDef def, Graphic graphicOverride = null)
         {
             var graphic = graphicOverride ?? def.graphic;
             AddEntry(type, def, graphic);
-            if (def.uiIconPath.NullOrEmpty() is false)
+            if (def.uiIconPath.NullOrEmpty() is false && def.uiIcon != null)
             {
-                if (def.uiIcon != null)
+                if (TryGetTexturePath(def.uiIcon, out var fullPath))
                 {
-                    if (TryGetTexturePath(def.uiIcon, out var fullPath))
-                    {
-                        AddEntry(TextureType.UI, def, fullPath, def.uiIcon);
-                    }
+                    AddEntry(TextureType.UI, def, fullPath, def.uiIcon);
                 }
             }
         }
+
+        /// <summary>
+        /// 遞迴展開 Graphic 物件樹，將所有材質紋理加入條目。
+        /// 支援 Graphic_Multi、Graphic_Appearances、Graphic_Single、
+        /// Graphic_RandomRotated、Graphic_Linked、Graphic_Collection 等類型。
+        /// </summary>
         private static void AddEntry(TextureType type, BuildableDef def, Graphic graphic)
         {
-            if (graphic is Graphic_Multi multi)
+            switch (graphic)
             {
-                foreach (var mat in multi.mats)
-                {
-                    GetMatTexture(type, def, mat);
-                }
-            }
-            else if (graphic is Graphic_Appearances appearances)
-            {
-                foreach (var subGraphic in appearances.subGraphics)
-                {
-                    AddEntry(type, def, subGraphic);
-                }
-            }
-            else if (graphic is Graphic_Single single)
-            {
-                GetMatTexture(type, def, single.mat);
-            }
-            else if (graphic is Graphic_RandomRotated randomRotated)
-            {
-                AddEntry(type, def, randomRotated.subGraphic);
-            }
-            else if (graphic is Graphic_Linked linked)
-            {
-                AddEntry(type, def, linked.subGraphic);
-            }
-            else if (def.graphic is Graphic_Collection collection)
-            {
-                foreach (var subGraphic in collection.subGraphics)
-                {
-                    AddEntry(type, def, subGraphic);
-                }
+                case Graphic_Multi multi:
+                    foreach (var mat in multi.mats) GetMatTexture(type, def, mat);
+                    break;
+                case Graphic_Appearances appearances:
+                    foreach (var subGraphic in appearances.subGraphics) AddEntry(type, def, subGraphic);
+                    break;
+                case Graphic_Single single:
+                    GetMatTexture(type, def, single.mat);
+                    break;
+                case Graphic_RandomRotated randomRotated:
+                    AddEntry(type, def, randomRotated.subGraphic);
+                    break;
+                case Graphic_Linked linked:
+                    AddEntry(type, def, linked.subGraphic);
+                    break;
+                case Graphic_Collection collection:
+                    foreach (var subGraphic in collection.subGraphics) AddEntry(type, def, subGraphic);
+                    break;
             }
         }
+
+        /// <summary>
+        /// 從 Material 中提取 mainTexture 和 mask texture 加入條目。
+        /// </summary>
         private static void GetMatTexture(TextureType type, BuildableDef def, Material mat)
         {
             if (mat?.mainTexture != null && TryGetTexturePath(mat.mainTexture, out var fullPath))
@@ -738,6 +772,10 @@ namespace FasterGameLoading
             }
         }
 
+        /// <summary>
+        /// 判斷是否應該對此紋理進行降質。
+        /// 只對 drawSize 總和 ≤ 8 的 Def 進行降質（避免影響大型物件外觀）。
+        /// </summary>
         private static bool TryGetResizeTarget(Texture texture, BuildableDef def, out int targetSize)
         {
             if (def is TerrainDef)
@@ -756,6 +794,7 @@ namespace FasterGameLoading
             return false;
         }
 
+        /// <summary>從 WeakReference 快取中重新整理紋理路徑對照表。</summary>
         private static void RefreshTexturePathMap()
         {
             foreach (var kvp in ModContentLoaderTexture2D_LoadTexture_Patch.savedTextures)
@@ -767,12 +806,14 @@ namespace FasterGameLoading
             }
         }
 
+        /// <summary>
+        /// 根據 Texture 物件尋找其磁碟路徑。先在本地快取查詢，
+        /// 找不到時遍歷 WeakReference 快取進行 ReferenceEquals 比對。
+        /// </summary>
         private static bool TryGetTexturePath(Texture texture, out string fullPath)
         {
             if (texture != null && texturesByPaths.TryGetValue(texture, out fullPath))
-            {
                 return true;
-            }
 
             if (texture != null)
             {
@@ -791,6 +832,7 @@ namespace FasterGameLoading
             return false;
         }
 
+        /// <summary>將紋理條目加入指定類型的分類中。</summary>
         private static void AddEntry(TextureType type, BuildableDef def, string fullPath, Texture texture)
         {
             var entry = new KeyValuePair<BuildableDef, string>(def, fullPath);

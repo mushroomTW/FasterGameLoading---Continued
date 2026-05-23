@@ -1,13 +1,19 @@
 using HarmonyLib;
 using UnityEngine;
 using Verse;
+
 namespace FasterGameLoading
 {
+    /// <summary>
+    /// FasterGameLoading 模組的進入點。
+    /// 初始化 Harmony patch、設定、延遲動作管理器，並註冊快取重置回呼。
+    /// </summary>
     public class FasterGameLoadingMod : Mod
     {
         public static Harmony harmony;
         public static FasterGameLoadingSettings settings;
         public static DelayedActions delayedActions;
+
         public FasterGameLoadingMod(ModContentPack pack) : base(pack)
         {
             var gameObject = new GameObject("FasterGameLoadingMod");
@@ -15,6 +21,8 @@ namespace FasterGameLoading
             delayedActions = gameObject.AddComponent<DelayedActions>();
             settings = this.GetSettings<FasterGameLoadingSettings>();
             harmony = new Harmony("FasterGameLoadingMod");
+
+            // Background preload all types to speed up subsequent AccessTools.AllTypes() calls
             AccessTools_AllTypes_Patch.Preload();
             harmony.PatchAll();
 
@@ -35,7 +43,7 @@ namespace FasterGameLoading
                 }
                 catch
                 {
-                    // 如果 patch 類別尚未註冊或重複套用（拋出例外），跳過即可
+                    // If the patch category hasn't been registered yet or is duplicated (exception thrown), skip
                 }
             });
         }

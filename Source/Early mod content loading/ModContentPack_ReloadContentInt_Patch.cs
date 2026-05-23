@@ -5,6 +5,10 @@ using Verse;
 
 namespace FasterGameLoading
 {
+    /// <summary>
+    /// 攔截 ModContentPack.ReloadContentInt，跳過已在提早載入階段處理完的 Mod。
+    /// 所有 Mod 完成後自動觸發 AlienRacesCompat.ScheduleRescan。
+    /// </summary>
     [HarmonyPatch(typeof(ModContentPack), "ReloadContentInt")]
     public static class ModContentPack_ReloadContentInt_Patch
     {

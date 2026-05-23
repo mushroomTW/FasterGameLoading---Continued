@@ -29,7 +29,7 @@ namespace FasterGameLoading
                     .FirstOrDefault(a => a.GetName().Name == "AlienRace");
                 if (alienAssembly == null) return;
 
-                Log.Message("[FasterGameLoading] 檢測到 Alien Races，安排在載入完成後重新掃描 extended graphics");
+                Log.Message("[FasterGameLoading] Alien Races detected, scheduling extended graphics rescan after loading");
 
                 // 使用 LongEventHandler 在載入完成後執行
                 // 此時所有 Def 已解析完畢，貼圖資料庫完整
@@ -37,7 +37,7 @@ namespace FasterGameLoading
             }
             catch (Exception ex)
             {
-                Log.Warning("[FasterGameLoading] Alien Races 檢測失敗: " + ex.Message);
+                Log.Warning("[FasterGameLoading] Alien Races detection failed: " + ex.Message);
             }
         }
 
@@ -61,7 +61,7 @@ namespace FasterGameLoading
                 var countProp = AccessTools.Property(queue.GetType(), "Count");
                 if (countProp == null)
                 {
-                    Log.Warning("[FasterGameLoading] Alien Races graphicsQueue 型別無 Count 屬性");
+                    Log.Warning("[FasterGameLoading] Alien Races graphicsQueue type has no Count property");
                     return;
                 }
                 var count = (int)countProp.GetValue(queue);
@@ -69,7 +69,7 @@ namespace FasterGameLoading
                 // 如果 queue 還有內容，表示 Hook 尚未執行，不需我們手動觸發
                 if (count > 0)
                 {
-                    Log.Message("[FasterGameLoading] Alien Races graphics queue 尚未處理，不需手動重新掃描");
+                    Log.Message("[FasterGameLoading] Alien Races graphics queue not yet processed, skipping manual rescan");
                     rescanDone = true;
                     return;
                 }
@@ -110,11 +110,11 @@ namespace FasterGameLoading
                     if (loadGraphicsHook != null)
                     {
                         loadGraphicsHook.Invoke(null, null);
-                        Log.Message("[FasterGameLoading] Alien Races extended graphics 重新掃描完成");
+                        Log.Message("[FasterGameLoading] Alien Races extended graphics rescan complete");
                     }
                     else
                     {
-                        Log.Warning("[FasterGameLoading] 找不到 AlienPartGenerator.LoadGraphicsHook 方法");
+                        Log.Warning("[FasterGameLoading] AlienPartGenerator.LoadGraphicsHook method not found");
                     }
                 }
 
@@ -122,7 +122,7 @@ namespace FasterGameLoading
             }
             catch (Exception ex)
             {
-                Log.Warning("[FasterGameLoading] Alien Races 重新掃描失敗: " + ex.Message);
+                Log.Warning("[FasterGameLoading] Alien Races rescan failed: " + ex.Message);
 #if DEBUG
                 Log.Error($"[FasterGameLoading] Alien Races rescan error details: {ex}");
 #endif

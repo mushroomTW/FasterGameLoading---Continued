@@ -5,6 +5,11 @@ using Verse;
 
 namespace FasterGameLoading
 {
+    /// <summary>
+    /// 攔截 GenTypes.GetTypeInAnyAssemblyInt 以快取型別查詢結果。
+    /// 先從跨 session 快取中尋找完整名稱對照表，再查詢本次 session 的執行期快取。
+    /// 命中時跳過原始方法，未命中則記錄到本次 session 快取。
+    /// </summary>
     [HarmonyPatch(typeof(GenTypes), "GetTypeInAnyAssemblyInt")]
     public static class GenTypes_GetTypeInAnyAssemblyInt_Patch
     {

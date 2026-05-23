@@ -45,8 +45,9 @@ namespace FasterGameLoading
 
         /// <summary>
         /// 保留的歷史記錄筆數上限。
+        /// 需與 WEIGHTS 長度一致，確保加權平均能正確計算。
         /// </summary>
-        public const int HISTORY_SIZE = 5;
+        public const int HISTORY_SIZE = 4;
 
         // ── 執行期查詢快取（不持久化） ──
 

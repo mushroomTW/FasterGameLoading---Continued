@@ -4,6 +4,10 @@ using Verse;
 
 namespace FasterGameLoading
 {
+    /// <summary>
+    /// 攔截 ModAssetBundlesHandler.ReloadAll，確保每個 handler 只執行一次。
+    /// 提早載入階段可能重複呼叫 ReloadAll，此 patch 追蹤已處理的 handler 以避免重複的 I/O 操作。
+    /// </summary>
     [HarmonyPatch(typeof(ModAssetBundlesHandler), "ReloadAll")]
     public static class ModAssetBundlesHandler_ReloadAll_Patch
     {

@@ -96,7 +96,6 @@ namespace FasterGameLoading
                 if (manifest.queueHash != ComputeQueueHash()) return false;
 
                 var cachedAtlases = new List<StaticTextureAtlas>();
-                var buildMeshesMethod = AccessTools.Method(typeof(StaticTextureAtlas), "BuildMeshesForUvs", new[] { typeof(Rect[]) });
 
                 foreach (var info in manifest.atlases)
                 {
@@ -143,7 +142,7 @@ namespace FasterGameLoading
                         colorTex.name = "StaticAtlas_" + info.group;
                         atlas.colorTexture = colorTex;
                     }
-                    catch
+                    catch (Exception)
                     {
                         UnityEngine.Object.Destroy(colorTex);
                         DestroyAtlases(cachedAtlases);
@@ -169,7 +168,7 @@ namespace FasterGameLoading
                             maskTex.name = "StaticAtlasMask_" + info.group;
                             atlas.maskTexture = maskTex;
                         }
-                        catch
+                        catch (Exception)
                         {
                             UnityEngine.Object.Destroy(maskTex);
                             DestroyAtlasTextures(atlas);
@@ -180,10 +179,10 @@ namespace FasterGameLoading
 
                     try
                     {
-                        buildMeshesMethod.Invoke(atlas, new object[] { info.uvRects.ToArray() });
+                        atlas.BuildMeshesForUvs(info.uvRects.ToArray());
                         cachedAtlases.Add(atlas);
                     }
-                    catch
+                    catch (Exception)
                     {
                         DestroyAtlasTextures(atlas);
                         DestroyAtlases(cachedAtlases);
@@ -248,15 +247,10 @@ namespace FasterGameLoading
             {
                 var atlas = atlases[i];
 
-                var tilesDictField = AccessTools.Field(typeof(StaticTextureAtlas), "tiles");
-                var tilesDict = (Dictionary<Texture, StaticTextureAtlasTile>)tilesDictField.GetValue(atlas);
-
+                var tilesDict = atlas.tiles;
                 var uvRects = new List<Rect>();
-                var groupKeyField = AccessTools.Field(typeof(StaticTextureAtlas), "groupKey");
-                var groupKey = (TextureAtlasGroupKey)groupKeyField.GetValue(atlas);
-
-                var atlasTexturesField = AccessTools.Field(typeof(StaticTextureAtlas), "textures");
-                var atlasTextures = (List<Texture2D>)atlasTexturesField.GetValue(atlas);
+                var groupKey = atlas.groupKey;
+                var atlasTextures = atlas.textures;
 
                 var texNames = atlasTextures.Select(t => t.name).ToList();
 
@@ -333,9 +327,9 @@ namespace FasterGameLoading
                     return bytes;
                 }
             }
-            catch
+            catch (Exception)
             {
-                // Ignore and fall back to RenderTexture
+                // 無法直接讀取紋理資料，改用 RenderTexture fallback
             }
 
             // Fallback for unreadable textures

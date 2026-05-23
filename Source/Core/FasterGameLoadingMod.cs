@@ -33,7 +33,10 @@ namespace FasterGameLoading
                 {
                     harmony.PatchCategory("SoundStarter");
                 }
-                catch { /* 如果已 patched 就忽略 */ }
+                catch
+                {
+                    // 如果 patch 類別尚未註冊或重複套用（拋出例外），跳過即可
+                }
             });
         }
 

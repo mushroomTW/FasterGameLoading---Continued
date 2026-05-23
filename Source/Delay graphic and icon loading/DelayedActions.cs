@@ -38,7 +38,7 @@ namespace FasterGameLoading
         private const int TIMEOUT_THRESHOLD = 3;
         private int skipFrames;
         private const int SKIP_FRAME_COUNT = 5;
-        private bool ElapsedMaxImpact => (float)stopwatch.ElapsedTicks / Stopwatch.Frequency >= MaxImpactThisFrame;
+        private bool OverBudget => (float)stopwatch.ElapsedTicks / Stopwatch.Frequency >= MaxImpactThisFrame;
         public void LateUpdate()
         {
             if (earlyLoadingComplete || !FasterGameLoadingSettings.earlyModContentLoading)
@@ -75,7 +75,7 @@ namespace FasterGameLoading
                     Log.Warning("[FasterGameLoading] Early loading failed for " + modToLoad.PackageIdPlayerFacing + ", will retry in normal flow: " + ex.Message);
                 }
                 // 用完時間預算就讓出這幀，下幀繼續
-                if (ElapsedMaxImpact)
+                if (OverBudget)
                 {
                     consecutiveTimeouts++;
                     if (consecutiveTimeouts >= TIMEOUT_THRESHOLD)
@@ -106,18 +106,34 @@ namespace FasterGameLoading
 
         public IEnumerator PerformActions()
         {
+            var loadedDefs = new List<ThingDef>();
+            yield return LoadDeferredGraphicsCoroutine(loadedDefs);
+            yield return BakeDeferredAtlasesCoroutine();
+            yield return UpdateMapMeshForLoadedDefs(loadedDefs);
+            yield return LoadDeferredIconsCoroutine();
+            yield return ResolveSubSoundDefsCoroutine();
+
+            GraphicData_Init_Patch.savedGraphics.Clear();
+            stopwatch.Stop();
+            this.enabled = false;
+            yield return null;
+        }
+
+        /// <summary>
+        /// 在時間預算內批次載入延遲的圖形紋理。
+        /// </summary>
+        private IEnumerator LoadDeferredGraphicsCoroutine(List<ThingDef> loadedDefs)
+        {
             stopwatch.Start();
-            var count = 0;
+            int count = 0;
             Log.Message("[FasterGameLoading] Starting loading graphics: " + graphicsToLoad.Count);
-            List<ThingDef> loadedDefs = new List<ThingDef>();
             while (graphicsToLoad.Count > 0)
             {
                 if (UnityData.IsInMainThread is false)
                 {
                     yield return 0;
                 }
-                // 批次處理：在時間預算內盡量多處理項目
-                while (graphicsToLoad.Count > 0 && !ElapsedMaxImpact)
+                while (graphicsToLoad.Count > 0 && !OverBudget)
                 {
                     var (def, action) = graphicsToLoad.Dequeue();
                     try
@@ -140,7 +156,13 @@ namespace FasterGameLoading
                 }
             }
             Log.Message("[FasterGameLoading] Finished loading graphics");
+        }
 
+        /// <summary>
+        /// 執行靜態圖集烘焙（自適應或快取還原）。
+        /// </summary>
+        private IEnumerator BakeDeferredAtlasesCoroutine()
+        {
             AdaptiveStaticAtlasBakeFailed = false;
             AllDeferredVisualsLoaded = true;
             if (FasterGameLoadingSettings.StaticAtlasesBaking)
@@ -151,7 +173,6 @@ namespace FasterGameLoading
                 }
                 else
                 {
-                    // Remember queue hash before bake modifies it
                     string queueHash = null;
                     if (FasterGameLoadingSettings.atlasCaching)
                     {
@@ -187,7 +208,13 @@ namespace FasterGameLoading
                 GlobalTextureAtlasManager.BakeStaticAtlases();
                 Log.Message("[FasterGameLoading] Finished deferred vanilla static atlas baking");
             }
+        }
 
+        /// <summary>
+        /// 將已載入的圖形標記為需要重新繪製地圖網格。
+        /// </summary>
+        private IEnumerator UpdateMapMeshForLoadedDefs(List<ThingDef> loadedDefs)
+        {
             try
             {
                 if (Current.Game != null)
@@ -208,8 +235,15 @@ namespace FasterGameLoading
             {
                 Log.Warning("[FasterGameLoading] Error updating map mesh: " + ex);
             }
+            yield break;
+        }
 
-            count = 0;
+        /// <summary>
+        /// 在時間預算內批次載入延遲的圖示紋理。
+        /// </summary>
+        private IEnumerator LoadDeferredIconsCoroutine()
+        {
+            int count = 0;
             stopwatch.Restart();
 
             Log.Message("[FasterGameLoading] Starting loading icons: " + iconsToLoad.Count);
@@ -219,8 +253,7 @@ namespace FasterGameLoading
                 {
                     yield return 0;
                 }
-                // 批次處理：在時間預算內盡量多處理項目
-                while (iconsToLoad.Count > 0 && !ElapsedMaxImpact)
+                while (iconsToLoad.Count > 0 && !OverBudget)
                 {
                     var (def, action) = iconsToLoad.Dequeue();
                     if (def.uiIcon == BaseContent.BadTex)
@@ -245,14 +278,19 @@ namespace FasterGameLoading
             }
 
             Log.Message("[FasterGameLoading] Finished loading icons");
+        }
 
-            count = 0;
+        /// <summary>
+        /// 在時間預算內批次解析延遲的 SubSoundDef，完成後解除聲音攔截 patch。
+        /// </summary>
+        private IEnumerator ResolveSubSoundDefsCoroutine()
+        {
+            int count = 0;
             stopwatch.Restart();
             Log.Message("[FasterGameLoading] Starting resolving SubSoundDefs: " + subSoundDefToResolve.Count);
             while (subSoundDefToResolve.Count > 0)
             {
-                // 批次處理：在時間預算內盡量多處理項目
-                while (subSoundDefToResolve.Count > 0 && !ElapsedMaxImpact)
+                while (subSoundDefToResolve.Count > 0 && !OverBudget)
                 {
                     var (def, action) = subSoundDefToResolve.Dequeue();
                     try
@@ -274,11 +312,6 @@ namespace FasterGameLoading
             }
             SoundStarter_Patch.Unpatch();
             Log.Message("[FasterGameLoading] Finished resolving SubSoundDefs");
-
-            GraphicData_Init_Patch.savedGraphics.Clear();
-            stopwatch.Stop();
-            this.enabled = false;
-            yield return null;
         }
 
         private IEnumerator PerformAdaptiveStaticAtlasBake()

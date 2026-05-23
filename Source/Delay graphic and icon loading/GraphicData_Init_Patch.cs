@@ -22,7 +22,7 @@ namespace FasterGameLoading
                 var graphicDatas = savedGraphics.GetOrAdd(__instance.texPath, _ => new List<GraphicData>());
                 foreach (var item in graphicDatas)
                 {
-                    if (IsTheSameGraphicData(__instance, item) && item.cachedGraphic != null)
+                    if (IsSameGraphicData(__instance, item) && item.cachedGraphic != null)
                     {
                         __instance.cachedGraphic = item.cachedGraphic;
                         return false;
@@ -44,7 +44,7 @@ namespace FasterGameLoading
             }
         }
 
-        public static bool IsTheSameGraphicData(GraphicData current, GraphicData other)
+        public static bool IsSameGraphicData(GraphicData current, GraphicData other)
         {
             if (current.shaderParameters is null && other.shaderParameters is null
                 && current.asymmetricLink is null && other.asymmetricLink is null)

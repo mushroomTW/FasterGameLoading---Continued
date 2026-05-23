@@ -61,7 +61,11 @@ namespace FasterGameLoading
                     LoadKeyedTranslationsFromFile(xmlFile, activeLanguage);
                 }
             }
-            catch (Exception ex)
+            catch (IOException ex)
+            {
+                Log.Error("[FasterGameLoading] Error injecting translations: " + ex);
+            }
+            catch (UnauthorizedAccessException ex)
             {
                 Log.Error("[FasterGameLoading] Error injecting translations: " + ex);
             }

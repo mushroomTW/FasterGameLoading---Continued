@@ -63,9 +63,13 @@ namespace FasterGameLoading
                     return originalPath + "|" + file.Length + "|" + file.LastWriteTimeUtc.Ticks;
                 }
             }
-            catch (Exception)
+            catch (IOException)
             {
                 // 無法讀取檔案資訊（路徑過長、權限不足等），改用純路徑作為快取鍵
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // 權限不足，改用純路徑作為快取鍵
             }
             return originalPath;
         }
@@ -120,7 +124,11 @@ namespace FasterGameLoading
                 }
                 return File.GetLastWriteTimeUtc(cachePath) >= File.GetLastWriteTimeUtc(originalPath);
             }
-            catch (Exception)
+            catch (IOException)
+            {
+                return false;
+            }
+            catch (UnauthorizedAccessException)
             {
                 return false;
             }
@@ -150,7 +158,11 @@ namespace FasterGameLoading
                 }
                 Log.Message("[FasterGameLoading] Texture cache cleared.");
             }
-            catch (Exception ex)
+            catch (IOException ex)
+            {
+                Log.Error("[FasterGameLoading] Failed to clear texture cache: " + ex.Message);
+            }
+            catch (UnauthorizedAccessException ex)
             {
                 Log.Error("[FasterGameLoading] Failed to clear texture cache: " + ex.Message);
             }
@@ -240,6 +252,11 @@ namespace FasterGameLoading
 
                 // 持久化快取對照表
                 LoadedModManager.GetMod<FasterGameLoadingMod>().WriteSettings();
+            }
+            catch (Exception ex)
+            {
+                Log.Error("[FasterGameLoading] Texture downscale failed, keeping previous cache: " + ex);
+                RestorePreviousCacheState(previousCacheMap, previousCacheDirectory, stagingDirectory);
             }
             finally
             {
@@ -511,9 +528,18 @@ namespace FasterGameLoading
                 File.WriteAllBytes(cachePath, ResizeTextureToPng(resizeSource, newWidth, newHeight));
                 lock (cacheLock) { resizedTextureCache[candidate.path] = cachePath; }
             }
+            catch (IOException ex)
+            {
+                Log.Error("[FasterGameLoading] Failed to downscale texture " + candidate.path + ": " + ex.Message);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Log.Error("[FasterGameLoading] Failed to downscale texture " + candidate.path + ": " + ex.Message);
+            }
             catch (Exception ex)
             {
-                Log.Warning("[FasterGameLoading] Failed to resize texture: " + candidate.path + " - " + ex.Message);
+                Log.Warning("[FasterGameLoading] Failed to downscale texture " + candidate.path + ": " + ex);
+                RemoveCachedTexturePath(candidate.path);
             }
             finally
             {
@@ -557,7 +583,8 @@ namespace FasterGameLoading
                     return TryReadPngDimensions(stream, ref width, ref height);
                 }
             }
-            catch (Exception) { return false; }
+            catch (IOException) { return false; }
+            catch (UnauthorizedAccessException) { return false; }
         }
 
         /// <summary>從 PNG 檔案串流讀取 IHDR chunk 中的寬高。</summary>

@@ -61,7 +61,11 @@ namespace FasterGameLoading
                     Log.Message("[FasterGameLoading] Atlas cache cleared.");
                 }
             }
-            catch (Exception ex)
+            catch (IOException ex)
+            {
+                Log.Warning("[FasterGameLoading] Failed to clear atlas cache: " + ex.Message);
+            }
+            catch (UnauthorizedAccessException ex)
             {
                 Log.Warning("[FasterGameLoading] Failed to clear atlas cache: " + ex.Message);
             }
@@ -219,9 +223,19 @@ namespace FasterGameLoading
 
                 return true;
             }
+            catch (IOException e)
+            {
+                Log.Warning("[FasterGameLoading] Cache load error: " + e);
+                return false;
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                Log.Warning("[FasterGameLoading] Cache load error: " + e);
+                return false;
+            }
             catch (Exception e)
             {
-Log.Warning("[FasterGameLoading] Cache load error: " + e);
+                Log.Warning("[FasterGameLoading] Cache load error, falling back to vanilla atlas baking: " + e);
                 return false;
             }
         }
@@ -310,6 +324,16 @@ Log.Warning("[FasterGameLoading] Cache load error: " + e);
                     info.format = (int)newFormat;
                     File.WriteAllBytes(Path.Combine(CacheDirectory, info.colorFile), colorBytes);
                 }
+                catch (IOException e)
+                {
+                    Log.Error("[FasterGameLoading] Error saving atlas color bytes: " + e);
+                    yield break;
+                }
+                catch (UnauthorizedAccessException e)
+                {
+                    Log.Error("[FasterGameLoading] Error saving atlas color bytes: " + e);
+                    yield break;
+                }
                 catch (Exception e)
                 {
                     Log.Error("[FasterGameLoading] Error saving atlas color bytes: " + e);
@@ -326,6 +350,16 @@ Log.Warning("[FasterGameLoading] Cache load error: " + e);
                         info.maskFormat = (int)newFormatMask;
                         File.WriteAllBytes(Path.Combine(CacheDirectory, info.maskFile), maskBytes);
                     }
+                    catch (IOException e)
+                    {
+                        Log.Error("[FasterGameLoading] Error saving atlas mask bytes: " + e);
+                        yield break;
+                    }
+                    catch (UnauthorizedAccessException e)
+                    {
+                        Log.Error("[FasterGameLoading] Error saving atlas mask bytes: " + e);
+                        yield break;
+                    }
                     catch (Exception e)
                     {
                         Log.Error("[FasterGameLoading] Error saving atlas mask bytes: " + e);
@@ -337,8 +371,23 @@ Log.Warning("[FasterGameLoading] Cache load error: " + e);
                 manifest.atlases.Add(info);
             }
 
-            File.WriteAllText(ManifestPath, JsonUtility.ToJson(manifest, true));
-            Log.Message("[FasterGameLoading] Static atlas cache saved.");
+            try
+            {
+                File.WriteAllText(ManifestPath, JsonUtility.ToJson(manifest, true));
+                Log.Message("[FasterGameLoading] Static atlas cache saved.");
+            }
+            catch (IOException e)
+            {
+                Log.Error("[FasterGameLoading] Error saving atlas manifest: " + e);
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                Log.Error("[FasterGameLoading] Error saving atlas manifest: " + e);
+            }
+            catch (Exception e)
+            {
+                Log.Error("[FasterGameLoading] Error saving atlas manifest: " + e);
+            }
         }
 
         /// <summary>

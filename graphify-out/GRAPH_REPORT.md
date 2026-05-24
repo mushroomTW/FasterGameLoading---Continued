@@ -1,16 +1,16 @@
 # Graph Report - FasterGameLoading---Continued  (2026-05-25)
 
 ## Corpus Check
-- 47 files · ~25,537 words
+- 47 files · ~25,615 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 654 nodes · 763 edges · 55 communities (41 shown, 14 thin omitted)
+- 657 nodes · 766 edges · 55 communities (41 shown, 14 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.86)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a24fcacc`
+- Built from commit: `29fbf6b7`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -65,7 +65,7 @@
 
 ## God Nodes (most connected - your core abstractions)
 1. `compile` - 109 edges
-2. `TextureResize` - 50 edges
+2. `TextureResize` - 52 edges
 3. `DelayedActions` - 21 edges
 4. `TextureCacheManager` - 16 edges
 5. `TextureScanner` - 16 edges
@@ -99,7 +99,7 @@ Nodes (43): build/Krafs.Publicizer.props, build/Krafs.Publicizer.targets, lib/ne
 
 ### Community 2 - "Community 2"
 Cohesion: 0.08
-Nodes (11): long, ConcurrentDictionary, Dictionary, object, string, ConcurrentDictionary, Dictionary, object (+3 more)
+Nodes (13): long, ConcurrentDictionary, Dictionary, object, string, ConcurrentDictionary, Dictionary, object (+5 more)
 
 ### Community 3 - "Community 3"
 Cohesion: 0.06
@@ -218,11 +218,11 @@ Cohesion: 0.15
 Nodes (13): Krafs.Publicizer, Krafs.Rimworld.Ref, Lib.Harmony, include, suppressParent, target, version, target (+5 more)
 
 ### Community 54 - "Community 54"
-Cohesion: 0.40
-Nodes (3): EarlyLoadSkipList, FasterGameLoading, HashSet
+Cohesion: 0.33
+Nodes (4): EarlyLoadSkipList, FasterGameLoading, bool, HashSet
 
 ## Knowledge Gaps
-- **269 isolated node(s):** `FasterGameLoading`, `HashSet`, `FasterGameLoading`, `FieldInfo`, `MethodBase` (+264 more)
+- **272 isolated node(s):** `FasterGameLoading`, `HashSet`, `bool`, `FasterGameLoading`, `FieldInfo` (+267 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **14 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -232,14 +232,14 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `compile` connect `Community 0` to `Community 1`, `Community 38`?**
   _High betweenness centrality (0.070) - this node is a cross-community bridge._
 - **Why does `Krafs.Rimworld.Ref/1.6.4633` connect `Community 1` to `Community 0`?**
-  _High betweenness centrality (0.043) - this node is a cross-community bridge._
-- **What connects `FasterGameLoading`, `HashSet`, `FasterGameLoading` to the rest of the system?**
-  _269 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _High betweenness centrality (0.042) - this node is a cross-community bridge._
+- **What connects `FasterGameLoading`, `HashSet`, `bool` to the rest of the system?**
+  _272 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.018518518518518517 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
   _Cohesion score 0.052525252525252523 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
-  _Cohesion score 0.08295625942684766 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07826694619147449 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**
   _Cohesion score 0.06417112299465241 - nodes in this community are weakly interconnected._

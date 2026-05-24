@@ -10,12 +10,20 @@ namespace FasterGameLoading
     /// </summary>
     public class FasterGameLoadingMod : Mod
     {
+        public static FasterGameLoadingMod Instance { get; private set; }
         public static Harmony harmony;
         public static FasterGameLoadingSettings settings;
         public static DelayedActions delayedActions;
 
+        public TextureCacheManager CacheManager { get; private set; }
+        public TextureResize Resizer { get; private set; }
+
         public FasterGameLoadingMod(ModContentPack pack) : base(pack)
         {
+            Instance = this;
+            CacheManager = new TextureCacheManager();
+            Resizer = new TextureResize(CacheManager);
+
             var gameObject = new GameObject("FasterGameLoadingMod");
             Object.DontDestroyOnLoad(gameObject);
             delayedActions = gameObject.AddComponent<DelayedActions>();

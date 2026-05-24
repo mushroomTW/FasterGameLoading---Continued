@@ -46,7 +46,7 @@ namespace FasterGameLoading
             }
 
             // 檢查是否有降質快取版本的紋理可用
-            if (TextureCacheManager.TryGetCachedTexturePath(fullPath, out var cachePath))
+            if (FasterGameLoadingMod.Instance.CacheManager.TryGetCachedTexturePath(fullPath, out var cachePath))
             {
                 try
                 {
@@ -78,12 +78,12 @@ namespace FasterGameLoading
                         }
                     }
 
-                    TextureCacheManager.RemoveCachedTexturePath(fullPath);
+                    FasterGameLoadingMod.Instance.CacheManager.RemoveCachedTexturePath(fullPath);
                     Interlocked.Increment(ref cacheLoadFailures);
                 }
                 catch (Exception)
                 {
-                    TextureCacheManager.RemoveCachedTexturePath(fullPath);
+                    FasterGameLoadingMod.Instance.CacheManager.RemoveCachedTexturePath(fullPath);
                     Interlocked.Increment(ref cacheLoadFailures);
                 }
             }

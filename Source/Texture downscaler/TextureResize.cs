@@ -12,7 +12,7 @@ namespace FasterGameLoading
     /// <summary>
     /// 紋理降質的整合調度器。協同 CacheManager、Scanner、Resizer 及 PngUtils 執行降質流程。
     /// </summary>
-    public static class TextureResize
+    public class TextureResize
     {
         /// <summary>紋理分類，用於決定降質目標尺寸。</summary>
         public enum TextureType
@@ -20,8 +20,11 @@ namespace FasterGameLoading
             None, Building, Pawn, Weapon, Apparel, Item, Plant, Tree, Terrain, Mote, Filth, Projectile, UI, Other
         }
 
-        private static long lastOriginalPixelCount;
-        private static long lastDownscaledPixelCount;
+        private readonly TextureCacheManager cacheManager;
+        private readonly TextureScanner scanner;
+
+        private long lastOriginalPixelCount;
+        private long lastDownscaledPixelCount;
 
         /// <summary>單一紋理的縮放候選資訊。</summary>
         private struct TextureResizeCandidate
@@ -33,6 +36,12 @@ namespace FasterGameLoading
             public int originalHeight;
         }
 
+        public TextureResize(TextureCacheManager cacheManager)
+        {
+            this.cacheManager = cacheManager;
+            this.scanner = new TextureScanner();
+        }
+
         // ════════════════════════════════════════════════════════════════
         //  主要流程
         // ════════════════════════════════════════════════════════════════
@@ -42,17 +51,17 @@ namespace FasterGameLoading
         /// 掃描所有已載入的紋理 → 計算縮放候選 → 批次降質 → 替換快取目錄。
         /// 失敗時自動還原先前的快取狀態。
         /// </summary>
-        public static void DoTextureResizing()
+        public void DoTextureResizing()
         {
-            var previousCacheMap = new Dictionary<string, string>(TextureCacheManager.resizedTextureCache);
-            var previousCacheDirectory = TextureCacheManager.CacheDirectory;
-            var stagingDirectory = TextureCacheManager.BuildCacheDirectory(FGLConsts.TextureCacheStagingDir);
+            var previousCacheMap = new Dictionary<string, string>(cacheManager.resizedTextureCache);
+            var previousCacheDirectory = cacheManager.CacheDirectory;
+            var stagingDirectory = cacheManager.BuildCacheDirectory(FGLConsts.TextureCacheStagingDir);
             lastOriginalPixelCount = 0;
             lastDownscaledPixelCount = 0;
             try
             {
-                TextureCacheManager.SetupResizeStagingDirectory(stagingDirectory);
-                TextureScanner.BuildTextureScanData();
+                cacheManager.SetupResizeStagingDirectory(stagingDirectory);
+                scanner.BuildTextureScanData();
 
                 var texturesToResize = BuildResizeCandidates();
 
@@ -63,12 +72,12 @@ namespace FasterGameLoading
                         ResizeTexture(entry);
                     }
                     FGLLog.Warning("Downscaled " + texturesToResize.Count + " textures (cached, originals untouched)");
-                    TextureCacheManager.ReplaceTextureCacheDirectory(stagingDirectory);
+                    cacheManager.ReplaceTextureCacheDirectory(stagingDirectory);
                     LogResizeSummary(texturesToResize.Count);
                 }
                 else
                 {
-                    TextureCacheManager.RestorePreviousCacheState(previousCacheMap, previousCacheDirectory, stagingDirectory);
+                    cacheManager.RestorePreviousCacheState(previousCacheMap, previousCacheDirectory, stagingDirectory);
                 }
 
                 // 持久化快取對照表
@@ -77,27 +86,27 @@ namespace FasterGameLoading
             catch (Exception ex)
             {
                 FGLLog.Error("Texture downscale failed, keeping previous cache: ", ex);
-                TextureCacheManager.RestorePreviousCacheState(previousCacheMap, previousCacheDirectory, stagingDirectory);
+                cacheManager.RestorePreviousCacheState(previousCacheMap, previousCacheDirectory, stagingDirectory);
             }
             finally
             {
-                TextureScanner.ClearTextureScanData();
+                scanner.ClearTextureScanData();
             }
         }
 
         /// <summary>
         /// 篩選需要縮放的紋理：尺寸超過目標尺寸且 drawSize 總和 ≤ 8 的紋理。
         /// </summary>
-        private static List<TextureResizeCandidate> BuildResizeCandidates()
+        private List<TextureResizeCandidate> BuildResizeCandidates()
         {
             var texturesToResize = new List<TextureResizeCandidate>();
-            foreach (var texture in TextureScanner.texturesByPaths)
+            foreach (var texture in scanner.texturesByPaths)
             {
                 var sourceWidth = texture.Key.width;
                 var sourceHeight = texture.Key.height;
                 PngUtils.TryGetImageDimensions(texture.Value, ref sourceWidth, ref sourceHeight);
 
-                if (TextureScanner.texturesByDefs.TryGetValue(texture.Key, out var value)
+                if (scanner.texturesByDefs.TryGetValue(texture.Key, out var value)
                     && TextureResizer.TryGetResizeTarget(texture.Key, value.Key, out var targetSize)
                     && (sourceWidth > targetSize || sourceHeight > targetSize))
                 {
@@ -117,7 +126,7 @@ namespace FasterGameLoading
         /// <summary>
         /// 執行單一紋理降質：載入原始 PNG → 按比例縮放 → 輸出 PNG 到快取目錄。
         /// </summary>
-        private static void ResizeTexture(TextureResizeCandidate candidate)
+        private void ResizeTexture(TextureResizeCandidate candidate)
         {
             Texture2D originalTexture = null;
             try
@@ -134,9 +143,9 @@ namespace FasterGameLoading
                 int newHeight = Math.Max(1, (int)Math.Round(sourceHeight * ratio));
                 lastOriginalPixelCount += (long)sourceWidth * sourceHeight;
                 lastDownscaledPixelCount += (long)newWidth * newHeight;
-                var cachePath = TextureCacheManager.GetCachePath(candidate.path);
+                var cachePath = cacheManager.GetCachePath(candidate.path);
                 File.WriteAllBytes(cachePath, TextureResizer.ResizeTextureToPng(resizeSource, newWidth, newHeight));
-                TextureCacheManager.SetCacheEntry(candidate.path, cachePath);
+                cacheManager.SetCacheEntry(candidate.path, cachePath);
             }
             catch (IOException ex)
             {
@@ -149,7 +158,7 @@ namespace FasterGameLoading
             catch (Exception ex)
             {
                 FGLLog.Warning("Failed to downscale texture " + candidate.path + ": ", ex);
-                TextureCacheManager.RemoveCachedTexturePath(candidate.path);
+                cacheManager.RemoveCachedTexturePath(candidate.path);
             }
             finally
             {
@@ -158,7 +167,7 @@ namespace FasterGameLoading
         }
 
         /// <summary>嘗試從磁碟載入原始 PNG 紋理。失敗時回傳 false，由呼叫端使用記憶體中的版本。</summary>
-        private static bool TryLoadOriginalTexture(string path, out Texture2D texture)
+        private bool TryLoadOriginalTexture(string path, out Texture2D texture)
         {
             texture = null;
             try
@@ -182,7 +191,7 @@ namespace FasterGameLoading
             return false;
         }
 
-        private static void LogResizeSummary(int resizedCount)
+        private void LogResizeSummary(int resizedCount)
         {
             FGLLog.Message("Texture downscale summary: resized=" + resizedCount
                 + ", sourcePixels=" + lastOriginalPixelCount
@@ -270,9 +279,9 @@ namespace FasterGameLoading
         // ════════════════════════════════════════════════════════════════
 
         /// <summary>相容性代理：目前快取的紋理數量。</summary>
-        public static int CacheCount => TextureCacheManager.CacheCount;
+        public int CacheCount => cacheManager.CacheCount;
 
         /// <summary>相容性代理：清除所有紋理快取。</summary>
-        public static void ClearCache() => TextureCacheManager.ClearCache();
+        public void ClearCache() => cacheManager.ClearCache();
     }
 }

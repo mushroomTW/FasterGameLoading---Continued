@@ -57,13 +57,13 @@ namespace FasterGameLoading
             {
                 Find.WindowStack.Add(new Dialog_MessageBox("FGL_DownscaleTexturesConfirmation".Translate(), "Confirm".Translate(), delegate
                 {
-                    TextureResize.DoTextureResizing();
+                    FasterGameLoadingMod.Instance.Resizer.DoTextureResizing();
                 }, "GoBack".Translate()));
             }
 
             // Reset texture button (clear cache) + status display
             ls.Gap(4f);
-            var cacheCount = TextureResize.CacheCount;
+            var cacheCount = FasterGameLoadingMod.Instance.Resizer.CacheCount;
             var cacheStatusText = cacheCount > 0
                 ? "FGL_TextureCacheStatus_Active".Translate(cacheCount)
                 : "FGL_TextureCacheStatus_Empty".Translate();
@@ -73,7 +73,7 @@ namespace FasterGameLoading
             {
                 Find.WindowStack.Add(new Dialog_MessageBox("FGL_ClearTextureCacheConfirmation".Translate(), "Confirm".Translate(), delegate
                 {
-                    TextureResize.ClearCache();
+                    FasterGameLoadingMod.Instance.Resizer.ClearCache();
                     LoadedModManager.GetMod<FasterGameLoadingMod>().WriteSettings();
                 }, "GoBack".Translate()));
             }
@@ -103,7 +103,11 @@ namespace FasterGameLoading
             Scribe_Values.Look(ref EnableMultiThreading, "enableMultiThreading", true);
 
             // 紋理快取
-            Scribe_Collections.Look(ref TextureCacheManager.resizedTextureCache, "resizedTextureCache", LookMode.Value, LookMode.Value);
+            var cacheManager = FasterGameLoadingMod.Instance?.CacheManager;
+            if (cacheManager != null)
+            {
+                Scribe_Collections.Look(ref cacheManager.resizedTextureCache, "resizedTextureCache", LookMode.Value, LookMode.Value);
+            }
 
             // 跨 session 快取資料委派給 SessionCache
             SessionCache.ExposeData();

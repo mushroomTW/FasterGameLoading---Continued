@@ -88,7 +88,7 @@
       "label": "DocumentGroupContainers",
       "file_type": "code",
       "source_file": "Source/.vs/FasterGameLoading/v18/DocumentLayout.json",
-      "source_location": "L14",
+      "source_location": "L5",
       "id": "v18_documentlayout_documentgroupcontainers",
       "community": 33,
       "norm_label": "documentgroupcontainers"
@@ -106,7 +106,7 @@
       "label": "FasterGameLoading",
       "file_type": "code",
       "source_file": "Source/Compatibility/EarlyLoadSkipList.cs",
-      "source_location": "L4",
+      "source_location": "L5",
       "id": "compatibility_earlyloadskiplist_fastergameloading",
       "community": 54,
       "norm_label": "fastergameloading"
@@ -115,7 +115,7 @@
       "label": "EarlyLoadSkipList",
       "file_type": "code",
       "source_file": "Source/Compatibility/EarlyLoadSkipList.cs",
-      "source_location": "L9",
+      "source_location": "L10",
       "id": "compatibility_earlyloadskiplist_earlyloadskiplist",
       "community": 54,
       "norm_label": "earlyloadskiplist"
@@ -124,16 +124,25 @@
       "label": "HashSet",
       "file_type": "code",
       "source_file": "Source/Compatibility/EarlyLoadSkipList.cs",
-      "source_location": "L12",
+      "source_location": "L13",
       "id": "source_compatibility_earlyloadskiplist_cs_hashset",
       "community": 54,
       "norm_label": "hashset"
     },
     {
+      "label": "bool",
+      "file_type": "code",
+      "source_file": "Source/Compatibility/EarlyLoadSkipList.cs",
+      "source_location": "L18",
+      "id": "source_compatibility_earlyloadskiplist_cs_bool",
+      "community": 54,
+      "norm_label": "bool"
+    },
+    {
       "label": ".ShouldSkip()",
       "file_type": "code",
       "source_file": "Source/Compatibility/EarlyLoadSkipList.cs",
-      "source_location": "L22",
+      "source_location": "L40",
       "id": "compatibility_earlyloadskiplist_earlyloadskiplist_shouldskip",
       "community": 54,
       "norm_label": ".shouldskip()"
@@ -322,7 +331,7 @@
       "label": "Harmony",
       "file_type": "code",
       "source_file": "Source/Core/FasterGameLoadingMod.cs",
-      "source_location": "L13",
+      "source_location": "L14",
       "id": "harmony",
       "community": 10,
       "norm_label": "harmony"
@@ -331,7 +340,7 @@
       "label": "FasterGameLoadingSettings",
       "file_type": "code",
       "source_file": "Source/Core/FasterGameLoadingMod.cs",
-      "source_location": "L14",
+      "source_location": "L15",
       "id": "fastergameloadingsettings",
       "community": 10,
       "norm_label": "fastergameloadingsettings"
@@ -340,7 +349,7 @@
       "label": "DelayedActions",
       "file_type": "code",
       "source_file": "Source/Core/FasterGameLoadingMod.cs",
-      "source_location": "L15",
+      "source_location": "L16",
       "id": "delayedactions",
       "community": 10,
       "norm_label": "delayedactions"
@@ -349,7 +358,7 @@
       "label": ".SettingsCategory()",
       "file_type": "code",
       "source_file": "Source/Core/FasterGameLoadingMod.cs",
-      "source_location": "L52",
+      "source_location": "L60",
       "id": "core_fastergameloadingmod_fastergameloadingmod_settingscategory",
       "community": 10,
       "norm_label": ".settingscategory()"
@@ -358,7 +367,7 @@
       "label": ".DoSettingsWindowContents()",
       "file_type": "code",
       "source_file": "Source/Core/FasterGameLoadingMod.cs",
-      "source_location": "L57",
+      "source_location": "L65",
       "id": "core_fastergameloadingmod_fastergameloadingmod_dosettingswindowcontents",
       "community": 10,
       "norm_label": ".dosettingswindowcontents()"
@@ -4165,7 +4174,7 @@
       "label": ".GetCachePath()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
-      "source_location": "L30",
+      "source_location": "L35",
       "id": "texture_downscaler_texturecachemanager_texturecachemanager_getcachepath",
       "community": 8,
       "norm_label": ".getcachepath()"
@@ -4174,7 +4183,7 @@
       "label": ".GetCacheKey()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
-      "source_location": "L47",
+      "source_location": "L52",
       "id": "texture_downscaler_texturecachemanager_texturecachemanager_getcachekey",
       "community": 8,
       "norm_label": ".getcachekey()"
@@ -4183,7 +4192,7 @@
       "label": ".TryGetCachedTexturePath()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
-      "source_location": "L84",
+      "source_location": "L89",
       "id": "texture_downscaler_texturecachemanager_texturecachemanager_trygetcachedtexturepath",
       "community": 8,
       "norm_label": ".trygetcachedtexturepath()"
@@ -4192,7 +4201,7 @@
       "label": ".IsCacheFresh()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
-      "source_location": "L108",
+      "source_location": "L113",
       "id": "texture_downscaler_texturecachemanager_texturecachemanager_iscachefresh",
       "community": 8,
       "norm_label": ".iscachefresh()"
@@ -4201,7 +4210,7 @@
       "label": ".RemoveCachedTexturePath()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
-      "source_location": "L129",
+      "source_location": "L134",
       "id": "texture_downscaler_texturecachemanager_texturecachemanager_removecachedtexturepath",
       "community": 8,
       "norm_label": ".removecachedtexturepath()"
@@ -4210,7 +4219,7 @@
       "label": ".ClearCache()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
-      "source_location": "L138",
+      "source_location": "L143",
       "id": "texture_downscaler_texturecachemanager_texturecachemanager_clearcache",
       "community": 8,
       "norm_label": ".clearcache()"
@@ -4219,7 +4228,7 @@
       "label": ".SetupResizeStagingDirectory()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
-      "source_location": "L163",
+      "source_location": "L168",
       "id": "texture_downscaler_texturecachemanager_texturecachemanager_setupresizestagingdirectory",
       "community": 8,
       "norm_label": ".setupresizestagingdirectory()"
@@ -4228,7 +4237,7 @@
       "label": ".RestorePreviousCacheState()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
-      "source_location": "L186",
+      "source_location": "L191",
       "id": "texture_downscaler_texturecachemanager_texturecachemanager_restorepreviouscachestate",
       "community": 8,
       "norm_label": ".restorepreviouscachestate()"
@@ -4237,7 +4246,7 @@
       "label": ".ReplaceTextureCacheDirectory()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
-      "source_location": "L208",
+      "source_location": "L213",
       "id": "texture_downscaler_texturecachemanager_texturecachemanager_replacetexturecachedirectory",
       "community": 8,
       "norm_label": ".replacetexturecachedirectory()"
@@ -4246,7 +4255,7 @@
       "label": ".SetCacheEntry()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
-      "source_location": "L247",
+      "source_location": "L252",
       "id": "texture_downscaler_texturecachemanager_texturecachemanager_setcacheentry",
       "community": 8,
       "norm_label": ".setcacheentry()"
@@ -4279,10 +4288,28 @@
       "norm_label": "textureresize"
     },
     {
-      "label": "long",
+      "label": "TextureCacheManager",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
       "source_location": "L23",
+      "id": "texturecachemanager",
+      "community": 2,
+      "norm_label": "texturecachemanager"
+    },
+    {
+      "label": "TextureScanner",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L24",
+      "id": "texturescanner",
+      "community": 2,
+      "norm_label": "texturescanner"
+    },
+    {
+      "label": "long",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L26",
       "id": "long",
       "community": 2,
       "norm_label": "long"
@@ -4291,7 +4318,7 @@
       "label": ".DoTextureResizing()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L45",
+      "source_location": "L54",
       "id": "texture_downscaler_textureresize_textureresize_dotextureresizing",
       "community": 2,
       "norm_label": ".dotextureresizing()"
@@ -4300,7 +4327,7 @@
       "label": ".BuildResizeCandidates()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L91",
+      "source_location": "L100",
       "id": "texture_downscaler_textureresize_textureresize_buildresizecandidates",
       "community": 2,
       "norm_label": ".buildresizecandidates()"
@@ -4309,7 +4336,7 @@
       "label": ".ResizeTexture()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L120",
+      "source_location": "L129",
       "id": "texture_downscaler_textureresize_textureresize_resizetexture",
       "community": 2,
       "norm_label": ".resizetexture()"
@@ -4318,7 +4345,7 @@
       "label": ".TryLoadOriginalTexture()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L161",
+      "source_location": "L170",
       "id": "texture_downscaler_textureresize_textureresize_tryloadoriginaltexture",
       "community": 2,
       "norm_label": ".tryloadoriginaltexture()"
@@ -4327,7 +4354,7 @@
       "label": ".LogResizeSummary()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L185",
+      "source_location": "L194",
       "id": "texture_downscaler_textureresize_textureresize_logresizesummary",
       "community": 2,
       "norm_label": ".logresizesummary()"
@@ -4336,7 +4363,7 @@
       "label": ".FormatBytes()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L193",
+      "source_location": "L202",
       "id": "texture_downscaler_textureresize_textureresize_formatbytes",
       "community": 2,
       "norm_label": ".formatbytes()"
@@ -4345,7 +4372,7 @@
       "label": ".TryGetGraphicApparel()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L206",
+      "source_location": "L215",
       "id": "texture_downscaler_textureresize_textureresize_trygetgraphicapparel",
       "community": 2,
       "norm_label": ".trygetgraphicapparel()"
@@ -4354,7 +4381,7 @@
       "label": ".RenderAsPack()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L233",
+      "source_location": "L242",
       "id": "texture_downscaler_textureresize_textureresize_renderaspack",
       "community": 2,
       "norm_label": ".renderaspack()"
@@ -4363,7 +4390,7 @@
       "label": ".GetTextureType()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L251",
+      "source_location": "L260",
       "id": "texture_downscaler_textureresize_textureresize_gettexturetype",
       "community": 2,
       "norm_label": ".gettexturetype()"
@@ -4372,7 +4399,7 @@
       "label": ".ClearCache()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L276",
+      "source_location": "L285",
       "id": "texture_downscaler_textureresize_textureresize_clearcache",
       "community": 2,
       "norm_label": ".clearcache()"
@@ -6129,6 +6156,17 @@
       "confidence_score": 1.0,
       "source": "compatibility_earlyloadskiplist_earlyloadskiplist",
       "target": "source_compatibility_earlyloadskiplist_cs_hashset"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Compatibility/EarlyLoadSkipList.cs",
+      "source_location": "L18",
+      "weight": 1.0,
+      "context": "field",
+      "source": "compatibility_earlyloadskiplist_earlyloadskiplist",
+      "target": "source_compatibility_earlyloadskiplist_cs_bool",
+      "confidence_score": 1.0
     },
     {
       "relation": "method",
@@ -11731,6 +11769,28 @@
     {
       "relation": "references",
       "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L23",
+      "weight": 1.0,
+      "context": "field",
+      "source": "texture_downscaler_textureresize_textureresize",
+      "target": "texturecachemanager",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L24",
+      "weight": 1.0,
+      "context": "field",
+      "source": "texture_downscaler_textureresize_textureresize",
+      "target": "texturescanner",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
       "source_file": "Texture downscaler/TextureResize.cs",
       "source_location": "L156",
       "weight": 1.0,
@@ -13754,5 +13814,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "a24fcaccb4a1591cad5bed8ef05c3d82ebe6578c"
+  "built_at_commit": "29fbf6b78cf61d2bd6f593262894541dc34d4e1c"
 }

@@ -11,23 +11,28 @@ namespace FasterGameLoading
     /// <summary>
     /// 管理降質紋理快取的生命週期與對照表。
     /// </summary>
-    public static class TextureCacheManager
+    public class TextureCacheManager
     {
         /// <summary>原始路徑 → 降質快取路徑的對照表（會透過 Scribe 持久化）。</summary>
-        internal static Dictionary<string, string> resizedTextureCache = new Dictionary<string, string>();
-        private static readonly object cacheLock = new object();
-        private static readonly ConcurrentDictionary<string, string> md5HashCache = new ConcurrentDictionary<string, string>();
+        internal Dictionary<string, string> resizedTextureCache = new Dictionary<string, string>();
+        private readonly object cacheLock = new object();
+        private readonly ConcurrentDictionary<string, string> md5HashCache = new ConcurrentDictionary<string, string>();
 
         /// <summary>紋理快取的根目錄。</summary>
-        public static string CacheDirectory => Path.Combine(GenFilePaths.SaveDataFolderPath, FGLConsts.ModName, FGLConsts.TextureCacheDir);
-        internal static string BuildCacheDirectory(string suffix) => Path.Combine(GenFilePaths.SaveDataFolderPath, FGLConsts.ModName, suffix);
-        private static string activeCacheDirectory = CacheDirectory;
+        public string CacheDirectory => Path.Combine(GenFilePaths.SaveDataFolderPath, FGLConsts.ModName, FGLConsts.TextureCacheDir);
+        internal string BuildCacheDirectory(string suffix) => Path.Combine(GenFilePaths.SaveDataFolderPath, FGLConsts.ModName, suffix);
+        private string activeCacheDirectory;
+
+        public TextureCacheManager()
+        {
+            activeCacheDirectory = CacheDirectory;
+        }
 
         /// <summary>
         /// 根據原始檔案路徑產生 MD5 快取檔案路徑。
         /// 快取鍵結合路徑、檔案大小和最後修改時間，確保原始檔案變更時自動失效。
         /// </summary>
-        public static string GetCachePath(string originalPath)
+        public string GetCachePath(string originalPath)
         {
             return md5HashCache.GetOrAdd(GetCacheKey(originalPath), key =>
             {
@@ -44,7 +49,7 @@ namespace FasterGameLoading
             });
         }
 
-        private static string GetCacheKey(string originalPath)
+        private string GetCacheKey(string originalPath)
         {
             try
             {
@@ -66,7 +71,7 @@ namespace FasterGameLoading
         }
 
         /// <summary>目前快取的紋理數量（執行緒安全）。</summary>
-        public static int CacheCount
+        public int CacheCount
         {
             get
             {
@@ -81,7 +86,7 @@ namespace FasterGameLoading
         /// 嘗試取得指定原始路徑對應的快取紋理路徑。
         /// 自動檢查快取是否過期（原始檔案比快取檔案新時視為失效）。
         /// </summary>
-        public static bool TryGetCachedTexturePath(string originalPath, out string cachePath)
+        public bool TryGetCachedTexturePath(string originalPath, out string cachePath)
         {
             lock (cacheLock)
             {
@@ -105,7 +110,7 @@ namespace FasterGameLoading
         /// <summary>
         /// 檢查快取是否比原始檔案更新。若無法讀取檔案時間則視為失效。
         /// </summary>
-        private static bool IsCacheFresh(string originalPath, string cachePath)
+        private bool IsCacheFresh(string originalPath, string cachePath)
         {
             try
             {
@@ -126,7 +131,7 @@ namespace FasterGameLoading
         }
 
         /// <summary>移除指定原始路徑的快取項目。</summary>
-        public static void RemoveCachedTexturePath(string originalPath)
+        public void RemoveCachedTexturePath(string originalPath)
         {
             lock (cacheLock)
             {
@@ -135,7 +140,7 @@ namespace FasterGameLoading
         }
 
         /// <summary>清除所有紋理快取（檔案 + 記憶體對照表）。</summary>
-        public static void ClearCache()
+        public void ClearCache()
         {
             try
             {
@@ -160,7 +165,7 @@ namespace FasterGameLoading
         }
 
         /// <summary>初始化縮放工作暫存目錄與快取對照表。</summary>
-        internal static void SetupResizeStagingDirectory(string stagingDirectory)
+        internal void SetupResizeStagingDirectory(string stagingDirectory)
         {
             md5HashCache.Clear();
             activeCacheDirectory = stagingDirectory;
@@ -183,7 +188,7 @@ namespace FasterGameLoading
         }
 
         /// <summary>還原快取狀態到上一次的快取對照表與目錄配置。</summary>
-        internal static void RestorePreviousCacheState(
+        internal void RestorePreviousCacheState(
             Dictionary<string, string> previousCacheMap,
             string previousCacheDirectory,
             string stagingDirectory)
@@ -205,7 +210,7 @@ namespace FasterGameLoading
         }
 
         /// <summary>將暫存目錄替換為正式快取目錄，並重建相對路徑對照表。</summary>
-        internal static void ReplaceTextureCacheDirectory(string stagingDirectory)
+        internal void ReplaceTextureCacheDirectory(string stagingDirectory)
         {
             bool moved = false;
             try
@@ -244,7 +249,7 @@ namespace FasterGameLoading
         }
 
         /// <summary>提供向內部字典新增項目的執行緒安全介面。</summary>
-        internal static void SetCacheEntry(string originalPath, string cachePath)
+        internal void SetCacheEntry(string originalPath, string cachePath)
         {
             lock (cacheLock)
             {

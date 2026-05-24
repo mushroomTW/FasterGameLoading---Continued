@@ -10,22 +10,22 @@ namespace FasterGameLoading
     /// <summary>
     /// 負責掃描和對照所有已載入的 Mod 紋理與其關聯的 Def 和 ModContentPack。
     /// </summary>
-    public static class TextureScanner
+    public class TextureScanner
     {
         /// <summary>按紋理類型分類的紋理條目。</summary>
-        internal static readonly Dictionary<TextureResize.TextureType, List<KeyValuePair<BuildableDef, string>>> textures = new();
+        internal readonly Dictionary<TextureResize.TextureType, List<KeyValuePair<BuildableDef, string>>> textures = new();
         /// <summary>紋理 → 檔案路徑的對照表。</summary>
-        internal static readonly Dictionary<Texture, string> texturesByPaths = new();
+        internal readonly Dictionary<Texture, string> texturesByPaths = new();
         /// <summary>紋理 → (Def, 路徑) 的對照表。</summary>
-        internal static readonly Dictionary<Texture, KeyValuePair<BuildableDef, string>> texturesByDefs = new();
+        internal readonly Dictionary<Texture, KeyValuePair<BuildableDef, string>> texturesByDefs = new();
         /// <summary>紋理 → 來源 Mod 的對照表。</summary>
-        internal static readonly Dictionary<Texture, ModContentPack> texturesByMods = new();
+        internal readonly Dictionary<Texture, ModContentPack> texturesByMods = new();
 
         /// <summary>
         /// 掃描所有已載入的紋理，按類型分類並建立對照表。
         /// 只處理非官方 Mod 的紋理（IsOfficialMod = false）。
         /// </summary>
-        public static void BuildTextureScanData()
+        public void BuildTextureScanData()
         {
             InitializeScanContainers();
             RefreshTexturePathMap();
@@ -35,7 +35,7 @@ namespace FasterGameLoading
             ScanBuildableTextures();
         }
 
-        private static void InitializeScanContainers()
+        private void InitializeScanContainers()
         {
             foreach (var value in Enum.GetValues(typeof(TextureResize.TextureType)).Cast<TextureResize.TextureType>())
             {
@@ -43,7 +43,7 @@ namespace FasterGameLoading
             }
         }
 
-        private static void BuildModTextureMap()
+        private void BuildModTextureMap()
         {
             foreach (var mod in LoadedModManager.RunningMods)
             {
@@ -55,7 +55,7 @@ namespace FasterGameLoading
         }
 
         /// <summary>掃描所有 PawnKindDef 的種族紋理與生命階段圖形。</summary>
-        private static void ScanPawnTextures()
+        private void ScanPawnTextures()
         {
             foreach (var pawnKind in DefDatabase<PawnKindDef>.AllDefs)
             {
@@ -78,7 +78,7 @@ namespace FasterGameLoading
         }
 
         /// <summary>掃描所有 StyleCategoryDef 的外觀圖形。</summary>
-        private static void ScanStyleTextures()
+        private void ScanStyleTextures()
         {
             foreach (var styleDef in DefDatabase<StyleCategoryDef>.AllDefs)
             {
@@ -104,7 +104,7 @@ namespace FasterGameLoading
         }
 
         /// <summary>掃描所有 BuildableDef 的建物/物品/植物紋理。</summary>
-        private static void ScanBuildableTextures()
+        private void ScanBuildableTextures()
         {
             foreach (var def in DefDatabase<BuildableDef>.AllDefs)
             {
@@ -126,7 +126,7 @@ namespace FasterGameLoading
         }
 
         /// <summary>掃描服裝的多種穿著外觀變體（含 wornGraphicPaths）。</summary>
-        private static void ScanApparelVariants(TextureResize.TextureType type, BuildableDef def, ThingDef thingDef)
+        private void ScanApparelVariants(TextureResize.TextureType type, BuildableDef def, ThingDef thingDef)
         {
             if (type != TextureResize.TextureType.Apparel) return;
 
@@ -150,7 +150,7 @@ namespace FasterGameLoading
         }
 
         /// <summary>掃描植物的特殊圖形變體（落葉、未成熟、受汙染）。</summary>
-        private static void ScanPlantVariants(TextureResize.TextureType type, BuildableDef def, ThingDef thingDef)
+        private void ScanPlantVariants(TextureResize.TextureType type, BuildableDef def, ThingDef thingDef)
         {
             if (type != TextureResize.TextureType.Plant && type != TextureResize.TextureType.Tree) return;
 
@@ -165,7 +165,7 @@ namespace FasterGameLoading
         /// <summary>
         /// 將 Def 的圖形和 UI 圖示加入紋理條目。
         /// </summary>
-        private static void FillEntry(TextureResize.TextureType type, BuildableDef def, Graphic graphicOverride = null)
+        private void FillEntry(TextureResize.TextureType type, BuildableDef def, Graphic graphicOverride = null)
         {
             var graphic = graphicOverride ?? def.graphic;
             AddEntry(type, def, graphic);
@@ -183,7 +183,7 @@ namespace FasterGameLoading
         /// 支援 Graphic_Multi、Graphic_Appearances、Graphic_Single、
         /// Graphic_RandomRotated、Graphic_Linked、Graphic_Collection 等類型。
         /// </summary>
-        private static void AddEntry(TextureResize.TextureType type, BuildableDef def, Graphic graphic)
+        private void AddEntry(TextureResize.TextureType type, BuildableDef def, Graphic graphic)
         {
             switch (graphic)
             {
@@ -211,7 +211,7 @@ namespace FasterGameLoading
         /// <summary>
         /// 從 Material 中提取 mainTexture 和 mask texture 加入條目。
         /// </summary>
-        private static void GetMatTexture(TextureResize.TextureType type, Material mat, BuildableDef def)
+        private void GetMatTexture(TextureResize.TextureType type, Material mat, BuildableDef def)
         {
             if (mat?.mainTexture != mat && mat?.mainTexture != null && TryGetTexturePath(mat.mainTexture, out var fullPath))
             {
@@ -229,7 +229,7 @@ namespace FasterGameLoading
         }
 
         /// <summary>從 WeakReference 快取中重新整理紋理路徑對照表。</summary>
-        private static void RefreshTexturePathMap()
+        private void RefreshTexturePathMap()
         {
             foreach (var kvp in ModContentLoaderTexture2D_LoadTexture_Patch.savedTextures)
             {
@@ -244,7 +244,7 @@ namespace FasterGameLoading
         /// 根據 Texture 物件尋找其磁碟路徑。先在本地快取查詢，
         /// 找不到時遍歷 WeakReference 快取進行 ReferenceEquals 比對。
         /// </summary>
-        public static bool TryGetTexturePath(Texture texture, out string fullPath)
+        public bool TryGetTexturePath(Texture texture, out string fullPath)
         {
             if (texture != null && texturesByPaths.TryGetValue(texture, out fullPath))
                 return true;
@@ -267,7 +267,7 @@ namespace FasterGameLoading
         }
 
         /// <summary>將紋理條目加入指定類型的分類中。</summary>
-        private static void AddEntry(TextureResize.TextureType type, BuildableDef def, string fullPath, Texture texture)
+        private void AddEntry(TextureResize.TextureType type, BuildableDef def, string fullPath, Texture texture)
         {
             var entry = new KeyValuePair<BuildableDef, string>(def, fullPath);
             textures[type].Add(entry);
@@ -275,7 +275,7 @@ namespace FasterGameLoading
         }
 
         /// <summary>清理掃描階段的暫存資料。</summary>
-        public static void ClearTextureScanData()
+        public void ClearTextureScanData()
         {
             texturesByPaths.Clear();
             texturesByDefs.Clear();

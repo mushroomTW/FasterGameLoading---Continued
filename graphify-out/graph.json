@@ -934,7 +934,7 @@
       "label": ".Prefix()",
       "file_type": "code",
       "source_file": "Source/Early mod content loading/AccessTools_AllTypes_Patch.cs",
-      "source_location": "L47",
+      "source_location": "L58",
       "id": "early_mod_content_loading_accesstools_alltypes_patch_accesstools_alltypes_patch_prefix",
       "community": 16,
       "norm_label": ".prefix()"
@@ -1105,7 +1105,7 @@
       "label": "FasterGameLoading",
       "file_type": "code",
       "source_file": "Source/Early mod content loading/GenTypes_GetTypeInAnyAssemblyInt_Patch.cs",
-      "source_location": "L6",
+      "source_location": "L7",
       "id": "early_mod_content_loading_gentypes_gettypeinanyassemblyint_patch_fastergameloading",
       "community": 17,
       "norm_label": "fastergameloading"
@@ -1114,25 +1114,25 @@
       "label": "GenTypes_GetTypeInAnyAssemblyInt_Patch",
       "file_type": "code",
       "source_file": "Source/Early mod content loading/GenTypes_GetTypeInAnyAssemblyInt_Patch.cs",
-      "source_location": "L13",
+      "source_location": "L14",
       "id": "early_mod_content_loading_gentypes_gettypeinanyassemblyint_patch_gentypes_gettypeinanyassemblyint_patch",
       "community": 17,
       "norm_label": "gentypes_gettypeinanyassemblyint_patch"
     },
     {
-      "label": "Dictionary",
+      "label": "ConcurrentDictionary",
       "file_type": "code",
       "source_file": "Source/Early mod content loading/GenTypes_GetTypeInAnyAssemblyInt_Patch.cs",
-      "source_location": "L16",
-      "id": "source_early_mod_content_loading_gentypes_gettypeinanyassemblyint_patch_cs_dictionary",
+      "source_location": "L17",
+      "id": "source_early_mod_content_loading_gentypes_gettypeinanyassemblyint_patch_cs_concurrentdictionary",
       "community": 17,
-      "norm_label": "dictionary"
+      "norm_label": "concurrentdictionary"
     },
     {
       "label": ".ClearCache()",
       "file_type": "code",
       "source_file": "Source/Early mod content loading/GenTypes_GetTypeInAnyAssemblyInt_Patch.cs",
-      "source_location": "L24",
+      "source_location": "L25",
       "id": "early_mod_content_loading_gentypes_gettypeinanyassemblyint_patch_gentypes_gettypeinanyassemblyint_patch_clearcache",
       "community": 17,
       "norm_label": ".clearcache()"
@@ -1141,7 +1141,7 @@
       "label": ".Prefix()",
       "file_type": "code",
       "source_file": "Source/Early mod content loading/GenTypes_GetTypeInAnyAssemblyInt_Patch.cs",
-      "source_location": "L30",
+      "source_location": "L31",
       "id": "early_mod_content_loading_gentypes_gettypeinanyassemblyint_patch_gentypes_gettypeinanyassemblyint_patch_prefix",
       "community": 17,
       "norm_label": ".prefix()"
@@ -1150,7 +1150,7 @@
       "label": ".Postfix()",
       "file_type": "code",
       "source_file": "Source/Early mod content loading/GenTypes_GetTypeInAnyAssemblyInt_Patch.cs",
-      "source_location": "L49",
+      "source_location": "L50",
       "id": "early_mod_content_loading_gentypes_gettypeinanyassemblyint_patch_gentypes_gettypeinanyassemblyint_patch_postfix",
       "community": 17,
       "norm_label": ".postfix()"
@@ -1638,7 +1638,7 @@
       "source_file": "Source/obj/FasterGameLoading.csproj.nuget.dgspec.json",
       "source_location": "L50",
       "id": "obj_fastergameloading_csproj_nuget_dgspec_net472_dependencies",
-      "community": 3,
+      "community": 53,
       "norm_label": "dependencies"
     },
     {
@@ -1647,7 +1647,7 @@
       "source_file": "Source/obj/FasterGameLoading.csproj.nuget.dgspec.json",
       "source_location": "L51",
       "id": "obj_fastergameloading_csproj_nuget_dgspec_dependencies_krafs_publicizer",
-      "community": 3,
+      "community": 53,
       "norm_label": "krafs.publicizer"
     },
     {
@@ -1656,7 +1656,7 @@
       "source_file": "Source/obj/FasterGameLoading.csproj.nuget.dgspec.json",
       "source_location": "L52",
       "id": "obj_fastergameloading_csproj_nuget_dgspec_krafs_publicizer_include",
-      "community": 3,
+      "community": 53,
       "norm_label": "include"
     },
     {
@@ -1665,7 +1665,7 @@
       "source_file": "Source/obj/FasterGameLoading.csproj.nuget.dgspec.json",
       "source_location": "L53",
       "id": "obj_fastergameloading_csproj_nuget_dgspec_krafs_publicizer_suppressparent",
-      "community": 3,
+      "community": 53,
       "norm_label": "suppressparent"
     },
     {
@@ -1674,7 +1674,7 @@
       "source_file": "Source/obj/FasterGameLoading.csproj.nuget.dgspec.json",
       "source_location": "L54",
       "id": "obj_fastergameloading_csproj_nuget_dgspec_krafs_publicizer_target",
-      "community": 3,
+      "community": 53,
       "norm_label": "target"
     },
     {
@@ -1683,7 +1683,7 @@
       "source_file": "Source/obj/FasterGameLoading.csproj.nuget.dgspec.json",
       "source_location": "L55",
       "id": "obj_fastergameloading_csproj_nuget_dgspec_krafs_publicizer_version",
-      "community": 3,
+      "community": 53,
       "norm_label": "version"
     },
     {
@@ -1692,7 +1692,7 @@
       "source_file": "Source/obj/FasterGameLoading.csproj.nuget.dgspec.json",
       "source_location": "L57",
       "id": "obj_fastergameloading_csproj_nuget_dgspec_dependencies_krafs_rimworld_ref",
-      "community": 3,
+      "community": 53,
       "norm_label": "krafs.rimworld.ref"
     },
     {
@@ -1701,7 +1701,7 @@
       "source_file": "Source/obj/FasterGameLoading.csproj.nuget.dgspec.json",
       "source_location": "L58",
       "id": "obj_fastergameloading_csproj_nuget_dgspec_krafs_rimworld_ref_target",
-      "community": 3,
+      "community": 53,
       "norm_label": "target"
     },
     {
@@ -1710,7 +1710,7 @@
       "source_file": "Source/obj/FasterGameLoading.csproj.nuget.dgspec.json",
       "source_location": "L59",
       "id": "obj_fastergameloading_csproj_nuget_dgspec_krafs_rimworld_ref_version",
-      "community": 3,
+      "community": 53,
       "norm_label": "version"
     },
     {
@@ -1719,7 +1719,7 @@
       "source_file": "Source/obj/FasterGameLoading.csproj.nuget.dgspec.json",
       "source_location": "L61",
       "id": "obj_fastergameloading_csproj_nuget_dgspec_dependencies_lib_harmony",
-      "community": 3,
+      "community": 53,
       "norm_label": "lib.harmony"
     },
     {
@@ -1728,7 +1728,7 @@
       "source_file": "Source/obj/FasterGameLoading.csproj.nuget.dgspec.json",
       "source_location": "L62",
       "id": "obj_fastergameloading_csproj_nuget_dgspec_lib_harmony_include",
-      "community": 3,
+      "community": 53,
       "norm_label": "include"
     },
     {
@@ -1737,7 +1737,7 @@
       "source_file": "Source/obj/FasterGameLoading.csproj.nuget.dgspec.json",
       "source_location": "L63",
       "id": "obj_fastergameloading_csproj_nuget_dgspec_lib_harmony_target",
-      "community": 3,
+      "community": 53,
       "norm_label": "target"
     },
     {
@@ -1746,7 +1746,7 @@
       "source_file": "Source/obj/FasterGameLoading.csproj.nuget.dgspec.json",
       "source_location": "L64",
       "id": "obj_fastergameloading_csproj_nuget_dgspec_lib_harmony_version",
-      "community": 3,
+      "community": 53,
       "norm_label": "version"
     },
     {
@@ -3913,7 +3913,7 @@
       "label": ".GetRawBytesSafe()",
       "file_type": "code",
       "source_file": "Source/Static atlases cache/StaticAtlasCache.cs",
-      "source_location": "L397",
+      "source_location": "L411",
       "id": "static_atlases_cache_staticatlascache_staticatlascache_getrawbytessafe",
       "community": 5,
       "norm_label": ".getrawbytessafe()"
@@ -4174,7 +4174,7 @@
       "label": ".RestorePreviousCacheState()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
-      "source_location": "L179",
+      "source_location": "L186",
       "id": "texture_downscaler_texturecachemanager_texturecachemanager_restorepreviouscachestate",
       "community": 8,
       "norm_label": ".restorepreviouscachestate()"
@@ -4183,7 +4183,7 @@
       "label": ".ReplaceTextureCacheDirectory()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
-      "source_location": "L194",
+      "source_location": "L208",
       "id": "texture_downscaler_texturecachemanager_texturecachemanager_replacetexturecachedirectory",
       "community": 8,
       "norm_label": ".replacetexturecachedirectory()"
@@ -4192,7 +4192,7 @@
       "label": ".SetCacheEntry()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
-      "source_location": "L212",
+      "source_location": "L247",
       "id": "texture_downscaler_texturecachemanager_texturecachemanager_setcacheentry",
       "community": 8,
       "norm_label": ".setcacheentry()"
@@ -4808,6 +4808,15 @@
       "id": "readme_md",
       "community": 42,
       "norm_label": "readme.md"
+    },
+    {
+      "label": "Dictionary",
+      "file_type": "code",
+      "source_file": "Source/Early mod content loading/GenTypes_GetTypeInAnyAssemblyInt_Patch.cs",
+      "source_location": "L16",
+      "community": 17,
+      "norm_label": "dictionary",
+      "id": "source_early_mod_content_loading_gentypes_gettypeinanyassemblyint_patch_cs_dictionary"
     },
     {
       "label": "Dictionary",
@@ -7558,12 +7567,12 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "Source/Early mod content loading/GenTypes_GetTypeInAnyAssemblyInt_Patch.cs",
-      "source_location": "L12",
+      "source_location": "L18",
       "weight": 1.0,
       "context": "field",
-      "confidence_score": 1.0,
       "source": "early_mod_content_loading_gentypes_gettypeinanyassemblyint_patch_gentypes_gettypeinanyassemblyint_patch",
-      "target": "source_early_mod_content_loading_gentypes_gettypeinanyassemblyint_patch_cs_dictionary"
+      "target": "source_early_mod_content_loading_gentypes_gettypeinanyassemblyint_patch_cs_concurrentdictionary",
+      "confidence_score": 1.0
     },
     {
       "relation": "method",
@@ -7594,6 +7603,17 @@
       "confidence_score": 1.0,
       "source": "early_mod_content_loading_gentypes_gettypeinanyassemblyint_patch_gentypes_gettypeinanyassemblyint_patch",
       "target": "early_mod_content_loading_gentypes_gettypeinanyassemblyint_patch_gentypes_gettypeinanyassemblyint_patch_postfix"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Early mod content loading/GenTypes_GetTypeInAnyAssemblyInt_Patch.cs",
+      "source_location": "L12",
+      "weight": 1.0,
+      "context": "field",
+      "confidence_score": 1.0,
+      "source": "early_mod_content_loading_gentypes_gettypeinanyassemblyint_patch_gentypes_gettypeinanyassemblyint_patch",
+      "target": "source_early_mod_content_loading_gentypes_gettypeinanyassemblyint_patch_cs_dictionary"
     },
     {
       "relation": "contains",
@@ -11088,6 +11108,17 @@
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
+      "source_file": "Source/Static atlases cache/StaticAtlasCache.cs",
+      "source_location": "L403",
+      "weight": 1.0,
+      "source": "static_atlases_cache_staticatlascache_staticatlascache_savetocachecoroutine",
+      "target": "static_atlases_cache_staticatlascache_staticatlascache_clearcache",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
       "source_file": "Static atlases cache/StaticAtlasCache.cs",
       "source_location": "L95",
       "weight": 1.0,
@@ -12954,9 +12985,9 @@
       "source_file": "Source/Utilities/FGLConsts.cs",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "source_utilities_fglconsts_cs",
-      "target": "utilities_fglconsts_fastergameloading",
-      "confidence_score": 1.0
+      "target": "utilities_fglconsts_fastergameloading"
     },
     {
       "relation": "contains",
@@ -12964,9 +12995,9 @@
       "source_file": "Source/Utilities/FGLConsts.cs",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "source_utilities_fglconsts_cs",
-      "target": "utilities_fglconsts_fglconsts",
-      "confidence_score": 1.0
+      "target": "utilities_fglconsts_fglconsts"
     },
     {
       "relation": "references",
@@ -12975,9 +13006,9 @@
       "source_location": "L44",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "utilities_fglconsts_fglconsts",
-      "target": "source_utilities_fglconsts_cs_string",
-      "confidence_score": 1.0
+      "target": "source_utilities_fglconsts_cs_string"
     },
     {
       "relation": "contains",
@@ -12985,9 +13016,9 @@
       "source_file": "Source/Utilities/FGLLog.cs",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "source_utilities_fgllog_cs",
-      "target": "utilities_fgllog_fastergameloading",
-      "confidence_score": 1.0
+      "target": "utilities_fgllog_fastergameloading"
     },
     {
       "relation": "contains",
@@ -12995,9 +13026,9 @@
       "source_file": "Source/Utilities/FGLLog.cs",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "source_utilities_fgllog_cs",
-      "target": "utilities_fgllog_fgllog",
-      "confidence_score": 1.0
+      "target": "utilities_fgllog_fgllog"
     },
     {
       "relation": "references",
@@ -13006,9 +13037,9 @@
       "source_location": "L13",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "utilities_fgllog_fgllog",
-      "target": "source_utilities_fgllog_cs_string",
-      "confidence_score": 1.0
+      "target": "source_utilities_fgllog_cs_string"
     },
     {
       "relation": "method",
@@ -13016,9 +13047,9 @@
       "source_file": "Source/Utilities/FGLLog.cs",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "utilities_fgllog_fgllog",
-      "target": "utilities_fgllog_fgllog_message",
-      "confidence_score": 1.0
+      "target": "utilities_fgllog_fgllog_message"
     },
     {
       "relation": "method",
@@ -13026,9 +13057,9 @@
       "source_file": "Source/Utilities/FGLLog.cs",
       "source_location": "L25",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "utilities_fgllog_fgllog",
-      "target": "utilities_fgllog_fgllog_warning",
-      "confidence_score": 1.0
+      "target": "utilities_fgllog_fgllog_warning"
     },
     {
       "relation": "method",
@@ -13036,9 +13067,9 @@
       "source_file": "Source/Utilities/FGLLog.cs",
       "source_location": "L35",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "utilities_fgllog_fgllog",
-      "target": "utilities_fgllog_fgllog_error",
-      "confidence_score": 1.0
+      "target": "utilities_fgllog_fgllog_error"
     },
     {
       "relation": "contains",
@@ -13568,5 +13599,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "c57b9d089cca69509e93dfba505742ef9de93fea"
+  "built_at_commit": "c59a291650a1b7028ba0ca3b0c47b0ae7a727b1c"
 }

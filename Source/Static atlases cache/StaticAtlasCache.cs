@@ -273,7 +273,16 @@ namespace FasterGameLoading
         {
             if (!FasterGameLoadingSettings.AtlasCaching) yield break;
 
-            Directory.CreateDirectory(CacheDirectory);
+            bool success = true;
+            try
+            {
+                Directory.CreateDirectory(CacheDirectory);
+            }
+            catch (Exception e)
+            {
+                FGLLog.Error("Error creating atlas cache directory: " + e);
+                yield break;
+            }
 
             var manifest = new Manifest
             {
@@ -318,52 +327,56 @@ namespace FasterGameLoading
                     maskFile = ""
                 };
 
+                byte[] colorBytes = null;
                 try
                 {
-                    var colorBytes = GetRawBytesSafe(atlas.colorTexture, out var newFormat);
+                    colorBytes = GetRawBytesSafe(atlas.colorTexture, out var newFormat);
                     info.format = (int)newFormat;
+                }
+                catch (Exception e)
+                {
+                    FGLLog.Error("Error getting raw bytes for color atlas: " + e);
+                    success = false;
+                    break;
+                }
+
+                try
+                {
                     File.WriteAllBytes(Path.Combine(CacheDirectory, info.colorFile), colorBytes);
-                }
-                catch (IOException e)
-                {
-                    FGLLog.Error("Error saving atlas color bytes: " + e);
-                    yield break;
-                }
-                catch (UnauthorizedAccessException e)
-                {
-                    FGLLog.Error("Error saving atlas color bytes: " + e);
-                    yield break;
                 }
                 catch (Exception e)
                 {
                     FGLLog.Error("Error saving atlas color bytes: " + e);
-                    yield break;
+                    success = false;
+                    break;
                 }
                 yield return null;
 
                 if (groupKey.hasMask && atlas.maskTexture != null)
                 {
                     info.maskFile = $"atlas_{i}_mask.raw";
+                    byte[] maskBytes = null;
                     try
                     {
-                        var maskBytes = GetRawBytesSafe(atlas.maskTexture, out var newFormatMask);
+                        maskBytes = GetRawBytesSafe(atlas.maskTexture, out var newFormatMask);
                         info.maskFormat = (int)newFormatMask;
+                    }
+                    catch (Exception e)
+                    {
+                        FGLLog.Error("Error getting raw bytes for mask atlas: " + e);
+                        success = false;
+                        break;
+                    }
+
+                    try
+                    {
                         File.WriteAllBytes(Path.Combine(CacheDirectory, info.maskFile), maskBytes);
-                    }
-                    catch (IOException e)
-                    {
-                        FGLLog.Error("Error saving atlas mask bytes: " + e);
-                        yield break;
-                    }
-                    catch (UnauthorizedAccessException e)
-                    {
-                        FGLLog.Error("Error saving atlas mask bytes: " + e);
-                        yield break;
                     }
                     catch (Exception e)
                     {
                         FGLLog.Error("Error saving atlas mask bytes: " + e);
-                        yield break;
+                        success = false;
+                        break;
                     }
                     yield return null;
                 }
@@ -371,22 +384,23 @@ namespace FasterGameLoading
                 manifest.atlases.Add(info);
             }
 
-            try
+            if (success)
             {
-                File.WriteAllText(ManifestPath, JsonUtility.ToJson(manifest, true));
-                FGLLog.Message("Static atlas cache saved.");
+                try
+                {
+                    File.WriteAllText(ManifestPath, JsonUtility.ToJson(manifest, true));
+                    FGLLog.Message("Static atlas cache saved.");
+                }
+                catch (Exception e)
+                {
+                    FGLLog.Error("Error saving atlas manifest: " + e);
+                    success = false;
+                }
             }
-            catch (IOException e)
+
+            if (!success)
             {
-                FGLLog.Error("Error saving atlas manifest: " + e);
-            }
-            catch (UnauthorizedAccessException e)
-            {
-                FGLLog.Error("Error saving atlas manifest: " + e);
-            }
-            catch (Exception e)
-            {
-                FGLLog.Error("Error saving atlas manifest: " + e);
+                ClearCache();
             }
         }
 

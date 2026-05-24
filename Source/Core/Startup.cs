@@ -24,7 +24,7 @@ namespace FasterGameLoading
                     + ", failures: " + ModContentLoaderTexture2D_LoadTexture_Patch.cacheLoadFailures
                     + ", configured entries: " + TextureResize.CacheCount);
             }
-            SessionCache.loadedTypesByFullNameSinceLastSession = GenTypes_GetTypeInAnyAssemblyInt_Patch.loadedTypesThisSession;
+            SessionCache.loadedTypesByFullNameSinceLastSession = new System.Collections.Generic.Dictionary<string, string>(GenTypes_GetTypeInAnyAssemblyInt_Patch.loadedTypesThisSession);
             SessionCache.xmlPathsSinceLastSession = new System.Collections.Generic.Dictionary<string, bool>(XmlNode_SelectSingleNode_Patch.xmlPathsThisSession);
 
             // Inject translations

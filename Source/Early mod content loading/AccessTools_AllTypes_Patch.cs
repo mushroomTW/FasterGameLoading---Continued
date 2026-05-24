@@ -27,6 +27,17 @@ namespace FasterGameLoading
         {
             if (!FasterGameLoadingSettings.EnableMultiThreading)
             {
+                // 當關閉多執行緒預載入時，直接在當前（主）執行緒同步載入，避免後續在其他執行緒上觸發初始化
+                var types = AppDomain.CurrentDomain.GetAssemblies()
+                    .SelectMany(assembly =>
+                    {
+                        try { return AccessTools.GetTypesFromAssembly(assembly); }
+                        catch { return Array.Empty<Type>(); }
+                    }).ToList();
+                lock (typesLock)
+                {
+                    allTypesCached = types;
+                }
                 return;
             }
             Task.Run(() =>

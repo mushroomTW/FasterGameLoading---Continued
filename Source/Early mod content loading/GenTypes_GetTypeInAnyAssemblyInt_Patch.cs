@@ -1,5 +1,6 @@
 using HarmonyLib;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Verse;
 
@@ -13,8 +14,8 @@ namespace FasterGameLoading
     [HarmonyPatch(typeof(GenTypes), "GetTypeInAnyAssemblyInt")]
     public static class GenTypes_GetTypeInAnyAssemblyInt_Patch
     {
-        internal static Dictionary<string, Type> cachedResults = new Dictionary<string, Type>();
-        internal static Dictionary<string, string> loadedTypesThisSession = new Dictionary<string, string>();
+        internal static ConcurrentDictionary<string, Type> cachedResults = new ConcurrentDictionary<string, Type>();
+        internal static ConcurrentDictionary<string, string> loadedTypesThisSession = new ConcurrentDictionary<string, string>();
 
         static GenTypes_GetTypeInAnyAssemblyInt_Patch()
         {

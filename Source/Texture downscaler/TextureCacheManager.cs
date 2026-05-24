@@ -164,11 +164,18 @@ namespace FasterGameLoading
         {
             md5HashCache.Clear();
             activeCacheDirectory = stagingDirectory;
-            if (Directory.Exists(stagingDirectory))
+            try
             {
-                Directory.Delete(stagingDirectory, true);
+                if (Directory.Exists(stagingDirectory))
+                {
+                    Directory.Delete(stagingDirectory, true);
+                }
+                Directory.CreateDirectory(stagingDirectory);
             }
-            Directory.CreateDirectory(stagingDirectory);
+            catch (Exception ex)
+            {
+                FGLLog.Error("Failed to setup staging directory: " + stagingDirectory, ex);
+            }
             lock (cacheLock)
             {
                 resizedTextureCache.Clear();
@@ -184,27 +191,55 @@ namespace FasterGameLoading
             lock (cacheLock) { resizedTextureCache = previousCacheMap; }
             activeCacheDirectory = previousCacheDirectory;
             md5HashCache.Clear();
-            if (Directory.Exists(stagingDirectory))
+            try
             {
-                Directory.Delete(stagingDirectory, true);
+                if (Directory.Exists(stagingDirectory))
+                {
+                    Directory.Delete(stagingDirectory, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                FGLLog.Warning("Failed to clean up staging directory: " + stagingDirectory + " error: " + ex.Message);
             }
         }
 
         /// <summary>將暫存目錄替換為正式快取目錄，並重建相對路徑對照表。</summary>
         internal static void ReplaceTextureCacheDirectory(string stagingDirectory)
         {
-            if (Directory.Exists(CacheDirectory))
+            bool moved = false;
+            try
             {
-                Directory.Delete(CacheDirectory, true);
+                if (Directory.Exists(CacheDirectory))
+                {
+                    Directory.Delete(CacheDirectory, true);
+                }
+                if (Directory.Exists(stagingDirectory))
+                {
+                    Directory.Move(stagingDirectory, CacheDirectory);
+                    moved = true;
+                }
             }
-            Directory.Move(stagingDirectory, CacheDirectory);
-            var updatedCacheMap = new Dictionary<string, string>();
-            foreach (var kvp in resizedTextureCache)
+            catch (Exception ex)
             {
-                updatedCacheMap[kvp.Key] = Path.Combine(CacheDirectory, Path.GetFileName(kvp.Value));
+                FGLLog.Error("Failed to replace texture cache directory. Falling back.", ex);
             }
-            lock (cacheLock) { resizedTextureCache = updatedCacheMap; }
-            activeCacheDirectory = CacheDirectory;
+
+            if (moved)
+            {
+                var updatedCacheMap = new Dictionary<string, string>();
+                foreach (var kvp in resizedTextureCache)
+                {
+                    updatedCacheMap[kvp.Key] = Path.Combine(CacheDirectory, Path.GetFileName(kvp.Value));
+                }
+                lock (cacheLock) { resizedTextureCache = updatedCacheMap; }
+                activeCacheDirectory = CacheDirectory;
+            }
+            else
+            {
+                lock (cacheLock) { resizedTextureCache.Clear(); }
+                activeCacheDirectory = CacheDirectory;
+            }
             md5HashCache.Clear();
         }
 

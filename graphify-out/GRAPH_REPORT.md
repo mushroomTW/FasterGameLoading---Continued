@@ -1,16 +1,16 @@
-# Graph Report - FasterGameLoading---Continued  (2026-05-24)
+# Graph Report - FasterGameLoading---Continued  (2026-05-25)
 
 ## Corpus Check
-- 46 files · ~25,265 words
+- 46 files · ~25,383 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 645 nodes · 753 edges · 53 communities (39 shown, 14 thin omitted)
+- 646 nodes · 755 edges · 54 communities (40 shown, 14 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.86)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `c57b9d08`
+- Built from commit: `c59a2916`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -60,6 +60,7 @@
 - [[_COMMUNITY_Community 50|Community 50]]
 - [[_COMMUNITY_Community 51|Community 51]]
 - [[_COMMUNITY_Community 52|Community 52]]
+- [[_COMMUNITY_Community 53|Community 53]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `compile` - 109 edges
@@ -85,7 +86,7 @@
 - `DelayedActions` --references--> `bool`  [EXTRACTED]
   Source/Delay graphic and icon loading/DelayedActions.cs → Delay graphic and icon loading/DelayedActions.cs
 
-## Communities (53 total, 14 thin omitted)
+## Communities (54 total, 14 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.02
@@ -100,8 +101,8 @@ Cohesion: 0.08
 Nodes (11): long, ConcurrentDictionary, Dictionary, object, string, ConcurrentDictionary, Dictionary, object (+3 more)
 
 ### Community 3 - "Community 3"
-Cohesion: 0.05
-Nodes (45): frameworks, restore, version, Krafs.Publicizer, Krafs.Rimworld.Ref, Lib.Harmony, format, net472 (+37 more)
+Cohesion: 0.06
+Nodes (32): frameworks, restore, version, format, net472, framework, projectReferences, runtimeIdentifierGraphPath (+24 more)
 
 ### Community 4 - "Community 4"
 Cohesion: 0.05
@@ -152,8 +153,8 @@ Cohesion: 0.22
 Nodes (6): AccessTools_AllTypes_Patch, List, object, FasterGameLoading, List, object
 
 ### Community 17 - "Community 17"
-Cohesion: 0.25
-Nodes (4): Dictionary, FasterGameLoading, GenTypes_GetTypeInAnyAssemblyInt_Patch, Dictionary
+Cohesion: 0.22
+Nodes (5): Dictionary, FasterGameLoading, GenTypes_GetTypeInAnyAssemblyInt_Patch, ConcurrentDictionary, Dictionary
 
 ### Community 18 - "Community 18"
 Cohesion: 0.25
@@ -211,8 +212,12 @@ Nodes (3): Dictionary, FasterGameLoading, TextureResizer
 Cohesion: 0.50
 Nodes (3): string, FasterGameLoading, FGLConsts
 
+### Community 53 - "Community 53"
+Cohesion: 0.15
+Nodes (13): Krafs.Publicizer, Krafs.Rimworld.Ref, Lib.Harmony, include, suppressParent, target, version, target (+5 more)
+
 ## Knowledge Gaps
-- **265 isolated node(s):** `FasterGameLoading`, `FieldInfo`, `MethodBase`, `Harmony`, `FasterGameLoadingSettings` (+260 more)
+- **266 isolated node(s):** `FasterGameLoading`, `FieldInfo`, `MethodBase`, `Harmony`, `FasterGameLoadingSettings` (+261 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **14 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -224,7 +229,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `Krafs.Rimworld.Ref/1.6.4633` connect `Community 1` to `Community 0`?**
   _High betweenness centrality (0.044) - this node is a cross-community bridge._
 - **What connects `FasterGameLoading`, `FieldInfo`, `MethodBase` to the rest of the system?**
-  _265 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _266 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.018518518518518517 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
@@ -232,4 +237,4 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `Community 2` be split into smaller, more focused modules?**
   _Cohesion score 0.08295625942684766 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**
-  _Cohesion score 0.045328399629972246 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06417112299465241 - nodes in this community are weakly interconnected._

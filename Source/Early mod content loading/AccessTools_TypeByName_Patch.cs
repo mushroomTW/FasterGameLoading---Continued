@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using Verse;
@@ -13,7 +13,7 @@ namespace FasterGameLoading
     [HarmonyPatch(typeof(AccessTools), "TypeByName")]
     public static class AccessTools_TypeByName_Patch
     {
-        public static bool Prefix(ref Type __result, out (bool, string) __state, ref string name)
+        public static bool Prefix(ref Type __result, out (bool isCached, string originalName) __state, ref string name)
         {
             var oldName = name;
             if (SessionCache.loadedTypesByFullNameSinceLastSession.TryGetValue(name, out var fullName))
@@ -23,24 +23,24 @@ namespace FasterGameLoading
             if (GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults.TryGetValue(name, out var result))
             {
                 __result = result;
-                __state = new (true, oldName);
+                __state = (true, oldName);
                 return false;
             }
             else
             {
-                __state = new(false, oldName);
+                __state = (false, oldName);
                 return true;
             }
         }
 
-        public static void Postfix(Type __result, string name, (bool, string) __state)
+        public static void Postfix(Type __result, string name, (bool isCached, string originalName) __state)
         {
-            if (__state.Item1 is false)
+            if (__state.isCached is false)
             {
                 GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults[name] = __result;
                 if (__result != null && __result.FullName != name)
                 {
-                    SessionCache.loadedTypesByFullNameSinceLastSession[__state.Item2] = __result.FullName;
+                    SessionCache.loadedTypesByFullNameSinceLastSession[__state.originalName] = __result.FullName;
                     GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults[__result.FullName] = __result;
                 }
             }

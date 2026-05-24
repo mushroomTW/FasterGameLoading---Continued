@@ -33,11 +33,20 @@ namespace FasterGameLoading
         [HarmonyPrefix]
         static bool TryPlay_Patch() => false;
 
+        private static bool unpatched = false;
+
+        internal static void ResetUnpatchedStatus()
+        {
+            unpatched = false;
+        }
+
         /// <summary>
         /// 取消此類別中所有 Harmony patch，恢復正常聲音播放。
         /// </summary>
         internal static void Unpatch()
         {
+            if (unpatched) return;
+            unpatched = true;
             FasterGameLoadingMod.harmony.UnpatchCategory("SoundStarter");
         }
     }

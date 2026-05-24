@@ -37,8 +37,9 @@ namespace FasterGameLoading
         /// </summary>
         public static void CustomApply(Texture2D tex, bool updateMipmaps, bool makeNoLongerReadable)
         {
-            bool finalReadable = FasterGameLoadingSettings.AtlasCaching ? false : makeNoLongerReadable;
-            tex.Apply(updateMipmaps, finalReadable);
+            // 當 AtlasCaching 啟用時，finalMakeNoLongerReadable 設為 false，即表示「保持可讀取」（makeNoLongerReadable = false）
+            bool finalMakeNoLongerReadable = FasterGameLoadingSettings.AtlasCaching ? false : makeNoLongerReadable;
+            tex.Apply(updateMipmaps, finalMakeNoLongerReadable);
         }
     }
 }

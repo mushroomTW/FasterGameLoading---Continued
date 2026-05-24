@@ -39,6 +39,7 @@ namespace FasterGameLoading
                 }
                 try
                 {
+                    SoundStarter_Patch.ResetUnpatchedStatus();
                     harmony.PatchCategory("SoundStarter");
                 }
                 catch (System.InvalidOperationException)

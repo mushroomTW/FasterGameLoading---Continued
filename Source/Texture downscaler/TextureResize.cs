@@ -23,7 +23,7 @@ namespace FasterGameLoading
         // ════════════════════════════════════════════════════════════════
 
         /// <summary>原始路徑 → 降質快取路徑的對照表（會透過 Scribe 持久化）。</summary>
-        public static Dictionary<string, string> resizedTextureCache = new Dictionary<string, string>();
+        internal static Dictionary<string, string> resizedTextureCache = new Dictionary<string, string>();
         private static readonly object cacheLock = new object();
         private static readonly ConcurrentDictionary<string, string> md5HashCache = new ConcurrentDictionary<string, string>();
 
@@ -179,7 +179,7 @@ namespace FasterGameLoading
         }
 
         /// <summary>各紋理類型的降質目標尺寸（較長邊會縮放至此尺寸）。</summary>
-        public static Dictionary<TextureType, int> targetSizes = new Dictionary<TextureType, int>
+        private static readonly Dictionary<TextureType, int> targetSizes = new Dictionary<TextureType, int>
         {
             { TextureType.Building, 256 },
             { TextureType.Pawn, 256 },
@@ -192,13 +192,13 @@ namespace FasterGameLoading
         };
 
         /// <summary>按紋理類型分類的紋理條目。</summary>
-        public static Dictionary<TextureType, List<KeyValuePair<BuildableDef, string>>> textures = new();
+        private static readonly Dictionary<TextureType, List<KeyValuePair<BuildableDef, string>>> textures = new();
         /// <summary>紋理 → 檔案路徑的對照表。</summary>
-        public static Dictionary<Texture, string> texturesByPaths = new();
+        private static readonly Dictionary<Texture, string> texturesByPaths = new();
         /// <summary>紋理 → (Def, 路徑) 的對照表。</summary>
-        public static Dictionary<Texture, KeyValuePair<BuildableDef, string>> texturesByDefs = new();
+        private static readonly Dictionary<Texture, KeyValuePair<BuildableDef, string>> texturesByDefs = new();
         /// <summary>紋理 → 來源 Mod 的對照表。</summary>
-        public static Dictionary<Texture, ModContentPack> texturesByMods = new();
+        private static readonly Dictionary<Texture, ModContentPack> texturesByMods = new();
         private static long lastOriginalPixelCount;
         private static long lastDownscaledPixelCount;
 

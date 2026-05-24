@@ -13,8 +13,8 @@ namespace FasterGameLoading
     [HarmonyPatch(typeof(GenTypes), "GetTypeInAnyAssemblyInt")]
     public static class GenTypes_GetTypeInAnyAssemblyInt_Patch
     {
-        public static Dictionary<string, Type> cachedResults = new Dictionary<string, Type>();
-        public static Dictionary<string, string> loadedTypesThisSession = new Dictionary<string, string>();
+        internal static Dictionary<string, Type> cachedResults = new Dictionary<string, Type>();
+        internal static Dictionary<string, string> loadedTypesThisSession = new Dictionary<string, string>();
 
         static GenTypes_GetTypeInAnyAssemblyInt_Patch()
         {
@@ -27,17 +27,17 @@ namespace FasterGameLoading
             loadedTypesThisSession.Clear();
         }
 
-        public static bool Prefix(ref Type __result, out (string, bool) __state, ref string typeName)
+        public static bool Prefix(ref Type __result, out (string originalTypeName, bool isCached) __state, ref string typeName)
         {
             if (cachedResults.TryGetValue(typeName, out var result))
             {
                 __result = result;
-                __state = new (typeName, true);
+                __state = (typeName, true);
                 return false;
             }
             else
             {
-                __state = new(typeName, false);
+                __state = (typeName, false);
                 if (SessionCache.loadedTypesByFullNameSinceLastSession.TryGetValue(typeName, out var fullName))
                 {
                     typeName = fullName;
@@ -46,22 +46,22 @@ namespace FasterGameLoading
             }
         }
 
-        public static void Postfix(Type __result, (string, bool) __state)
+        public static void Postfix(Type __result, (string originalTypeName, bool isCached) __state)
         {
             if (__result != null)
             {
                 var fullName = __result.FullName;
-                if (__state.Item2 is false)
+                if (__state.isCached is false)
                 {
-                    cachedResults[__state.Item1] = __result;
-                    if (fullName != __state.Item1)
+                    cachedResults[__state.originalTypeName] = __result;
+                    if (fullName != __state.originalTypeName)
                     {
                         cachedResults[fullName] = __result;
                     }
                 }
-                if (__state.Item1 != fullName)
+                if (__state.originalTypeName != fullName)
                 {
-                    loadedTypesThisSession[__state.Item1] = fullName;
+                    loadedTypesThisSession[__state.originalTypeName] = fullName;
                 }
             }
         }

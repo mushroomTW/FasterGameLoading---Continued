@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using System.Collections.Generic;
 using System.Linq;
 using Verse;
@@ -12,7 +12,7 @@ namespace FasterGameLoading
     [HarmonyPatch(typeof(ModContentPack), "ReloadContentInt")]
     public static class ModContentPack_ReloadContentInt_Patch
     {
-        public static HashSet<ModContentPack> loadedMods = new HashSet<ModContentPack>();
+        internal static readonly HashSet<ModContentPack> loadedMods = new HashSet<ModContentPack>();
 
         static ModContentPack_ReloadContentInt_Patch()
         {

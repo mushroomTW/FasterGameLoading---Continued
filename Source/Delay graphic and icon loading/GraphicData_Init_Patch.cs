@@ -16,7 +16,7 @@ namespace FasterGameLoading
         /// <summary>
         /// 以 texPath 為鍵的快取，值為所有使用該 texPath 的 GraphicData 列表。
         /// </summary>
-        public static ConcurrentDictionary<string, List<GraphicData>> savedGraphics = new ConcurrentDictionary<string, List<GraphicData>>();
+        internal static ConcurrentDictionary<string, List<GraphicData>> savedGraphics = new ConcurrentDictionary<string, List<GraphicData>>();
 
         static GraphicData_Init_Patch()
         {
@@ -29,12 +29,15 @@ namespace FasterGameLoading
             if (__instance.texPath.NullOrEmpty() is false)
             {
                 var graphicDatas = savedGraphics.GetOrAdd(__instance.texPath, _ => new List<GraphicData>());
-                foreach (var item in graphicDatas)
+                lock (graphicDatas)
                 {
-                    if (IsSameGraphicData(__instance, item) && item.cachedGraphic != null)
+                    foreach (var item in graphicDatas)
                     {
-                        __instance.cachedGraphic = item.cachedGraphic;
-                        return false;
+                        if (IsSameGraphicData(__instance, item) && item.cachedGraphic != null)
+                        {
+                            __instance.cachedGraphic = item.cachedGraphic;
+                            return false;
+                        }
                     }
                 }
                 __state = true;
@@ -48,7 +51,10 @@ namespace FasterGameLoading
             {
                 if (savedGraphics.TryGetValue(__instance.texPath, out var graphicDatas))
                 {
-                    graphicDatas.Add(__instance);
+                    lock (graphicDatas)
+                    {
+                        graphicDatas.Add(__instance);
+                    }
                 }
             }
         }

@@ -1,16 +1,16 @@
 # Graph Report - FasterGameLoading---Continued  (2026-05-25)
 
 ## Corpus Check
-- 46 files · ~25,383 words
+- 47 files · ~25,537 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 646 nodes · 755 edges · 54 communities (40 shown, 14 thin omitted)
+- 654 nodes · 763 edges · 55 communities (41 shown, 14 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.86)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `c59a2916`
+- Built from commit: `a24fcacc`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -61,6 +61,7 @@
 - [[_COMMUNITY_Community 51|Community 51]]
 - [[_COMMUNITY_Community 52|Community 52]]
 - [[_COMMUNITY_Community 53|Community 53]]
+- [[_COMMUNITY_Community 54|Community 54]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `compile` - 109 edges
@@ -71,8 +72,8 @@
 6. `restore` - 14 edges
 7. `restore` - 14 edges
 8. `SessionCache` - 11 edges
-9. `FasterGameLoading Mod` - 11 edges
-10. `StaticAtlasCache` - 10 edges
+9. `StaticAtlasCache` - 11 edges
+10. `FasterGameLoading Mod` - 11 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `FasterGameLoading Mod` --has_icon--> `Mod Icon Image`  [INFERRED]
@@ -86,7 +87,7 @@
 - `DelayedActions` --references--> `bool`  [EXTRACTED]
   Source/Delay graphic and icon loading/DelayedActions.cs → Delay graphic and icon loading/DelayedActions.cs
 
-## Communities (54 total, 14 thin omitted)
+## Communities (55 total, 14 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.02
@@ -185,8 +186,8 @@ Cohesion: 0.29
 Nodes (4): List, CacheResetter, List, FasterGameLoading
 
 ### Community 26 - "Community 26"
-Cohesion: 0.29
-Nodes (4): ConcurrentDictionary, ConcurrentDictionary, FasterGameLoading, XmlNode_SelectSingleNode_Patch
+Cohesion: 0.22
+Nodes (5): bool, ConcurrentDictionary, ConcurrentDictionary, FasterGameLoading, XmlNode_SelectSingleNode_Patch
 
 ### Community 32 - "Community 32"
 Cohesion: 0.53
@@ -216,8 +217,12 @@ Nodes (3): string, FasterGameLoading, FGLConsts
 Cohesion: 0.15
 Nodes (13): Krafs.Publicizer, Krafs.Rimworld.Ref, Lib.Harmony, include, suppressParent, target, version, target (+5 more)
 
+### Community 54 - "Community 54"
+Cohesion: 0.40
+Nodes (3): EarlyLoadSkipList, FasterGameLoading, HashSet
+
 ## Knowledge Gaps
-- **266 isolated node(s):** `FasterGameLoading`, `FieldInfo`, `MethodBase`, `Harmony`, `FasterGameLoadingSettings` (+261 more)
+- **269 isolated node(s):** `FasterGameLoading`, `HashSet`, `FasterGameLoading`, `FieldInfo`, `MethodBase` (+264 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **14 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -225,11 +230,11 @@ Nodes (13): Krafs.Publicizer, Krafs.Rimworld.Ref, Lib.Harmony, include, suppress
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `compile` connect `Community 0` to `Community 1`, `Community 38`?**
-  _High betweenness centrality (0.072) - this node is a cross-community bridge._
+  _High betweenness centrality (0.070) - this node is a cross-community bridge._
 - **Why does `Krafs.Rimworld.Ref/1.6.4633` connect `Community 1` to `Community 0`?**
-  _High betweenness centrality (0.044) - this node is a cross-community bridge._
-- **What connects `FasterGameLoading`, `FieldInfo`, `MethodBase` to the rest of the system?**
-  _266 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _High betweenness centrality (0.043) - this node is a cross-community bridge._
+- **What connects `FasterGameLoading`, `HashSet`, `FasterGameLoading` to the rest of the system?**
+  _269 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.018518518518518517 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**

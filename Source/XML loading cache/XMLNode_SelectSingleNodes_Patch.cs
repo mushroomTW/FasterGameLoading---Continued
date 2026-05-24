@@ -17,14 +17,27 @@ namespace FasterGameLoading
         /// 使用 ConcurrentDictionary 以確保多執行緒環境下安全
         /// </summary>
         public static ConcurrentDictionary<string, bool> xmlPathsThisSession = new ConcurrentDictionary<string, bool>();
+        private static bool patchEnabled = true;
 
         static XmlNode_SelectSingleNode_Patch()
         {
             CacheResetter.Register(() => xmlPathsThisSession.Clear());
         }
 
+        public static void DisableAndClear()
+        {
+            patchEnabled = false;
+            xmlPathsThisSession.Clear();
+            SessionCache.xmlPathsSinceLastSession.Clear();
+        }
+
         public static bool Prefix(string xpath)
         {
+            if (!patchEnabled)
+            {
+                return true;
+            }
+
             // 單一次 TryGetValue 查詢，取代原先兩次 Contains 呼叫
             if (SessionCache.xmlPathsSinceLastSession.TryGetValue(xpath, out bool succeeded) && !succeeded)
             {
@@ -35,8 +48,11 @@ namespace FasterGameLoading
 
         public static void Postfix(string xpath, XmlNode __result)
         {
+            if (!patchEnabled)
+            {
+                return;
+            }
             xmlPathsThisSession[xpath] = __result is not null;
         }
     }
 }
-

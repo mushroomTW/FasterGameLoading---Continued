@@ -94,6 +94,51 @@
       "norm_label": "documentgroupcontainers"
     },
     {
+      "label": "EarlyLoadSkipList.cs",
+      "file_type": "code",
+      "source_file": "Source/Compatibility/EarlyLoadSkipList.cs",
+      "source_location": "L1",
+      "id": "source_compatibility_earlyloadskiplist_cs",
+      "community": 54,
+      "norm_label": "earlyloadskiplist.cs"
+    },
+    {
+      "label": "FasterGameLoading",
+      "file_type": "code",
+      "source_file": "Source/Compatibility/EarlyLoadSkipList.cs",
+      "source_location": "L4",
+      "id": "compatibility_earlyloadskiplist_fastergameloading",
+      "community": 54,
+      "norm_label": "fastergameloading"
+    },
+    {
+      "label": "EarlyLoadSkipList",
+      "file_type": "code",
+      "source_file": "Source/Compatibility/EarlyLoadSkipList.cs",
+      "source_location": "L9",
+      "id": "compatibility_earlyloadskiplist_earlyloadskiplist",
+      "community": 54,
+      "norm_label": "earlyloadskiplist"
+    },
+    {
+      "label": "HashSet",
+      "file_type": "code",
+      "source_file": "Source/Compatibility/EarlyLoadSkipList.cs",
+      "source_location": "L12",
+      "id": "source_compatibility_earlyloadskiplist_cs_hashset",
+      "community": 54,
+      "norm_label": "hashset"
+    },
+    {
+      "label": ".ShouldSkip()",
+      "file_type": "code",
+      "source_file": "Source/Compatibility/EarlyLoadSkipList.cs",
+      "source_location": "L22",
+      "id": "compatibility_earlyloadskiplist_earlyloadskiplist_shouldskip",
+      "community": 54,
+      "norm_label": ".shouldskip()"
+    },
+    {
       "label": "FGLProgressReporter.cs",
       "file_type": "code",
       "source_file": "Source/Compatibility/FGLProgressReporter.cs",
@@ -502,7 +547,7 @@
       "label": ".ResetEarlyLoading()",
       "file_type": "code",
       "source_file": "Source/Delay graphic and icon loading/DelayedActions.cs",
-      "source_location": "L130",
+      "source_location": "L131",
       "id": "delay_graphic_and_icon_loading_delayedactions_delayedactions_resetearlyloading",
       "community": 6,
       "norm_label": ".resetearlyloading()"
@@ -511,7 +556,7 @@
       "label": ".PerformActions()",
       "file_type": "code",
       "source_file": "Source/Delay graphic and icon loading/DelayedActions.cs",
-      "source_location": "L148",
+      "source_location": "L149",
       "id": "delay_graphic_and_icon_loading_delayedactions_delayedactions_performactions",
       "community": 6,
       "norm_label": ".performactions()"
@@ -520,7 +565,7 @@
       "label": ".LoadDeferredGraphicsCoroutine()",
       "file_type": "code",
       "source_file": "Source/Delay graphic and icon loading/DelayedActions.cs",
-      "source_location": "L171",
+      "source_location": "L172",
       "id": "delay_graphic_and_icon_loading_delayedactions_delayedactions_loaddeferredgraphicscoroutine",
       "community": 6,
       "norm_label": ".loaddeferredgraphicscoroutine()"
@@ -529,7 +574,7 @@
       "label": ".BakeDeferredAtlasesCoroutine()",
       "file_type": "code",
       "source_file": "Source/Delay graphic and icon loading/DelayedActions.cs",
-      "source_location": "L239",
+      "source_location": "L240",
       "id": "delay_graphic_and_icon_loading_delayedactions_delayedactions_bakedeferredatlasescoroutine",
       "community": 6,
       "norm_label": ".bakedeferredatlasescoroutine()"
@@ -538,7 +583,7 @@
       "label": ".UpdateMapMeshForLoadedDefs()",
       "file_type": "code",
       "source_file": "Source/Delay graphic and icon loading/DelayedActions.cs",
-      "source_location": "L294",
+      "source_location": "L295",
       "id": "delay_graphic_and_icon_loading_delayedactions_delayedactions_updatemapmeshforloadeddefs",
       "community": 6,
       "norm_label": ".updatemapmeshforloadeddefs()"
@@ -547,7 +592,7 @@
       "label": ".LoadDeferredIconsCoroutine()",
       "file_type": "code",
       "source_file": "Source/Delay graphic and icon loading/DelayedActions.cs",
-      "source_location": "L324",
+      "source_location": "L325",
       "id": "delay_graphic_and_icon_loading_delayedactions_delayedactions_loaddeferrediconscoroutine",
       "community": 6,
       "norm_label": ".loaddeferrediconscoroutine()"
@@ -556,7 +601,7 @@
       "label": ".ResolveSubSoundDefsCoroutine()",
       "file_type": "code",
       "source_file": "Source/Delay graphic and icon loading/DelayedActions.cs",
-      "source_location": "L363",
+      "source_location": "L364",
       "id": "delay_graphic_and_icon_loading_delayedactions_delayedactions_resolvesubsounddefscoroutine",
       "community": 6,
       "norm_label": ".resolvesubsounddefscoroutine()"
@@ -565,7 +610,7 @@
       "label": ".PerformAdaptiveStaticAtlasBake()",
       "file_type": "code",
       "source_file": "Source/Delay graphic and icon loading/DelayedActions.cs",
-      "source_location": "L401",
+      "source_location": "L402",
       "id": "delay_graphic_and_icon_loading_delayedactions_delayedactions_performadaptivestaticatlasbake",
       "community": 6,
       "norm_label": ".performadaptivestaticatlasbake()"
@@ -574,7 +619,7 @@
       "label": ".TryBakeSingleBatch()",
       "file_type": "code",
       "source_file": "Source/Delay graphic and icon loading/DelayedActions.cs",
-      "source_location": "L521",
+      "source_location": "L522",
       "id": "delay_graphic_and_icon_loading_delayedactions_delayedactions_trybakesinglebatch",
       "community": 6,
       "norm_label": ".trybakesinglebatch()"
@@ -583,7 +628,7 @@
       "label": ".Error()",
       "file_type": "code",
       "source_file": "Source/Delay graphic and icon loading/DelayedActions.cs",
-      "source_location": "L593",
+      "source_location": "L594",
       "id": "delay_graphic_and_icon_loading_delayedactions_delayedactions_error",
       "community": 6,
       "norm_label": ".error()"
@@ -934,7 +979,7 @@
       "label": ".Prefix()",
       "file_type": "code",
       "source_file": "Source/Early mod content loading/AccessTools_AllTypes_Patch.cs",
-      "source_location": "L58",
+      "source_location": "L65",
       "id": "early_mod_content_loading_accesstools_alltypes_patch_accesstools_alltypes_patch_prefix",
       "community": 16,
       "norm_label": ".prefix()"
@@ -3910,10 +3955,19 @@
       "norm_label": ".savetocachecoroutine()"
     },
     {
+      "label": ".AlignToBlockSize()",
+      "file_type": "code",
+      "source_file": "Source/Static atlases cache/StaticAtlasCache.cs",
+      "source_location": "L407",
+      "id": "static_atlases_cache_staticatlascache_staticatlascache_aligntoblocksize",
+      "community": 5,
+      "norm_label": ".aligntoblocksize()"
+    },
+    {
       "label": ".GetRawBytesSafe()",
       "file_type": "code",
       "source_file": "Source/Static atlases cache/StaticAtlasCache.cs",
-      "source_location": "L411",
+      "source_location": "L417",
       "id": "static_atlases_cache_staticatlascache_staticatlascache_getrawbytessafe",
       "community": 5,
       "norm_label": ".getrawbytessafe()"
@@ -4783,10 +4837,28 @@
       "norm_label": "concurrentdictionary"
     },
     {
+      "label": "bool",
+      "file_type": "code",
+      "source_file": "Source/XML loading cache/XMLNode_SelectSingleNodes_Patch.cs",
+      "source_location": "L20",
+      "id": "source_xml_loading_cache_xmlnode_selectsinglenodes_patch_cs_bool",
+      "community": 26,
+      "norm_label": "bool"
+    },
+    {
+      "label": ".DisableAndClear()",
+      "file_type": "code",
+      "source_file": "Source/XML loading cache/XMLNode_SelectSingleNodes_Patch.cs",
+      "source_location": "L27",
+      "id": "xml_loading_cache_xmlnode_selectsinglenodes_patch_xmlnode_selectsinglenode_patch_disableandclear",
+      "community": 26,
+      "norm_label": ".disableandclear()"
+    },
+    {
       "label": ".Prefix()",
       "file_type": "code",
       "source_file": "Source/XML loading cache/XMLNode_SelectSingleNodes_Patch.cs",
-      "source_location": "L26",
+      "source_location": "L34",
       "id": "xml_loading_cache_xmlnode_selectsinglenodes_patch_xmlnode_selectsinglenode_patch_prefix",
       "community": 26,
       "norm_label": ".prefix()"
@@ -4795,7 +4867,7 @@
       "label": ".Postfix()",
       "file_type": "code",
       "source_file": "Source/XML loading cache/XMLNode_SelectSingleNodes_Patch.cs",
-      "source_location": "L36",
+      "source_location": "L49",
       "id": "xml_loading_cache_xmlnode_selectsinglenodes_patch_xmlnode_selectsinglenode_patch_postfix",
       "community": 26,
       "norm_label": ".postfix()"
@@ -6026,6 +6098,47 @@
       "confidence_score": 1.0,
       "source": "vs_fastergameloading_v18_documentlayout_json",
       "target": "v18_documentlayout_documentgroupcontainers"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Compatibility/EarlyLoadSkipList.cs",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "source_compatibility_earlyloadskiplist_cs",
+      "target": "compatibility_earlyloadskiplist_fastergameloading"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Compatibility/EarlyLoadSkipList.cs",
+      "source_location": "L9",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "source_compatibility_earlyloadskiplist_cs",
+      "target": "compatibility_earlyloadskiplist_earlyloadskiplist"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Compatibility/EarlyLoadSkipList.cs",
+      "source_location": "L12",
+      "weight": 1.0,
+      "context": "field",
+      "confidence_score": 1.0,
+      "source": "compatibility_earlyloadskiplist_earlyloadskiplist",
+      "target": "source_compatibility_earlyloadskiplist_cs_hashset"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Compatibility/EarlyLoadSkipList.cs",
+      "source_location": "L22",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "compatibility_earlyloadskiplist_earlyloadskiplist",
+      "target": "compatibility_earlyloadskiplist_earlyloadskiplist_shouldskip"
     },
     {
       "relation": "contains",
@@ -7570,9 +7683,9 @@
       "source_location": "L18",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "early_mod_content_loading_gentypes_gettypeinanyassemblyint_patch_gentypes_gettypeinanyassemblyint_patch",
-      "target": "source_early_mod_content_loading_gentypes_gettypeinanyassemblyint_patch_cs_concurrentdictionary",
-      "confidence_score": 1.0
+      "target": "source_early_mod_content_loading_gentypes_gettypeinanyassemblyint_patch_cs_concurrentdictionary"
     },
     {
       "relation": "method",
@@ -10913,6 +11026,16 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
+      "source_file": "Source/Static atlases cache/StaticAtlasCache.cs",
+      "source_location": "L407",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "static_atlases_cache_staticatlascache_staticatlascache",
+      "target": "static_atlases_cache_staticatlascache_staticatlascache_aligntoblocksize"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
       "source_file": "Static atlases cache/StaticAtlasCache.cs",
       "source_location": "L325",
       "weight": 1.0,
@@ -11111,9 +11234,9 @@
       "source_file": "Source/Static atlases cache/StaticAtlasCache.cs",
       "source_location": "L403",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "static_atlases_cache_staticatlascache_staticatlascache_savetocachecoroutine",
-      "target": "static_atlases_cache_staticatlascache_staticatlascache_clearcache",
-      "confidence_score": 1.0
+      "target": "static_atlases_cache_staticatlascache_staticatlascache_clearcache"
     },
     {
       "relation": "calls",
@@ -11191,6 +11314,17 @@
       "confidence_score": 1.0,
       "source": "static_atlases_cache_staticatlascache_staticatlascache_savetocachecoroutine",
       "target": "static_atlases_cache_staticatlascache_staticatlascache_getrawbytessafe"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Static atlases cache/StaticAtlasCache.cs",
+      "source_location": "L439",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "static_atlases_cache_staticatlascache_staticatlascache_getrawbytessafe",
+      "target": "static_atlases_cache_staticatlascache_staticatlascache_aligntoblocksize"
     },
     {
       "relation": "contains",
@@ -13173,6 +13307,27 @@
       "target": "source_xml_loading_cache_xmlnode_selectsinglenodes_patch_cs_concurrentdictionary"
     },
     {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/XML loading cache/XMLNode_SelectSingleNodes_Patch.cs",
+      "source_location": "L20",
+      "weight": 1.0,
+      "context": "field",
+      "confidence_score": 1.0,
+      "source": "xml_loading_cache_xmlnode_selectsinglenodes_patch_xmlnode_selectsinglenode_patch",
+      "target": "source_xml_loading_cache_xmlnode_selectsinglenodes_patch_cs_bool"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/XML loading cache/XMLNode_SelectSingleNodes_Patch.cs",
+      "source_location": "L27",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "xml_loading_cache_xmlnode_selectsinglenodes_patch_xmlnode_selectsinglenode_patch",
+      "target": "xml_loading_cache_xmlnode_selectsinglenodes_patch_xmlnode_selectsinglenode_patch_disableandclear"
+    },
+    {
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "XML loading cache/XMLNode_SelectSingleNodes_Patch.cs",
@@ -13599,5 +13754,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "c59a291650a1b7028ba0ca3b0c47b0ae7a727b1c"
+  "built_at_commit": "a24fcaccb4a1591cad5bed8ef05c3d82ebe6578c"
 }

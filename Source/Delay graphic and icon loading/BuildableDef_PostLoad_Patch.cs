@@ -90,6 +90,16 @@ namespace FasterGameLoading
                 cat.defName.Contains(FGLConsts.SecurityKeyword)))
                 return true;
 
+            // 處理 Bionic Icons 相容性：不延遲載入身體零件或假肢的圖形，避免與 Bionic Icons 動態產生的紋理衝突
+            if (EarlyLoadSkipList.IsBionicIconsActive)
+            {
+                if (thingDef.thingCategories != null && thingDef.thingCategories.Any(cat =>
+                    cat.defName.Contains("BodyParts") ||
+                    cat.defName.Contains("Bionic") ||
+                    cat.defName.Contains("Prosthetic")))
+                    return true;
+            }
+
             return false;
         }
     }

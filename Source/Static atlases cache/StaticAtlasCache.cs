@@ -404,6 +404,12 @@ namespace FasterGameLoading
             }
         }
 
+        private static int AlignToBlockSize(int size)
+        {
+            // DXT/BC 壓縮紋理以 4x4 像素為單位，寬高必須是 4 的倍數
+            return (size + 3) & ~3;
+        }
+
         /// <summary>
         /// 安全地從 Texture2D 取得原始位元組。
         /// 優先使用 GetRawTextureData，若無法直接讀取則透過 RenderTexture 進行 GPU→CPU 複製。
@@ -430,12 +436,15 @@ namespace FasterGameLoading
             var previous = RenderTexture.active;
             try
             {
-                rt = RenderTexture.GetTemporary(tex.width, tex.height, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Default);
+                int targetWidth = AlignToBlockSize(tex.width);
+                int targetHeight = AlignToBlockSize(tex.height);
+
+                rt = RenderTexture.GetTemporary(targetWidth, targetHeight, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Default);
                 Graphics.Blit(tex, rt);
                 RenderTexture.active = rt;
 
                 TextureFormat fallbackFormat = TextureFormat.RGBA32;
-                readable = new Texture2D(tex.width, tex.height, fallbackFormat, false);
+                readable = new Texture2D(targetWidth, targetHeight, fallbackFormat, false);
                 readable.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
                 readable.Apply(false, false);
 

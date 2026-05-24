@@ -25,10 +25,13 @@ namespace FasterGameLoading
         /// </summary>
         public static void Preload()
         {
+            // 在主執行緒先取得 Assemblies 快照，防止列舉時集合發生 Race Condition
+            var assembliesSnapshot = Enumerable.ToArray(AppDomain.CurrentDomain.GetAssemblies());
+
             if (!FasterGameLoadingSettings.EnableMultiThreading)
             {
                 // 當關閉多執行緒預載入時，直接在當前（主）執行緒同步載入，避免後續在其他執行緒上觸發初始化
-                var types = AppDomain.CurrentDomain.GetAssemblies()
+                var types = assembliesSnapshot
                     .SelectMany(assembly =>
                     {
                         try { return AccessTools.GetTypesFromAssembly(assembly); }
@@ -40,9 +43,13 @@ namespace FasterGameLoading
                 }
                 return;
             }
+            
             Task.Run(() =>
             {
-                var types = AppDomain.CurrentDomain.GetAssemblies()
+                // 稍微延遲 50 毫秒，避開啟動時的併發載入高峰
+                System.Threading.Thread.Sleep(50);
+
+                var types = assembliesSnapshot
                     .SelectMany(assembly =>
                     {
                         try { return AccessTools.GetTypesFromAssembly(assembly); }

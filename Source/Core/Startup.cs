@@ -39,6 +39,9 @@ namespace FasterGameLoading
             {
                 FasterGameLoadingMod.delayedActions.StartCoroutine(FasterGameLoadingMod.delayedActions.PerformActions());
             });
+
+            // 遊戲初始化載入完成，關閉並釋放 XML 快取
+            XmlNode_SelectSingleNode_Patch.DisableAndClear();
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Verse;
 
 namespace FasterGameLoading
 {
@@ -13,6 +14,23 @@ namespace FasterGameLoading
         {
             "automatic.bionicicons" // Bionic Icons — 避免因提早載入而產生重複載入衝突
         };
+
+        private static bool? isBionicIconsActive;
+
+        /// <summary>
+        /// 取得 Bionic Icons Mod 是否為啟用狀態（快取判定結果以維護啟動時期的效能）。
+        /// </summary>
+        public static bool IsBionicIconsActive
+        {
+            get
+            {
+                if (!isBionicIconsActive.HasValue)
+                {
+                    isBionicIconsActive = ModsConfig.IsActive("automatic.bionicicons");
+                }
+                return isBionicIconsActive.Value;
+            }
+        }
 
         /// <summary>
         /// 判斷指定的 Mod 是否應該跳過提早載入流程，改走原生同步載入。

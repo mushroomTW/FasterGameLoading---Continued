@@ -16,9 +16,14 @@ namespace FasterGameLoading
             // Save current session data for cross-session caching
             SessionCache.modsInLastSession = ModsConfig.ActiveModsInLoadOrder.Select(x => x.packageIdLowerCase).ToList();
             SessionCache.loadedTexturesSinceLastSession = new System.Collections.Generic.Dictionary<string, string>(ModContentLoaderTexture2D_LoadTexture_Patch.loadedTexturesThisSession);
-            Log.Message("[FasterGameLoading] Texture downscale cache hits: " + ModContentLoaderTexture2D_LoadTexture_Patch.cacheLoadHits
-                + ", failures: " + ModContentLoaderTexture2D_LoadTexture_Patch.cacheLoadFailures
-                + ", configured entries: " + TextureResize.CacheCount);
+            if (ModContentLoaderTexture2D_LoadTexture_Patch.cacheLoadHits > 0
+                || ModContentLoaderTexture2D_LoadTexture_Patch.cacheLoadFailures > 0
+                || TextureResize.CacheCount > 0)
+            {
+                Log.Message("[FasterGameLoading] Texture downscale cache hits: " + ModContentLoaderTexture2D_LoadTexture_Patch.cacheLoadHits
+                    + ", failures: " + ModContentLoaderTexture2D_LoadTexture_Patch.cacheLoadFailures
+                    + ", configured entries: " + TextureResize.CacheCount);
+            }
             SessionCache.loadedTypesByFullNameSinceLastSession = GenTypes_GetTypeInAnyAssemblyInt_Patch.loadedTypesThisSession;
             SessionCache.xmlPathsSinceLastSession = new System.Collections.Generic.Dictionary<string, bool>(XmlNode_SelectSingleNode_Patch.xmlPathsThisSession);
 

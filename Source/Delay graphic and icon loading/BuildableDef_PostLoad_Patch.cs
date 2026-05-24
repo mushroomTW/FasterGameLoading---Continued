@@ -19,14 +19,15 @@ namespace FasterGameLoading
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> codeInstructions)
         {
             var execute = AccessTools.Method(typeof(LongEventHandler), nameof(LongEventHandler.ExecuteWhenFinished));
-            var executeDelayed = AccessTools.Method(typeof(BuildableDef_PostLoad_Patch), nameof(ExecuteDelayed));
+            var executeNow = AccessTools.Method(typeof(BuildableDef_PostLoad_Patch), nameof(ExecuteImmediately));
             foreach (var code in codeInstructions)
             {
                 if (code.Calls(execute))
                 {
-                    // Replace ExecuteWhenFinished(action) with ExecuteDelayed(action, this)
+                    // 雖然在「延遲」模組中，但 UI 圖示必須立即載入：
+                    // 延遲圖示會讓主選單顯示 BadTex 紅叉，因為選單在載入完成前就需要渲染圖示
                     yield return new CodeInstruction(OpCodes.Ldarg_0);
-                    yield return new CodeInstruction(OpCodes.Call, executeDelayed);
+                    yield return new CodeInstruction(OpCodes.Call, executeNow);
                 }
                 else
                 {
@@ -36,10 +37,11 @@ namespace FasterGameLoading
         }
 
         /// <summary>
-        ///BuildableDef UI 圖示在早期 UI 設定期間透過指定和架構選單讀取。
-        ///延遲它們會在 BaseContent.BadTex 上留下許多定義，顯示為紅色叉子。
+        /// BuildableDef UI 圖示必須立即載入，不能延遲。
+        /// 延遲它們會在 BaseContent.BadTex 上留下許多定義，顯示為紅色叉子。
+        /// 此方法名稱中的「Immediately」是為強調這點，與 ThingDef_PostLoad_Patch 的延遲行為形成對比。
         /// </summary>
-        public static void ExecuteDelayed(Action action, BuildableDef def)
+        public static void ExecuteImmediately(Action action, BuildableDef def)
         {
             LongEventHandler.ExecuteWhenFinished(action);
         }
@@ -52,6 +54,9 @@ namespace FasterGameLoading
         public static bool ShouldBeLoadedImmediately(this ThingDef thingDef)
         {
             // 基礎建築和藍圖必須立即載入
+            if (thingDef.designationCategory != null || !thingDef.uiIconPath.NullOrEmpty())
+                return true;
+
             if (thingDef.IsBlueprint || thingDef.IsFrame)
                 return true;
 

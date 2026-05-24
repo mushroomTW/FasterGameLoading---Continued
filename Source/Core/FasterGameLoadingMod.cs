@@ -41,9 +41,9 @@ namespace FasterGameLoading
                 {
                     harmony.PatchCategory("SoundStarter");
                 }
-                catch
+                catch (System.InvalidOperationException)
                 {
-                    // If the patch category hasn't been registered yet or is duplicated (exception thrown), skip
+                    // Patch category "SoundStarter" hasn't been registered yet or was already unpatched — skip silently
                 }
             });
         }

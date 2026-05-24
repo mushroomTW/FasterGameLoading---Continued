@@ -8,8 +8,7 @@ namespace FasterGameLoading
 {
     /// <summary>
     /// 攔截 GenTypes.AllLeafSubclasses 並快取結果。
-    /// 計算給定基底型別的所有葉子子類別（未被其他子類別繼承的型別），
-    /// 避免每次查詢時都遍歷所有型別。
+    /// 葉子子類別 = 某基底型別的子類別中，沒有被其他子類別繼承的型別。
     /// </summary>
     [HarmonyPatch(typeof(GenTypes), "AllLeafSubclasses")]
     public static class GenTypes_AllLeafSubclasses_Patch
@@ -31,29 +30,13 @@ namespace FasterGameLoading
             if (!keyValuePairs.TryGetValue(baseType, out var final))
             {
                 var subClasses = baseType.AllSubclasses().ToHashSet();
+                var typesWithSubclasses = subClasses
+                    .Select(t => t.BaseType)
+                    .Where(t => t != null && subClasses.Contains(t))
+                    .ToHashSet();
 
-                // 計數每個型別作為「其他子類別的基底型別」的次數
-                var baseTypeCounts = new Dictionary<Type, int>();
-                foreach (var sub in subClasses)
-                {
-                    var directBase = sub.BaseType;
-                    if (subClasses.Contains(directBase))
-                    {
-                        baseTypeCounts[directBase] = baseTypeCounts.TryGetValue(directBase, out var count)
-                            ? count + 1
-                            : 1;
-                    }
-                }
-
-                // 沒有被任何子類別引用為基底型別的，即為 leaf
-                final = new HashSet<Type>();
-                foreach (var sub in subClasses)
-                {
-                    if (!baseTypeCounts.ContainsKey(sub))
-                    {
-                        final.Add(sub);
-                    }
-                }
+                // 葉子 = 沒有任何其他子類別以它為基底的非抽象型別。
+                final = subClasses.Where(t => !t.IsAbstract && !typesWithSubclasses.Contains(t)).ToHashSet();
                 keyValuePairs[baseType] = final;
             }
             __result = final;

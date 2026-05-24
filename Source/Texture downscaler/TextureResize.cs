@@ -562,7 +562,11 @@ namespace FasterGameLoading
                     return true;
                 }
             }
-            catch (Exception) { /* fallback 到記憶體中的版本 */ }
+            catch (Exception ex)
+            {
+                // 無法從磁碟載入原始紋理，caller 會改用記憶體中的版本作為 fallback
+                Log.Warning("[FasterGameLoading] Cannot load original texture from disk, using in-memory copy: " + ex.Message);
+            }
 
             if (texture != null) { DestroyTemporaryUnityObject(texture); texture = null; }
             return false;

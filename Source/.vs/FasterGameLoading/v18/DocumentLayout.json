@@ -32,7 +32,7 @@
               "RelativeDocumentMoniker": "Early mod content loading\\AlienRacesCompat.cs",
               "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\Early mod content loading\\AlienRacesCompat.cs",
               "RelativeToolTip": "Early mod content loading\\AlienRacesCompat.cs",
-              "ViewState": "AgIAADkAAAAAAAAAAAAIwFIAAAAhAAAAAAAAAA==",
+              "ViewState": "AgIAABIAAAAAAAAAAAAwwCgAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-05-21T13:42:29.322Z",
               "EditorCaption": ""
@@ -47,8 +47,7 @@
               "RelativeToolTip": "Texture downscaler\\TextureResize.cs",
               "ViewState": "AgIAAEMBAAAAAAAAAAAiwGIBAAA7AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-14T09:54:48.017Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-14T09:54:48.017Z"
             }
           ]
         }

@@ -69,7 +69,8 @@ namespace FasterGameLoading
         /// </summary>
         public void LateUpdate()
         {
-            if (earlyLoadingComplete || !FasterGameLoadingSettings.EarlyModContentLoading)
+            // earlyModContentLoading 採 camelCase 以相容 loading-progress 的反射查詢，詳見 FasterGameLoadingSettings
+            if (earlyLoadingComplete || !FasterGameLoadingSettings.earlyModContentLoading)
                 return;
 
             if (skipFrames > 0)
@@ -355,6 +356,7 @@ Log.Message("[FasterGameLoading] Vanilla static atlas baking complete");
                     stopwatch.Restart();
                 }
             }
+            SoundStarter_Patch.Unpatch();
             Log.Message("[FasterGameLoading] SubSoundDef resolution complete");
         }
 

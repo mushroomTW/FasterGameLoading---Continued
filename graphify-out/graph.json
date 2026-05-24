@@ -3249,7 +3249,7 @@
       "source_file": "Source/obj/project.assets.json",
       "source_location": "L374",
       "id": "obj_project_assets_restore_frameworks",
-      "community": 8,
+      "community": 4,
       "norm_label": "frameworks"
     },
     {
@@ -3258,7 +3258,7 @@
       "source_file": "Source/obj/project.assets.json",
       "source_location": "L375",
       "id": "obj_project_assets_frameworks_net472",
-      "community": 8,
+      "community": 4,
       "norm_label": "net472"
     },
     {
@@ -3267,7 +3267,7 @@
       "source_file": "Source/obj/project.assets.json",
       "source_location": "L376",
       "id": "obj_project_assets_net472_framework",
-      "community": 8,
+      "community": 4,
       "norm_label": "framework"
     },
     {
@@ -3276,7 +3276,7 @@
       "source_file": "Source/obj/project.assets.json",
       "source_location": "L377",
       "id": "obj_project_assets_net472_targetalias",
-      "community": 8,
+      "community": 4,
       "norm_label": "targetalias"
     },
     {
@@ -3285,7 +3285,7 @@
       "source_file": "Source/obj/project.assets.json",
       "source_location": "L378",
       "id": "obj_project_assets_net472_projectreferences",
-      "community": 8,
+      "community": 4,
       "norm_label": "projectreferences"
     },
     {
@@ -3366,7 +3366,7 @@
       "source_file": "Source/obj/project.assets.json",
       "source_location": "L397",
       "id": "obj_project_assets_net472_dependencies",
-      "community": 8,
+      "community": 4,
       "norm_label": "dependencies"
     },
     {
@@ -3375,7 +3375,7 @@
       "source_file": "Source/obj/project.assets.json",
       "source_location": "L398",
       "id": "obj_project_assets_dependencies_krafs_publicizer",
-      "community": 8,
+      "community": 4,
       "norm_label": "krafs.publicizer"
     },
     {
@@ -3384,7 +3384,7 @@
       "source_file": "Source/obj/project.assets.json",
       "source_location": "L399",
       "id": "obj_project_assets_krafs_publicizer_include",
-      "community": 8,
+      "community": 4,
       "norm_label": "include"
     },
     {
@@ -3393,7 +3393,7 @@
       "source_file": "Source/obj/project.assets.json",
       "source_location": "L400",
       "id": "obj_project_assets_krafs_publicizer_suppressparent",
-      "community": 8,
+      "community": 4,
       "norm_label": "suppressparent"
     },
     {
@@ -3402,7 +3402,7 @@
       "source_file": "Source/obj/project.assets.json",
       "source_location": "L401",
       "id": "obj_project_assets_krafs_publicizer_target",
-      "community": 8,
+      "community": 4,
       "norm_label": "target"
     },
     {
@@ -3411,7 +3411,7 @@
       "source_file": "Source/obj/project.assets.json",
       "source_location": "L402",
       "id": "obj_project_assets_krafs_publicizer_version",
-      "community": 8,
+      "community": 4,
       "norm_label": "version"
     },
     {
@@ -3420,7 +3420,7 @@
       "source_file": "Source/obj/project.assets.json",
       "source_location": "L404",
       "id": "obj_project_assets_dependencies_krafs_rimworld_ref",
-      "community": 8,
+      "community": 4,
       "norm_label": "krafs.rimworld.ref"
     },
     {
@@ -3429,7 +3429,7 @@
       "source_file": "Source/obj/project.assets.json",
       "source_location": "L405",
       "id": "obj_project_assets_krafs_rimworld_ref_target",
-      "community": 8,
+      "community": 4,
       "norm_label": "target"
     },
     {
@@ -3438,7 +3438,7 @@
       "source_file": "Source/obj/project.assets.json",
       "source_location": "L406",
       "id": "obj_project_assets_krafs_rimworld_ref_version",
-      "community": 8,
+      "community": 4,
       "norm_label": "version"
     },
     {
@@ -3447,7 +3447,7 @@
       "source_file": "Source/obj/project.assets.json",
       "source_location": "L408",
       "id": "obj_project_assets_dependencies_lib_harmony",
-      "community": 8,
+      "community": 4,
       "norm_label": "lib.harmony"
     },
     {
@@ -3456,7 +3456,7 @@
       "source_file": "Source/obj/project.assets.json",
       "source_location": "L409",
       "id": "obj_project_assets_lib_harmony_include",
-      "community": 8,
+      "community": 4,
       "norm_label": "include"
     },
     {
@@ -3465,7 +3465,7 @@
       "source_file": "Source/obj/project.assets.json",
       "source_location": "L410",
       "id": "obj_project_assets_lib_harmony_target",
-      "community": 8,
+      "community": 4,
       "norm_label": "target"
     },
     {
@@ -3474,7 +3474,7 @@
       "source_file": "Source/obj/project.assets.json",
       "source_location": "L411",
       "id": "obj_project_assets_lib_harmony_version",
-      "community": 8,
+      "community": 4,
       "norm_label": "version"
     },
     {
@@ -3483,7 +3483,7 @@
       "source_file": "Source/obj/project.assets.json",
       "source_location": "L414",
       "id": "obj_project_assets_net472_runtimeidentifiergraphpath",
-      "community": 8,
+      "community": 4,
       "norm_label": "runtimeidentifiergraphpath"
     },
     {
@@ -3982,6 +3982,222 @@
       "norm_label": ".postfix()"
     },
     {
+      "label": "PngUtils.cs",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/PngUtils.cs",
+      "source_location": "L1",
+      "id": "source_texture_downscaler_pngutils_cs",
+      "community": 51,
+      "norm_label": "pngutils.cs"
+    },
+    {
+      "label": "FasterGameLoading",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/PngUtils.cs",
+      "source_location": "L3",
+      "id": "texture_downscaler_pngutils_fastergameloading",
+      "community": 51,
+      "norm_label": "fastergameloading"
+    },
+    {
+      "label": "PngUtils",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/PngUtils.cs",
+      "source_location": "L8",
+      "id": "texture_downscaler_pngutils_pngutils",
+      "community": 51,
+      "norm_label": "pngutils"
+    },
+    {
+      "label": ".TryGetImageDimensions()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/PngUtils.cs",
+      "source_location": "L11",
+      "id": "texture_downscaler_pngutils_pngutils_trygetimagedimensions",
+      "community": 51,
+      "norm_label": ".trygetimagedimensions()"
+    },
+    {
+      "label": ".TryReadPngDimensions()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/PngUtils.cs",
+      "source_location": "L26",
+      "id": "texture_downscaler_pngutils_pngutils_tryreadpngdimensions",
+      "community": 51,
+      "norm_label": ".tryreadpngdimensions()"
+    },
+    {
+      "label": ".ReadBigEndianInt32()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/PngUtils.cs",
+      "source_location": "L38",
+      "id": "texture_downscaler_pngutils_pngutils_readbigendianint32",
+      "community": 51,
+      "norm_label": ".readbigendianint32()"
+    },
+    {
+      "label": "TextureCacheManager.cs",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L1",
+      "id": "source_texture_downscaler_texturecachemanager_cs",
+      "community": 8,
+      "norm_label": "texturecachemanager.cs"
+    },
+    {
+      "label": "FasterGameLoading",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L9",
+      "id": "texture_downscaler_texturecachemanager_fastergameloading",
+      "community": 8,
+      "norm_label": "fastergameloading"
+    },
+    {
+      "label": "TextureCacheManager",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L14",
+      "id": "texture_downscaler_texturecachemanager_texturecachemanager",
+      "community": 8,
+      "norm_label": "texturecachemanager"
+    },
+    {
+      "label": "Dictionary",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L17",
+      "id": "source_texture_downscaler_texturecachemanager_cs_dictionary",
+      "community": 8,
+      "norm_label": "dictionary"
+    },
+    {
+      "label": "object",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L18",
+      "id": "source_texture_downscaler_texturecachemanager_cs_object",
+      "community": 8,
+      "norm_label": "object"
+    },
+    {
+      "label": "ConcurrentDictionary",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L19",
+      "id": "source_texture_downscaler_texturecachemanager_cs_concurrentdictionary",
+      "community": 8,
+      "norm_label": "concurrentdictionary"
+    },
+    {
+      "label": ".BuildCacheDirectory()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L23",
+      "id": "texture_downscaler_texturecachemanager_texturecachemanager_buildcachedirectory",
+      "community": 8,
+      "norm_label": ".buildcachedirectory()"
+    },
+    {
+      "label": "string",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L24",
+      "id": "source_texture_downscaler_texturecachemanager_cs_string",
+      "community": 8,
+      "norm_label": "string"
+    },
+    {
+      "label": ".GetCachePath()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L30",
+      "id": "texture_downscaler_texturecachemanager_texturecachemanager_getcachepath",
+      "community": 8,
+      "norm_label": ".getcachepath()"
+    },
+    {
+      "label": ".GetCacheKey()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L47",
+      "id": "texture_downscaler_texturecachemanager_texturecachemanager_getcachekey",
+      "community": 8,
+      "norm_label": ".getcachekey()"
+    },
+    {
+      "label": ".TryGetCachedTexturePath()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L84",
+      "id": "texture_downscaler_texturecachemanager_texturecachemanager_trygetcachedtexturepath",
+      "community": 8,
+      "norm_label": ".trygetcachedtexturepath()"
+    },
+    {
+      "label": ".IsCacheFresh()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L108",
+      "id": "texture_downscaler_texturecachemanager_texturecachemanager_iscachefresh",
+      "community": 8,
+      "norm_label": ".iscachefresh()"
+    },
+    {
+      "label": ".RemoveCachedTexturePath()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L129",
+      "id": "texture_downscaler_texturecachemanager_texturecachemanager_removecachedtexturepath",
+      "community": 8,
+      "norm_label": ".removecachedtexturepath()"
+    },
+    {
+      "label": ".ClearCache()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L138",
+      "id": "texture_downscaler_texturecachemanager_texturecachemanager_clearcache",
+      "community": 8,
+      "norm_label": ".clearcache()"
+    },
+    {
+      "label": ".SetupResizeStagingDirectory()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L163",
+      "id": "texture_downscaler_texturecachemanager_texturecachemanager_setupresizestagingdirectory",
+      "community": 8,
+      "norm_label": ".setupresizestagingdirectory()"
+    },
+    {
+      "label": ".RestorePreviousCacheState()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L179",
+      "id": "texture_downscaler_texturecachemanager_texturecachemanager_restorepreviouscachestate",
+      "community": 8,
+      "norm_label": ".restorepreviouscachestate()"
+    },
+    {
+      "label": ".ReplaceTextureCacheDirectory()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L194",
+      "id": "texture_downscaler_texturecachemanager_texturecachemanager_replacetexturecachedirectory",
+      "community": 8,
+      "norm_label": ".replacetexturecachedirectory()"
+    },
+    {
+      "label": ".SetCacheEntry()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L212",
+      "id": "texture_downscaler_texturecachemanager_texturecachemanager_setcacheentry",
+      "community": 8,
+      "norm_label": ".setcacheentry()"
+    },
+    {
       "label": "TextureResize.cs",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
@@ -3994,7 +4210,7 @@
       "label": "FasterGameLoading",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L13",
+      "source_location": "L10",
       "id": "texture_downscaler_textureresize_fastergameloading",
       "community": 2,
       "norm_label": "fastergameloading"
@@ -4003,115 +4219,16 @@
       "label": "TextureResize",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L19",
+      "source_location": "L15",
       "id": "texture_downscaler_textureresize_textureresize",
       "community": 2,
       "norm_label": "textureresize"
     },
     {
-      "label": "Dictionary",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L26",
-      "id": "source_texture_downscaler_textureresize_cs_dictionary",
-      "community": 2,
-      "norm_label": "dictionary"
-    },
-    {
-      "label": "object",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L27",
-      "id": "source_texture_downscaler_textureresize_cs_object",
-      "community": 2,
-      "norm_label": "object"
-    },
-    {
-      "label": "ConcurrentDictionary",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L28",
-      "id": "source_texture_downscaler_textureresize_cs_concurrentdictionary",
-      "community": 2,
-      "norm_label": "concurrentdictionary"
-    },
-    {
-      "label": ".BuildCacheDirectory()",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L32",
-      "id": "texture_downscaler_textureresize_textureresize_buildcachedirectory",
-      "community": 2,
-      "norm_label": ".buildcachedirectory()"
-    },
-    {
-      "label": "string",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L33",
-      "id": "source_texture_downscaler_textureresize_cs_string",
-      "community": 2,
-      "norm_label": "string"
-    },
-    {
-      "label": ".GetCachePath()",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L39",
-      "id": "texture_downscaler_textureresize_textureresize_getcachepath",
-      "community": 2,
-      "norm_label": ".getcachepath()"
-    },
-    {
-      "label": ".GetCacheKey()",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L56",
-      "id": "texture_downscaler_textureresize_textureresize_getcachekey",
-      "community": 2,
-      "norm_label": ".getcachekey()"
-    },
-    {
-      "label": ".TryGetCachedTexturePath()",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L93",
-      "id": "texture_downscaler_textureresize_textureresize_trygetcachedtexturepath",
-      "community": 2,
-      "norm_label": ".trygetcachedtexturepath()"
-    },
-    {
-      "label": ".IsCacheFresh()",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L117",
-      "id": "texture_downscaler_textureresize_textureresize_iscachefresh",
-      "community": 2,
-      "norm_label": ".iscachefresh()"
-    },
-    {
-      "label": ".RemoveCachedTexturePath()",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L138",
-      "id": "texture_downscaler_textureresize_textureresize_removecachedtexturepath",
-      "community": 2,
-      "norm_label": ".removecachedtexturepath()"
-    },
-    {
-      "label": ".ClearCache()",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L147",
-      "id": "texture_downscaler_textureresize_textureresize_clearcache",
-      "community": 2,
-      "norm_label": ".clearcache()"
-    },
-    {
       "label": "long",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L202",
+      "source_location": "L23",
       "id": "long",
       "community": 2,
       "norm_label": "long"
@@ -4120,133 +4237,25 @@
       "label": ".DoTextureResizing()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L224",
+      "source_location": "L45",
       "id": "texture_downscaler_textureresize_textureresize_dotextureresizing",
       "community": 2,
       "norm_label": ".dotextureresizing()"
     },
     {
-      "label": ".SetupResizeStagingDirectory()",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L267",
-      "id": "texture_downscaler_textureresize_textureresize_setupresizestagingdirectory",
-      "community": 2,
-      "norm_label": ".setupresizestagingdirectory()"
-    },
-    {
-      "label": ".BuildTextureScanData()",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L294",
-      "id": "texture_downscaler_textureresize_textureresize_buildtexturescandata",
-      "community": 2,
-      "norm_label": ".buildtexturescandata()"
-    },
-    {
-      "label": ".InitializeScanContainers()",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L304",
-      "id": "texture_downscaler_textureresize_textureresize_initializescancontainers",
-      "community": 2,
-      "norm_label": ".initializescancontainers()"
-    },
-    {
-      "label": ".BuildModTextureMap()",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L312",
-      "id": "texture_downscaler_textureresize_textureresize_buildmodtexturemap",
-      "community": 2,
-      "norm_label": ".buildmodtexturemap()"
-    },
-    {
-      "label": ".ScanPawnTextures()",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L324",
-      "id": "texture_downscaler_textureresize_textureresize_scanpawntextures",
-      "community": 2,
-      "norm_label": ".scanpawntextures()"
-    },
-    {
-      "label": ".ScanStyleTextures()",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L347",
-      "id": "texture_downscaler_textureresize_textureresize_scanstyletextures",
-      "community": 2,
-      "norm_label": ".scanstyletextures()"
-    },
-    {
-      "label": ".ScanBuildableTextures()",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L373",
-      "id": "texture_downscaler_textureresize_textureresize_scanbuildabletextures",
-      "community": 2,
-      "norm_label": ".scanbuildabletextures()"
-    },
-    {
-      "label": ".ScanApparelVariants()",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L395",
-      "id": "texture_downscaler_textureresize_textureresize_scanapparelvariants",
-      "community": 2,
-      "norm_label": ".scanapparelvariants()"
-    },
-    {
-      "label": ".ScanPlantVariants()",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L419",
-      "id": "texture_downscaler_textureresize_textureresize_scanplantvariants",
-      "community": 2,
-      "norm_label": ".scanplantvariants()"
-    },
-    {
       "label": ".BuildResizeCandidates()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L438",
+      "source_location": "L91",
       "id": "texture_downscaler_textureresize_textureresize_buildresizecandidates",
       "community": 2,
       "norm_label": ".buildresizecandidates()"
     },
     {
-      "label": ".RestorePreviousCacheState()",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L464",
-      "id": "texture_downscaler_textureresize_textureresize_restorepreviouscachestate",
-      "community": 2,
-      "norm_label": ".restorepreviouscachestate()"
-    },
-    {
-      "label": ".ReplaceTextureCacheDirectory()",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L481",
-      "id": "texture_downscaler_textureresize_textureresize_replacetexturecachedirectory",
-      "community": 2,
-      "norm_label": ".replacetexturecachedirectory()"
-    },
-    {
-      "label": ".ClearTextureScanData()",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L499",
-      "id": "texture_downscaler_textureresize_textureresize_cleartexturescandata",
-      "community": 2,
-      "norm_label": ".cleartexturescandata()"
-    },
-    {
       "label": ".ResizeTexture()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L510",
+      "source_location": "L120",
       "id": "texture_downscaler_textureresize_textureresize_resizetexture",
       "community": 2,
       "norm_label": ".resizetexture()"
@@ -4255,43 +4264,16 @@
       "label": ".TryLoadOriginalTexture()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L551",
+      "source_location": "L161",
       "id": "texture_downscaler_textureresize_textureresize_tryloadoriginaltexture",
       "community": 2,
       "norm_label": ".tryloadoriginaltexture()"
     },
     {
-      "label": ".TryGetImageDimensions()",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L580",
-      "id": "texture_downscaler_textureresize_textureresize_trygetimagedimensions",
-      "community": 2,
-      "norm_label": ".trygetimagedimensions()"
-    },
-    {
-      "label": ".TryReadPngDimensions()",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L595",
-      "id": "texture_downscaler_textureresize_textureresize_tryreadpngdimensions",
-      "community": 2,
-      "norm_label": ".tryreadpngdimensions()"
-    },
-    {
-      "label": ".ReadBigEndianInt32()",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L607",
-      "id": "texture_downscaler_textureresize_textureresize_readbigendianint32",
-      "community": 2,
-      "norm_label": ".readbigendianint32()"
-    },
-    {
       "label": ".LogResizeSummary()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L616",
+      "source_location": "L185",
       "id": "texture_downscaler_textureresize_textureresize_logresizesummary",
       "community": 2,
       "norm_label": ".logresizesummary()"
@@ -4300,34 +4282,16 @@
       "label": ".FormatBytes()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L624",
+      "source_location": "L193",
       "id": "texture_downscaler_textureresize_textureresize_formatbytes",
       "community": 2,
       "norm_label": ".formatbytes()"
     },
     {
-      "label": ".DestroyTemporaryUnityObject()",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L632",
-      "id": "texture_downscaler_textureresize_textureresize_destroytemporaryunityobject",
-      "community": 2,
-      "norm_label": ".destroytemporaryunityobject()"
-    },
-    {
-      "label": ".ResizeTextureToPng()",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L643",
-      "id": "texture_downscaler_textureresize_textureresize_resizetexturetopng",
-      "community": 2,
-      "norm_label": ".resizetexturetopng()"
-    },
-    {
       "label": ".TryGetGraphicApparel()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L674",
+      "source_location": "L206",
       "id": "texture_downscaler_textureresize_textureresize_trygetgraphicapparel",
       "community": 2,
       "norm_label": ".trygetgraphicapparel()"
@@ -4336,7 +4300,7 @@
       "label": ".RenderAsPack()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L701",
+      "source_location": "L233",
       "id": "texture_downscaler_textureresize_textureresize_renderaspack",
       "community": 2,
       "norm_label": ".renderaspack()"
@@ -4345,64 +4309,244 @@
       "label": ".GetTextureType()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L719",
+      "source_location": "L251",
       "id": "texture_downscaler_textureresize_textureresize_gettexturetype",
       "community": 2,
       "norm_label": ".gettexturetype()"
     },
     {
-      "label": ".FillEntry()",
+      "label": ".ClearCache()",
       "file_type": "code",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L743",
-      "id": "texture_downscaler_textureresize_textureresize_fillentry",
+      "source_location": "L276",
+      "id": "texture_downscaler_textureresize_textureresize_clearcache",
       "community": 2,
+      "norm_label": ".clearcache()"
+    },
+    {
+      "label": "TextureResizer.cs",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResizer.cs",
+      "source_location": "L1",
+      "id": "source_texture_downscaler_textureresizer_cs",
+      "community": 50,
+      "norm_label": "textureresizer.cs"
+    },
+    {
+      "label": "FasterGameLoading",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResizer.cs",
+      "source_location": "L6",
+      "id": "texture_downscaler_textureresizer_fastergameloading",
+      "community": 50,
+      "norm_label": "fastergameloading"
+    },
+    {
+      "label": "TextureResizer",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResizer.cs",
+      "source_location": "L11",
+      "id": "texture_downscaler_textureresizer_textureresizer",
+      "community": 50,
+      "norm_label": "textureresizer"
+    },
+    {
+      "label": "Dictionary",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResizer.cs",
+      "source_location": "L14",
+      "id": "source_texture_downscaler_textureresizer_cs_dictionary",
+      "community": 50,
+      "norm_label": "dictionary"
+    },
+    {
+      "label": ".TryGetResizeTarget()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResizer.cs",
+      "source_location": "L30",
+      "id": "texture_downscaler_textureresizer_textureresizer_trygetresizetarget",
+      "community": 50,
+      "norm_label": ".trygetresizetarget()"
+    },
+    {
+      "label": ".DestroyTemporaryUnityObject()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResizer.cs",
+      "source_location": "L51",
+      "id": "texture_downscaler_textureresizer_textureresizer_destroytemporaryunityobject",
+      "community": 50,
+      "norm_label": ".destroytemporaryunityobject()"
+    },
+    {
+      "label": ".ResizeTextureToPng()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResizer.cs",
+      "source_location": "L61",
+      "id": "texture_downscaler_textureresizer_textureresizer_resizetexturetopng",
+      "community": 50,
+      "norm_label": ".resizetexturetopng()"
+    },
+    {
+      "label": "TextureScanner.cs",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L1",
+      "id": "source_texture_downscaler_texturescanner_cs",
+      "community": 49,
+      "norm_label": "texturescanner.cs"
+    },
+    {
+      "label": "FasterGameLoading",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L8",
+      "id": "texture_downscaler_texturescanner_fastergameloading",
+      "community": 49,
+      "norm_label": "fastergameloading"
+    },
+    {
+      "label": "TextureScanner",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L13",
+      "id": "texture_downscaler_texturescanner_texturescanner",
+      "community": 49,
+      "norm_label": "texturescanner"
+    },
+    {
+      "label": "Dictionary",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L16",
+      "id": "source_texture_downscaler_texturescanner_cs_dictionary",
+      "community": 49,
+      "norm_label": "dictionary"
+    },
+    {
+      "label": ".BuildTextureScanData()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L28",
+      "id": "texture_downscaler_texturescanner_texturescanner_buildtexturescandata",
+      "community": 49,
+      "norm_label": ".buildtexturescandata()"
+    },
+    {
+      "label": ".InitializeScanContainers()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L38",
+      "id": "texture_downscaler_texturescanner_texturescanner_initializescancontainers",
+      "community": 49,
+      "norm_label": ".initializescancontainers()"
+    },
+    {
+      "label": ".BuildModTextureMap()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L46",
+      "id": "texture_downscaler_texturescanner_texturescanner_buildmodtexturemap",
+      "community": 49,
+      "norm_label": ".buildmodtexturemap()"
+    },
+    {
+      "label": ".ScanPawnTextures()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L58",
+      "id": "texture_downscaler_texturescanner_texturescanner_scanpawntextures",
+      "community": 49,
+      "norm_label": ".scanpawntextures()"
+    },
+    {
+      "label": ".ScanStyleTextures()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L81",
+      "id": "texture_downscaler_texturescanner_texturescanner_scanstyletextures",
+      "community": 49,
+      "norm_label": ".scanstyletextures()"
+    },
+    {
+      "label": ".ScanBuildableTextures()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L107",
+      "id": "texture_downscaler_texturescanner_texturescanner_scanbuildabletextures",
+      "community": 49,
+      "norm_label": ".scanbuildabletextures()"
+    },
+    {
+      "label": ".ScanApparelVariants()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L129",
+      "id": "texture_downscaler_texturescanner_texturescanner_scanapparelvariants",
+      "community": 49,
+      "norm_label": ".scanapparelvariants()"
+    },
+    {
+      "label": ".ScanPlantVariants()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L153",
+      "id": "texture_downscaler_texturescanner_texturescanner_scanplantvariants",
+      "community": 49,
+      "norm_label": ".scanplantvariants()"
+    },
+    {
+      "label": ".FillEntry()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L168",
+      "id": "texture_downscaler_texturescanner_texturescanner_fillentry",
+      "community": 49,
       "norm_label": ".fillentry()"
     },
     {
       "label": ".AddEntry()",
       "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L761",
-      "id": "texture_downscaler_textureresize_textureresize_addentry",
-      "community": 2,
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L186",
+      "id": "texture_downscaler_texturescanner_texturescanner_addentry",
+      "community": 49,
       "norm_label": ".addentry()"
     },
     {
       "label": ".GetMatTexture()",
       "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L789",
-      "id": "texture_downscaler_textureresize_textureresize_getmattexture",
-      "community": 2,
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L214",
+      "id": "texture_downscaler_texturescanner_texturescanner_getmattexture",
+      "community": 49,
       "norm_label": ".getmattexture()"
-    },
-    {
-      "label": ".TryGetResizeTarget()",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L810",
-      "id": "texture_downscaler_textureresize_textureresize_trygetresizetarget",
-      "community": 2,
-      "norm_label": ".trygetresizetarget()"
     },
     {
       "label": ".RefreshTexturePathMap()",
       "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L829",
-      "id": "texture_downscaler_textureresize_textureresize_refreshtexturepathmap",
-      "community": 2,
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L232",
+      "id": "texture_downscaler_texturescanner_texturescanner_refreshtexturepathmap",
+      "community": 49,
       "norm_label": ".refreshtexturepathmap()"
     },
     {
       "label": ".TryGetTexturePath()",
       "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L844",
-      "id": "texture_downscaler_textureresize_textureresize_trygettexturepath",
-      "community": 2,
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L247",
+      "id": "texture_downscaler_texturescanner_texturescanner_trygettexturepath",
+      "community": 49,
       "norm_label": ".trygettexturepath()"
+    },
+    {
+      "label": ".ClearTextureScanData()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L278",
+      "id": "texture_downscaler_texturescanner_texturescanner_cleartexturescandata",
+      "community": 49,
+      "norm_label": ".cleartexturescandata()"
     },
     {
       "label": "CacheResetter.cs",
@@ -4565,6 +4709,303 @@
       "id": "readme_md",
       "community": 42,
       "norm_label": "readme.md"
+    },
+    {
+      "label": "Dictionary",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L26",
+      "community": 2,
+      "norm_label": "dictionary",
+      "id": "source_texture_downscaler_textureresize_cs_dictionary"
+    },
+    {
+      "label": "object",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L27",
+      "community": 2,
+      "norm_label": "object",
+      "id": "source_texture_downscaler_textureresize_cs_object"
+    },
+    {
+      "label": "ConcurrentDictionary",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L28",
+      "community": 2,
+      "norm_label": "concurrentdictionary",
+      "id": "source_texture_downscaler_textureresize_cs_concurrentdictionary"
+    },
+    {
+      "label": ".BuildCacheDirectory()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L32",
+      "community": 2,
+      "norm_label": ".buildcachedirectory()",
+      "id": "texture_downscaler_textureresize_textureresize_buildcachedirectory"
+    },
+    {
+      "label": "string",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L33",
+      "community": 2,
+      "norm_label": "string",
+      "id": "source_texture_downscaler_textureresize_cs_string"
+    },
+    {
+      "label": ".GetCachePath()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L39",
+      "community": 2,
+      "norm_label": ".getcachepath()",
+      "id": "texture_downscaler_textureresize_textureresize_getcachepath"
+    },
+    {
+      "label": ".GetCacheKey()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L56",
+      "community": 2,
+      "norm_label": ".getcachekey()",
+      "id": "texture_downscaler_textureresize_textureresize_getcachekey"
+    },
+    {
+      "label": ".TryGetCachedTexturePath()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L93",
+      "community": 2,
+      "norm_label": ".trygetcachedtexturepath()",
+      "id": "texture_downscaler_textureresize_textureresize_trygetcachedtexturepath"
+    },
+    {
+      "label": ".IsCacheFresh()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L117",
+      "community": 2,
+      "norm_label": ".iscachefresh()",
+      "id": "texture_downscaler_textureresize_textureresize_iscachefresh"
+    },
+    {
+      "label": ".RemoveCachedTexturePath()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L138",
+      "community": 2,
+      "norm_label": ".removecachedtexturepath()",
+      "id": "texture_downscaler_textureresize_textureresize_removecachedtexturepath"
+    },
+    {
+      "label": ".SetupResizeStagingDirectory()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L267",
+      "community": 2,
+      "norm_label": ".setupresizestagingdirectory()",
+      "id": "texture_downscaler_textureresize_textureresize_setupresizestagingdirectory"
+    },
+    {
+      "label": ".BuildTextureScanData()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L294",
+      "community": 2,
+      "norm_label": ".buildtexturescandata()",
+      "id": "texture_downscaler_textureresize_textureresize_buildtexturescandata"
+    },
+    {
+      "label": ".InitializeScanContainers()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L304",
+      "community": 2,
+      "norm_label": ".initializescancontainers()",
+      "id": "texture_downscaler_textureresize_textureresize_initializescancontainers"
+    },
+    {
+      "label": ".BuildModTextureMap()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L312",
+      "community": 2,
+      "norm_label": ".buildmodtexturemap()",
+      "id": "texture_downscaler_textureresize_textureresize_buildmodtexturemap"
+    },
+    {
+      "label": ".ScanPawnTextures()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L324",
+      "community": 2,
+      "norm_label": ".scanpawntextures()",
+      "id": "texture_downscaler_textureresize_textureresize_scanpawntextures"
+    },
+    {
+      "label": ".ScanStyleTextures()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L347",
+      "community": 2,
+      "norm_label": ".scanstyletextures()",
+      "id": "texture_downscaler_textureresize_textureresize_scanstyletextures"
+    },
+    {
+      "label": ".ScanBuildableTextures()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L373",
+      "community": 2,
+      "norm_label": ".scanbuildabletextures()",
+      "id": "texture_downscaler_textureresize_textureresize_scanbuildabletextures"
+    },
+    {
+      "label": ".ScanApparelVariants()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L395",
+      "community": 2,
+      "norm_label": ".scanapparelvariants()",
+      "id": "texture_downscaler_textureresize_textureresize_scanapparelvariants"
+    },
+    {
+      "label": ".ScanPlantVariants()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L419",
+      "community": 2,
+      "norm_label": ".scanplantvariants()",
+      "id": "texture_downscaler_textureresize_textureresize_scanplantvariants"
+    },
+    {
+      "label": ".RestorePreviousCacheState()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L464",
+      "community": 2,
+      "norm_label": ".restorepreviouscachestate()",
+      "id": "texture_downscaler_textureresize_textureresize_restorepreviouscachestate"
+    },
+    {
+      "label": ".ReplaceTextureCacheDirectory()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L481",
+      "community": 2,
+      "norm_label": ".replacetexturecachedirectory()",
+      "id": "texture_downscaler_textureresize_textureresize_replacetexturecachedirectory"
+    },
+    {
+      "label": ".ClearTextureScanData()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L499",
+      "community": 2,
+      "norm_label": ".cleartexturescandata()",
+      "id": "texture_downscaler_textureresize_textureresize_cleartexturescandata"
+    },
+    {
+      "label": ".TryGetImageDimensions()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L580",
+      "community": 2,
+      "norm_label": ".trygetimagedimensions()",
+      "id": "texture_downscaler_textureresize_textureresize_trygetimagedimensions"
+    },
+    {
+      "label": ".TryReadPngDimensions()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L595",
+      "community": 2,
+      "norm_label": ".tryreadpngdimensions()",
+      "id": "texture_downscaler_textureresize_textureresize_tryreadpngdimensions"
+    },
+    {
+      "label": ".ReadBigEndianInt32()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L607",
+      "community": 2,
+      "norm_label": ".readbigendianint32()",
+      "id": "texture_downscaler_textureresize_textureresize_readbigendianint32"
+    },
+    {
+      "label": ".DestroyTemporaryUnityObject()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L632",
+      "community": 2,
+      "norm_label": ".destroytemporaryunityobject()",
+      "id": "texture_downscaler_textureresize_textureresize_destroytemporaryunityobject"
+    },
+    {
+      "label": ".ResizeTextureToPng()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L643",
+      "community": 2,
+      "norm_label": ".resizetexturetopng()",
+      "id": "texture_downscaler_textureresize_textureresize_resizetexturetopng"
+    },
+    {
+      "label": ".FillEntry()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L743",
+      "community": 2,
+      "norm_label": ".fillentry()",
+      "id": "texture_downscaler_textureresize_textureresize_fillentry"
+    },
+    {
+      "label": ".AddEntry()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L761",
+      "community": 2,
+      "norm_label": ".addentry()",
+      "id": "texture_downscaler_textureresize_textureresize_addentry"
+    },
+    {
+      "label": ".GetMatTexture()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L789",
+      "community": 2,
+      "norm_label": ".getmattexture()",
+      "id": "texture_downscaler_textureresize_textureresize_getmattexture"
+    },
+    {
+      "label": ".TryGetResizeTarget()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L810",
+      "community": 2,
+      "norm_label": ".trygetresizetarget()",
+      "id": "texture_downscaler_textureresize_textureresize_trygetresizetarget"
+    },
+    {
+      "label": ".RefreshTexturePathMap()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L829",
+      "community": 2,
+      "norm_label": ".refreshtexturepathmap()",
+      "id": "texture_downscaler_textureresize_textureresize_refreshtexturepathmap"
+    },
+    {
+      "label": ".TryGetTexturePath()",
+      "file_type": "code",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L844",
+      "community": 2,
+      "norm_label": ".trygettexturepath()",
+      "id": "texture_downscaler_textureresize_textureresize_trygettexturepath"
     },
     {
       "label": ".UseVanillaStaticAtlasBaking()",
@@ -6501,9 +6942,9 @@
       "source_location": "L36",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "delay_sound_loading_soundstarter_patch_soundstarter_patch",
-      "target": "source_delay_sound_loading_soundstarter_patch_cs_bool",
-      "confidence_score": 1.0
+      "target": "source_delay_sound_loading_soundstarter_patch_cs_bool"
     },
     {
       "relation": "method",
@@ -6511,9 +6952,9 @@
       "source_file": "Source/Delay sound loading/SoundStarter_Patch.cs",
       "source_location": "L38",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "delay_sound_loading_soundstarter_patch_soundstarter_patch",
-      "target": "delay_sound_loading_soundstarter_patch_soundstarter_patch_resetunpatchedstatus",
-      "confidence_score": 1.0
+      "target": "delay_sound_loading_soundstarter_patch_soundstarter_patch_resetunpatchedstatus"
     },
     {
       "relation": "method",
@@ -9867,9 +10308,9 @@
       "source_file": "Source/obj/Any CPU/Debug/FasterGameLoading.sourcelink.json",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "source_obj_any_cpu_debug_fastergameloading_sourcelink_json",
-      "target": "debug_fastergameloading_sourcelink_documents",
-      "confidence_score": 1.0
+      "target": "debug_fastergameloading_sourcelink_documents"
     },
     {
       "relation": "contains",
@@ -9877,9 +10318,9 @@
       "source_file": "Source/obj/Any CPU/Debug/FasterGameLoading.sourcelink.json",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "debug_fastergameloading_sourcelink_documents",
-      "target": "debug_fastergameloading_sourcelink_documents_c_program_files_x86_steam_steamapps_common_rimworld_mods_fastergameloading_continued",
-      "confidence_score": 1.0
+      "target": "debug_fastergameloading_sourcelink_documents_c_program_files_x86_steam_steamapps_common_rimworld_mods_fastergameloading_continued"
     },
     {
       "relation": "contains",
@@ -10728,6 +11169,274 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/PngUtils.cs",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "source_texture_downscaler_pngutils_cs",
+      "target": "texture_downscaler_pngutils_fastergameloading",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/PngUtils.cs",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "source_texture_downscaler_pngutils_cs",
+      "target": "texture_downscaler_pngutils_pngutils",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/PngUtils.cs",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "texture_downscaler_pngutils_pngutils",
+      "target": "texture_downscaler_pngutils_pngutils_trygetimagedimensions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/PngUtils.cs",
+      "source_location": "L26",
+      "weight": 1.0,
+      "source": "texture_downscaler_pngutils_pngutils",
+      "target": "texture_downscaler_pngutils_pngutils_tryreadpngdimensions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/PngUtils.cs",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "texture_downscaler_pngutils_pngutils",
+      "target": "texture_downscaler_pngutils_pngutils_readbigendianint32",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/PngUtils.cs",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "texture_downscaler_pngutils_pngutils_trygetimagedimensions",
+      "target": "texture_downscaler_pngutils_pngutils_tryreadpngdimensions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/PngUtils.cs",
+      "source_location": "L33",
+      "weight": 1.0,
+      "source": "texture_downscaler_pngutils_pngutils_tryreadpngdimensions",
+      "target": "texture_downscaler_pngutils_pngutils_readbigendianint32",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "source_texture_downscaler_texturecachemanager_cs",
+      "target": "texture_downscaler_texturecachemanager_fastergameloading",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "source_texture_downscaler_texturecachemanager_cs",
+      "target": "texture_downscaler_texturecachemanager_texturecachemanager",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L17",
+      "weight": 1.0,
+      "context": "field",
+      "source": "texture_downscaler_texturecachemanager_texturecachemanager",
+      "target": "source_texture_downscaler_texturecachemanager_cs_dictionary",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L18",
+      "weight": 1.0,
+      "context": "field",
+      "source": "texture_downscaler_texturecachemanager_texturecachemanager",
+      "target": "source_texture_downscaler_texturecachemanager_cs_object",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L19",
+      "weight": 1.0,
+      "context": "field",
+      "source": "texture_downscaler_texturecachemanager_texturecachemanager",
+      "target": "source_texture_downscaler_texturecachemanager_cs_concurrentdictionary",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturecachemanager_texturecachemanager",
+      "target": "texture_downscaler_texturecachemanager_texturecachemanager_buildcachedirectory",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L24",
+      "weight": 1.0,
+      "context": "field",
+      "source": "texture_downscaler_texturecachemanager_texturecachemanager",
+      "target": "source_texture_downscaler_texturecachemanager_cs_string",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturecachemanager_texturecachemanager",
+      "target": "texture_downscaler_texturecachemanager_texturecachemanager_getcachepath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L47",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturecachemanager_texturecachemanager",
+      "target": "texture_downscaler_texturecachemanager_texturecachemanager_getcachekey",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L84",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturecachemanager_texturecachemanager",
+      "target": "texture_downscaler_texturecachemanager_texturecachemanager_trygetcachedtexturepath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L108",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturecachemanager_texturecachemanager",
+      "target": "texture_downscaler_texturecachemanager_texturecachemanager_iscachefresh",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L129",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturecachemanager_texturecachemanager",
+      "target": "texture_downscaler_texturecachemanager_texturecachemanager_removecachedtexturepath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L138",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturecachemanager_texturecachemanager",
+      "target": "texture_downscaler_texturecachemanager_texturecachemanager_clearcache",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L163",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturecachemanager_texturecachemanager",
+      "target": "texture_downscaler_texturecachemanager_texturecachemanager_setupresizestagingdirectory",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L179",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturecachemanager_texturecachemanager",
+      "target": "texture_downscaler_texturecachemanager_texturecachemanager_restorepreviouscachestate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L194",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturecachemanager_texturecachemanager",
+      "target": "texture_downscaler_texturecachemanager_texturecachemanager_replacetexturecachedirectory",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L212",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturecachemanager_texturecachemanager",
+      "target": "texture_downscaler_texturecachemanager_texturecachemanager_setcacheentry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturecachemanager_texturecachemanager_getcachepath",
+      "target": "texture_downscaler_texturecachemanager_texturecachemanager_getcachekey",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureCacheManager.cs",
+      "source_location": "L90",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturecachemanager_texturecachemanager_trygetcachedtexturepath",
+      "target": "texture_downscaler_texturecachemanager_texturecachemanager_iscachefresh",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
       "source_location": "L13",
       "weight": 1.0,
@@ -10754,6 +11463,117 @@
       "confidence_score": 1.0,
       "source": "texture_downscaler_textureresize_cs",
       "target": "texture_downscaler_textureresize_fastergameloading"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Texture downscaler/TextureResize.cs",
+      "source_location": "L156",
+      "weight": 1.0,
+      "context": "field",
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize",
+      "target": "long"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Texture downscaler/TextureResize.cs",
+      "source_location": "L167",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize",
+      "target": "texture_downscaler_textureresize_textureresize_dotextureresizing"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L343",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize",
+      "target": "texture_downscaler_textureresize_textureresize_buildresizecandidates"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Texture downscaler/TextureResize.cs",
+      "source_location": "L403",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize",
+      "target": "texture_downscaler_textureresize_textureresize_resizetexture"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Texture downscaler/TextureResize.cs",
+      "source_location": "L439",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize",
+      "target": "texture_downscaler_textureresize_textureresize_tryloadoriginaltexture"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Texture downscaler/TextureResize.cs",
+      "source_location": "L513",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize",
+      "target": "texture_downscaler_textureresize_textureresize_logresizesummary"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Texture downscaler/TextureResize.cs",
+      "source_location": "L521",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize",
+      "target": "texture_downscaler_textureresize_textureresize_formatbytes"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Texture downscaler/TextureResize.cs",
+      "source_location": "L570",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize",
+      "target": "texture_downscaler_textureresize_textureresize_trygetgraphicapparel"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Texture downscaler/TextureResize.cs",
+      "source_location": "L596",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize",
+      "target": "texture_downscaler_textureresize_textureresize_renderaspack"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Texture downscaler/TextureResize.cs",
+      "source_location": "L609",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize",
+      "target": "texture_downscaler_textureresize_textureresize_gettexturetype"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Texture downscaler/TextureResize.cs",
+      "source_location": "L115",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize",
+      "target": "texture_downscaler_textureresize_textureresize_clearcache"
     },
     {
       "relation": "references",
@@ -10862,37 +11682,6 @@
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "Texture downscaler/TextureResize.cs",
-      "source_location": "L115",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize",
-      "target": "texture_downscaler_textureresize_textureresize_clearcache"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "Texture downscaler/TextureResize.cs",
-      "source_location": "L156",
-      "weight": 1.0,
-      "context": "field",
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize",
-      "target": "long"
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "Texture downscaler/TextureResize.cs",
-      "source_location": "L167",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize",
-      "target": "texture_downscaler_textureresize_textureresize_dotextureresizing"
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
       "source_location": "L206",
       "weight": 1.0,
@@ -10984,16 +11773,6 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L343",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize",
-      "target": "texture_downscaler_textureresize_textureresize_buildresizecandidates"
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
       "source_location": "L369",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -11019,26 +11798,6 @@
       "confidence_score": 1.0,
       "source": "texture_downscaler_textureresize_textureresize",
       "target": "texture_downscaler_textureresize_textureresize_cleartexturescandata"
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "Texture downscaler/TextureResize.cs",
-      "source_location": "L403",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize",
-      "target": "texture_downscaler_textureresize_textureresize_resizetexture"
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "Texture downscaler/TextureResize.cs",
-      "source_location": "L439",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize",
-      "target": "texture_downscaler_textureresize_textureresize_tryloadoriginaltexture"
     },
     {
       "relation": "method",
@@ -11074,26 +11833,6 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "Texture downscaler/TextureResize.cs",
-      "source_location": "L513",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize",
-      "target": "texture_downscaler_textureresize_textureresize_logresizesummary"
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "Texture downscaler/TextureResize.cs",
-      "source_location": "L521",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize",
-      "target": "texture_downscaler_textureresize_textureresize_formatbytes"
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "Texture downscaler/TextureResize.cs",
       "source_location": "L526",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -11109,36 +11848,6 @@
       "confidence_score": 1.0,
       "source": "texture_downscaler_textureresize_textureresize",
       "target": "texture_downscaler_textureresize_textureresize_resizetexturetopng"
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "Texture downscaler/TextureResize.cs",
-      "source_location": "L570",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize",
-      "target": "texture_downscaler_textureresize_textureresize_trygetgraphicapparel"
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "Texture downscaler/TextureResize.cs",
-      "source_location": "L596",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize",
-      "target": "texture_downscaler_textureresize_textureresize_renderaspack"
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "Texture downscaler/TextureResize.cs",
-      "source_location": "L609",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize",
-      "target": "texture_downscaler_textureresize_textureresize_gettexturetype"
     },
     {
       "relation": "method",
@@ -11258,56 +11967,45 @@
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L180",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_dotextureresizing",
+      "target": "texture_downscaler_textureresize_textureresize_buildresizecandidates"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Texture downscaler/TextureResize.cs",
+      "source_location": "L341",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_dotextureresizing",
+      "target": "texture_downscaler_textureresize_textureresize_resizetexture"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Texture downscaler/TextureResize.cs",
+      "source_location": "L345",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_dotextureresizing",
+      "target": "texture_downscaler_textureresize_textureresize_logresizesummary"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
       "source_file": "Texture downscaler/TextureResize.cs",
       "source_location": "L171",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "texture_downscaler_textureresize_textureresize_dotextureresizing",
       "target": "texture_downscaler_textureresize_textureresize_buildcachedirectory"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Texture downscaler/TextureResize.cs",
-      "source_location": "L27",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_getcachepath",
-      "target": "texture_downscaler_textureresize_textureresize_getcachekey"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Texture downscaler/TextureResize.cs",
-      "source_location": "L419",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_resizetexture",
-      "target": "texture_downscaler_textureresize_textureresize_getcachepath"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Texture downscaler/TextureResize.cs",
-      "source_location": "L76",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_trygetcachedtexturepath",
-      "target": "texture_downscaler_textureresize_textureresize_iscachefresh"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L542",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_resizetexture",
-      "target": "texture_downscaler_textureresize_textureresize_removecachedtexturepath"
     },
     {
       "relation": "calls",
@@ -11335,45 +12033,12 @@
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L180",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_dotextureresizing",
-      "target": "texture_downscaler_textureresize_textureresize_buildresizecandidates"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Texture downscaler/TextureResize.cs",
-      "source_location": "L341",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_dotextureresizing",
-      "target": "texture_downscaler_textureresize_textureresize_resizetexture"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
       "source_file": "Texture downscaler/TextureResize.cs",
       "source_location": "L344",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "texture_downscaler_textureresize_textureresize_dotextureresizing",
       "target": "texture_downscaler_textureresize_textureresize_replacetexturecachedirectory"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Texture downscaler/TextureResize.cs",
-      "source_location": "L345",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_dotextureresizing",
-      "target": "texture_downscaler_textureresize_textureresize_logresizesummary"
     },
     {
       "relation": "calls",
@@ -11479,237 +12144,6 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L279",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_buildtexturescandata",
-      "target": "texture_downscaler_textureresize_textureresize_initializescancontainers"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L232",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_buildtexturescandata",
-      "target": "texture_downscaler_textureresize_textureresize_refreshtexturepathmap"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L281",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_buildtexturescandata",
-      "target": "texture_downscaler_textureresize_textureresize_buildmodtexturemap"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L282",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_buildtexturescandata",
-      "target": "texture_downscaler_textureresize_textureresize_scanpawntextures"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L283",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_buildtexturescandata",
-      "target": "texture_downscaler_textureresize_textureresize_scanstyletextures"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L284",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_buildtexturescandata",
-      "target": "texture_downscaler_textureresize_textureresize_scanbuildabletextures"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L255",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_buildtexturescandata",
-      "target": "texture_downscaler_textureresize_textureresize_addentry"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L274",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_buildtexturescandata",
-      "target": "texture_downscaler_textureresize_textureresize_gettexturetype"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L280",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_buildtexturescandata",
-      "target": "texture_downscaler_textureresize_textureresize_trygetgraphicapparel"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L298",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_buildtexturescandata",
-      "target": "texture_downscaler_textureresize_textureresize_fillentry"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L319",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_scanpawntextures",
-      "target": "texture_downscaler_textureresize_textureresize_addentry"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L339",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_scanstyletextures",
-      "target": "texture_downscaler_textureresize_textureresize_gettexturetype"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L340",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_scanstyletextures",
-      "target": "texture_downscaler_textureresize_textureresize_addentry"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L345",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_scanstyletextures",
-      "target": "texture_downscaler_textureresize_textureresize_trygetgraphicapparel"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L365",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_scanbuildabletextures",
-      "target": "texture_downscaler_textureresize_textureresize_fillentry"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L369",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_scanbuildabletextures",
-      "target": "texture_downscaler_textureresize_textureresize_gettexturetype"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L371",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_scanbuildabletextures",
-      "target": "texture_downscaler_textureresize_textureresize_scanapparelvariants"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L372",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_scanbuildabletextures",
-      "target": "texture_downscaler_textureresize_textureresize_scanplantvariants"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L384",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_scanapparelvariants",
-      "target": "texture_downscaler_textureresize_textureresize_trygetgraphicapparel"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L386",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_scanapparelvariants",
-      "target": "texture_downscaler_textureresize_textureresize_addentry"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L407",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_scanplantvariants",
-      "target": "texture_downscaler_textureresize_textureresize_addentry"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
       "source_location": "L350",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -11731,23 +12165,34 @@
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L385",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_restorepreviouscachestate",
-      "target": "texture_downscaler_textureresize_textureresize_logresizesummary"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
       "source_file": "Texture downscaler/TextureResize.cs",
       "source_location": "L408",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "texture_downscaler_textureresize_textureresize_resizetexture",
       "target": "texture_downscaler_textureresize_textureresize_tryloadoriginaltexture"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Texture downscaler/TextureResize.cs",
+      "source_location": "L419",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_resizetexture",
+      "target": "texture_downscaler_textureresize_textureresize_getcachepath"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L542",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_resizetexture",
+      "target": "texture_downscaler_textureresize_textureresize_removecachedtexturepath"
     },
     {
       "relation": "calls",
@@ -11787,28 +12232,6 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "Texture downscaler/TextureResize.cs",
-      "source_location": "L480",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_trygetimagedimensions",
-      "target": "texture_downscaler_textureresize_textureresize_tryreadpngdimensions"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Texture downscaler/TextureResize.cs",
-      "source_location": "L503",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_tryreadpngdimensions",
-      "target": "texture_downscaler_textureresize_textureresize_readbigendianint32"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Texture downscaler/TextureResize.cs",
       "source_location": "L518",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -11819,12 +12242,12 @@
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
-      "source_file": "Texture downscaler/TextureResize.cs",
-      "source_location": "L565",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L385",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_resizetexturetopng",
-      "target": "texture_downscaler_textureresize_textureresize_destroytemporaryunityobject"
+      "source": "texture_downscaler_textureresize_textureresize_restorepreviouscachestate",
+      "target": "texture_downscaler_textureresize_textureresize_logresizesummary"
     },
     {
       "relation": "calls",
@@ -11841,6 +12264,72 @@
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L280",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_buildtexturescandata",
+      "target": "texture_downscaler_textureresize_textureresize_trygetgraphicapparel"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L345",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_scanstyletextures",
+      "target": "texture_downscaler_textureresize_textureresize_trygetgraphicapparel"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L384",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_scanapparelvariants",
+      "target": "texture_downscaler_textureresize_textureresize_trygetgraphicapparel"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L274",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_buildtexturescandata",
+      "target": "texture_downscaler_textureresize_textureresize_gettexturetype"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L339",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_scanstyletextures",
+      "target": "texture_downscaler_textureresize_textureresize_gettexturetype"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L369",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_scanbuildabletextures",
+      "target": "texture_downscaler_textureresize_textureresize_gettexturetype"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
       "source_file": "Texture downscaler/TextureResize.cs",
       "source_location": "L733",
       "weight": 1.0,
@@ -11849,48 +12338,434 @@
       "target": "texture_downscaler_textureresize_textureresize_gettexturetype"
     },
     {
-      "relation": "calls",
-      "context": "call",
+      "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "Texture downscaler/TextureResize.cs",
-      "source_location": "L657",
+      "source_file": "Source/Texture downscaler/TextureResizer.cs",
+      "source_location": "L6",
       "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_fillentry",
-      "target": "texture_downscaler_textureresize_textureresize_addentry"
+      "source": "source_texture_downscaler_textureresizer_cs",
+      "target": "texture_downscaler_textureresizer_fastergameloading",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResizer.cs",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "source_texture_downscaler_textureresizer_cs",
+      "target": "texture_downscaler_textureresizer_textureresizer",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResizer.cs",
+      "source_location": "L14",
+      "weight": 1.0,
+      "context": "field",
+      "source": "texture_downscaler_textureresizer_textureresizer",
+      "target": "source_texture_downscaler_textureresizer_cs_dictionary",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResizer.cs",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "texture_downscaler_textureresizer_textureresizer",
+      "target": "texture_downscaler_textureresizer_textureresizer_trygetresizetarget",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResizer.cs",
+      "source_location": "L51",
+      "weight": 1.0,
+      "source": "texture_downscaler_textureresizer_textureresizer",
+      "target": "texture_downscaler_textureresizer_textureresizer_destroytemporaryunityobject",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResizer.cs",
+      "source_location": "L61",
+      "weight": 1.0,
+      "source": "texture_downscaler_textureresizer_textureresizer",
+      "target": "texture_downscaler_textureresizer_textureresizer_resizetexturetopng",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
-      "source_file": "Texture downscaler/TextureResize.cs",
-      "source_location": "L662",
+      "source_file": "Source/Texture downscaler/TextureResizer.cs",
+      "source_location": "L80",
       "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_fillentry",
-      "target": "texture_downscaler_textureresize_textureresize_trygettexturepath"
+      "source": "texture_downscaler_textureresizer_textureresizer_resizetexturetopng",
+      "target": "texture_downscaler_textureresizer_textureresizer_destroytemporaryunityobject",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "source_texture_downscaler_texturescanner_cs",
+      "target": "texture_downscaler_texturescanner_fastergameloading",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "source_texture_downscaler_texturescanner_cs",
+      "target": "texture_downscaler_texturescanner_texturescanner",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L22",
+      "weight": 1.0,
+      "context": "field",
+      "source": "texture_downscaler_texturescanner_texturescanner",
+      "target": "source_texture_downscaler_texturescanner_cs_dictionary",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner",
+      "target": "texture_downscaler_texturescanner_texturescanner_buildtexturescandata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner",
+      "target": "texture_downscaler_texturescanner_texturescanner_initializescancontainers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner",
+      "target": "texture_downscaler_texturescanner_texturescanner_buildmodtexturemap",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L58",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner",
+      "target": "texture_downscaler_texturescanner_texturescanner_scanpawntextures",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L81",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner",
+      "target": "texture_downscaler_texturescanner_texturescanner_scanstyletextures",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L107",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner",
+      "target": "texture_downscaler_texturescanner_texturescanner_scanbuildabletextures",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L129",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner",
+      "target": "texture_downscaler_texturescanner_texturescanner_scanapparelvariants",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L153",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner",
+      "target": "texture_downscaler_texturescanner_texturescanner_scanplantvariants",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L168",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner",
+      "target": "texture_downscaler_texturescanner_texturescanner_fillentry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L270",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner",
+      "target": "texture_downscaler_texturescanner_texturescanner_addentry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L214",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner",
+      "target": "texture_downscaler_texturescanner_texturescanner_getmattexture",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L232",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner",
+      "target": "texture_downscaler_texturescanner_texturescanner_refreshtexturepathmap",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L247",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner",
+      "target": "texture_downscaler_texturescanner_texturescanner_trygettexturepath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L278",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner",
+      "target": "texture_downscaler_texturescanner_texturescanner_cleartexturescandata",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
-      "source_file": "Texture downscaler/TextureResize.cs",
-      "source_location": "L709",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L30",
       "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_getmattexture",
-      "target": "texture_downscaler_textureresize_textureresize_addentry"
+      "source": "texture_downscaler_texturescanner_texturescanner_buildtexturescandata",
+      "target": "texture_downscaler_texturescanner_texturescanner_initializescancontainers",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
-      "source_file": "Texture downscaler/TextureResize.cs",
-      "source_location": "L707",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L31",
       "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize_getmattexture",
-      "target": "texture_downscaler_textureresize_textureresize_trygettexturepath"
+      "source": "texture_downscaler_texturescanner_texturescanner_buildtexturescandata",
+      "target": "texture_downscaler_texturescanner_texturescanner_refreshtexturepathmap",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner_buildtexturescandata",
+      "target": "texture_downscaler_texturescanner_texturescanner_buildmodtexturemap",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L33",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner_buildtexturescandata",
+      "target": "texture_downscaler_texturescanner_texturescanner_scanpawntextures",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner_buildtexturescandata",
+      "target": "texture_downscaler_texturescanner_texturescanner_scanstyletextures",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L35",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner_buildtexturescandata",
+      "target": "texture_downscaler_texturescanner_texturescanner_scanbuildabletextures",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L70",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner_scanpawntextures",
+      "target": "texture_downscaler_texturescanner_texturescanner_addentry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L91",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner_scanstyletextures",
+      "target": "texture_downscaler_texturescanner_texturescanner_addentry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L116",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner_scanbuildabletextures",
+      "target": "texture_downscaler_texturescanner_texturescanner_fillentry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L122",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner_scanbuildabletextures",
+      "target": "texture_downscaler_texturescanner_texturescanner_scanapparelvariants",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L123",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner_scanbuildabletextures",
+      "target": "texture_downscaler_texturescanner_texturescanner_scanplantvariants",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L137",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner_scanapparelvariants",
+      "target": "texture_downscaler_texturescanner_texturescanner_addentry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L158",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner_scanplantvariants",
+      "target": "texture_downscaler_texturescanner_texturescanner_addentry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L171",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner_fillentry",
+      "target": "texture_downscaler_texturescanner_texturescanner_addentry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L174",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner_fillentry",
+      "target": "texture_downscaler_texturescanner_texturescanner_trygettexturepath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L218",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner_getmattexture",
+      "target": "texture_downscaler_texturescanner_texturescanner_addentry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureScanner.cs",
+      "source_location": "L216",
+      "weight": 1.0,
+      "source": "texture_downscaler_texturescanner_texturescanner_getmattexture",
+      "target": "texture_downscaler_texturescanner_texturescanner_trygettexturepath",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -12117,6 +12992,270 @@
       "target": "xml_loading_cache_xmlnode_selectsinglenodes_patch_cs_concurrentdictionary"
     },
     {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Texture downscaler/TextureResize.cs",
+      "source_location": "L27",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_getcachepath",
+      "target": "texture_downscaler_textureresize_textureresize_getcachekey"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Texture downscaler/TextureResize.cs",
+      "source_location": "L76",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_trygetcachedtexturepath",
+      "target": "texture_downscaler_textureresize_textureresize_iscachefresh"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L279",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_buildtexturescandata",
+      "target": "texture_downscaler_textureresize_textureresize_initializescancontainers"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L232",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_buildtexturescandata",
+      "target": "texture_downscaler_textureresize_textureresize_refreshtexturepathmap"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L281",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_buildtexturescandata",
+      "target": "texture_downscaler_textureresize_textureresize_buildmodtexturemap"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L282",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_buildtexturescandata",
+      "target": "texture_downscaler_textureresize_textureresize_scanpawntextures"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L283",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_buildtexturescandata",
+      "target": "texture_downscaler_textureresize_textureresize_scanstyletextures"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L284",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_buildtexturescandata",
+      "target": "texture_downscaler_textureresize_textureresize_scanbuildabletextures"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L255",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_buildtexturescandata",
+      "target": "texture_downscaler_textureresize_textureresize_addentry"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L298",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_buildtexturescandata",
+      "target": "texture_downscaler_textureresize_textureresize_fillentry"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L319",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_scanpawntextures",
+      "target": "texture_downscaler_textureresize_textureresize_addentry"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L340",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_scanstyletextures",
+      "target": "texture_downscaler_textureresize_textureresize_addentry"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L365",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_scanbuildabletextures",
+      "target": "texture_downscaler_textureresize_textureresize_fillentry"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L371",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_scanbuildabletextures",
+      "target": "texture_downscaler_textureresize_textureresize_scanapparelvariants"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L372",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_scanbuildabletextures",
+      "target": "texture_downscaler_textureresize_textureresize_scanplantvariants"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L386",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_scanapparelvariants",
+      "target": "texture_downscaler_textureresize_textureresize_addentry"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L407",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_scanplantvariants",
+      "target": "texture_downscaler_textureresize_textureresize_addentry"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Texture downscaler/TextureResize.cs",
+      "source_location": "L480",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_trygetimagedimensions",
+      "target": "texture_downscaler_textureresize_textureresize_tryreadpngdimensions"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Texture downscaler/TextureResize.cs",
+      "source_location": "L503",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_tryreadpngdimensions",
+      "target": "texture_downscaler_textureresize_textureresize_readbigendianint32"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Texture downscaler/TextureResize.cs",
+      "source_location": "L565",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_resizetexturetopng",
+      "target": "texture_downscaler_textureresize_textureresize_destroytemporaryunityobject"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Texture downscaler/TextureResize.cs",
+      "source_location": "L657",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_fillentry",
+      "target": "texture_downscaler_textureresize_textureresize_addentry"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Texture downscaler/TextureResize.cs",
+      "source_location": "L662",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_fillentry",
+      "target": "texture_downscaler_textureresize_textureresize_trygettexturepath"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Texture downscaler/TextureResize.cs",
+      "source_location": "L709",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_getmattexture",
+      "target": "texture_downscaler_textureresize_textureresize_addentry"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Texture downscaler/TextureResize.cs",
+      "source_location": "L707",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize_getmattexture",
+      "target": "texture_downscaler_textureresize_textureresize_trygettexturepath"
+    },
+    {
       "relation": "describes",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
@@ -12238,5 +13377,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "d6c2395bf07455d489766c2b76385a05b2a1289c"
+  "built_at_commit": "eaf44a6251bd2d52ae45760cd43b8fbd233947a3"
 }

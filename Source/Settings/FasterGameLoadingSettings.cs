@@ -98,7 +98,7 @@ namespace FasterGameLoading
             Scribe_Values.Look(ref earlyModContentLoading, "earlyModContentLoading", true);
 
             // 紋理快取
-            Scribe_Collections.Look(ref TextureResize.resizedTextureCache, "resizedTextureCache", LookMode.Value, LookMode.Value);
+            Scribe_Collections.Look(ref TextureCacheManager.resizedTextureCache, "resizedTextureCache", LookMode.Value, LookMode.Value);
 
             // 跨 session 快取資料委派給 SessionCache
             SessionCache.ExposeData();

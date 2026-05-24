@@ -1,16 +1,16 @@
 # Graph Report - FasterGameLoading---Continued  (2026-05-24)
 
 ## Corpus Check
-- 40 files · ~24,948 words
+- 44 files · ~25,025 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 585 nodes · 677 edges · 49 communities (36 shown, 13 thin omitted)
+- 634 nodes · 744 edges · 52 communities (38 shown, 14 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.86)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d6c2395b`
+- Built from commit: `eaf44a62`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -56,18 +56,21 @@
 - [[_COMMUNITY_Community 38|Community 38]]
 - [[_COMMUNITY_Community 46|Community 46]]
 - [[_COMMUNITY_Community 47|Community 47]]
+- [[_COMMUNITY_Community 49|Community 49]]
+- [[_COMMUNITY_Community 50|Community 50]]
+- [[_COMMUNITY_Community 51|Community 51]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `compile` - 109 edges
 2. `TextureResize` - 50 edges
 3. `DelayedActions` - 21 edges
-4. `restore` - 14 edges
-5. `restore` - 14 edges
-6. `SessionCache` - 11 edges
-7. `FasterGameLoading Mod` - 11 edges
-8. `StaticAtlasCache` - 10 edges
-9. `AtlasInfo` - 10 edges
-10. `SoundStarter_Patch` - 9 edges
+4. `TextureCacheManager` - 16 edges
+5. `TextureScanner` - 16 edges
+6. `restore` - 14 edges
+7. `restore` - 14 edges
+8. `SessionCache` - 11 edges
+9. `FasterGameLoading Mod` - 11 edges
+10. `StaticAtlasCache` - 10 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `FasterGameLoading Mod` --has_icon--> `Mod Icon Image`  [INFERRED]
@@ -81,7 +84,7 @@
 - `DelayedActions` --references--> `bool`  [EXTRACTED]
   Source/Delay graphic and icon loading/DelayedActions.cs → Delay graphic and icon loading/DelayedActions.cs
 
-## Communities (49 total, 13 thin omitted)
+## Communities (52 total, 14 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.02
@@ -100,8 +103,8 @@ Cohesion: 0.06
 Nodes (32): frameworks, restore, version, format, net472, framework, projectReferences, runtimeIdentifierGraphPath (+24 more)
 
 ### Community 4 - "Community 4"
-Cohesion: 0.11
-Nodes (19): restore, configFilePaths, originalTargetFrameworks, outputPath, packagesPath, projectName, projectPath, projectStyle (+11 more)
+Cohesion: 0.05
+Nodes (38): Krafs.Publicizer, Krafs.Rimworld.Ref, Lib.Harmony, net472, include, suppressParent, target, version (+30 more)
 
 ### Community 5 - "Community 5"
 Cohesion: 0.16
@@ -116,8 +119,8 @@ Cohesion: 0.15
 Nodes (13): Krafs.Publicizer, Krafs.Rimworld.Ref, Lib.Harmony, include, suppressParent, target, version, target (+5 more)
 
 ### Community 8 - "Community 8"
-Cohesion: 0.11
-Nodes (19): Krafs.Publicizer, Krafs.Rimworld.Ref, Lib.Harmony, net472, include, suppressParent, target, version (+11 more)
+Cohesion: 0.12
+Nodes (6): ConcurrentDictionary, Dictionary, object, string, FasterGameLoading, TextureCacheManager
 
 ### Community 9 - "Community 9"
 Cohesion: 0.18
@@ -195,20 +198,28 @@ Nodes (4): DocumentGroupContainers, Documents, Version, WorkspaceRootPath
 Cohesion: 0.29
 Nodes (3): FasterGameLoading, FGLProgressReporter, FieldInfo
 
+### Community 49 - "Community 49"
+Cohesion: 0.22
+Nodes (3): Dictionary, FasterGameLoading, TextureScanner
+
+### Community 50 - "Community 50"
+Cohesion: 0.33
+Nodes (3): Dictionary, FasterGameLoading, TextureResizer
+
 ## Knowledge Gaps
-- **251 isolated node(s):** `FasterGameLoading`, `FieldInfo`, `MethodBase`, `Harmony`, `FasterGameLoadingSettings` (+246 more)
+- **261 isolated node(s):** `FasterGameLoading`, `FieldInfo`, `MethodBase`, `Harmony`, `FasterGameLoadingSettings` (+256 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **13 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **14 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `compile` connect `Community 0` to `Community 1`, `Community 38`?**
-  _High betweenness centrality (0.088) - this node is a cross-community bridge._
+  _High betweenness centrality (0.075) - this node is a cross-community bridge._
 - **Why does `Krafs.Rimworld.Ref/1.6.4633` connect `Community 1` to `Community 0`?**
-  _High betweenness centrality (0.053) - this node is a cross-community bridge._
+  _High betweenness centrality (0.045) - this node is a cross-community bridge._
 - **What connects `FasterGameLoading`, `FieldInfo`, `MethodBase` to the rest of the system?**
-  _251 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _261 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.018518518518518517 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**

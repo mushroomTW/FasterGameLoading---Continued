@@ -116,7 +116,7 @@ namespace FasterGameLoading
                     loadedTexturesSinceLastSession.Clear();
                     loadedTypesByFullNameSinceLastSession.Clear();
                     xmlPathsSinceLastSession.Clear();
-                    TextureResize.ClearCache();
+                    TextureCacheManager.ClearCache();
                     StaticAtlasCache.ClearCache();
                 }
             }

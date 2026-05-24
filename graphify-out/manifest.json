@@ -1,12 +1,12 @@
 {
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\.vs\\FasterGameLoading\\v18\\DocumentLayout.backup.json": {
-    "mtime": 1779621512.6847346,
-    "ast_hash": "00066816b08e6f1848e90d67f7b95512",
+    "mtime": 1779626300.6024597,
+    "ast_hash": "6db71158722f7fcdc24b5ba04f00a822",
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\.vs\\FasterGameLoading\\v18\\DocumentLayout.json": {
-    "mtime": 1779621516.2317784,
-    "ast_hash": "00066816b08e6f1848e90d67f7b95512",
+    "mtime": 1779626573.1350687,
+    "ast_hash": "f5e3431f054796b7140085af4466baca",
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\Compatibility\\RedirectHugslibToMainThread.cs": {
@@ -130,13 +130,13 @@
     "semantic_hash": "896ab120ac6b6af2895fdb71c452b9d3"
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\Settings\\FasterGameLoadingSettings.cs": {
-    "mtime": 1779608645.017286,
-    "ast_hash": "cc72e69cf9c69d24f25a4c2a069cb11a",
+    "mtime": 1779626822.377962,
+    "ast_hash": "5e9922ee10e81f16ad04c1b24efe3a36",
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\Settings\\SessionCache.cs": {
-    "mtime": 1779624999.719385,
-    "ast_hash": "c671735504f6e57c099842c5c5255664",
+    "mtime": 1779626826.3088913,
+    "ast_hash": "2e721f169dcd65c691f5b82611d73690",
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\Smarter atlas baking\\GlobalTextureAtlasManager_BakeStaticAtlases_Patch.cs": {
@@ -155,13 +155,13 @@
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\Texture downscaler\\ModContentLoaderTexture2D_LoadTexture_Patch.cs": {
-    "mtime": 1779542977.2167423,
-    "ast_hash": "e58865437d0b5af41ca84b39490c3e40",
+    "mtime": 1779626819.4886067,
+    "ast_hash": "6590ab596312fc55b27f3dec2ec47093",
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\Texture downscaler\\TextureResize.cs": {
-    "mtime": 1779625027.2424738,
-    "ast_hash": "d7202e3bbe3e702b91094368cd8b6b4f",
+    "mtime": 1779626817.255759,
+    "ast_hash": "f7edc734651f6422f056cfb5abbd61d0",
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\Utilities\\CacheResetter.cs": {
@@ -227,6 +227,26 @@
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\obj\\Any CPU\\Debug\\FasterGameLoading.csproj.FileListAbsolute.txt": {
     "mtime": 1779614046.137921,
     "ast_hash": "e85d973b44031cdf8ea0a113c9574554",
+    "semantic_hash": ""
+  },
+  "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\Texture downscaler\\PngUtils.cs": {
+    "mtime": 1779626796.2752836,
+    "ast_hash": "ffcb375a055e28a213872480093aa274",
+    "semantic_hash": ""
+  },
+  "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\Texture downscaler\\TextureCacheManager.cs": {
+    "mtime": 1779626799.9687903,
+    "ast_hash": "a869c1e9d091622370635efe00c772a8",
+    "semantic_hash": ""
+  },
+  "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\Texture downscaler\\TextureResizer.cs": {
+    "mtime": 1779626802.8162422,
+    "ast_hash": "ff206537bbbb4767e3806ae7c12c183e",
+    "semantic_hash": ""
+  },
+  "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\Texture downscaler\\TextureScanner.cs": {
+    "mtime": 1779626806.8516319,
+    "ast_hash": "f321c66a3087aa3516ab693cbf118076",
     "semantic_hash": ""
   }
 }

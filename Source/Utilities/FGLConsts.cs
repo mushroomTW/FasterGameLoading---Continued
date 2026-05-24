@@ -24,17 +24,7 @@ namespace FasterGameLoading
             SecurityKeyword
         };
 
-        // ── Bionic Icons 相容性關鍵字 ──
-        public const string BodyPartsKeyword = "BodyParts";
-        public const string BionicKeyword = "Bionic";
-        public const string ProstheticKeyword = "Prosthetic";
 
-        public static readonly string[] BionicIconsKeywords = new[]
-        {
-            BodyPartsKeyword,
-            BionicKeyword,
-            ProstheticKeyword
-        };
 
         // ── 快取目錄與序列化標記鍵值 ──
         public const string TextureCacheDir = "TextureCache";

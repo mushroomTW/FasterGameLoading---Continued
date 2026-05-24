@@ -97,20 +97,6 @@ namespace FasterGameLoading
                 }
             }
 
-            // 處理 Bionic Icons 相容性：不延遲載入身體零件或假肢的圖形，避免與 Bionic Icons 動態產生的紋理衝突
-            if (EarlyLoadSkipList.IsBionicIconsActive && thingDef.thingCategories != null)
-            {
-                for (int i = 0; i < thingDef.thingCategories.Count; i++)
-                {
-                    var catDefName = thingDef.thingCategories[i].defName;
-                    for (int j = 0; j < FGLConsts.BionicIconsKeywords.Length; j++)
-                    {
-                        if (catDefName.Contains(FGLConsts.BionicIconsKeywords[j]))
-                            return true;
-                    }
-                }
-            }
-
             return false;
         }
     }

@@ -60,17 +60,15 @@ namespace FasterGameLoading
             if (thingDef.IsBlueprint || thingDef.IsFrame)
                 return true;
 
-            // 連接型圖形（如牆壁、管道）必須立即載入
             if (thingDef.graphicData != null && thingDef.graphicData.Linked)
                 return true;
 
-            // 特殊建築類型
-            if (thingDef.thingClass != null && thingDef.thingClass.Name == "Building_Pipe")
+            if (thingDef.thingClass != null && thingDef.thingClass.Name == FGLConsts.BuildingPipe)
                 return true;
 
             // 醫療用品
             if (typeof(Medicine).IsAssignableFrom(thingDef.thingClass)
-                || thingDef.orderedTakeGroup?.defName == "Medicine")
+                || thingDef.orderedTakeGroup?.defName == FGLConsts.MedicineDefName)
                 return true;
 
             // 武器和裝備 - 殖民者常用物品
@@ -87,9 +85,9 @@ namespace FasterGameLoading
 
             // 常見家具和工作台
             if (thingDef.thingCategories != null && thingDef.thingCategories.Any(cat =>
-                cat.defName.Contains("Furniture") ||
-                cat.defName.Contains("Production") ||
-                cat.defName.Contains("Security")))
+                cat.defName.Contains(FGLConsts.FurnitureKeyword) ||
+                cat.defName.Contains(FGLConsts.ProductionKeyword) ||
+                cat.defName.Contains(FGLConsts.SecurityKeyword)))
                 return true;
 
             return false;

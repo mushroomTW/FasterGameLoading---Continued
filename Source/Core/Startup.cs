@@ -20,7 +20,7 @@ namespace FasterGameLoading
                 || ModContentLoaderTexture2D_LoadTexture_Patch.cacheLoadFailures > 0
                 || TextureResize.CacheCount > 0)
             {
-                Log.Message("[FasterGameLoading] Texture downscale cache hits: " + ModContentLoaderTexture2D_LoadTexture_Patch.cacheLoadHits
+                FGLLog.Message("Texture downscale cache hits: " + ModContentLoaderTexture2D_LoadTexture_Patch.cacheLoadHits
                     + ", failures: " + ModContentLoaderTexture2D_LoadTexture_Patch.cacheLoadFailures
                     + ", configured entries: " + TextureResize.CacheCount);
             }

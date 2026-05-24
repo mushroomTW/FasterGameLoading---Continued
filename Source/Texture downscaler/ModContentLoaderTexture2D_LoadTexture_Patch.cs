@@ -51,7 +51,7 @@ namespace FasterGameLoading
                 try
                 {
                     var data = File.ReadAllBytes(cachePath);
-                    bool useMipmaps = !fullPath.Contains("/UI/") && !fullPath.Contains("\\UI\\");
+                    bool useMipmaps = !fullPath.Contains(FGLConsts.UIDirSlash) && !fullPath.Contains(FGLConsts.UIDirBackslash);
                     var tex = new Texture2D(2, 2, TextureFormat.RGBA32, useMipmaps);
                     var textureAccepted = false;
 
@@ -91,7 +91,7 @@ namespace FasterGameLoading
             // 沒有快取命中，讓原始方法載入紋理
             __state = true;
             var searchPath = fullPath.Replace('\\', '/');
-            var index = searchPath.IndexOf("Textures/");
+            var index = searchPath.IndexOf(FGLConsts.TexturesDirSlash);
             if (index >= 0)
             {
                 var path = fullPath.Substring(index);

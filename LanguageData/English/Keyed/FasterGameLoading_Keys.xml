@@ -7,6 +7,7 @@
     <FGL_DelayGraphicLoading>Delay graphic and icon loading (requires restart)</FGL_DelayGraphicLoading>
     <FGL_StaticAtlasesBaking>Smarter atlas baking (requires restart)</FGL_StaticAtlasesBaking>
     <FGL_AtlasCaching>Static atlases cache (requires restart)</FGL_AtlasCaching>
+    <FGL_EnableMultiThreading>Enable multi-threaded preloading (requires restart)</FGL_EnableMultiThreading>
     <FGL_ClearAtlasCache>Clear atlas cache</FGL_ClearAtlasCache>
     <FGL_ClearAtlasCacheConfirmation>Clear the cached static atlases?</FGL_ClearAtlasCacheConfirmation>
 
@@ -26,5 +27,5 @@
     <FGL_ClearTextureCache>Clear texture cache</FGL_ClearTextureCache>
     <FGL_ClearTextureCacheConfirmation>Clear all cached downscaled textures? Original textures will be used on next startup.</FGL_ClearTextureCacheConfirmation>
     <FGL_TextureCacheStatus_Active>Texture cache active: {0} textures cached.</FGL_TextureCacheStatus_Active>
-    <FGL_TextureCacheStatus_Empty>Texture cache is empty. No textures have been downscaled.</FGL_TextureCacheStatus_Empty>
+    <FGL_TextureCacheStatus_Empty>Texture cache is empty. No textures have been downscaled.</FGL_TextureCacheStatus_Empty>  
 </LanguageData>

@@ -61,7 +61,7 @@ namespace FasterGameLoading
             CacheResetter.Register(() => modsByPackageIds.Clear());
             if (WEIGHTS.Length != HISTORY_SIZE)
             {
-                Log.Error("[FasterGameLoading] WEIGHTS length must match HISTORY_SIZE!");
+                FGLLog.Error("WEIGHTS length must match HISTORY_SIZE!");
             }
         }
 
@@ -85,11 +85,11 @@ namespace FasterGameLoading
         /// </summary>
         internal static void ExposeData()
         {
-            Scribe_Collections.Look(ref loadedTexturesSinceLastSession, "loadedTexturesSinceLastSession", LookMode.Value, LookMode.Value);
-            Scribe_Collections.Look(ref loadedTypesByFullNameSinceLastSession, "loadedTypesByFullNameSinceLastSession", LookMode.Value, LookMode.Value);
-            Scribe_Collections.Look(ref xmlPathsSinceLastSession, "xmlPathsSinceLastSession", LookMode.Value, LookMode.Value);
-            Scribe_Collections.Look(ref modsInLastSession, "modsInLastSession", LookMode.Value);
-            Scribe_Collections.Look(ref historicalBakeSpeeds, "historicalBakeSpeeds", LookMode.Value);
+            Scribe_Collections.Look(ref loadedTexturesSinceLastSession, FGLConsts.LoadedTexturesKey, LookMode.Value, LookMode.Value);
+            Scribe_Collections.Look(ref loadedTypesByFullNameSinceLastSession, FGLConsts.LoadedTypesKey, LookMode.Value, LookMode.Value);
+            Scribe_Collections.Look(ref xmlPathsSinceLastSession, FGLConsts.XmlPathsKey, LookMode.Value, LookMode.Value);
+            Scribe_Collections.Look(ref modsInLastSession, FGLConsts.ModsInLastSessionKey, LookMode.Value);
+            Scribe_Collections.Look(ref historicalBakeSpeeds, FGLConsts.HistoricalBakeSpeedsKey, LookMode.Value);
 
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {

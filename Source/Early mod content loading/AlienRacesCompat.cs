@@ -26,10 +26,10 @@ namespace FasterGameLoading
             try
             {
                 var alienAssembly = AppDomain.CurrentDomain.GetAssemblies()
-                    .FirstOrDefault(a => a.GetName().Name == "AlienRace");
+                    .FirstOrDefault(a => a.GetName().Name == FGLConsts.AlienRaceAssemblyName);
                 if (alienAssembly == null) return;
 
-                Log.Message("[FasterGameLoading] Alien Races detected, scheduling extended graphics rescan after loading");
+                FGLLog.Message("Alien Races detected, scheduling extended graphics rescan after loading");
 
                 // 使用 LongEventHandler 在載入完成後執行
                 // 此時所有 Def 已解析完畢，貼圖資料庫完整
@@ -37,7 +37,7 @@ namespace FasterGameLoading
             }
             catch (Exception ex)
             {
-                Log.Warning("[FasterGameLoading] Alien Races detection failed: " + ex.Message);
+                FGLLog.Warning("Alien Races detection failed: ", ex);
             }
         }
 
@@ -48,20 +48,20 @@ namespace FasterGameLoading
             try
             {
                 // 尋找 AlienPartGenerator 型別
-                var apgType = alienAssembly.GetType("AlienRace.AlienPartGenerator");
+                var apgType = alienAssembly.GetType(FGLConsts.AlienPartGeneratorTypeName);
                 if (apgType == null) return;
 
                 // 取得 graphicsQueue (HashSet<AlienPartGenerator>)
-                var graphicsQueueField = AccessTools.Field(apgType, "graphicsQueue");
+                var graphicsQueueField = AccessTools.Field(apgType, FGLConsts.GraphicsQueueFieldName);
                 if (graphicsQueueField == null) return;
 
                 var queue = graphicsQueueField.GetValue(null);
                 if (queue == null) return;
 
-                var countProp = AccessTools.Property(queue.GetType(), "Count");
+                var countProp = AccessTools.Property(queue.GetType(), FGLConsts.CountPropertyName);
                 if (countProp == null)
                 {
-                    Log.Warning("[FasterGameLoading] Alien Races graphicsQueue type has no Count property");
+                    FGLLog.Warning("Alien Races graphicsQueue type has no Count property");
                     return;
                 }
                 var count = (int)countProp.GetValue(queue);
@@ -69,16 +69,16 @@ namespace FasterGameLoading
                 // 如果 queue 還有內容，表示 Hook 尚未執行，不需我們手動觸發
                 if (count > 0)
                 {
-                    Log.Message("[FasterGameLoading] Alien Races graphics queue not yet processed, skipping manual rescan");
+                    FGLLog.Message("Alien Races graphics queue not yet processed, skipping manual rescan");
                     rescanDone = true;
                     return;
                 }
 
                 // queue 為空 → Hook 已執行過（可能跑太早），需重新填充並觸發
-                var thingDefAlienRaceType = AccessTools.TypeByName("AlienRace.ThingDef_AlienRace");
+                var thingDefAlienRaceType = AccessTools.TypeByName(FGLConsts.ThingDefAlienRaceTypeName);
                 if (thingDefAlienRaceType == null) return;
 
-                var addMethod = AccessTools.Method(queue.GetType(), "Add");
+                var addMethod = AccessTools.Method(queue.GetType(), FGLConsts.AddMethodName);
                 if (addMethod == null) return;
 
                 bool anyAdded = false;
@@ -90,14 +90,14 @@ namespace FasterGameLoading
                         continue;
 
                     // 導覽路徑: ThingDef_AlienRace.alienRace.generalSettings.alienPartGenerator
-                    var alienRace = AccessTools.Field(defType, "alienRace")?.GetValue(def) ??
-                                    AccessTools.Property(defType, "alienRace")?.GetValue(def);
+                    var alienRace = AccessTools.Field(defType, FGLConsts.AlienRaceFieldName)?.GetValue(def) ??
+                                    AccessTools.Property(defType, FGLConsts.AlienRaceFieldName)?.GetValue(def);
                     if (alienRace == null) continue;
 
-                    var gs = AccessTools.Property(alienRace.GetType(), "generalSettings")?.GetValue(alienRace);
+                    var gs = AccessTools.Property(alienRace.GetType(), FGLConsts.GeneralSettingsPropertyName)?.GetValue(alienRace);
                     if (gs == null) continue;
 
-                    var apg = AccessTools.Property(gs.GetType(), "alienPartGenerator")?.GetValue(gs);
+                    var apg = AccessTools.Property(gs.GetType(), FGLConsts.AlienPartGeneratorPropertyName)?.GetValue(gs);
                     if (apg == null) continue;
 
                     addMethod.Invoke(queue, new object[] { apg });
@@ -106,15 +106,15 @@ namespace FasterGameLoading
 
                 if (anyAdded)
                 {
-                    var loadGraphicsHook = AccessTools.Method(apgType, "LoadGraphicsHook");
+                    var loadGraphicsHook = AccessTools.Method(apgType, FGLConsts.LoadGraphicsHookMethodName);
                     if (loadGraphicsHook != null)
                     {
                         loadGraphicsHook.Invoke(null, null);
-                        Log.Message("[FasterGameLoading] Alien Races extended graphics rescan complete");
+                        FGLLog.Message("Alien Races extended graphics rescan complete");
                     }
                     else
                     {
-                        Log.Warning("[FasterGameLoading] AlienPartGenerator.LoadGraphicsHook method not found");
+                        FGLLog.Warning("AlienPartGenerator.LoadGraphicsHook method not found");
                     }
                 }
 
@@ -122,10 +122,7 @@ namespace FasterGameLoading
             }
             catch (Exception ex)
             {
-                Log.Warning("[FasterGameLoading] Alien Races rescan failed: " + ex.Message);
-#if DEBUG
-                Log.Error($"[FasterGameLoading] Alien Races rescan error details: {ex}");
-#endif
+                FGLLog.Warning("Alien Races rescan failed: ", ex);
             }
         }
     }

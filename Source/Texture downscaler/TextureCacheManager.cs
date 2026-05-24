@@ -19,8 +19,8 @@ namespace FasterGameLoading
         private static readonly ConcurrentDictionary<string, string> md5HashCache = new ConcurrentDictionary<string, string>();
 
         /// <summary>紋理快取的根目錄。</summary>
-        public static string CacheDirectory => Path.Combine(GenFilePaths.SaveDataFolderPath, "FasterGameLoading", "TextureCache");
-        internal static string BuildCacheDirectory(string suffix) => Path.Combine(GenFilePaths.SaveDataFolderPath, "FasterGameLoading", suffix);
+        public static string CacheDirectory => Path.Combine(GenFilePaths.SaveDataFolderPath, FGLConsts.ModName, FGLConsts.TextureCacheDir);
+        internal static string BuildCacheDirectory(string suffix) => Path.Combine(GenFilePaths.SaveDataFolderPath, FGLConsts.ModName, suffix);
         private static string activeCacheDirectory = CacheDirectory;
 
         /// <summary>
@@ -147,15 +147,15 @@ namespace FasterGameLoading
                 {
                     resizedTextureCache.Clear();
                 }
-                Log.Message("[FasterGameLoading] Texture cache cleared.");
+                FGLLog.Message("Texture cache cleared.");
             }
             catch (IOException ex)
             {
-                Log.Error("[FasterGameLoading] Failed to clear texture cache: " + ex.Message);
+                FGLLog.Error("Failed to clear texture cache: ", ex);
             }
             catch (UnauthorizedAccessException ex)
             {
-                Log.Error("[FasterGameLoading] Failed to clear texture cache: " + ex.Message);
+                FGLLog.Error("Failed to clear texture cache: ", ex);
             }
         }
 

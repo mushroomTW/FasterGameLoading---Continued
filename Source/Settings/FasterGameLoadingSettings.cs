@@ -31,11 +31,15 @@ namespace FasterGameLoading
         /// <summary>圖集快取（預設關閉）</summary>
         public static bool AtlasCaching = false;
 
+        /// <summary>啟用多執行緒預載入（預設開啟）</summary>
+        public static bool EnableMultiThreading = true;
+
         public static void DoSettingsWindowContents(Rect inRect)
         {
             var ls = new Listing_Standard();
             ls.Begin(inRect);
             ls.CheckboxLabeled("FGL_EarlyModContentLoading".Translate(), ref earlyModContentLoading);
+            ls.CheckboxLabeled("FGL_EnableMultiThreading".Translate(), ref EnableMultiThreading);
             ls.CheckboxLabeled("FGL_DelayGraphicLoading".Translate(), ref DelayGraphicLoading);
             ls.CheckboxLabeled("FGL_StaticAtlasesBaking".Translate(), ref StaticAtlasesBaking);
             ls.CheckboxLabeled("FGL_AtlasCaching".Translate(), ref AtlasCaching);
@@ -96,6 +100,7 @@ namespace FasterGameLoading
             Scribe_Values.Look(ref AtlasCaching, "atlasCaching", false);
             Scribe_Values.Look(ref DelayGraphicLoading, "delayGraphicLoading", false);
             Scribe_Values.Look(ref earlyModContentLoading, "earlyModContentLoading", true);
+            Scribe_Values.Look(ref EnableMultiThreading, "enableMultiThreading", true);
 
             // 紋理快取
             Scribe_Collections.Look(ref TextureCacheManager.resizedTextureCache, "resizedTextureCache", LookMode.Value, LookMode.Value);

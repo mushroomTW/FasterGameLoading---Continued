@@ -7,6 +7,7 @@
     <FGL_DelayGraphicLoading>延迟图形和图示载入（需要重新启动）</FGL_DelayGraphicLoading>
     <FGL_StaticAtlasesBaking>更聪明的图集烘焙（需要重新启动）</FGL_StaticAtlasesBaking>
     <FGL_AtlasCaching>静态图集缓存（需要重新启动）</FGL_AtlasCaching>
+    <FGL_EnableMultiThreading>启用多线程预载入（需要重新启动）</FGL_EnableMultiThreading>
     <FGL_ClearAtlasCache>清除图集缓存</FGL_ClearAtlasCache>
     <FGL_ClearAtlasCacheConfirmation>是否清除已缓存的静态图集？</FGL_ClearAtlasCacheConfirmation>
 

@@ -25,6 +25,10 @@ namespace FasterGameLoading
         /// </summary>
         public static void Preload()
         {
+            if (!FasterGameLoadingSettings.EnableMultiThreading)
+            {
+                return;
+            }
             Task.Run(() =>
             {
                 var types = AppDomain.CurrentDomain.GetAssemblies()

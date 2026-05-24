@@ -101,7 +101,7 @@ namespace FasterGameLoading
                 catch (Exception ex)
                 {
                     // 載入失敗時不加入 loadedMods，讓正式流程可以重試
-                    Log.Warning("[FasterGameLoading] Early loading failed for " + modToLoad.PackageIdPlayerFacing + ", will retry in normal flow: " + ex.Message);
+                    FGLLog.Warning("Early loading failed for " + modToLoad.PackageIdPlayerFacing + ", will retry in normal flow: ", ex);
                 }
 
                 // 用完時間預算就讓出這幀，下幀繼續
@@ -171,7 +171,7 @@ namespace FasterGameLoading
         private IEnumerator LoadDeferredGraphicsCoroutine(List<ThingDef> loadedDefs)
         {
             stopwatch.Start();
-            Log.Message("[FasterGameLoading] Starting deferred graphics: " + graphicsToLoad.Count);
+            FGLLog.Message("Starting deferred graphics: " + graphicsToLoad.Count);
             while (graphicsToLoad.Count > 0)
             {
                 if (UnityData.IsInMainThread is false)
@@ -217,7 +217,7 @@ namespace FasterGameLoading
                     }
                     catch (Exception ex)
                     {
-                        Log.Warning("[FasterGameLoading] Error loading graphic for " + def + ": " + ex);
+                        FGLLog.Warning("Error loading graphic for " + def + ": ", ex);
                     }
                     def.plant?.PostLoadSpecial(def);
                 }
@@ -228,7 +228,7 @@ namespace FasterGameLoading
                     stopwatch.Restart();
                 }
             }
-            Log.Message("[FasterGameLoading] Deferred graphics loaded");
+            FGLLog.Message("Deferred graphics loaded");
         }
 
         /// <summary>
@@ -245,7 +245,7 @@ namespace FasterGameLoading
             {
                 if (FasterGameLoadingSettings.AtlasCaching && StaticAtlasCache.TryLoadFromCache())
                 {
-                    Log.Message("[FasterGameLoading] Static atlases loaded from cache (Raw DXT bytes)");
+                    FGLLog.Message("Static atlases loaded from cache (Raw DXT bytes)");
                 }
                 else
                 {
@@ -263,9 +263,9 @@ namespace FasterGameLoading
 
                     if (AdaptiveStaticAtlasBakeFailed)
                     {
-                        Log.Message("[FasterGameLoading] Adaptive bake failed, falling back to vanilla static atlas baking");
+                        FGLLog.Message("Adaptive bake failed, falling back to vanilla static atlas baking");
                         GlobalTextureAtlasManager.BakeStaticAtlases();
-                        Log.Message("[FasterGameLoading] Vanilla static atlas baking complete");
+                        FGLLog.Message("Vanilla static atlas baking complete");
                     }
 
                     if (FasterGameLoadingSettings.AtlasCaching && !AdaptiveStaticAtlasBakeFailed && queueHash != null)
@@ -281,9 +281,9 @@ namespace FasterGameLoading
             }
             else
             {
-                Log.Message("[FasterGameLoading] Starting deferred vanilla static atlas baking");
+                FGLLog.Message("Starting deferred vanilla static atlas baking");
                 GlobalTextureAtlasManager.BakeStaticAtlases();
-                Log.Message("[FasterGameLoading] Deferred vanilla static atlas baking complete");
+                FGLLog.Message("Deferred vanilla static atlas baking complete");
             }
         }
 
@@ -312,7 +312,7 @@ namespace FasterGameLoading
             }
             catch (Exception ex)
             {
-                Log.Warning("[FasterGameLoading] Error updating map mesh: " + ex);
+                FGLLog.Warning("Error updating map mesh: ", ex);
             }
             yield break;
         }
@@ -324,7 +324,7 @@ namespace FasterGameLoading
         private IEnumerator LoadDeferredIconsCoroutine()
         {
             stopwatch.Restart();
-            Log.Message("[FasterGameLoading] Starting deferred icons: " + iconsToLoad.Count);
+            FGLLog.Message("Starting deferred icons: " + iconsToLoad.Count);
             while (iconsToLoad.Count > 0)
             {
                 if (UnityData.IsInMainThread is false)
@@ -342,7 +342,7 @@ namespace FasterGameLoading
                         }
                         catch (Exception ex)
                         {
-                            Log.Warning("[FasterGameLoading] Error loading icon for " + def + ": " + ex);
+                            FGLLog.Warning("Error loading icon for " + def + ": ", ex);
                         }
                     }
                 }
@@ -353,7 +353,7 @@ namespace FasterGameLoading
                     stopwatch.Restart();
                 }
             }
-            Log.Message("[FasterGameLoading] Deferred icons loaded");
+            FGLLog.Message("Deferred icons loaded");
         }
 
         /// <summary>
@@ -363,7 +363,7 @@ namespace FasterGameLoading
         private IEnumerator ResolveSubSoundDefsCoroutine()
         {
             stopwatch.Restart();
-            Log.Message("[FasterGameLoading] Starting SubSoundDef resolution: " + subSoundDefToResolve.Count);
+            FGLLog.Message("Starting SubSoundDef resolution: " + subSoundDefToResolve.Count);
             while (subSoundDefToResolve.Count > 0)
             {
                 while (subSoundDefToResolve.Count > 0 && !OverBudget)
@@ -375,7 +375,7 @@ namespace FasterGameLoading
                     }
                     catch (Exception ex)
                     {
-                        Log.Warning("[FasterGameLoading] Error resolving AudioGrain for " + def + ": " + ex);
+                        FGLLog.Warning("Error resolving AudioGrain for " + def + ": ", ex);
                     }
                 }
 
@@ -386,7 +386,7 @@ namespace FasterGameLoading
                 }
             }
             SoundStarter_Patch.Unpatch();
-            Log.Message("[FasterGameLoading] SubSoundDef resolution complete");
+            FGLLog.Message("SubSoundDef resolution complete");
         }
 
         // ════════════════════════════════════════════════════════════════
@@ -400,7 +400,7 @@ namespace FasterGameLoading
         /// </summary>
         private IEnumerator PerformAdaptiveStaticAtlasBake()
         {
-            Log.Message("[FasterGameLoading] Starting adaptive static atlas bake");
+            FGLLog.Message("Starting adaptive static atlas bake");
 
             const float TARGET_BAKE_TIME_SECONDS = 0.008f;
             const float ADAPTATION_FACTOR = 0.2f;
@@ -513,7 +513,7 @@ namespace FasterGameLoading
             // 清除原始 buildQueue，防止 vanilla 重複處理
             GlobalTextureAtlasManager.buildQueue.Clear();
             GlobalTextureAtlasManager.buildQueueMasks.Clear();
-            Log.Message("[FasterGameLoading] Adaptive static atlas bake complete");
+            FGLLog.Message("Adaptive static atlas bake complete");
         }
 
         // ════════════════════════════════════════════════════════════════
@@ -578,7 +578,7 @@ namespace FasterGameLoading
             catch (Exception ex)
             {
                 AdaptiveStaticAtlasBakeFailed = true;
-                Log.Warning("[FasterGameLoading] Error baking atlas batch: " + ex);
+                FGLLog.Warning("Error baking atlas batch: ", ex);
                 return false;
             }
         }
@@ -590,9 +590,10 @@ namespace FasterGameLoading
         /// <summary>
         /// 記錄錯誤訊息，包含完整堆疊追蹤。
         /// </summary>
+        [Obsolete("Use FGLLog.Error instead")]
         public void Error(string message, Exception ex)
         {
-            Log.Error("[FasterGameLoading] " + message + " - " + ex + " - " + new StackTrace());
+            FGLLog.Error(message, ex);
         }
     }
 }

@@ -58,16 +58,16 @@ namespace FasterGameLoading
                 if (Directory.Exists(CacheDirectory))
                 {
                     Directory.Delete(CacheDirectory, true);
-                    Log.Message("[FasterGameLoading] Atlas cache cleared.");
+                    FGLLog.Message("Atlas cache cleared.");
                 }
             }
             catch (IOException ex)
             {
-                Log.Warning("[FasterGameLoading] Failed to clear atlas cache: " + ex.Message);
+                FGLLog.Warning("Failed to clear atlas cache: " + ex.Message);
             }
             catch (UnauthorizedAccessException ex)
             {
-                Log.Warning("[FasterGameLoading] Failed to clear atlas cache: " + ex.Message);
+                FGLLog.Warning("Failed to clear atlas cache: " + ex.Message);
             }
         }
 
@@ -144,7 +144,7 @@ namespace FasterGameLoading
                         }
                         else
                         {
-                            Log.Warning("[FasterGameLoading] Texture missing from queue during cache load: " + texName);
+                            FGLLog.Warning("Texture missing from queue during cache load: " + texName);
                             DestroyAtlases(cachedAtlases);
                             return false;
                         }
@@ -225,17 +225,17 @@ namespace FasterGameLoading
             }
             catch (IOException e)
             {
-                Log.Warning("[FasterGameLoading] Cache load error: " + e);
+                FGLLog.Warning("Cache load error: " + e);
                 return false;
             }
             catch (UnauthorizedAccessException e)
             {
-                Log.Warning("[FasterGameLoading] Cache load error: " + e);
+                FGLLog.Warning("Cache load error: " + e);
                 return false;
             }
             catch (Exception e)
             {
-                Log.Warning("[FasterGameLoading] Cache load error, falling back to vanilla atlas baking: " + e);
+                FGLLog.Warning("Cache load error, falling back to vanilla atlas baking: " + e);
                 return false;
             }
         }
@@ -326,17 +326,17 @@ namespace FasterGameLoading
                 }
                 catch (IOException e)
                 {
-                    Log.Error("[FasterGameLoading] Error saving atlas color bytes: " + e);
+                    FGLLog.Error("Error saving atlas color bytes: " + e);
                     yield break;
                 }
                 catch (UnauthorizedAccessException e)
                 {
-                    Log.Error("[FasterGameLoading] Error saving atlas color bytes: " + e);
+                    FGLLog.Error("Error saving atlas color bytes: " + e);
                     yield break;
                 }
                 catch (Exception e)
                 {
-                    Log.Error("[FasterGameLoading] Error saving atlas color bytes: " + e);
+                    FGLLog.Error("Error saving atlas color bytes: " + e);
                     yield break;
                 }
                 yield return null;
@@ -352,17 +352,17 @@ namespace FasterGameLoading
                     }
                     catch (IOException e)
                     {
-                        Log.Error("[FasterGameLoading] Error saving atlas mask bytes: " + e);
+                        FGLLog.Error("Error saving atlas mask bytes: " + e);
                         yield break;
                     }
                     catch (UnauthorizedAccessException e)
                     {
-                        Log.Error("[FasterGameLoading] Error saving atlas mask bytes: " + e);
+                        FGLLog.Error("Error saving atlas mask bytes: " + e);
                         yield break;
                     }
                     catch (Exception e)
                     {
-                        Log.Error("[FasterGameLoading] Error saving atlas mask bytes: " + e);
+                        FGLLog.Error("Error saving atlas mask bytes: " + e);
                         yield break;
                     }
                     yield return null;
@@ -374,19 +374,19 @@ namespace FasterGameLoading
             try
             {
                 File.WriteAllText(ManifestPath, JsonUtility.ToJson(manifest, true));
-                Log.Message("[FasterGameLoading] Static atlas cache saved.");
+                FGLLog.Message("Static atlas cache saved.");
             }
             catch (IOException e)
             {
-                Log.Error("[FasterGameLoading] Error saving atlas manifest: " + e);
+                FGLLog.Error("Error saving atlas manifest: " + e);
             }
             catch (UnauthorizedAccessException e)
             {
-                Log.Error("[FasterGameLoading] Error saving atlas manifest: " + e);
+                FGLLog.Error("Error saving atlas manifest: " + e);
             }
             catch (Exception e)
             {
-                Log.Error("[FasterGameLoading] Error saving atlas manifest: " + e);
+                FGLLog.Error("Error saving atlas manifest: " + e);
             }
         }
 

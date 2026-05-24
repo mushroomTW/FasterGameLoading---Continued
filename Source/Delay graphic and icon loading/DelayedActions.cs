@@ -185,6 +185,35 @@ namespace FasterGameLoading
                     {
                         action();
                         loadedDefs.Add(def);
+
+                        // 圖形剛載入完成，重新解析 UI 圖示。
+                        // BuildableDef.PostLoad 的圖示回呼在 ExecuteWhenFinished 階段以正常時機執行，
+                        // 但那時圖形尚未載入，導致 uiIcon 被設為 BadTex。
+                        // 現在圖形已載入，重新解析圖示即可得到正確的紋理。
+                        if (def.uiIcon == BaseContent.BadTex)
+                        {
+                            if (def.uiIconPath.NullOrEmpty() is false)
+                            {
+                                // 有明確的圖示路徑，直接載入
+                                def.uiIcon = ContentFinder<Texture2D>.Get(def.uiIconPath, true);
+                            }
+                            else if (def.graphicData?.Graphic != null)
+                            {
+                                // 從已初始化的圖形取得 UI 圖示。
+                                // 必須使用 Graphic.MatSingle.mainTexture，這是 RimWorld 原始
+                                // BuildableDef.PostLoad 中用來設定 uiIcon 的邏輯。
+                                // 不能用 ContentFinder.Get(texPath)，因為 Graphic_Multi 等
+                                // 多方向圖形的 texPath 只是基礎路徑（如 "Things/Building/Lamp"），
+                                // 實際紋理是 "Lamp_south" 等帶有方向後綴的檔案，
+                                // ContentFinder 無法找到不含後綴的路徑。
+                                var mat = def.graphicData.Graphic.MatSingle;
+                                if (mat != null && mat.mainTexture is Texture2D tex
+                                    && tex != null && tex != BaseContent.BadTex)
+                                {
+                                    def.uiIcon = tex;
+                                }
+                            }
+                        }
                     }
                     catch (Exception ex)
                     {

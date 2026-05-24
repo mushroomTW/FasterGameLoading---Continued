@@ -265,7 +265,7 @@ namespace FasterGameLoading
                     {
                         Log.Message("[FasterGameLoading] Adaptive bake failed, falling back to vanilla static atlas baking");
                         GlobalTextureAtlasManager.BakeStaticAtlases();
-Log.Message("[FasterGameLoading] Vanilla static atlas baking complete");
+                        Log.Message("[FasterGameLoading] Vanilla static atlas baking complete");
                     }
 
                     if (FasterGameLoadingSettings.AtlasCaching && !AdaptiveStaticAtlasBakeFailed && queueHash != null)

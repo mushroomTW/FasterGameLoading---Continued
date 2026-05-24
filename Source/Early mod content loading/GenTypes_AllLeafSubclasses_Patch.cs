@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,8 +35,8 @@ namespace FasterGameLoading
                     .Where(t => t != null && subClasses.Contains(t))
                     .ToHashSet();
 
-                // 葉子 = 沒有任何其他子類別以它為基底的非抽象型別。
-                final = subClasses.Where(t => !t.IsAbstract && !typesWithSubclasses.Contains(t)).ToHashSet();
+                // 葉子 = 沒有任何其他子類別以它為基底的型別
+                final = subClasses.Where(t => !typesWithSubclasses.Contains(t)).ToHashSet();
                 keyValuePairs[baseType] = final;
             }
             __result = final;

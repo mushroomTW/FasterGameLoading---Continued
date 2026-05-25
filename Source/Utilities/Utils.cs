@@ -9,6 +9,14 @@ namespace FasterGameLoading
     public static class Utils
     {
         /// <summary>
+        /// 將路徑中的反斜線統一替換為正斜線，確保跨平台相容性。
+        /// </summary>
+        public static string NormalizePath(this string path)
+        {
+            if (path == null) return null;
+            return path.Replace('\\', '/');
+        }
+        /// <summary>
         /// 根據指定的 ThingDef 集合，從 ListerThings 中取出所有對應的 Thing。
         /// </summary>
         public static List<Thing> ThingsOfDefs(this ListerThings listerThings, IEnumerable<ThingDef> defs)
@@ -30,8 +38,13 @@ namespace FasterGameLoading
         /// </summary>
         public static int FloorToPowerOfTwo(this int i)
         {
-            int closest = UnityEngine.Mathf.ClosestPowerOfTwo(i);
-            return closest <= i ? closest : closest >> 1;
+            if (i <= 0) return 0;
+            i |= i >> 1;
+            i |= i >> 2;
+            i |= i >> 4;
+            i |= i >> 8;
+            i |= i >> 16;
+            return i - (i >> 1);
         }
     }
 }

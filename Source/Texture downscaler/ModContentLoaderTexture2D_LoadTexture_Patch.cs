@@ -51,7 +51,7 @@ namespace FasterGameLoading
                 try
                 {
                     var data = File.ReadAllBytes(cachePath);
-                    bool useMipmaps = !fullPath.Contains(FGLConsts.UIDirSlash) && !fullPath.Contains(FGLConsts.UIDirBackslash);
+                    bool useMipmaps = !fullPath.NormalizePath().Contains(FGLConsts.UIDirSlash);
                     var tex = new Texture2D(2, 2, TextureFormat.RGBA32, useMipmaps);
                     var textureAccepted = false;
 

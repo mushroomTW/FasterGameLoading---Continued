@@ -10,6 +10,7 @@
     <FGL_EnableMultiThreading>启用多线程预载入（需要重新启动）</FGL_EnableMultiThreading>
     <FGL_ClearAtlasCache>清除图集缓存</FGL_ClearAtlasCache>
     <FGL_ClearAtlasCacheConfirmation>是否清除已缓存的静态图集？</FGL_ClearAtlasCacheConfirmation>
+    <FGL_VerboseLogging>启用详细日志（输出调试信息至控制台）</FGL_VerboseLogging>
 
     <!-- Texture Resizing -->
     <FGL_TextureResizingExplanation>某些模组可能包含大量高分辨率纹理，载入需很长时间。使用此功能缩小高分辨率纹理。原始文件不会被修改；缩小后的版本会储存在独立的缓存目录中，并在下次启动时自动载入。

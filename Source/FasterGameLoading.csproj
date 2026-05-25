@@ -49,7 +49,6 @@
       <ExcludeAssets>runtime</ExcludeAssets>
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-
   </ItemGroup>
   <PropertyGroup>
     <!-- Disable automatic generation of assembly attributes -->
@@ -58,6 +57,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Publicize Include="Assembly-CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="FasterGameLoading.Tests\**" />
+    <EmbeddedResource Remove="FasterGameLoading.Tests\**" />
+    <None Remove="FasterGameLoading.Tests\**" />
   </ItemGroup>
   <ItemGroup>
     <Reference Update="System.Runtime.Serialization">

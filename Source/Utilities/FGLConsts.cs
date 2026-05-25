@@ -49,7 +49,6 @@ namespace FasterGameLoading
 
         // ── 紋理路徑字首與目錄匹配 ──
         public const string UIDirSlash = "/UI/";
-        public const string UIDirBackslash = "\\UI\\";
         public const string TexturesDirSlash = "Textures/";
     }
 }

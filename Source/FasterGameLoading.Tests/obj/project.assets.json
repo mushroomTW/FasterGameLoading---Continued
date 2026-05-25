@@ -1,0 +1,600 @@
+{
+  "version": 4,
+  "targets": {
+    "net472": {
+      "Krafs.Rimworld.Ref/1.6.4633": {
+        "type": "package",
+        "compile": {
+          "ref/net472/Assembly-CSharp-firstpass.dll": {},
+          "ref/net472/Assembly-CSharp.dll": {},
+          "ref/net472/Assembly-CSharp_publicised.dll": {},
+          "ref/net472/ISharpZipLib.dll": {},
+          "ref/net472/Mono.Security.dll": {},
+          "ref/net472/NAudio.dll": {},
+          "ref/net472/NVorbis.dll": {},
+          "ref/net472/System.ComponentModel.Composition.dll": {},
+          "ref/net472/System.Configuration.dll": {},
+          "ref/net472/System.Core.dll": {},
+          "ref/net472/System.Data.DataSetExtensions.dll": {},
+          "ref/net472/System.Data.dll": {},
+          "ref/net472/System.Drawing.dll": {},
+          "ref/net472/System.EnterpriseServices.dll": {},
+          "ref/net472/System.IO.Compression.FileSystem.dll": {},
+          "ref/net472/System.IO.Compression.dll": {},
+          "ref/net472/System.Net.Http.dll": {},
+          "ref/net472/System.Numerics.dll": {},
+          "ref/net472/System.Runtime.Serialization.dll": {},
+          "ref/net472/System.Runtime.dll": {},
+          "ref/net472/System.Security.dll": {},
+          "ref/net472/System.ServiceModel.Internals.dll": {},
+          "ref/net472/System.Transactions.dll": {},
+          "ref/net472/System.Xml.Linq.dll": {},
+          "ref/net472/System.Xml.dll": {},
+          "ref/net472/System.dll": {},
+          "ref/net472/Unity.AI.Navigation.dll": {},
+          "ref/net472/Unity.Burst.Unsafe.dll": {},
+          "ref/net472/Unity.Burst.dll": {},
+          "ref/net472/Unity.Collections.LowLevel.ILSupport.dll": {},
+          "ref/net472/Unity.Collections.dll": {},
+          "ref/net472/Unity.Mathematics.dll": {},
+          "ref/net472/Unity.MemoryProfiler.dll": {},
+          "ref/net472/Unity.Profiling.Core.dll": {},
+          "ref/net472/Unity.TextMeshPro.dll": {},
+          "ref/net472/UnityEngine.AIModule.dll": {},
+          "ref/net472/UnityEngine.ARModule.dll": {},
+          "ref/net472/UnityEngine.AccessibilityModule.dll": {},
+          "ref/net472/UnityEngine.AndroidJNIModule.dll": {},
+          "ref/net472/UnityEngine.AnimationModule.dll": {},
+          "ref/net472/UnityEngine.AssetBundleModule.dll": {},
+          "ref/net472/UnityEngine.AudioModule.dll": {},
+          "ref/net472/UnityEngine.ClothModule.dll": {},
+          "ref/net472/UnityEngine.ClusterInputModule.dll": {},
+          "ref/net472/UnityEngine.ClusterRendererModule.dll": {},
+          "ref/net472/UnityEngine.ContentLoadModule.dll": {},
+          "ref/net472/UnityEngine.CoreModule.dll": {},
+          "ref/net472/UnityEngine.CoreModule_publicised.dll": {},
+          "ref/net472/UnityEngine.CrashReportingModule.dll": {},
+          "ref/net472/UnityEngine.DSPGraphModule.dll": {},
+          "ref/net472/UnityEngine.DirectorModule.dll": {},
+          "ref/net472/UnityEngine.GIModule.dll": {},
+          "ref/net472/UnityEngine.GameCenterModule.dll": {},
+          "ref/net472/UnityEngine.GridModule.dll": {},
+          "ref/net472/UnityEngine.HotReloadModule.dll": {},
+          "ref/net472/UnityEngine.IMGUIModule.dll": {},
+          "ref/net472/UnityEngine.ImageConversionModule.dll": {},
+          "ref/net472/UnityEngine.InputLegacyModule.dll": {},
+          "ref/net472/UnityEngine.InputModule.dll": {},
+          "ref/net472/UnityEngine.JSONSerializeModule.dll": {},
+          "ref/net472/UnityEngine.LocalizationModule.dll": {},
+          "ref/net472/UnityEngine.NVIDIAModule.dll": {},
+          "ref/net472/UnityEngine.ParticleSystemModule.dll": {},
+          "ref/net472/UnityEngine.PerformanceReportingModule.dll": {},
+          "ref/net472/UnityEngine.Physics2DModule.dll": {},
+          "ref/net472/UnityEngine.PhysicsModule.dll": {},
+          "ref/net472/UnityEngine.ProfilerModule.dll": {},
+          "ref/net472/UnityEngine.PropertiesModule.dll": {},
+          "ref/net472/UnityEngine.RuntimeInitializeOnLoadManagerInitializerModule.dll": {},
+          "ref/net472/UnityEngine.ScreenCaptureModule.dll": {},
+          "ref/net472/UnityEngine.SharedInternalsModule.dll": {},
+          "ref/net472/UnityEngine.SpriteMaskModule.dll": {},
+          "ref/net472/UnityEngine.SpriteShapeModule.dll": {},
+          "ref/net472/UnityEngine.StreamingModule.dll": {},
+          "ref/net472/UnityEngine.SubstanceModule.dll": {},
+          "ref/net472/UnityEngine.SubsystemsModule.dll": {},
+          "ref/net472/UnityEngine.TLSModule.dll": {},
+          "ref/net472/UnityEngine.TerrainModule.dll": {},
+          "ref/net472/UnityEngine.TerrainPhysicsModule.dll": {},
+          "ref/net472/UnityEngine.TextCoreFontEngineModule.dll": {},
+          "ref/net472/UnityEngine.TextCoreTextEngineModule.dll": {},
+          "ref/net472/UnityEngine.TextRenderingModule.dll": {},
+          "ref/net472/UnityEngine.TilemapModule.dll": {},
+          "ref/net472/UnityEngine.UI.dll": {},
+          "ref/net472/UnityEngine.UIElementsModule.dll": {},
+          "ref/net472/UnityEngine.UIModule.dll": {},
+          "ref/net472/UnityEngine.UmbraModule.dll": {},
+          "ref/net472/UnityEngine.UnityAnalyticsCommonModule.dll": {},
+          "ref/net472/UnityEngine.UnityAnalyticsModule.dll": {},
+          "ref/net472/UnityEngine.UnityConnectModule.dll": {},
+          "ref/net472/UnityEngine.UnityCurlModule.dll": {},
+          "ref/net472/UnityEngine.UnityTestProtocolModule.dll": {},
+          "ref/net472/UnityEngine.UnityWebRequestAssetBundleModule.dll": {},
+          "ref/net472/UnityEngine.UnityWebRequestAudioModule.dll": {},
+          "ref/net472/UnityEngine.UnityWebRequestModule.dll": {},
+          "ref/net472/UnityEngine.UnityWebRequestTextureModule.dll": {},
+          "ref/net472/UnityEngine.UnityWebRequestWWWModule.dll": {},
+          "ref/net472/UnityEngine.VFXModule.dll": {},
+          "ref/net472/UnityEngine.VRModule.dll": {},
+          "ref/net472/UnityEngine.VehiclesModule.dll": {},
+          "ref/net472/UnityEngine.VideoModule.dll": {},
+          "ref/net472/UnityEngine.VirtualTexturingModule.dll": {},
+          "ref/net472/UnityEngine.WindModule.dll": {},
+          "ref/net472/UnityEngine.XRModule.dll": {},
+          "ref/net472/UnityEngine.dll": {
+            "related": ".CoreModule_hash.hash"
+          },
+          "ref/net472/com.rlabrecque.steamworks.net.dll": {},
+          "ref/net472/mscorlib.dll": {},
+          "ref/net472/netstandard.dll": {}
+        }
+      },
+      "Lib.Harmony/2.4.2": {
+        "type": "package",
+        "compile": {
+          "lib/net472/0Harmony.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/net472/_._": {
+            "related": ".pdb;.xml"
+          }
+        }
+      },
+      "Microsoft.CodeCoverage/17.5.0": {
+        "type": "package",
+        "compile": {
+          "lib/net462/Microsoft.VisualStudio.CodeCoverage.Shim.dll": {}
+        },
+        "runtime": {
+          "lib/net462/Microsoft.VisualStudio.CodeCoverage.Shim.dll": {}
+        },
+        "build": {
+          "build/netstandard2.0/Microsoft.CodeCoverage.props": {},
+          "build/netstandard2.0/Microsoft.CodeCoverage.targets": {}
+        }
+      },
+      "Microsoft.NET.Test.Sdk/17.5.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.CodeCoverage": "17.5.0"
+        },
+        "compile": {
+          "lib/net462/_._": {}
+        },
+        "runtime": {
+          "lib/net462/_._": {}
+        },
+        "build": {
+          "build/net462/Microsoft.NET.Test.Sdk.props": {},
+          "build/net462/Microsoft.NET.Test.Sdk.targets": {}
+        },
+        "buildMultiTargeting": {
+          "buildMultiTargeting/Microsoft.NET.Test.Sdk.props": {}
+        }
+      },
+      "NUnit/3.13.3": {
+        "type": "package",
+        "compile": {
+          "lib/net45/nunit.framework.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net45/nunit.framework.dll": {
+            "related": ".xml"
+          }
+        },
+        "build": {
+          "build/NUnit.props": {}
+        }
+      },
+      "NUnit3TestAdapter/4.4.2": {
+        "type": "package",
+        "build": {
+          "build/net462/NUnit3TestAdapter.props": {}
+        }
+      },
+      "FasterGameLoading/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.7.2",
+        "dependencies": {
+          "Krafs.Rimworld.Ref": "1.6.4633",
+          "Lib.Harmony": "2.0.0"
+        },
+        "compile": {
+          "bin/placeholder/FasterGameLoading.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/FasterGameLoading.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Krafs.Rimworld.Ref/1.6.4633": {
+      "sha512": "wbUZCLBFHnNJ9IT4ighta1wrsBI9i/gRrfixPNfsMLlPvd/lksz+yv8H3Os7EIpT3O3wOkXgN3LGt8UHncWpzQ==",
+      "type": "package",
+      "path": "krafs.rimworld.ref/1.6.4633",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.md",
+        "README.md",
+        "icon.png",
+        "krafs.rimworld.ref.1.6.4633.nupkg.sha512",
+        "krafs.rimworld.ref.nuspec",
+        "ref/net472/Assembly-CSharp-firstpass.dll",
+        "ref/net472/Assembly-CSharp.dll",
+        "ref/net472/Assembly-CSharp_hash.hash",
+        "ref/net472/Assembly-CSharp_publicised.dll",
+        "ref/net472/ISharpZipLib.dll",
+        "ref/net472/Mono.Security.dll",
+        "ref/net472/NAudio.dll",
+        "ref/net472/NVorbis.dll",
+        "ref/net472/System.ComponentModel.Composition.dll",
+        "ref/net472/System.Configuration.dll",
+        "ref/net472/System.Core.dll",
+        "ref/net472/System.Data.DataSetExtensions.dll",
+        "ref/net472/System.Data.dll",
+        "ref/net472/System.Drawing.dll",
+        "ref/net472/System.EnterpriseServices.dll",
+        "ref/net472/System.IO.Compression.FileSystem.dll",
+        "ref/net472/System.IO.Compression.dll",
+        "ref/net472/System.Net.Http.dll",
+        "ref/net472/System.Numerics.dll",
+        "ref/net472/System.Runtime.Serialization.dll",
+        "ref/net472/System.Runtime.dll",
+        "ref/net472/System.Security.dll",
+        "ref/net472/System.ServiceModel.Internals.dll",
+        "ref/net472/System.Transactions.dll",
+        "ref/net472/System.Xml.Linq.dll",
+        "ref/net472/System.Xml.dll",
+        "ref/net472/System.dll",
+        "ref/net472/Unity.AI.Navigation.dll",
+        "ref/net472/Unity.Burst.Unsafe.dll",
+        "ref/net472/Unity.Burst.dll",
+        "ref/net472/Unity.Collections.LowLevel.ILSupport.dll",
+        "ref/net472/Unity.Collections.dll",
+        "ref/net472/Unity.Mathematics.dll",
+        "ref/net472/Unity.MemoryProfiler.dll",
+        "ref/net472/Unity.Profiling.Core.dll",
+        "ref/net472/Unity.TextMeshPro.dll",
+        "ref/net472/UnityEngine.AIModule.dll",
+        "ref/net472/UnityEngine.ARModule.dll",
+        "ref/net472/UnityEngine.AccessibilityModule.dll",
+        "ref/net472/UnityEngine.AndroidJNIModule.dll",
+        "ref/net472/UnityEngine.AnimationModule.dll",
+        "ref/net472/UnityEngine.AssetBundleModule.dll",
+        "ref/net472/UnityEngine.AudioModule.dll",
+        "ref/net472/UnityEngine.ClothModule.dll",
+        "ref/net472/UnityEngine.ClusterInputModule.dll",
+        "ref/net472/UnityEngine.ClusterRendererModule.dll",
+        "ref/net472/UnityEngine.ContentLoadModule.dll",
+        "ref/net472/UnityEngine.CoreModule.dll",
+        "ref/net472/UnityEngine.CoreModule_hash.hash",
+        "ref/net472/UnityEngine.CoreModule_publicised.dll",
+        "ref/net472/UnityEngine.CrashReportingModule.dll",
+        "ref/net472/UnityEngine.DSPGraphModule.dll",
+        "ref/net472/UnityEngine.DirectorModule.dll",
+        "ref/net472/UnityEngine.GIModule.dll",
+        "ref/net472/UnityEngine.GameCenterModule.dll",
+        "ref/net472/UnityEngine.GridModule.dll",
+        "ref/net472/UnityEngine.HotReloadModule.dll",
+        "ref/net472/UnityEngine.IMGUIModule.dll",
+        "ref/net472/UnityEngine.ImageConversionModule.dll",
+        "ref/net472/UnityEngine.InputLegacyModule.dll",
+        "ref/net472/UnityEngine.InputModule.dll",
+        "ref/net472/UnityEngine.JSONSerializeModule.dll",
+        "ref/net472/UnityEngine.LocalizationModule.dll",
+        "ref/net472/UnityEngine.NVIDIAModule.dll",
+        "ref/net472/UnityEngine.ParticleSystemModule.dll",
+        "ref/net472/UnityEngine.PerformanceReportingModule.dll",
+        "ref/net472/UnityEngine.Physics2DModule.dll",
+        "ref/net472/UnityEngine.PhysicsModule.dll",
+        "ref/net472/UnityEngine.ProfilerModule.dll",
+        "ref/net472/UnityEngine.PropertiesModule.dll",
+        "ref/net472/UnityEngine.RuntimeInitializeOnLoadManagerInitializerModule.dll",
+        "ref/net472/UnityEngine.ScreenCaptureModule.dll",
+        "ref/net472/UnityEngine.SharedInternalsModule.dll",
+        "ref/net472/UnityEngine.SpriteMaskModule.dll",
+        "ref/net472/UnityEngine.SpriteShapeModule.dll",
+        "ref/net472/UnityEngine.StreamingModule.dll",
+        "ref/net472/UnityEngine.SubstanceModule.dll",
+        "ref/net472/UnityEngine.SubsystemsModule.dll",
+        "ref/net472/UnityEngine.TLSModule.dll",
+        "ref/net472/UnityEngine.TerrainModule.dll",
+        "ref/net472/UnityEngine.TerrainPhysicsModule.dll",
+        "ref/net472/UnityEngine.TextCoreFontEngineModule.dll",
+        "ref/net472/UnityEngine.TextCoreTextEngineModule.dll",
+        "ref/net472/UnityEngine.TextRenderingModule.dll",
+        "ref/net472/UnityEngine.TilemapModule.dll",
+        "ref/net472/UnityEngine.UI.dll",
+        "ref/net472/UnityEngine.UIElementsModule.dll",
+        "ref/net472/UnityEngine.UIModule.dll",
+        "ref/net472/UnityEngine.UmbraModule.dll",
+        "ref/net472/UnityEngine.UnityAnalyticsCommonModule.dll",
+        "ref/net472/UnityEngine.UnityAnalyticsModule.dll",
+        "ref/net472/UnityEngine.UnityConnectModule.dll",
+        "ref/net472/UnityEngine.UnityCurlModule.dll",
+        "ref/net472/UnityEngine.UnityTestProtocolModule.dll",
+        "ref/net472/UnityEngine.UnityWebRequestAssetBundleModule.dll",
+        "ref/net472/UnityEngine.UnityWebRequestAudioModule.dll",
+        "ref/net472/UnityEngine.UnityWebRequestModule.dll",
+        "ref/net472/UnityEngine.UnityWebRequestTextureModule.dll",
+        "ref/net472/UnityEngine.UnityWebRequestWWWModule.dll",
+        "ref/net472/UnityEngine.VFXModule.dll",
+        "ref/net472/UnityEngine.VRModule.dll",
+        "ref/net472/UnityEngine.VehiclesModule.dll",
+        "ref/net472/UnityEngine.VideoModule.dll",
+        "ref/net472/UnityEngine.VirtualTexturingModule.dll",
+        "ref/net472/UnityEngine.WindModule.dll",
+        "ref/net472/UnityEngine.XRModule.dll",
+        "ref/net472/UnityEngine.dll",
+        "ref/net472/com.rlabrecque.steamworks.net.dll",
+        "ref/net472/mscorlib.dll",
+        "ref/net472/netstandard.dll"
+      ]
+    },
+    "Lib.Harmony/2.4.2": {
+      "sha512": "D2X9ojVjqbqdqWVK3VQETrEb56yVoXxtEp6tP5UvW0PP+bA4uJiswqOxF8GhH02ECwyevUa9vwhwdLzyXfksbw==",
+      "type": "package",
+      "path": "lib.harmony/2.4.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "HarmonyLogo.png",
+        "LICENSE",
+        "README.md",
+        "lib.harmony.2.4.2.nupkg.sha512",
+        "lib.harmony.nuspec",
+        "lib/net10.0/0Harmony.dll",
+        "lib/net10.0/0Harmony.pdb",
+        "lib/net10.0/0Harmony.xml",
+        "lib/net35/0Harmony.dll",
+        "lib/net35/0Harmony.pdb",
+        "lib/net35/0Harmony.xml",
+        "lib/net452/0Harmony.dll",
+        "lib/net452/0Harmony.pdb",
+        "lib/net452/0Harmony.xml",
+        "lib/net472/0Harmony.dll",
+        "lib/net472/0Harmony.pdb",
+        "lib/net472/0Harmony.xml",
+        "lib/net48/0Harmony.dll",
+        "lib/net48/0Harmony.pdb",
+        "lib/net48/0Harmony.xml",
+        "lib/net5.0/0Harmony.dll",
+        "lib/net5.0/0Harmony.pdb",
+        "lib/net5.0/0Harmony.xml",
+        "lib/net6.0/0Harmony.dll",
+        "lib/net6.0/0Harmony.pdb",
+        "lib/net6.0/0Harmony.xml",
+        "lib/net7.0/0Harmony.dll",
+        "lib/net7.0/0Harmony.pdb",
+        "lib/net7.0/0Harmony.xml",
+        "lib/net8.0/0Harmony.dll",
+        "lib/net8.0/0Harmony.pdb",
+        "lib/net8.0/0Harmony.xml",
+        "lib/net9.0/0Harmony.dll",
+        "lib/net9.0/0Harmony.pdb",
+        "lib/net9.0/0Harmony.xml",
+        "lib/netcoreapp3.0/0Harmony.dll",
+        "lib/netcoreapp3.0/0Harmony.pdb",
+        "lib/netcoreapp3.0/0Harmony.xml",
+        "lib/netcoreapp3.1/0Harmony.dll",
+        "lib/netcoreapp3.1/0Harmony.pdb",
+        "lib/netcoreapp3.1/0Harmony.xml",
+        "lib/netstandard2.0/_._"
+      ]
+    },
+    "Microsoft.CodeCoverage/17.5.0": {
+      "sha512": "6FQo0O6LKDqbCiIgVQhJAf810HSjFlOj7FunWaeOGDKxy8DAbpHzPk4SfBTXz9ytaaceuIIeR6hZgplt09m+ig==",
+      "type": "package",
+      "path": "microsoft.codecoverage/17.5.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "LICENSE_NET.txt",
+        "ThirdPartyNotices.txt",
+        "build/netstandard2.0/CodeCoverage/CodeCoverage.config",
+        "build/netstandard2.0/CodeCoverage/CodeCoverage.exe",
+        "build/netstandard2.0/CodeCoverage/VanguardInstrumentationProfiler_x86.config",
+        "build/netstandard2.0/CodeCoverage/amd64/CodeCoverage.exe",
+        "build/netstandard2.0/CodeCoverage/amd64/VanguardInstrumentationProfiler_x64.config",
+        "build/netstandard2.0/CodeCoverage/amd64/covrun64.dll",
+        "build/netstandard2.0/CodeCoverage/amd64/msdia140.dll",
+        "build/netstandard2.0/CodeCoverage/arm64/VanguardInstrumentationProfiler_arm64.config",
+        "build/netstandard2.0/CodeCoverage/arm64/covrunarm64.dll",
+        "build/netstandard2.0/CodeCoverage/arm64/msdia140.dll",
+        "build/netstandard2.0/CodeCoverage/codecoveragemessages.dll",
+        "build/netstandard2.0/CodeCoverage/coreclr/Microsoft.VisualStudio.CodeCoverage.Shim.dll",
+        "build/netstandard2.0/CodeCoverage/covrun32.dll",
+        "build/netstandard2.0/CodeCoverage/msdia140.dll",
+        "build/netstandard2.0/InstrumentationEngine/alpine/x64/VanguardInstrumentationProfiler_x64.config",
+        "build/netstandard2.0/InstrumentationEngine/alpine/x64/libCoverageInstrumentationMethod.so",
+        "build/netstandard2.0/InstrumentationEngine/alpine/x64/libInstrumentationEngine.so",
+        "build/netstandard2.0/InstrumentationEngine/arm64/MicrosoftInstrumentationEngine_arm64.dll",
+        "build/netstandard2.0/InstrumentationEngine/macos/x64/VanguardInstrumentationProfiler_x64.config",
+        "build/netstandard2.0/InstrumentationEngine/macos/x64/libCoverageInstrumentationMethod.dylib",
+        "build/netstandard2.0/InstrumentationEngine/macos/x64/libInstrumentationEngine.dylib",
+        "build/netstandard2.0/InstrumentationEngine/ubuntu/x64/VanguardInstrumentationProfiler_x64.config",
+        "build/netstandard2.0/InstrumentationEngine/ubuntu/x64/libCoverageInstrumentationMethod.so",
+        "build/netstandard2.0/InstrumentationEngine/ubuntu/x64/libInstrumentationEngine.so",
+        "build/netstandard2.0/InstrumentationEngine/x64/MicrosoftInstrumentationEngine_x64.dll",
+        "build/netstandard2.0/InstrumentationEngine/x86/MicrosoftInstrumentationEngine_x86.dll",
+        "build/netstandard2.0/Microsoft.CodeCoverage.Core.dll",
+        "build/netstandard2.0/Microsoft.CodeCoverage.Instrumentation.dll",
+        "build/netstandard2.0/Microsoft.CodeCoverage.Interprocess.dll",
+        "build/netstandard2.0/Microsoft.CodeCoverage.props",
+        "build/netstandard2.0/Microsoft.CodeCoverage.targets",
+        "build/netstandard2.0/Microsoft.VisualStudio.TraceDataCollector.dll",
+        "build/netstandard2.0/Mono.Cecil.Pdb.dll",
+        "build/netstandard2.0/Mono.Cecil.Rocks.dll",
+        "build/netstandard2.0/Mono.Cecil.dll",
+        "build/netstandard2.0/ThirdPartyNotices.txt",
+        "build/netstandard2.0/cs/Microsoft.VisualStudio.TraceDataCollector.resources.dll",
+        "build/netstandard2.0/de/Microsoft.VisualStudio.TraceDataCollector.resources.dll",
+        "build/netstandard2.0/es/Microsoft.VisualStudio.TraceDataCollector.resources.dll",
+        "build/netstandard2.0/fr/Microsoft.VisualStudio.TraceDataCollector.resources.dll",
+        "build/netstandard2.0/it/Microsoft.VisualStudio.TraceDataCollector.resources.dll",
+        "build/netstandard2.0/ja/Microsoft.VisualStudio.TraceDataCollector.resources.dll",
+        "build/netstandard2.0/ko/Microsoft.VisualStudio.TraceDataCollector.resources.dll",
+        "build/netstandard2.0/pl/Microsoft.VisualStudio.TraceDataCollector.resources.dll",
+        "build/netstandard2.0/pt-BR/Microsoft.VisualStudio.TraceDataCollector.resources.dll",
+        "build/netstandard2.0/ru/Microsoft.VisualStudio.TraceDataCollector.resources.dll",
+        "build/netstandard2.0/tr/Microsoft.VisualStudio.TraceDataCollector.resources.dll",
+        "build/netstandard2.0/zh-Hans/Microsoft.VisualStudio.TraceDataCollector.resources.dll",
+        "build/netstandard2.0/zh-Hant/Microsoft.VisualStudio.TraceDataCollector.resources.dll",
+        "lib/net462/Microsoft.VisualStudio.CodeCoverage.Shim.dll",
+        "lib/netcoreapp3.1/Microsoft.VisualStudio.CodeCoverage.Shim.dll",
+        "microsoft.codecoverage.17.5.0.nupkg.sha512",
+        "microsoft.codecoverage.nuspec"
+      ]
+    },
+    "Microsoft.NET.Test.Sdk/17.5.0": {
+      "sha512": "IJ4eSPcsRbwbAZehh1M9KgejSy0u3d0wAdkJytfCh67zOaCl5U3ltruUEe15MqirdRqGmm/ngbjeaVeGapSZxg==",
+      "type": "package",
+      "path": "microsoft.net.test.sdk/17.5.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "LICENSE_NET.txt",
+        "build/net462/Microsoft.NET.Test.Sdk.props",
+        "build/net462/Microsoft.NET.Test.Sdk.targets",
+        "build/netcoreapp3.1/Microsoft.NET.Test.Sdk.Program.cs",
+        "build/netcoreapp3.1/Microsoft.NET.Test.Sdk.Program.fs",
+        "build/netcoreapp3.1/Microsoft.NET.Test.Sdk.Program.vb",
+        "build/netcoreapp3.1/Microsoft.NET.Test.Sdk.props",
+        "build/netcoreapp3.1/Microsoft.NET.Test.Sdk.targets",
+        "buildMultiTargeting/Microsoft.NET.Test.Sdk.props",
+        "lib/net462/_._",
+        "lib/netcoreapp3.1/_._",
+        "microsoft.net.test.sdk.17.5.0.nupkg.sha512",
+        "microsoft.net.test.sdk.nuspec"
+      ]
+    },
+    "NUnit/3.13.3": {
+      "sha512": "KNPDpls6EfHwC3+nnA67fh5wpxeLb3VLFAfLxrug6JMYDLHH6InaQIWR7Sc3y75d/9IKzMksH/gi08W7XWbmnQ==",
+      "type": "package",
+      "path": "nunit/3.13.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "CHANGES.md",
+        "LICENSE.txt",
+        "NOTICES.txt",
+        "build/NUnit.props",
+        "icon.png",
+        "lib/net35/nunit.framework.dll",
+        "lib/net35/nunit.framework.xml",
+        "lib/net40/nunit.framework.dll",
+        "lib/net40/nunit.framework.xml",
+        "lib/net45/nunit.framework.dll",
+        "lib/net45/nunit.framework.xml",
+        "lib/netstandard2.0/nunit.framework.dll",
+        "lib/netstandard2.0/nunit.framework.xml",
+        "nunit.3.13.3.nupkg.sha512",
+        "nunit.nuspec"
+      ]
+    },
+    "NUnit3TestAdapter/4.4.2": {
+      "sha512": "vA/iHYcR+LYw+pRWQugckC/zW2fXHaqMr2uA82NOBt8v4YK4wMJrQ7QC8XLc7PjetEZ96cPbBTWsDDtmQiRZTA==",
+      "type": "package",
+      "path": "nunit3testadapter/4.4.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "build/net462/NUnit3.TestAdapter.dll",
+        "build/net462/NUnit3.TestAdapter.pdb",
+        "build/net462/NUnit3TestAdapter.props",
+        "build/net462/nunit.engine.api.dll",
+        "build/net462/nunit.engine.core.dll",
+        "build/net462/nunit.engine.dll",
+        "build/net462/testcentric.engine.metadata.dll",
+        "build/netcoreapp3.1/NUnit3.TestAdapter.dll",
+        "build/netcoreapp3.1/NUnit3.TestAdapter.pdb",
+        "build/netcoreapp3.1/NUnit3TestAdapter.props",
+        "build/netcoreapp3.1/nunit.engine.api.dll",
+        "build/netcoreapp3.1/nunit.engine.core.dll",
+        "build/netcoreapp3.1/nunit.engine.dll",
+        "build/netcoreapp3.1/testcentric.engine.metadata.dll",
+        "docs/README.md",
+        "nunit3testadapter.4.4.2.nupkg.sha512",
+        "nunit3testadapter.nuspec",
+        "nunit_256.png"
+      ]
+    },
+    "FasterGameLoading/1.0.0": {
+      "type": "project",
+      "path": "../FasterGameLoading.csproj",
+      "msbuildProject": "../FasterGameLoading.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net472": [
+      "FasterGameLoading >= 1.0.0",
+      "Microsoft.NET.Test.Sdk >= 17.5.0",
+      "NUnit >= 3.13.3",
+      "NUnit3TestAdapter >= 4.4.2"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\mushroomMaster\\.nuget\\packages\\": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.Tests\\FasterGameLoading.Tests.csproj",
+      "projectName": "FasterGameLoading.Tests",
+      "projectPath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.Tests\\FasterGameLoading.Tests.csproj",
+      "packagesPath": "C:\\Users\\mushroomMaster\\.nuget\\packages\\",
+      "outputPath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.Tests\\obj\\",
+      "projectStyle": "PackageReference",
+      "configFilePaths": [
+        "C:\\Users\\mushroomMaster\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net472"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net472": {
+          "framework": "net472",
+          "targetAlias": "net472",
+          "projectReferences": {
+            "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.csproj": {
+              "projectPath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.csproj"
+            }
+          }
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
+      },
+      "SdkAnalysisLevel": "10.0.300"
+    },
+    "frameworks": {
+      "net472": {
+        "framework": "net472",
+        "targetAlias": "net472",
+        "dependencies": {
+          "Microsoft.NET.Test.Sdk": {
+            "target": "Package",
+            "version": "[17.5.0, )"
+          },
+          "NUnit": {
+            "target": "Package",
+            "version": "[3.13.3, )"
+          },
+          "NUnit3TestAdapter": {
+            "target": "Package",
+            "version": "[4.4.2, )"
+          }
+        },
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300\\RuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}

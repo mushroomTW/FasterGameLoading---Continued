@@ -1,16 +1,16 @@
 # Graph Report - FasterGameLoading---Continued  (2026-05-25)
 
 ## Corpus Check
-- 48 files · ~25,576 words
+- 54 files · ~27,030 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 662 nodes · 771 edges · 55 communities (40 shown, 15 thin omitted)
-- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.86)
+- 1145 nodes · 1283 edges · 92 communities (73 shown, 19 thin omitted)
+- Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.86)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `3d66addc`
+- Built from commit: `279fc16a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -62,18 +62,53 @@
 - [[_COMMUNITY_Community 52|Community 52]]
 - [[_COMMUNITY_Community 53|Community 53]]
 - [[_COMMUNITY_Community 54|Community 54]]
+- [[_COMMUNITY_Community 55|Community 55]]
+- [[_COMMUNITY_Community 56|Community 56]]
+- [[_COMMUNITY_Community 57|Community 57]]
+- [[_COMMUNITY_Community 58|Community 58]]
+- [[_COMMUNITY_Community 59|Community 59]]
+- [[_COMMUNITY_Community 60|Community 60]]
+- [[_COMMUNITY_Community 61|Community 61]]
+- [[_COMMUNITY_Community 62|Community 62]]
+- [[_COMMUNITY_Community 63|Community 63]]
+- [[_COMMUNITY_Community 64|Community 64]]
+- [[_COMMUNITY_Community 65|Community 65]]
+- [[_COMMUNITY_Community 66|Community 66]]
+- [[_COMMUNITY_Community 67|Community 67]]
+- [[_COMMUNITY_Community 68|Community 68]]
+- [[_COMMUNITY_Community 69|Community 69]]
+- [[_COMMUNITY_Community 70|Community 70]]
+- [[_COMMUNITY_Community 71|Community 71]]
+- [[_COMMUNITY_Community 72|Community 72]]
+- [[_COMMUNITY_Community 73|Community 73]]
+- [[_COMMUNITY_Community 74|Community 74]]
+- [[_COMMUNITY_Community 75|Community 75]]
+- [[_COMMUNITY_Community 76|Community 76]]
+- [[_COMMUNITY_Community 77|Community 77]]
+- [[_COMMUNITY_Community 78|Community 78]]
+- [[_COMMUNITY_Community 79|Community 79]]
+- [[_COMMUNITY_Community 80|Community 80]]
+- [[_COMMUNITY_Community 81|Community 81]]
+- [[_COMMUNITY_Community 82|Community 82]]
+- [[_COMMUNITY_Community 83|Community 83]]
+- [[_COMMUNITY_Community 84|Community 84]]
+- [[_COMMUNITY_Community 85|Community 85]]
+- [[_COMMUNITY_Community 86|Community 86]]
+- [[_COMMUNITY_Community 87|Community 87]]
+- [[_COMMUNITY_Community 88|Community 88]]
+- [[_COMMUNITY_Community 89|Community 89]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `compile` - 109 edges
-2. `TextureResize` - 52 edges
-3. `DelayedActions` - 21 edges
-4. `TextureCacheManager` - 16 edges
-5. `TextureScanner` - 16 edges
-6. `restore` - 14 edges
-7. `restore` - 14 edges
-8. `SessionCache` - 11 edges
-9. `StaticAtlasCache` - 11 edges
-10. `FasterGameLoading Mod` - 11 edges
+2. `compile` - 109 edges
+3. `compile` - 109 edges
+4. `TextureResize` - 52 edges
+5. `DelayedActions` - 21 edges
+6. `TextureCacheManager` - 16 edges
+7. `TextureScanner` - 16 edges
+8. `restore` - 14 edges
+9. `restore` - 14 edges
+10. `restore` - 14 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `FasterGameLoading Mod` --has_icon--> `Mod Icon Image`  [INFERRED]
@@ -87,15 +122,15 @@
 - `DelayedActions` --references--> `bool`  [EXTRACTED]
   Source/Delay graphic and icon loading/DelayedActions.cs → Delay graphic and icon loading/DelayedActions.cs
 
-## Communities (55 total, 15 thin omitted)
+## Communities (92 total, 19 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.02
 Nodes (108): ref/net472/Assembly-CSharp.dll, ref/net472/Assembly-CSharp-firstpass.dll, ref/net472/Assembly-CSharp_publicised.dll, ref/net472/com.rlabrecque.steamworks.net.dll, ref/net472/ISharpZipLib.dll, ref/net472/Mono.Security.dll, ref/net472/mscorlib.dll, ref/net472/NAudio.dll (+100 more)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.05
-Nodes (43): build/Krafs.Publicizer.props, build/Krafs.Publicizer.targets, lib/net472/0Harmony.dll, contentfiles/cs/any/Publicizer/IgnoresAccessChecksToAttribute.cs, buildAction, codeLanguage, copyToOutput, build (+35 more)
+Cohesion: 0.13
+Nodes (15): lib/net472/0Harmony.dll, files, path, sha512, type, compile, runtime, type (+7 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.08
@@ -106,8 +141,8 @@ Cohesion: 0.05
 Nodes (45): frameworks, restore, version, Krafs.Publicizer, Krafs.Rimworld.Ref, Lib.Harmony, format, net472 (+37 more)
 
 ### Community 4 - "Community 4"
-Cohesion: 0.05
-Nodes (38): Krafs.Publicizer, Krafs.Rimworld.Ref, Lib.Harmony, net472, include, suppressParent, target, version (+30 more)
+Cohesion: 0.13
+Nodes (15): restore, configFilePaths, originalTargetFrameworks, outputPath, packagesPath, projectName, projectPath, projectStyle (+7 more)
 
 ### Community 5 - "Community 5"
 Cohesion: 0.16
@@ -217,25 +252,149 @@ Nodes (3): string, FasterGameLoading, FGLConsts
 Cohesion: 0.33
 Nodes (4): EarlyLoadSkipList, FasterGameLoading, bool, HashSet
 
+### Community 55 - "Community 55"
+Cohesion: 0.02
+Nodes (108): ref/net472/Assembly-CSharp.dll, ref/net472/Assembly-CSharp-firstpass.dll, ref/net472/Assembly-CSharp_publicised.dll, ref/net472/com.rlabrecque.steamworks.net.dll, ref/net472/ISharpZipLib.dll, ref/net472/Mono.Security.dll, ref/net472/mscorlib.dll, ref/net472/NAudio.dll (+100 more)
+
+### Community 56 - "Community 56"
+Cohesion: 0.02
+Nodes (108): ref/net472/Assembly-CSharp.dll, ref/net472/Assembly-CSharp-firstpass.dll, ref/net472/Assembly-CSharp_publicised.dll, ref/net472/com.rlabrecque.steamworks.net.dll, ref/net472/ISharpZipLib.dll, ref/net472/Mono.Security.dll, ref/net472/mscorlib.dll, ref/net472/NAudio.dll (+100 more)
+
+### Community 57 - "Community 57"
+Cohesion: 0.04
+Nodes (46): projectPath, Microsoft.NET.Test.Sdk, NUnit, NUnit3TestAdapter, target, version, target, version (+38 more)
+
+### Community 58 - "Community 58"
+Cohesion: 0.12
+Nodes (17): Krafs.Rimworld.Ref, Lib.Harmony, Microsoft.NET.Test.Sdk, NUnit, NUnit3TestAdapter, target, version, include (+9 more)
+
+### Community 59 - "Community 59"
+Cohesion: 0.13
+Nodes (15): restore, configFilePaths, originalTargetFrameworks, outputPath, packagesPath, projectName, projectPath, projectStyle (+7 more)
+
+### Community 60 - "Community 60"
+Cohesion: 0.19
+Nodes (12): libraries, packageFolders, C:\\Users\\mushroomMaster\\.nuget\\packages\\, projectFileDependencyGroups, net472, targets, version, packageFolders (+4 more)
+
+### Community 61 - "Community 61"
+Cohesion: 0.27
+Nodes (13): restore, restore, configFilePaths, originalTargetFrameworks, outputPath, packagesPath, projectName, projectPath (+5 more)
+
+### Community 62 - "Community 62"
+Cohesion: 0.15
+Nodes (13): build/net462/Microsoft.NET.Test.Sdk.props, build/net462/Microsoft.NET.Test.Sdk.targets, buildMultiTargeting/Microsoft.NET.Test.Sdk.props, lib/net462/_._, Microsoft.CodeCoverage, build, buildMultiTargeting, compile (+5 more)
+
+### Community 63 - "Community 63"
+Cohesion: 0.17
+Nodes (13): build/NUnit.props, lib/net45/nunit.framework.dll, related, NUnit/3.13.3, NUnit/3.13.3, build, compile, files (+5 more)
+
+### Community 64 - "Community 64"
+Cohesion: 0.15
+Nodes (13): bin/placeholder/FasterGameLoading.dll, compile, dependencies, framework, msbuildProject, path, runtime, type (+5 more)
+
+### Community 65 - "Community 65"
+Cohesion: 0.17
+Nodes (12): lib/net472/0Harmony.dll, compile, files, path, runtime, sha512, type, related (+4 more)
+
+### Community 66 - "Community 66"
+Cohesion: 0.17
+Nodes (12): lib/net472/0Harmony.dll, compile, files, path, runtime, sha512, type, related (+4 more)
+
+### Community 67 - "Community 67"
+Cohesion: 0.22
+Nodes (11): Krafs.Publicizer, Krafs.Rimworld.Ref, include, suppressParent, target, version, target, version (+3 more)
+
+### Community 68 - "Community 68"
+Cohesion: 0.20
+Nodes (10): frameworks, version, net472, framework, projectReferences, runtimeIdentifierGraphPath, targetAlias, C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.csproj (+2 more)
+
+### Community 69 - "Community 69"
+Cohesion: 0.20
+Nodes (10): build/Krafs.Publicizer.props, build/Krafs.Publicizer.targets, contentfiles/cs/any/Publicizer/IgnoresAccessChecksToAttribute.cs, buildAction, codeLanguage, copyToOutput, build, contentFiles (+2 more)
+
+### Community 71 - "Community 71"
+Cohesion: 0.22
+Nodes (9): build/netstandard2.0/Microsoft.CodeCoverage.props, build/netstandard2.0/Microsoft.CodeCoverage.targets, lib/net462/Microsoft.VisualStudio.CodeCoverage.Shim.dll, build, compile, runtime, type, Microsoft.CodeCoverage/17.5.0 (+1 more)
+
+### Community 72 - "Community 72"
+Cohesion: 0.22
+Nodes (9): net472, framework, projectReferences, runtimeIdentifierGraphPath, targetAlias, project, frameworks, version (+1 more)
+
+### Community 73 - "Community 73"
+Cohesion: 0.22
+Nodes (9): files, path, sha512, Krafs.Publicizer/2.3.0, files, path, sha512, libraries (+1 more)
+
+### Community 74 - "Community 74"
+Cohesion: 0.22
+Nodes (9): Microsoft.CodeCoverage/17.5.0, Microsoft.NET.Test.Sdk/17.5.0, files, path, sha512, files, path, sha512 (+1 more)
+
+### Community 75 - "Community 75"
+Cohesion: 0.22
+Nodes (9): net472, framework, projectReferences, runtimeIdentifierGraphPath, targetAlias, project, frameworks, version (+1 more)
+
+### Community 76 - "Community 76"
+Cohesion: 0.25
+Nodes (7): frameworks, version, format, projects, C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.csproj, restore, C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.Tests\\FasterGameLoading.Tests.csproj
+
+### Community 77 - "Community 77"
+Cohesion: 0.25
+Nodes (8): build/net462/NUnit3TestAdapter.props, NUnit3TestAdapter/4.4.2, NUnit3TestAdapter/4.4.2, build, files, path, sha512, type
+
+### Community 78 - "Community 78"
+Cohesion: 0.29
+Nodes (7): files, path, sha512, type, Krafs.Rimworld.Ref/1.6.4633, Krafs.Rimworld.Ref/1.6.4633, net472
+
+### Community 79 - "Community 79"
+Cohesion: 0.40
+Nodes (5): Krafs.Publicizer, include, suppressParent, target, version
+
+### Community 80 - "Community 80"
+Cohesion: 0.60
+Nodes (5): Lib.Harmony, include, target, version, Lib.Harmony
+
+### Community 81 - "Community 81"
+Cohesion: 0.50
+Nodes (4): restoreAuditProperties, auditLevel, auditMode, enableAudit
+
+### Community 82 - "Community 82"
+Cohesion: 0.50
+Nodes (4): files, path, sha512, Lib.Harmony/2.4.2
+
+### Community 83 - "Community 83"
+Cohesion: 0.50
+Nodes (4): restoreAuditProperties, auditLevel, auditMode, enableAudit
+
+### Community 84 - "Community 84"
+Cohesion: 0.50
+Nodes (4): type, Krafs.Rimworld.Ref/1.6.4633, targets, net472
+
+### Community 85 - "Community 85"
+Cohesion: 0.50
+Nodes (4): restoreAuditProperties, auditLevel, auditMode, enableAudit
+
+### Community 87 - "Community 87"
+Cohesion: 0.67
+Nodes (3): sources, C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\, https://api.nuget.org/v3/index.json
+
 ## Knowledge Gaps
-- **273 isolated node(s):** `FasterGameLoading`, `FasterGameLoading`, `HashSet`, `bool`, `FasterGameLoading` (+268 more)
+- **614 isolated node(s):** `FasterGameLoading`, `FasterGameLoading`, `HashSet`, `bool`, `FasterGameLoading` (+609 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **15 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **19 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
+- **Why does `compile` connect `Community 56` to `Community 89`, `Community 84`?**
+  _High betweenness centrality (0.050) - this node is a cross-community bridge._
 - **Why does `compile` connect `Community 0` to `Community 1`, `Community 38`?**
-  _High betweenness centrality (0.068) - this node is a cross-community bridge._
-- **Why does `Krafs.Rimworld.Ref/1.6.4633` connect `Community 1` to `Community 0`?**
-  _High betweenness centrality (0.042) - this node is a cross-community bridge._
+  _High betweenness centrality (0.039) - this node is a cross-community bridge._
+- **Why does `Krafs.Rimworld.Ref/1.6.4633` connect `Community 84` to `Community 56`?**
+  _High betweenness centrality (0.039) - this node is a cross-community bridge._
 - **What connects `FasterGameLoading`, `FasterGameLoading`, `HashSet` to the rest of the system?**
-  _273 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _614 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.018518518518518517 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
-  _Cohesion score 0.052525252525252523 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.13333333333333333 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
   _Cohesion score 0.07826694619147449 - nodes in this community are weakly interconnected._
-- **Should `Community 3` be split into smaller, more focused modules?**
-  _Cohesion score 0.045328399629972246 - nodes in this community are weakly interconnected._

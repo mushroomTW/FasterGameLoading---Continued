@@ -11,7 +11,8 @@ namespace FasterGameLoading
     /// </summary>
     public class FasterGameLoadingSettings : ModSettings
     {
-        // ── User-configurable feature toggles ──
+        /// <summary>詳細日誌記錄開關（預設關閉）</summary>
+        public static bool VerboseLogging = false;
 
         /// <summary>延遲非必要圖形/圖示載入（預設關閉）</summary>
         public static bool DelayGraphicLoading = false;
@@ -43,6 +44,7 @@ namespace FasterGameLoading
             ls.CheckboxLabeled("FGL_DelayGraphicLoading".Translate(), ref DelayGraphicLoading);
             ls.CheckboxLabeled("FGL_StaticAtlasesBaking".Translate(), ref StaticAtlasesBaking);
             ls.CheckboxLabeled("FGL_AtlasCaching".Translate(), ref AtlasCaching);
+            ls.CheckboxLabeled("FGL_VerboseLogging".Translate(), ref VerboseLogging);
             ls.Gap(12f);
 
             // Texture resize explanation
@@ -101,6 +103,7 @@ namespace FasterGameLoading
             Scribe_Values.Look(ref DelayGraphicLoading, "delayGraphicLoading", false);
             Scribe_Values.Look(ref earlyModContentLoading, "earlyModContentLoading", true);
             Scribe_Values.Look(ref EnableMultiThreading, "enableMultiThreading", true);
+            Scribe_Values.Look(ref VerboseLogging, "verboseLogging", false);
 
             // 紋理快取
             var cacheManager = FasterGameLoadingMod.Instance?.CacheManager;

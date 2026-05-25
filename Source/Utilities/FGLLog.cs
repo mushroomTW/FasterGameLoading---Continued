@@ -14,7 +14,10 @@ namespace FasterGameLoading
 
         public static void Message(string message)
         {
-            Log.Message(Prefix + message);
+            if (FasterGameLoadingSettings.VerboseLogging)
+            {
+                Log.Message(Prefix + message);
+            }
         }
 
         public static void Warning(string message)

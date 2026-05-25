@@ -14,7 +14,7 @@ namespace FasterGameLoading
     [HarmonyPatch(typeof(BuildableDef), "PostLoad")]
     public static class BuildableDef_PostLoad_Patch
     {
-        public static bool Prepare() => FasterGameLoadingSettings.DelayGraphicLoading;
+        public static bool Prepare() => false;
 
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> codeInstructions)
         {

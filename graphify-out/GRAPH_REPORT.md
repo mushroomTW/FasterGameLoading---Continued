@@ -1,16 +1,16 @@
 # Graph Report - FasterGameLoading---Continued  (2026-05-25)
 
 ## Corpus Check
-- 47 files · ~25,615 words
+- 48 files · ~25,576 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 657 nodes · 766 edges · 55 communities (41 shown, 14 thin omitted)
+- 662 nodes · 771 edges · 55 communities (40 shown, 15 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.86)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `29fbf6b7`
+- Built from commit: `3d66addc`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -87,7 +87,7 @@
 - `DelayedActions` --references--> `bool`  [EXTRACTED]
   Source/Delay graphic and icon loading/DelayedActions.cs → Delay graphic and icon loading/DelayedActions.cs
 
-## Communities (55 total, 14 thin omitted)
+## Communities (55 total, 15 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.02
@@ -102,8 +102,8 @@ Cohesion: 0.08
 Nodes (13): long, ConcurrentDictionary, Dictionary, object, string, ConcurrentDictionary, Dictionary, object (+5 more)
 
 ### Community 3 - "Community 3"
-Cohesion: 0.06
-Nodes (32): frameworks, restore, version, format, net472, framework, projectReferences, runtimeIdentifierGraphPath (+24 more)
+Cohesion: 0.05
+Nodes (45): frameworks, restore, version, Krafs.Publicizer, Krafs.Rimworld.Ref, Lib.Harmony, format, net472 (+37 more)
 
 ### Community 4 - "Community 4"
 Cohesion: 0.05
@@ -213,28 +213,24 @@ Nodes (3): Dictionary, FasterGameLoading, TextureResizer
 Cohesion: 0.50
 Nodes (3): string, FasterGameLoading, FGLConsts
 
-### Community 53 - "Community 53"
-Cohesion: 0.15
-Nodes (13): Krafs.Publicizer, Krafs.Rimworld.Ref, Lib.Harmony, include, suppressParent, target, version, target (+5 more)
-
 ### Community 54 - "Community 54"
 Cohesion: 0.33
 Nodes (4): EarlyLoadSkipList, FasterGameLoading, bool, HashSet
 
 ## Knowledge Gaps
-- **272 isolated node(s):** `FasterGameLoading`, `HashSet`, `bool`, `FasterGameLoading`, `FieldInfo` (+267 more)
+- **273 isolated node(s):** `FasterGameLoading`, `FasterGameLoading`, `HashSet`, `bool`, `FasterGameLoading` (+268 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **14 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **15 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `compile` connect `Community 0` to `Community 1`, `Community 38`?**
-  _High betweenness centrality (0.070) - this node is a cross-community bridge._
+  _High betweenness centrality (0.068) - this node is a cross-community bridge._
 - **Why does `Krafs.Rimworld.Ref/1.6.4633` connect `Community 1` to `Community 0`?**
   _High betweenness centrality (0.042) - this node is a cross-community bridge._
-- **What connects `FasterGameLoading`, `HashSet`, `bool` to the rest of the system?**
-  _272 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **What connects `FasterGameLoading`, `FasterGameLoading`, `HashSet` to the rest of the system?**
+  _273 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.018518518518518517 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
@@ -242,4 +238,4 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `Community 2` be split into smaller, more focused modules?**
   _Cohesion score 0.07826694619147449 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**
-  _Cohesion score 0.06417112299465241 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.045328399629972246 - nodes in this community are weakly interconnected._

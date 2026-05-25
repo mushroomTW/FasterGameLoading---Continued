@@ -43,7 +43,7 @@
       "label": "DocumentGroupContainers",
       "file_type": "code",
       "source_file": "Source/.vs/FasterGameLoading/v18/DocumentLayout.backup.json",
-      "source_location": "L14",
+      "source_location": "L5",
       "id": "v18_documentlayout_backup_documentgroupcontainers",
       "community": 32,
       "norm_label": "documentgroupcontainers"
@@ -92,6 +92,51 @@
       "id": "v18_documentlayout_documentgroupcontainers",
       "community": 33,
       "norm_label": "documentgroupcontainers"
+    },
+    {
+      "label": "BionicIconsBakePatch.cs",
+      "file_type": "code",
+      "source_file": "Source/Compatibility/BionicIconsBakePatch.cs",
+      "source_location": "L1",
+      "id": "source_compatibility_bioniciconsbakepatch_cs",
+      "community": 53,
+      "norm_label": "bioniciconsbakepatch.cs"
+    },
+    {
+      "label": "FasterGameLoading",
+      "file_type": "code",
+      "source_file": "Source/Compatibility/BionicIconsBakePatch.cs",
+      "source_location": "L5",
+      "id": "compatibility_bioniciconsbakepatch_fastergameloading",
+      "community": 53,
+      "norm_label": "fastergameloading"
+    },
+    {
+      "label": "BionicIconsBakePatch",
+      "file_type": "code",
+      "source_file": "Source/Compatibility/BionicIconsBakePatch.cs",
+      "source_location": "L11",
+      "id": "compatibility_bioniciconsbakepatch_bioniciconsbakepatch",
+      "community": 53,
+      "norm_label": "bioniciconsbakepatch"
+    },
+    {
+      "label": ".Prefix()",
+      "file_type": "code",
+      "source_file": "Source/Compatibility/BionicIconsBakePatch.cs",
+      "source_location": "L18",
+      "id": "compatibility_bioniciconsbakepatch_bioniciconsbakepatch_prefix",
+      "community": 53,
+      "norm_label": ".prefix()"
+    },
+    {
+      "label": ".IsBionicIconTexture()",
+      "file_type": "code",
+      "source_file": "Source/Compatibility/BionicIconsBakePatch.cs",
+      "source_location": "L31",
+      "id": "compatibility_bioniciconsbakepatch_bioniciconsbakepatch_isbionicicontexture",
+      "community": 53,
+      "norm_label": ".isbionicicontexture()"
     },
     {
       "label": "EarlyLoadSkipList.cs",
@@ -1692,7 +1737,7 @@
       "source_file": "Source/obj/FasterGameLoading.csproj.nuget.dgspec.json",
       "source_location": "L50",
       "id": "obj_fastergameloading_csproj_nuget_dgspec_net472_dependencies",
-      "community": 53,
+      "community": 3,
       "norm_label": "dependencies"
     },
     {
@@ -1701,7 +1746,7 @@
       "source_file": "Source/obj/FasterGameLoading.csproj.nuget.dgspec.json",
       "source_location": "L51",
       "id": "obj_fastergameloading_csproj_nuget_dgspec_dependencies_krafs_publicizer",
-      "community": 53,
+      "community": 3,
       "norm_label": "krafs.publicizer"
     },
     {
@@ -1710,7 +1755,7 @@
       "source_file": "Source/obj/FasterGameLoading.csproj.nuget.dgspec.json",
       "source_location": "L52",
       "id": "obj_fastergameloading_csproj_nuget_dgspec_krafs_publicizer_include",
-      "community": 53,
+      "community": 3,
       "norm_label": "include"
     },
     {
@@ -1719,7 +1764,7 @@
       "source_file": "Source/obj/FasterGameLoading.csproj.nuget.dgspec.json",
       "source_location": "L53",
       "id": "obj_fastergameloading_csproj_nuget_dgspec_krafs_publicizer_suppressparent",
-      "community": 53,
+      "community": 3,
       "norm_label": "suppressparent"
     },
     {
@@ -1728,7 +1773,7 @@
       "source_file": "Source/obj/FasterGameLoading.csproj.nuget.dgspec.json",
       "source_location": "L54",
       "id": "obj_fastergameloading_csproj_nuget_dgspec_krafs_publicizer_target",
-      "community": 53,
+      "community": 3,
       "norm_label": "target"
     },
     {
@@ -1737,7 +1782,7 @@
       "source_file": "Source/obj/FasterGameLoading.csproj.nuget.dgspec.json",
       "source_location": "L55",
       "id": "obj_fastergameloading_csproj_nuget_dgspec_krafs_publicizer_version",
-      "community": 53,
+      "community": 3,
       "norm_label": "version"
     },
     {
@@ -1746,7 +1791,7 @@
       "source_file": "Source/obj/FasterGameLoading.csproj.nuget.dgspec.json",
       "source_location": "L57",
       "id": "obj_fastergameloading_csproj_nuget_dgspec_dependencies_krafs_rimworld_ref",
-      "community": 53,
+      "community": 3,
       "norm_label": "krafs.rimworld.ref"
     },
     {
@@ -1755,7 +1800,7 @@
       "source_file": "Source/obj/FasterGameLoading.csproj.nuget.dgspec.json",
       "source_location": "L58",
       "id": "obj_fastergameloading_csproj_nuget_dgspec_krafs_rimworld_ref_target",
-      "community": 53,
+      "community": 3,
       "norm_label": "target"
     },
     {
@@ -1764,7 +1809,7 @@
       "source_file": "Source/obj/FasterGameLoading.csproj.nuget.dgspec.json",
       "source_location": "L59",
       "id": "obj_fastergameloading_csproj_nuget_dgspec_krafs_rimworld_ref_version",
-      "community": 53,
+      "community": 3,
       "norm_label": "version"
     },
     {
@@ -1773,7 +1818,7 @@
       "source_file": "Source/obj/FasterGameLoading.csproj.nuget.dgspec.json",
       "source_location": "L61",
       "id": "obj_fastergameloading_csproj_nuget_dgspec_dependencies_lib_harmony",
-      "community": 53,
+      "community": 3,
       "norm_label": "lib.harmony"
     },
     {
@@ -1782,7 +1827,7 @@
       "source_file": "Source/obj/FasterGameLoading.csproj.nuget.dgspec.json",
       "source_location": "L62",
       "id": "obj_fastergameloading_csproj_nuget_dgspec_lib_harmony_include",
-      "community": 53,
+      "community": 3,
       "norm_label": "include"
     },
     {
@@ -1791,7 +1836,7 @@
       "source_file": "Source/obj/FasterGameLoading.csproj.nuget.dgspec.json",
       "source_location": "L63",
       "id": "obj_fastergameloading_csproj_nuget_dgspec_lib_harmony_target",
-      "community": 53,
+      "community": 3,
       "norm_label": "target"
     },
     {
@@ -1800,7 +1845,7 @@
       "source_file": "Source/obj/FasterGameLoading.csproj.nuget.dgspec.json",
       "source_location": "L64",
       "id": "obj_fastergameloading_csproj_nuget_dgspec_lib_harmony_version",
-      "community": 53,
+      "community": 3,
       "norm_label": "version"
     },
     {
@@ -6129,6 +6174,57 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "Source/Compatibility/BionicIconsBakePatch.cs",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "source_compatibility_bioniciconsbakepatch_cs",
+      "target": "compatibility_bioniciconsbakepatch_fastergameloading",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Compatibility/BionicIconsBakePatch.cs",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "source_compatibility_bioniciconsbakepatch_cs",
+      "target": "compatibility_bioniciconsbakepatch_bioniciconsbakepatch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Compatibility/BionicIconsBakePatch.cs",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "compatibility_bioniciconsbakepatch_bioniciconsbakepatch",
+      "target": "compatibility_bioniciconsbakepatch_bioniciconsbakepatch_prefix",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Compatibility/BionicIconsBakePatch.cs",
+      "source_location": "L31",
+      "weight": 1.0,
+      "source": "compatibility_bioniciconsbakepatch_bioniciconsbakepatch",
+      "target": "compatibility_bioniciconsbakepatch_bioniciconsbakepatch_isbionicicontexture",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Compatibility/BionicIconsBakePatch.cs",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "compatibility_bioniciconsbakepatch_bioniciconsbakepatch_prefix",
+      "target": "compatibility_bioniciconsbakepatch_bioniciconsbakepatch_isbionicicontexture",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "Source/Compatibility/EarlyLoadSkipList.cs",
       "source_location": "L4",
       "weight": 1.0,
@@ -6164,9 +6260,9 @@
       "source_location": "L18",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "compatibility_earlyloadskiplist_earlyloadskiplist",
-      "target": "source_compatibility_earlyloadskiplist_cs_bool",
-      "confidence_score": 1.0
+      "target": "source_compatibility_earlyloadskiplist_cs_bool"
     },
     {
       "relation": "method",
@@ -11773,9 +11869,9 @@
       "source_location": "L23",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "texture_downscaler_textureresize_textureresize",
-      "target": "texturecachemanager",
-      "confidence_score": 1.0
+      "target": "texturecachemanager"
     },
     {
       "relation": "references",
@@ -11784,9 +11880,9 @@
       "source_location": "L24",
       "weight": 1.0,
       "context": "field",
+      "confidence_score": 1.0,
       "source": "texture_downscaler_textureresize_textureresize",
-      "target": "texturescanner",
-      "confidence_score": 1.0
+      "target": "texturescanner"
     },
     {
       "relation": "references",
@@ -13814,5 +13910,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "29fbf6b78cf61d2bd6f593262894541dc34d4e1c"
+  "built_at_commit": "3d66addc6e4aa168b3a9e62d4bbbbb91f11483c0"
 }

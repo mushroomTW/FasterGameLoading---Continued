@@ -38,14 +38,26 @@ namespace FasterGameLoading
         /// <summary>XPath 快取（預設開啟）</summary>
         public static bool XPathCaching = true;
 
+        /// <summary>依需求延遲加載材質（預設關閉）</summary>
+        public static bool LazyTextureLoading = false;
+
+
+        private static Vector2 scrollPosition = Vector2.zero;
+        private static float viewHeight = 0f;
+
         public static void DoSettingsWindowContents(Rect inRect)
         {
+            Rect viewRect = new Rect(0f, 0f, inRect.width - 18f, Mathf.Max(viewHeight, inRect.height));
+            Widgets.BeginScrollView(inRect, ref scrollPosition, viewRect);
+
             var ls = new Listing_Standard();
-            ls.Begin(inRect);
+            ls.Begin(viewRect);
             ls.CheckboxLabeled("FGL_EarlyModContentLoading".Translate(), ref earlyModContentLoading);
             ls.CheckboxLabeled("FGL_EnableMultiThreading".Translate(), ref EnableMultiThreading);
             ls.CheckboxLabeled("FGL_XPathCaching".Translate(), ref XPathCaching);
+            ls.CheckboxLabeled("FGL_LazyTextureLoading".Translate(), ref LazyTextureLoading);
             ls.CheckboxLabeled("FGL_DelayGraphicLoading".Translate(), ref DelayGraphicLoading);
+
             ls.CheckboxLabeled("FGL_StaticAtlasesBaking".Translate(), ref StaticAtlasesBaking);
             ls.CheckboxLabeled("FGL_AtlasCaching".Translate(), ref AtlasCaching);
             ls.CheckboxLabeled("FGL_VerboseLogging".Translate(), ref VerboseLogging);
@@ -95,6 +107,8 @@ namespace FasterGameLoading
             }
 
             ls.End();
+            viewHeight = ls.CurHeight + 20f;
+            Widgets.EndScrollView();
         }
 
         public override void ExposeData()
@@ -108,7 +122,9 @@ namespace FasterGameLoading
             Scribe_Values.Look(ref earlyModContentLoading, "earlyModContentLoading", true);
             Scribe_Values.Look(ref EnableMultiThreading, "enableMultiThreading", true);
             Scribe_Values.Look(ref XPathCaching, "XPathCaching", true);
+            Scribe_Values.Look(ref LazyTextureLoading, "lazyTextureLoading", false);
             Scribe_Values.Look(ref VerboseLogging, "verboseLogging", false);
+
 
             // 紋理快取
             var cacheManager = FasterGameLoadingMod.Instance?.CacheManager;

@@ -48,7 +48,7 @@ namespace FasterGameLoading
         // ── 提早載入狀態 ──
         private Stopwatch stopwatch = new();
         private Queue<ModContentPack> pendingEarlyLoads;
-        private bool earlyLoadingComplete;
+        public bool earlyLoadingComplete;
         private int consecutiveTimeouts;
         private const int TIMEOUT_THRESHOLD = 3;
         private int skipFrames;

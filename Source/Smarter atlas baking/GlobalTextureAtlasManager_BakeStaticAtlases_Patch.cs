@@ -14,6 +14,15 @@ namespace FasterGameLoading
     {
         public static bool Prefix()
         {
+            // 沒有啟用延遲圖形載入時，不需要阻擋烘焙流程
+            if (!FasterGameLoadingSettings.DelayGraphicLoading)
+            {
+                // 但仍可啟用自適應烘焙
+                if (!FasterGameLoadingSettings.StaticAtlasesBaking)
+                    return true;
+                return DelayedActions.AdaptiveStaticAtlasBakeFailed;
+            }
+
             if (!DelayedActions.AllDeferredVisualsLoaded)
             {
                 return false;

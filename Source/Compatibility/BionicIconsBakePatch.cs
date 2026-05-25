@@ -11,6 +11,8 @@ namespace FasterGameLoading
     [HarmonyPatch(typeof(GlobalTextureAtlasManager), "TryInsertStatic")]
     public static class BionicIconsBakePatch
     {
+        public static bool Prepare() => EarlyLoadSkipList.IsBionicIconsActive;
+
         /// <summary>
         /// 在將主紋理與遮罩紋理寫入靜態圖集前進行攔截。
         /// 如果該紋理在 ModContentLoader 載入快取中的硬碟路徑包含 "bionicicons"，則回傳 false 跳過原方法。

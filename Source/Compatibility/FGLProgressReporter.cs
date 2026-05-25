@@ -67,6 +67,13 @@ namespace FasterGameLoading
             if (!__result) return;          // 原本就 false → 不用改
             if (PauseField == null) return;  // 找不到 flag → 安全跳過
 
+            // 如果沒有啟用提早載入，或者提早載入已經完成，則不修改 __result，讓進度條可以消失。
+            if (!FasterGameLoadingSettings.earlyModContentLoading) return;
+            if (FasterGameLoadingMod.delayedActions != null && FasterGameLoadingMod.delayedActions.earlyLoadingComplete)
+            {
+                return;
+            }
+
             try
             {
                 var isPaused = (bool)(PauseField.GetValue(null) ?? false);

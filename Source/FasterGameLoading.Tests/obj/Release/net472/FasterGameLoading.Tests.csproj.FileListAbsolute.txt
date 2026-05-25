@@ -18,3 +18,4 @@ C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---
 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Source\FasterGameLoading.Tests\obj\Release\net472\FasterGa.57984063.Up2Date
 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Source\FasterGameLoading.Tests\obj\Release\net472\FasterGameLoading.Tests.dll
 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Source\FasterGameLoading.Tests\obj\Release\net472\FasterGameLoading.Tests.pdb
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Source\FasterGameLoading.Tests\bin\Release\net472\0Harmony.dll

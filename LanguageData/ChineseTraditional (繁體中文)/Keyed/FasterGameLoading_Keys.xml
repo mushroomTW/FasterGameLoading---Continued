@@ -8,6 +8,7 @@
     <FGL_StaticAtlasesBaking>更聰明的圖集烘焙（需要重新啟動）</FGL_StaticAtlasesBaking>
     <FGL_AtlasCaching>靜態圖集快取（需要重新啟動）</FGL_AtlasCaching>
     <FGL_EnableMultiThreading>啟用多執行緒預載入（需要重新啟動）</FGL_EnableMultiThreading>
+    <FGL_XPathCaching>XPath 快取（需要重新啟動）</FGL_XPathCaching>
     <FGL_ClearAtlasCache>清除圖集快取</FGL_ClearAtlasCache>
     <FGL_ClearAtlasCacheConfirmation>是否清除已快取的靜態圖集？</FGL_ClearAtlasCacheConfirmation>
     <FGL_VerboseLogging>啟用詳細日誌（輸出偵錯訊息至控制台）</FGL_VerboseLogging>

@@ -37,12 +37,10 @@ namespace FasterGameLoading
             // 註冊執行個體層級的快取清理（在語言切換時由 CacheResetter.ResetAll() 觸發）
             CacheResetter.Register(() =>
             {
-                if (delayedActions != null)
+                if (delayedActions) // 利用 Unity Object 的隱式 bool 轉型檢查，防範 GameObject 銷毀時的異常
                 {
                     delayedActions.StopAllCoroutines();
-                    delayedActions.graphicsToLoad.Clear();
-                    delayedActions.iconsToLoad.Clear();
-                    delayedActions.subSoundDefToResolve.Clear();
+                    delayedActions.ClearQueues();
                     delayedActions.ResetEarlyLoading();
                 }
                 try
@@ -55,7 +53,28 @@ namespace FasterGameLoading
                     // Patch category "SoundStarter" hasn't been registered yet or was already unpatched — skip silently
                 }
             });
+
+            // 啟動異步 XML 檔案變更掃描，比對是否需要清除 XPath 快取
+            try
+            {
+                var thirdPartyModPaths = new System.Collections.Generic.List<string>();
+                foreach (var m in ModsConfig.ActiveModsInLoadOrder)
+                {
+                    if (m != null && !m.Official && m.RootDir != null)
+                    {
+                        thirdPartyModPaths.Add(m.RootDir.FullName);
+                    }
+                }
+                System.Threading.Tasks.Task.Run(() => XmlChangeDetector.ScanXmlFilesAsync(thirdPartyModPaths));
+            }
+            catch (System.Exception ex)
+            {
+                FGLLog.Warning("Failed to start asynchronous XML file scan: " + ex.Message);
+                // 萬一出錯，確保快取攔截功能不會被永久關閉
+                XmlNode_SelectSingleNode_Patch.isXmlScanComplete = true;
+            }
         }
+
 
         public override string SettingsCategory()
         {

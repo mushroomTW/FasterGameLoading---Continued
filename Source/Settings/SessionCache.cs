@@ -37,6 +37,12 @@ namespace FasterGameLoading
         internal static Dictionary<string, bool> xmlPathsSinceLastSession = new();
 
         /// <summary>
+        /// 上一次 session 中所有第三方 Mod 的 XML 檔案的累積雜湊值。
+        /// </summary>
+        internal static long xmlCombinedHashSinceLastSession = 0;
+
+
+        /// <summary>
         /// 歷次靜態圖集烘焙速度記錄（用於自適應批次調整）。
         /// </summary>
         internal static List<float> historicalBakeSpeeds = new();
@@ -88,8 +94,10 @@ namespace FasterGameLoading
             Scribe_Collections.Look(ref loadedTexturesSinceLastSession, FGLConsts.LoadedTexturesKey, LookMode.Value, LookMode.Value);
             Scribe_Collections.Look(ref loadedTypesByFullNameSinceLastSession, FGLConsts.LoadedTypesKey, LookMode.Value, LookMode.Value);
             Scribe_Collections.Look(ref xmlPathsSinceLastSession, FGLConsts.XmlPathsKey, LookMode.Value, LookMode.Value);
+            Scribe_Values.Look(ref xmlCombinedHashSinceLastSession, "FGL_XmlCombinedHash", 0L);
             Scribe_Collections.Look(ref modsInLastSession, FGLConsts.ModsInLastSessionKey, LookMode.Value);
             Scribe_Collections.Look(ref historicalBakeSpeeds, FGLConsts.HistoricalBakeSpeedsKey, LookMode.Value);
+
 
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {

@@ -17,6 +17,7 @@ Sick of staring at the loading screen every time you start RimWorld? This mod cu
 --- What it does ---
 
 - Early mod content loading: Starts loading mod content earlier, during moments the game would otherwise sit idle. (enabled by default)
+- XPath cache: Caches XML queries during load and safely releases it on main menu initialization to prevent runtime conflicts and free up memory. (enabled by default)
 - Delay graphic and icon loading: Delay loading non-essential textures (like background objects) until after you enter a game — weapons, clothing, food, pawns, and furniture are always loaded right away so nothing looks broken. (disabled by default)
 - Smarter atlas baking: Automatically adjusts batch sizes based on your GPU speed to reduce loading hitches. (enabled by default)
 - Texture downscaler: Reduces the file size of high-resolution textures to save VRAM and speed up loading. Your original mod files are never touched, downscaled copies are stored in a separate folder, and you can delete them anytime to go back to full quality. (disabled by default)
@@ -27,7 +28,7 @@ Sick of staring at the loading screen every time you start RimWorld? This mod cu
 - The game may briefly freeze or feel unresponsive during startup. This is normal — the mod is doing work in the background.
 - It may take a while to get any sound after entering the main menu, which is normal.
 - When first entering a game with delayed texture loading enabled, some objects may briefly show as pink/grey placeholders. They fill in within a few seconds.
-- If you are using image conversion tools like Image Opt or RimSort(Optimize Texture), this mod's texture downscaler will not work (Converting to DDS is actually more efficient and has higher resolution than directly downscaled images, so it is recommended to use the texture downscaler only when you cannot use such tools)
+- If you are using image conversion tools like Image Opt or RimSort (Optimize Texture), this mod's texture downscaler will not work. (Converting to DDS is actually more efficient and has higher quality than directly downscaled images, so it is recommended to use the texture downscaler only when you cannot use such tools)
 
 --- Works well with ---
 
@@ -48,6 +49,7 @@ Original mod by Taranchuk. This is a maintained fork with bug fixes and improvem
 --- 功能說明 ---
 
 - 提早載入模組內容：在遊戲啟動的空閒時間提前載入模組內容，減少等待。（預設開啟）
+- XPath 快取：在載入時快取 XML 查詢，進入主畫面後徹底釋放記憶體，並防止執行期動態查詢產生的相容性衝突。（預設開啟）
 - 延遲圖形和圖示載入：延遲載入非必要貼圖（例如背景物件裝飾），等進入遊戲後才處理。武器、服裝、食物、人物、傢俱等必要物品仍會立即載入，不會出現問題。（預設關閉）
 - 更聰明的圖集烘焙：根據你的 GPU 速度自動調整每批次處理量，減少載入卡頓。（預設開啟）
 - 縮小紋理工具：可縮小高畫質貼圖來節省顯示記憶體與載入時間。原始模組檔案不會被動到，縮小版本存在獨立資料夾，隨時刪除即可還原原始品質。（預設關閉）
@@ -58,17 +60,17 @@ Original mod by Taranchuk. This is a maintained fork with bug fixes and improvem
 - 啟動期間遊戲可能短暫無回應，這是正常現象，模組正在背景運作。
 - 進入主畫面後會有一小段時間沒有聲音，屬於正常現象。
 - 開啟延遲貼圖載入後，剛進入遊戲時部分物件可能短暫顯示為粉紅色或灰色佔位圖，幾秒後會自動補齊。
-- 如果有使用Image Opt或RimSort的Optimize Texture等圖片轉化工具，本模組的貼圖降解析度工具是無效的(轉換成dds實際上比直接降解析度更有效率且解析度更高，所以建議只有在無法使用此類工具時使用貼圖降解析度工具)
+- 如果有使用Image Opt或RimSort的Optimize Texture等圖片轉化工具，本模組的貼圖降解析度工具是無效的（轉換成 DDS 實際上比直接降解析度更有效率且品質更高，所以建議只有在無法使用此類工具時使用貼圖降解析度工具）。
 
---- 推薦搭配使用 ---
+--- 推薦搭配與相容性 ---
 
 - Loading Progress
-- Missile Girl - Performance Mod 或 DefLoadCache (二選一)
+- Missile Girl - Performance Mod 或 DefLoadCache（二選一）
 - Image Opt
 
 --- 模組越多效果越明顯，對遊戲內容與存檔零影響。---
 
-原作者：Taranchuk。此為持續維護的分支版本，包含錯誤修復與功能改進。
+原作者：Taranchuk。此為持續維護的分支版本，包含錯誤修復與相容性功能改進。
   </description>
   <loadBefore>
     <li>Ludeon.RimWorld</li>

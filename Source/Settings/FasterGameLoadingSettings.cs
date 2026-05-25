@@ -35,12 +35,16 @@ namespace FasterGameLoading
         /// <summary>啟用多執行緒預載入（預設開啟）</summary>
         public static bool EnableMultiThreading = true;
 
+        /// <summary>XPath 快取（預設開啟）</summary>
+        public static bool XPathCaching = true;
+
         public static void DoSettingsWindowContents(Rect inRect)
         {
             var ls = new Listing_Standard();
             ls.Begin(inRect);
             ls.CheckboxLabeled("FGL_EarlyModContentLoading".Translate(), ref earlyModContentLoading);
             ls.CheckboxLabeled("FGL_EnableMultiThreading".Translate(), ref EnableMultiThreading);
+            ls.CheckboxLabeled("FGL_XPathCaching".Translate(), ref XPathCaching);
             ls.CheckboxLabeled("FGL_DelayGraphicLoading".Translate(), ref DelayGraphicLoading);
             ls.CheckboxLabeled("FGL_StaticAtlasesBaking".Translate(), ref StaticAtlasesBaking);
             ls.CheckboxLabeled("FGL_AtlasCaching".Translate(), ref AtlasCaching);
@@ -103,6 +107,7 @@ namespace FasterGameLoading
             Scribe_Values.Look(ref DelayGraphicLoading, "delayGraphicLoading", false);
             Scribe_Values.Look(ref earlyModContentLoading, "earlyModContentLoading", true);
             Scribe_Values.Look(ref EnableMultiThreading, "enableMultiThreading", true);
+            Scribe_Values.Look(ref XPathCaching, "XPathCaching", true);
             Scribe_Values.Look(ref VerboseLogging, "verboseLogging", false);
 
             // 紋理快取

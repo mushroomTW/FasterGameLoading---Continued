@@ -8,6 +8,7 @@
     <FGL_StaticAtlasesBaking>Умное запекание атласов (требует перезапуска)</FGL_StaticAtlasesBaking>
     <FGL_AtlasCaching>Статические атласы кэш (требует перезапуска)</FGL_AtlasCaching>
     <FGL_EnableMultiThreading>Включить многопоточную предварительную загрузку (требует перезапуска)</FGL_EnableMultiThreading>
+    <FGL_XPathCaching>Кэширование XPath (требует перезапуска)</FGL_XPathCaching>
     <FGL_ClearAtlasCache>Очистить кэш атласов</FGL_ClearAtlasCache>
     <FGL_ClearAtlasCacheConfirmation>Очистить кэш статических атласов?</FGL_ClearAtlasCacheConfirmation>
 

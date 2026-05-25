@@ -125,7 +125,7 @@
           }
         },
         "runtime": {
-          "lib/net472/_._": {
+          "lib/net472/0Harmony.dll": {
             "related": ".pdb;.xml"
           }
         }
@@ -524,6 +524,7 @@
   "projectFileDependencyGroups": {
     "net472": [
       "FasterGameLoading >= 1.0.0",
+      "Lib.Harmony >= 2.*",
       "Microsoft.NET.Test.Sdk >= 17.5.0",
       "NUnit >= 3.13.3",
       "NUnit3TestAdapter >= 4.4.2"
@@ -580,6 +581,10 @@
         "framework": "net472",
         "targetAlias": "net472",
         "dependencies": {
+          "Lib.Harmony": {
+            "target": "Package",
+            "version": "[2.*, )"
+          },
           "Microsoft.NET.Test.Sdk": {
             "target": "Package",
             "version": "[17.5.0, )"

@@ -116,6 +116,10 @@
           "framework": "net472",
           "targetAlias": "net472",
           "dependencies": {
+            "Lib.Harmony": {
+              "target": "Package",
+              "version": "[2.*, )"
+            },
             "Microsoft.NET.Test.Sdk": {
               "target": "Package",
               "version": "[17.5.0, )"

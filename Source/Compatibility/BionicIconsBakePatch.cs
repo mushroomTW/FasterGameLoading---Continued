@@ -33,20 +33,7 @@ namespace FasterGameLoading
         private static bool IsBionicIconTexture(Texture2D texture)
         {
             if (texture == null) return false;
-
-            // 遍歷本 session 中所有載入的紋理 WeakReference 快取
-            foreach (var kvp in ModContentLoaderTexture2D_LoadTexture_Patch.savedTextures)
-            {
-                // 檢查硬碟完整路徑中是否含有 "bionicicons" 關鍵字
-                if (kvp.Key.IndexOf("bionicicons", System.StringComparison.OrdinalIgnoreCase) >= 0)
-                {
-                    if (kvp.Value.TryGetTarget(out var savedTex) && savedTex == texture)
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
+            return ModContentLoaderTexture2D_LoadTexture_Patch.bionicIconTextures.ContainsKey(texture);
         }
     }
 }

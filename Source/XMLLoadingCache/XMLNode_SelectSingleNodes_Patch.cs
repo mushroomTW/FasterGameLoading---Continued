@@ -34,15 +34,12 @@ namespace FasterGameLoading
 
             Startup.RegisterOnStartupCompleted(() =>
             {
-                lock (SessionCache.xmlPathsLock)
+                SessionCache.xmlPathsSinceLastSession.Clear();
+                foreach (var kvp in xmlPathsThisSession)
                 {
-                    SessionCache.xmlPathsSinceLastSession.Clear();
-                    foreach (var kvp in xmlPathsThisSession)
+                    if (!kvp.Value)
                     {
-                        if (!kvp.Value)
-                        {
-                            SessionCache.xmlPathsSinceLastSession.Add(kvp.Key);
-                        }
+                        SessionCache.xmlPathsSinceLastSession.TryAdd(kvp.Key, 0);
                     }
                 }
                 DisableAndClear();
@@ -54,10 +51,7 @@ namespace FasterGameLoading
             patchEnabled = false;
             isXmlScanComplete = false;
             xmlPathsThisSession.Clear();
-            lock (SessionCache.xmlPathsLock)
-            {
-                SessionCache.xmlPathsSinceLastSession.Clear();
-            }
+            SessionCache.xmlPathsSinceLastSession.Clear();
         }
 
         public static bool Prefix(string xpath, ref XmlNode __result)
@@ -67,11 +61,7 @@ namespace FasterGameLoading
                 return true;
             }
 
-            bool found = false;
-            lock (SessionCache.xmlPathsLock)
-            {
-                found = SessionCache.xmlPathsSinceLastSession.Contains(xpath);
-            }
+            bool found = SessionCache.xmlPathsSinceLastSession.ContainsKey(xpath);
 
             if (found)
             {

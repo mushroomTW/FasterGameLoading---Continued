@@ -16,13 +16,7 @@ namespace FasterGameLoading
         public static bool Prefix(ref Type __result, out (bool isCached, string originalName) __state, ref string name)
         {
             var oldName = name;
-            string fullName = null;
-            bool found = false;
-            lock (SessionCache.loadedTypesLock)
-            {
-                found = SessionCache.loadedTypesByFullNameSinceLastSession.TryGetValue(name, out fullName);
-            }
-            if (found)
+            if (SessionCache.loadedTypesByFullNameSinceLastSession.TryGetValue(name, out var fullName))
             {
                 name = fullName;
             }
@@ -46,10 +40,7 @@ namespace FasterGameLoading
                 GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults[__state.originalName] = __result;
                 if (__result != null && __result.FullName != __state.originalName)
                 {
-                    lock (SessionCache.loadedTypesLock)
-                    {
-                        SessionCache.loadedTypesByFullNameSinceLastSession[__state.originalName] = __result.FullName;
-                    }
+                    SessionCache.loadedTypesByFullNameSinceLastSession[__state.originalName] = __result.FullName;
                     GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults[__result.FullName] = __result;
                 }
             }

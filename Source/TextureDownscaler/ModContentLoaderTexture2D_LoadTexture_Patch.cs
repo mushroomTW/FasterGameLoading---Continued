@@ -75,7 +75,9 @@ namespace FasterGameLoading
             {
                 try
                 {
-                    var semaphore = new SemaphoreSlim(4); // 限制 4 個並行 I/O 執行緒
+                    // 延遲 150ms 啟動，避免與啟動時最密集的 XML/Def I/O 爭奪頻寬
+                    System.Threading.Thread.Sleep(150);
+                    var semaphore = new SemaphoreSlim(2); // 限制 2 個並行 I/O 執行緒，防止硬碟頻寬飽和
                     Parallel.ForEach(cacheCopy.Values, cachePath =>
                     {
                         if (string.IsNullOrEmpty(cachePath)) return;

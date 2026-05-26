@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -24,8 +25,7 @@ namespace FasterGameLoading
         /// <summary>
         /// 上一次 session 中所有已查詢的完整型別名稱映射。
         /// </summary>
-        internal static Dictionary<string, string> loadedTypesByFullNameSinceLastSession = new();
-        internal static readonly object loadedTypesLock = new();
+        internal static ConcurrentDictionary<string, string> loadedTypesByFullNameSinceLastSession = new();
 
         /// <summary>
         /// 上一次 session 中啟用的 mod 列表（packageIdLowerCase）。
@@ -41,8 +41,7 @@ namespace FasterGameLoading
         /// <summary>
         /// 上一次 session 中所有 XPath 查詢結果（僅存缺失的 XPath 查詢）。
         /// </summary>
-        internal static HashSet<string> xmlPathsSinceLastSession = new();
-        internal static readonly object xmlPathsLock = new();
+        internal static ConcurrentDictionary<string, byte> xmlPathsSinceLastSession = new();
 
         /// <summary>
         /// 上一次 session 中所有第三方 Mod 的 XML 檔案的累積雜湊值。
@@ -80,38 +79,28 @@ namespace FasterGameLoading
         }
 
         /// <summary>
-        /// 根據 packageId 取得對應 of ModContentPack（含快取）。
-        /// </summary>
-        internal static ModContentPack GetModContent(string packageId)
-        {
-            var packageLower = packageId.ToLower();
-            if (!modsByPackageIds.TryGetValue(packageLower, out var mod))
-            {
-                modsByPackageIds[packageLower] = mod = LoadedModManager.RunningModsListForReading.FirstOrDefault(x =>
-                    x.PackageIdPlayerFacing.ToLower() == packageLower);
-            }
-            return mod;
-        }
-
-        /// <summary>
+        /// 根據 packageId 取得        /// <summary>
         /// 由 FasterGameLoadingSettings.ExposeData() 委派呼叫，
         /// 處理所有跨 session 快取資料的序列化。
         /// </summary>
         internal static void ExposeData()
         {
             Scribe_Collections.Look(ref loadedTexturesSinceLastSession, FGLConsts.LoadedTexturesKey, LookMode.Value, LookMode.Value);
-            Scribe_Collections.Look(ref loadedTypesByFullNameSinceLastSession, FGLConsts.LoadedTypesKey, LookMode.Value, LookMode.Value);
+
+            Dictionary<string, string> tempTypes = null;
+            if (Scribe.mode == LoadSaveMode.Saving)
+            {
+                tempTypes = new Dictionary<string, string>(loadedTypesByFullNameSinceLastSession);
+            }
+            Scribe_Collections.Look(ref tempTypes, FGLConsts.LoadedTypesKey, LookMode.Value, LookMode.Value);
 
             Dictionary<string, bool> tempXmlPaths = null;
             if (Scribe.mode == LoadSaveMode.Saving)
             {
                 tempXmlPaths = new Dictionary<string, bool>();
-                lock (xmlPathsLock)
+                foreach (var kvp in xmlPathsSinceLastSession)
                 {
-                    foreach (var path in xmlPathsSinceLastSession)
-                    {
-                        tempXmlPaths[path] = false;
-                    }
+                    tempXmlPaths[kvp.Key] = false;
                 }
             }
             Scribe_Collections.Look(ref tempXmlPaths, FGLConsts.XmlPathsKey, LookMode.Value, LookMode.Value);
@@ -125,22 +114,26 @@ namespace FasterGameLoading
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
                 loadedTexturesSinceLastSession ??= new Dictionary<string, string>();
-                loadedTypesByFullNameSinceLastSession ??= new Dictionary<string, string>();
-                lock (xmlPathsLock)
+                
+                if (tempTypes != null)
                 {
-                    xmlPathsSinceLastSession ??= new HashSet<string>();
-                    if (tempXmlPaths != null)
+                    loadedTypesByFullNameSinceLastSession = new ConcurrentDictionary<string, string>(tempTypes);
+                }
+                loadedTypesByFullNameSinceLastSession ??= new ConcurrentDictionary<string, string>();
+
+                xmlPathsSinceLastSession ??= new ConcurrentDictionary<string, byte>();
+                if (tempXmlPaths != null)
+                {
+                    xmlPathsSinceLastSession.Clear();
+                    foreach (var kvp in tempXmlPaths)
                     {
-                        xmlPathsSinceLastSession.Clear();
-                        foreach (var kvp in tempXmlPaths)
+                        if (!kvp.Value)
                         {
-                            if (!kvp.Value)
-                            {
-                                xmlPathsSinceLastSession.Add(kvp.Key);
-                            }
+                            xmlPathsSinceLastSession.TryAdd(kvp.Key, 0);
                         }
                     }
                 }
+                
                 modsInLastSession ??= new List<string>();
                 historicalBakeSpeeds ??= new List<float>();
                 lock (patchedAssembliesLock)
@@ -173,14 +166,8 @@ namespace FasterGameLoading
                     {
                         loadedTexturesSinceLastSession.Clear();
                     }
-                    lock (loadedTypesLock)
-                    {
-                        loadedTypesByFullNameSinceLastSession.Clear();
-                    }
-                    lock (xmlPathsLock)
-                    {
-                        xmlPathsSinceLastSession.Clear();
-                    }
+                    loadedTypesByFullNameSinceLastSession.Clear();
+                    xmlPathsSinceLastSession.Clear();
                     lock (patchedAssembliesLock)
                     {
                         patchedAssembliesLastSession.Clear();

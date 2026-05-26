@@ -58,10 +58,7 @@ namespace FasterGameLoading
                 if (SessionCache.xmlCombinedHashSinceLastSession != combinedHash)
                 {
                     // 雜湊不一致，說明玩家修改了 XML，失效 XPath 查詢快取
-                    lock (SessionCache.xmlPathsLock)
-                    {
-                        SessionCache.xmlPathsSinceLastSession.Clear();
-                    }
+                    SessionCache.xmlPathsSinceLastSession.Clear();
                     SessionCache.xmlCombinedHashSinceLastSession = combinedHash;
 
                     // 設置旗標，通知主執行緒在 LateUpdate 中儲存更新後的雜湊值

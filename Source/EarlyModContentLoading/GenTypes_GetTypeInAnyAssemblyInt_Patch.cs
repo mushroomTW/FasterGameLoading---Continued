@@ -23,7 +23,10 @@ namespace FasterGameLoading
 
             Startup.RegisterOnStartupCompleted(() =>
             {
-                SessionCache.loadedTypesByFullNameSinceLastSession = new System.Collections.Generic.Dictionary<string, string>(loadedTypesThisSession);
+                lock (SessionCache.loadedTypesLock)
+                {
+                    SessionCache.loadedTypesByFullNameSinceLastSession = new System.Collections.Generic.Dictionary<string, string>(loadedTypesThisSession);
+                }
             });
         }
 
@@ -44,7 +47,13 @@ namespace FasterGameLoading
             else
             {
                 __state = (typeName, false);
-                if (SessionCache.loadedTypesByFullNameSinceLastSession.TryGetValue(typeName, out var fullName))
+                string fullName = null;
+                bool found = false;
+                lock (SessionCache.loadedTypesLock)
+                {
+                    found = SessionCache.loadedTypesByFullNameSinceLastSession.TryGetValue(typeName, out fullName);
+                }
+                if (found)
                 {
                     typeName = fullName;
                 }

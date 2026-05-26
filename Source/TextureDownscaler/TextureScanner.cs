@@ -18,8 +18,6 @@ namespace FasterGameLoading
         internal readonly Dictionary<Texture, string> texturesByPaths = new();
         /// <summary>紋理 → (Def, 路徑) 的對照表。</summary>
         internal readonly Dictionary<Texture, KeyValuePair<BuildableDef, string>> texturesByDefs = new();
-        /// <summary>紋理 → 來源 Mod 的對照表。</summary>
-        internal readonly Dictionary<Texture, ModContentPack> texturesByMods = new();
 
         /// <summary>
         /// 掃描所有已載入的紋理，按類型分類並建立對照表。
@@ -29,7 +27,6 @@ namespace FasterGameLoading
         {
             InitializeScanContainers();
             RefreshTexturePathMap();
-            BuildModTextureMap();
             ScanPawnTextures();
             ScanStyleTextures();
             ScanBuildableTextures();
@@ -43,16 +40,7 @@ namespace FasterGameLoading
             }
         }
 
-        private void BuildModTextureMap()
-        {
-            foreach (var mod in LoadedModManager.RunningMods)
-            {
-                foreach (var texture in mod.textures.contentList.Values)
-                {
-                    texturesByMods[texture] = mod;
-                }
-            }
-        }
+
 
         /// <summary>掃描所有 PawnKindDef 的種族紋理與生命階段圖形。</summary>
         private void ScanPawnTextures()
@@ -279,7 +267,6 @@ namespace FasterGameLoading
         {
             texturesByPaths.Clear();
             texturesByDefs.Clear();
-            texturesByMods.Clear();
             foreach (var value in textures.Values) { value.Clear(); }
         }
     }

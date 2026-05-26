@@ -4,6 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 using Verse;
 
@@ -18,6 +19,8 @@ namespace FasterGameLoading
     {
         /// <summary>本次 session 中所有已載入的紋理路徑映射。</summary>
         public static ConcurrentDictionary<string, string> loadedTexturesThisSession = new ConcurrentDictionary<string, string>();
+        /// <summary>已非同步預載入至記憶體的降質快取紋理位元組數據。</summary>
+        public static readonly ConcurrentDictionary<string, byte[]> preloadedCacheBytes = new ConcurrentDictionary<string, byte[]>();
         /// <summary>以 WeakReference 快取已載入的 Texture2D，鍵為完整檔案路徑。</summary>
         public static ConcurrentDictionary<string, System.WeakReference<Texture2D>> savedTextures = new ConcurrentDictionary<string, System.WeakReference<Texture2D>>();
         /// <summary>Bionic Icons 的紋理快取，用於 O(1) 快速查詢。</summary>
@@ -34,6 +37,7 @@ namespace FasterGameLoading
                 savedTextures.Clear();
                 loadedTexturesThisSession.Clear();
                 bionicIconTextures.Clear();
+                preloadedCacheBytes.Clear();
             });
 
             Startup.RegisterOnStartupCompleted(() =>
@@ -46,6 +50,57 @@ namespace FasterGameLoading
                     FGLLog.Message("Texture downscale cache hits: " + cacheLoadHits
                         + ", failures: " + cacheLoadFailures
                         + ", configured entries: " + FasterGameLoadingMod.Instance.CacheManager.CacheCount);
+                }
+            });
+        }
+
+        /// <summary>
+        /// 背景異步預讀所有降質紋理快取到記憶體中，以防止主執行緒在載入紋理時阻塞 I/O。
+        /// </summary>
+        public static void StartPreloadCachedTextures()
+        {
+            preloadedCacheBytes.Clear();
+            var cacheManager = FasterGameLoadingMod.Instance?.CacheManager;
+            if (cacheManager == null) return;
+
+            System.Collections.Generic.Dictionary<string, string> cacheCopy;
+            lock (cacheManager.resizedTextureCache)
+            {
+                cacheCopy = new System.Collections.Generic.Dictionary<string, string>(cacheManager.resizedTextureCache);
+            }
+
+            if (cacheCopy.Count == 0) return;
+
+            Task.Run(() =>
+            {
+                try
+                {
+                    var semaphore = new SemaphoreSlim(4); // 限制 4 個並行 I/O 執行緒
+                    Parallel.ForEach(cacheCopy.Values, cachePath =>
+                    {
+                        if (string.IsNullOrEmpty(cachePath)) return;
+                        semaphore.Wait();
+                        try
+                        {
+                            if (File.Exists(cachePath))
+                            {
+                                var bytes = File.ReadAllBytes(cachePath);
+                                preloadedCacheBytes[cachePath] = bytes;
+                            }
+                        }
+                        catch
+                        {
+                            // 忽略個別快取讀取錯誤
+                        }
+                        finally
+                        {
+                            semaphore.Release();
+                        }
+                    });
+                }
+                catch (Exception ex)
+                {
+                    FGLLog.Warning("Error preloading cached textures: " + ex.Message);
                 }
             });
         }
@@ -100,7 +155,11 @@ namespace FasterGameLoading
             {
                 try
                 {
-                    var data = File.ReadAllBytes(cachePath);
+                    byte[] data;
+                    if (!preloadedCacheBytes.TryRemove(cachePath, out data))
+                    {
+                        data = File.ReadAllBytes(cachePath);
+                    }
                     bool useMipmaps = !fullPath.NormalizePath().Contains(FGLConsts.UIDirSlash);
                     var tex = new Texture2D(2, 2, TextureFormat.RGBA32, useMipmaps);
                     var textureAccepted = false;

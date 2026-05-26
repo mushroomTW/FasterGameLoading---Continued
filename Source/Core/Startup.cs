@@ -45,6 +45,38 @@ namespace FasterGameLoading
             }
             onStartupCompleted.Clear();
 
+            // 收集所有被 Patch 的 methods 關聯的 Patch Assembly 名稱
+            var patchedAssemblies = new HashSet<string>();
+            try
+            {
+                foreach (var method in Harmony.GetAllPatchedMethods())
+                {
+                    var patchInfo = Harmony.GetPatchInfo(method);
+                    if (patchInfo == null) continue;
+
+                    var patches = patchInfo.Prefixes.Concat(patchInfo.Postfixes).Concat(patchInfo.Transpilers);
+                    foreach (var patch in patches)
+                    {
+                        if (patch?.PatchMethod?.DeclaringType?.Assembly != null)
+                        {
+                            var name = patch.PatchMethod.DeclaringType.Assembly.GetName().Name;
+                            if (name != "FasterGameLoading")
+                            {
+                                patchedAssemblies.Add(name);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                FGLLog.Warning("Error collecting patched assemblies: " + ex.Message);
+            }
+            lock (SessionCache.patchedAssembliesLock)
+            {
+                SessionCache.patchedAssembliesLastSession = patchedAssemblies.ToList();
+            }
+
             // Inject translations
             TranslationInjector.InjectTranslations();
 

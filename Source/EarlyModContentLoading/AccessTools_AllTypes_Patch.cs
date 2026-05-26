@@ -40,6 +40,7 @@ namespace FasterGameLoading
                 lock (typesLock)
                 {
                     allTypesCached = types;
+                    WarmupTypeCache(types);
                 }
                 return;
             }
@@ -58,6 +59,7 @@ namespace FasterGameLoading
                 lock (typesLock)
                 {
                     allTypesCached = types;
+                    WarmupTypeCache(types);
                 }
             });
         }
@@ -85,8 +87,38 @@ namespace FasterGameLoading
                         try { return AccessTools.GetTypesFromAssembly(assembly); }
                         catch { return Array.Empty<Type>(); }
                     }).ToList();
+                WarmupTypeCache(allTypesCached);
                 __result = allTypesCached;
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// 預先填充 GenTypes.GetTypeInAnyAssemblyInt 的快取，消除主執行緒首次反射查詢的開銷。
+        /// </summary>
+        private static void WarmupTypeCache(List<Type> types)
+        {
+            if (types == null) return;
+            foreach (var type in types)
+            {
+                if (type == null) continue;
+                try
+                {
+                    var fullName = type.FullName;
+                    if (!string.IsNullOrEmpty(fullName))
+                    {
+                        GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults.TryAdd(fullName, type);
+                    }
+                    var name = type.Name;
+                    if (!string.IsNullOrEmpty(name))
+                    {
+                        GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults.TryAdd(name, type);
+                    }
+                }
+                catch
+                {
+                    // 忽略個別型別反射處理錯誤
+                }
             }
         }
     }

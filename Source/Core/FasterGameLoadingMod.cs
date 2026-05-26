@@ -28,6 +28,10 @@ namespace FasterGameLoading
             Object.DontDestroyOnLoad(gameObject);
             delayedActions = gameObject.AddComponent<DelayedActions>();
             settings = this.GetSettings<FasterGameLoadingSettings>();
+            
+            // Background preload cached textures
+            ModContentLoaderTexture2D_LoadTexture_Patch.StartPreloadCachedTextures();
+
             harmony = new Harmony("FasterGameLoadingMod");
 
             // Background preload all types to speed up subsequent AccessTools.AllTypes() calls
@@ -65,7 +69,7 @@ namespace FasterGameLoading
                         thirdPartyModPaths.Add(m.RootDir.FullName);
                     }
                 }
-                System.Threading.Tasks.Task.Run(() => XmlChangeDetector.ScanXmlFilesAsync(thirdPartyModPaths));
+                System.Threading.Tasks.Task.Run(() => XmlChangeDetector.ScanXmlFiles(thirdPartyModPaths));
             }
             catch (System.Exception ex)
             {

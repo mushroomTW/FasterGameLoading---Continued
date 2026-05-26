@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -28,7 +30,40 @@ namespace FasterGameLoading
                     int compiledTypesCount = 0;
 
                     var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-                    foreach (var assembly in assemblies)
+
+                    // 智慧優先級排序：上次被 Harmony Patch 的組件優先級最高，名稱含 "Patch" 的組件次之，其餘置後
+                    List<string> patchedCopy = null;
+                    lock (SessionCache.patchedAssembliesLock)
+                    {
+                        if (SessionCache.patchedAssembliesLastSession != null)
+                        {
+                            patchedCopy = new List<string>(SessionCache.patchedAssembliesLastSession);
+                        }
+                    }
+
+                    var orderedAssemblies = assemblies.OrderByDescending(a =>
+                    {
+                        if (a == null) return -1;
+                        try
+                        {
+                            var name = a.GetName().Name;
+                            if (patchedCopy != null && patchedCopy.Contains(name))
+                            {
+                                return 100;
+                            }
+                            if (name.IndexOf("Patch", StringComparison.OrdinalIgnoreCase) >= 0)
+                            {
+                                return 50;
+                            }
+                        }
+                        catch
+                        {
+                            // 忽略個別動態組件可能拋出的異常
+                        }
+                        return 0;
+                    }).ToList();
+
+                    foreach (var assembly in orderedAssemblies)
                     {
                         if (assembly == null) continue;
 

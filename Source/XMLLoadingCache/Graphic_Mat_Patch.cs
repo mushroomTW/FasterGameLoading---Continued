@@ -15,7 +15,7 @@ namespace FasterGameLoading
         [HarmonyPrefix]
         public static void Draw_Prefix(Graphic __instance)
         {
-            if (FasterGameLoadingSettings.LazyTextureLoading)
+            if (FasterGameLoadingSettings.LazyTextureLoading && LazyTextureLoader.hasPendingTextures)
             {
                 TriggerLazyLoadForGraphic(__instance);
             }
@@ -25,7 +25,7 @@ namespace FasterGameLoading
         [HarmonyPrefix]
         public static void DrawWorker_Prefix(Graphic __instance)
         {
-            if (FasterGameLoadingSettings.LazyTextureLoading)
+            if (FasterGameLoadingSettings.LazyTextureLoading && LazyTextureLoader.hasPendingTextures)
             {
                 TriggerLazyLoadForGraphic(__instance);
             }

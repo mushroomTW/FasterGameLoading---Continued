@@ -16,7 +16,7 @@ namespace FasterGameLoading
         /// </summary>
         public static volatile bool needWriteSettings = false;
 
-        public static void ScanXmlFilesAsync(List<string> modPaths)
+        public static void ScanXmlFiles(List<string> modPaths)
         {
             if (modPaths == null || modPaths.Count == 0)
             {
@@ -58,7 +58,10 @@ namespace FasterGameLoading
                 if (SessionCache.xmlCombinedHashSinceLastSession != combinedHash)
                 {
                     // 雜湊不一致，說明玩家修改了 XML，失效 XPath 查詢快取
-                    SessionCache.xmlPathsSinceLastSession.Clear();
+                    lock (SessionCache.xmlPathsLock)
+                    {
+                        SessionCache.xmlPathsSinceLastSession.Clear();
+                    }
                     SessionCache.xmlCombinedHashSinceLastSession = combinedHash;
 
                     // 設置旗標，通知主執行緒在 LateUpdate 中儲存更新後的雜湊值
@@ -88,8 +91,11 @@ namespace FasterGameLoading
                         var info = new FileInfo(file);
                         if (info.Exists)
                         {
-                            // 使用位元 XOR 運算，保證檔案順序不同（例如作業系統遍歷順序不一致）時算出的 Hash 依然相同
-                            combinedHash ^= info.LastWriteTimeUtc.Ticks ^ info.Length;
+                            // 改用 Order-Independent 的混合加法雜湊，避免 XOR 雜湊碰撞相互抵消，同時確保檔案遍歷順序不一致時結果仍相同
+                            long fileHash = 17;
+                            fileHash = fileHash * 31 + info.LastWriteTimeUtc.Ticks;
+                            fileHash = fileHash * 31 + info.Length;
+                            combinedHash += fileHash;
                             xmlCount++;
                         }
                     }

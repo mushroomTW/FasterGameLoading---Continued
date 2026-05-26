@@ -87,11 +87,11 @@ namespace FasterGameLoading
             var orderedKeys = GlobalTextureAtlasManager.buildQueue.Keys.OrderBy(k => (int)k.group).ThenBy(k => k.hasMask).ToList();
             foreach (var key in orderedKeys)
             {
-                sb.Append((int)key.group).Append(key.hasMask);
+                sb.Append((int)key.group).Append('|').Append(key.hasMask).Append('|');
                 var texList = GlobalTextureAtlasManager.buildQueue[key].Item1.OrderBy(t => t.name).ToList();
                 foreach (var tex in texList)
                 {
-                    sb.Append(tex.name).Append(tex.width).Append(tex.height);
+                    sb.Append(tex.name).Append('|').Append(tex.width).Append('|').Append(tex.height).Append('|');
                 }
             }
             using var md5 = MD5.Create();
@@ -401,6 +401,33 @@ namespace FasterGameLoading
             if (!success)
             {
                 ClearCache();
+            }
+
+            // 不管快取儲存成功與否，快取儲存結束後必須釋放 CPU 端的紋理資料以節省記憶體
+            foreach (var atlas in atlases)
+            {
+                if (atlas.colorTexture != null)
+                {
+                    try
+                    {
+                        atlas.colorTexture.Apply(true, true);
+                    }
+                    catch (Exception ex)
+                    {
+                        FGLLog.Warning("Failed to make color atlas texture non-readable: " + ex.Message);
+                    }
+                }
+                if (atlas.maskTexture != null)
+                {
+                    try
+                    {
+                        atlas.maskTexture.Apply(true, true);
+                    }
+                    catch (Exception ex)
+                    {
+                        FGLLog.Warning("Failed to make mask atlas texture non-readable: " + ex.Message);
+                    }
+                }
             }
         }
 

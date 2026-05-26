@@ -13,10 +13,16 @@ namespace FasterGameLoading
     {
         /// <summary>待加載材質的映射對照表：鍵為 2x2 佔位貼圖實例，值為真實檔案路徑。</summary>
         public static readonly ConcurrentDictionary<Texture2D, string> pendingLazyTextures = new ConcurrentDictionary<Texture2D, string>();
+        /// <summary>目前是否有等待按需加載的貼圖。提供給 Draw 的 Harmony Prefix 以免去熱路徑上的字典查詢開銷。</summary>
+        public static volatile bool hasPendingTextures = false;
 
         static LazyTextureLoader()
         {
-            CacheResetter.Register(() => pendingLazyTextures.Clear());
+            CacheResetter.Register(() =>
+            {
+                pendingLazyTextures.Clear();
+                hasPendingTextures = false;
+            });
         }
 
         /// <summary>
@@ -26,6 +32,7 @@ namespace FasterGameLoading
         {
             if (tex == null || string.IsNullOrEmpty(originalPath)) return;
             pendingLazyTextures[tex] = originalPath;
+            hasPendingTextures = true;
         }
 
         /// <summary>
@@ -35,6 +42,10 @@ namespace FasterGameLoading
         {
             if (texture is Texture2D tex2D && pendingLazyTextures.TryRemove(tex2D, out var filePath))
             {
+                if (pendingLazyTextures.IsEmpty)
+                {
+                    hasPendingTextures = false;
+                }
                 try
                 {
                     if (File.Exists(filePath))

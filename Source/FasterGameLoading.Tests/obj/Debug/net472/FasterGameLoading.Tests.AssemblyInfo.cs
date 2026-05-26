@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FasterGameLoading.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+46d8f4067bb40b163c293369e648b79e8de217b0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c1ed83774b7a1eb9bcb719938c3502ff0415244f")]
 [assembly: System.Reflection.AssemblyProductAttribute("FasterGameLoading.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FasterGameLoading.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

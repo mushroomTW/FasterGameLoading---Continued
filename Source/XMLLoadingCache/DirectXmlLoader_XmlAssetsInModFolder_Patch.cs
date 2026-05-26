@@ -40,8 +40,12 @@ namespace FasterGameLoading
 
                 var assets = new LoadableXmlAsset[files.Count];
 
-                // 2. 使用 Parallel.For 進行多執行緒並行讀取與 XML DOM 解析
-                Parallel.For(0, files.Count, i =>
+                // 2. 使用 Parallel.For 進行多執行緒並行讀取與 XML DOM 解析（限制最大並行度防止 I/O 飽和）
+                var options = new ParallelOptions
+                {
+                    MaxDegreeOfParallelism = Math.Min(Environment.ProcessorCount, 8)
+                };
+                Parallel.For(0, files.Count, options, i =>
                 {
                     try
                     {

@@ -153,7 +153,7 @@ namespace FasterGameLoading.Tests
         {
             // 1. 模擬跨 session 快取記錄：/root/missing 節點是不存在的 (false)
             string xpath = "/root/missing";
-            SessionCache.xmlPathsSinceLastSession[xpath] = false;
+            SessionCache.xmlPathsSinceLastSession.Add(xpath);
 
             // 2. 建立一個包含此節點的 XML 檔案（實際上它是存在的）
             var doc = new XmlDocument();
@@ -197,7 +197,7 @@ namespace FasterGameLoading.Tests
             // 模擬跨 session 快取中有一部分已知不存在的節點
             for (int i = 0; i < 50; i++)
             {
-                SessionCache.xmlPathsSinceLastSession[$"/root/missing_{i}"] = false;
+                SessionCache.xmlPathsSinceLastSession.Add($"/root/missing_{i}");
             }
 
             // 多執行緒併發呼叫 SelectSingleNode
@@ -244,7 +244,7 @@ namespace FasterGameLoading.Tests
                 XmlChangeDetector.needWriteSettings = false;
 
                 // 3. 呼叫掃描
-                XmlChangeDetector.ScanXmlFilesAsync(new List<string> { tempDir });
+                XmlChangeDetector.ScanXmlFiles(new List<string> { tempDir });
 
                 // 4. 驗證掃描完成與雜湊儲存
                 Assert.IsTrue(XmlNode_SelectSingleNode_Patch.isXmlScanComplete);
@@ -260,7 +260,7 @@ namespace FasterGameLoading.Tests
                 System.IO.File.SetLastWriteTimeUtc(xmlFile, DateTime.UtcNow.AddSeconds(5));
                 System.IO.File.WriteAllText(xmlFile, "<Defs><ThingDef>mock_modified</ThingDef></Defs>");
                 
-                XmlChangeDetector.ScanXmlFilesAsync(new List<string> { tempDir });
+                XmlChangeDetector.ScanXmlFiles(new List<string> { tempDir });
 
                 Assert.IsTrue(XmlNode_SelectSingleNode_Patch.isXmlScanComplete);
                 long hash2 = SessionCache.xmlCombinedHashSinceLastSession;

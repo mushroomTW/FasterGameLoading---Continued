@@ -265,11 +265,14 @@ namespace FasterGameLoading
             if (moved)
             {
                 var updatedCacheMap = new Dictionary<string, string>();
-                foreach (var kvp in resizedTextureCache)
+                lock (cacheLock)
                 {
-                    updatedCacheMap[kvp.Key] = Path.Combine(CacheDirectory, Path.GetFileName(kvp.Value));
+                    foreach (var kvp in resizedTextureCache)
+                    {
+                        updatedCacheMap[kvp.Key] = Path.Combine(CacheDirectory, Path.GetFileName(kvp.Value));
+                    }
+                    resizedTextureCache = updatedCacheMap;
                 }
-                lock (cacheLock) { resizedTextureCache = updatedCacheMap; }
                 activeCacheDirectory = CacheDirectory;
             }
             else

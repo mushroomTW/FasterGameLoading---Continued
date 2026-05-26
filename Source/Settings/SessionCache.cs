@@ -25,6 +25,7 @@ namespace FasterGameLoading
         /// 上一次 session 中所有已查詢的完整型別名稱映射。
         /// </summary>
         internal static Dictionary<string, string> loadedTypesByFullNameSinceLastSession = new();
+        internal static readonly object loadedTypesLock = new();
 
         /// <summary>
         /// 上一次 session 中啟用的 mod 列表（packageIdLowerCase）。
@@ -32,9 +33,16 @@ namespace FasterGameLoading
         internal static List<string> modsInLastSession = new();
 
         /// <summary>
-        /// 上一次 session 中所有 XPath 查詢結果。
+        /// 上一次 session 中被 Harmony patch 的組件名稱清單。
         /// </summary>
-        internal static Dictionary<string, bool> xmlPathsSinceLastSession = new();
+        internal static List<string> patchedAssembliesLastSession = new();
+        internal static readonly object patchedAssembliesLock = new();
+
+        /// <summary>
+        /// 上一次 session 中所有 XPath 查詢結果（僅存缺失的 XPath 查詢）。
+        /// </summary>
+        internal static HashSet<string> xmlPathsSinceLastSession = new();
+        internal static readonly object xmlPathsLock = new();
 
         /// <summary>
         /// 上一次 session 中所有第三方 Mod 的 XML 檔案的累積雜湊值。
@@ -93,37 +101,90 @@ namespace FasterGameLoading
         {
             Scribe_Collections.Look(ref loadedTexturesSinceLastSession, FGLConsts.LoadedTexturesKey, LookMode.Value, LookMode.Value);
             Scribe_Collections.Look(ref loadedTypesByFullNameSinceLastSession, FGLConsts.LoadedTypesKey, LookMode.Value, LookMode.Value);
-            Scribe_Collections.Look(ref xmlPathsSinceLastSession, FGLConsts.XmlPathsKey, LookMode.Value, LookMode.Value);
+
+            Dictionary<string, bool> tempXmlPaths = null;
+            if (Scribe.mode == LoadSaveMode.Saving)
+            {
+                tempXmlPaths = new Dictionary<string, bool>();
+                lock (xmlPathsLock)
+                {
+                    foreach (var path in xmlPathsSinceLastSession)
+                    {
+                        tempXmlPaths[path] = false;
+                    }
+                }
+            }
+            Scribe_Collections.Look(ref tempXmlPaths, FGLConsts.XmlPathsKey, LookMode.Value, LookMode.Value);
+
             Scribe_Values.Look(ref xmlCombinedHashSinceLastSession, "FGL_XmlCombinedHash", 0L);
             Scribe_Collections.Look(ref modsInLastSession, FGLConsts.ModsInLastSessionKey, LookMode.Value);
             Scribe_Collections.Look(ref historicalBakeSpeeds, FGLConsts.HistoricalBakeSpeedsKey, LookMode.Value);
+            Scribe_Collections.Look(ref patchedAssembliesLastSession, "patchedAssembliesLastSession", LookMode.Value);
 
 
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
                 loadedTexturesSinceLastSession ??= new Dictionary<string, string>();
                 loadedTypesByFullNameSinceLastSession ??= new Dictionary<string, string>();
-                xmlPathsSinceLastSession ??= new Dictionary<string, bool>();
+                lock (xmlPathsLock)
+                {
+                    xmlPathsSinceLastSession ??= new HashSet<string>();
+                    if (tempXmlPaths != null)
+                    {
+                        xmlPathsSinceLastSession.Clear();
+                        foreach (var kvp in tempXmlPaths)
+                        {
+                            if (!kvp.Value)
+                            {
+                                xmlPathsSinceLastSession.Add(kvp.Key);
+                            }
+                        }
+                    }
+                }
                 modsInLastSession ??= new List<string>();
                 historicalBakeSpeeds ??= new List<float>();
-
-                // 使用 MD5 雜湊比較偵測 mod 組合變更，避免 GetHashCode 跨平台與版本間的隨機雜湊種子碰撞問題
-                string currentModsStr = string.Join(",", ModsConfig.ActiveModsInLoadOrder.Select(x => x.packageIdLowerCase));
-                string lastModsStr = string.Join(",", modsInLastSession);
-
-                string currentHash;
-                string lastHash;
-                using (var md5 = MD5.Create())
+                lock (patchedAssembliesLock)
                 {
-                    currentHash = string.Concat(md5.ComputeHash(Encoding.UTF8.GetBytes(currentModsStr)).Select(b => b.ToString("x2")));
-                    lastHash = string.Concat(md5.ComputeHash(Encoding.UTF8.GetBytes(lastModsStr)).Select(b => b.ToString("x2")));
+                    patchedAssembliesLastSession ??= new List<string>();
                 }
 
-                if (currentHash != lastHash)
+                // 零分配偵測 mod 組合變更，避免 GetHashCode 隨機雜湊種子碰撞與 MD5 重複記憶體配發
+                var currentActiveMods = ModsConfig.ActiveModsInLoadOrder.ToList();
+                bool modsChanged = false;
+                if (modsInLastSession == null || currentActiveMods.Count != modsInLastSession.Count)
                 {
-                    loadedTexturesSinceLastSession.Clear();
-                    loadedTypesByFullNameSinceLastSession.Clear();
-                    xmlPathsSinceLastSession.Clear();
+                    modsChanged = true;
+                }
+                else
+                {
+                    for (int i = 0; i < modsInLastSession.Count; i++)
+                    {
+                        if (currentActiveMods[i].packageIdLowerCase != modsInLastSession[i])
+                        {
+                            modsChanged = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (modsChanged)
+                {
+                    lock (loadedTexturesSinceLastSession)
+                    {
+                        loadedTexturesSinceLastSession.Clear();
+                    }
+                    lock (loadedTypesLock)
+                    {
+                        loadedTypesByFullNameSinceLastSession.Clear();
+                    }
+                    lock (xmlPathsLock)
+                    {
+                        xmlPathsSinceLastSession.Clear();
+                    }
+                    lock (patchedAssembliesLock)
+                    {
+                        patchedAssembliesLastSession.Clear();
+                    }
                     FasterGameLoadingMod.Instance.CacheManager.ClearCache();
                     StaticAtlasCache.ClearCache();
                 }

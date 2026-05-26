@@ -34,7 +34,17 @@ namespace FasterGameLoading
 
             Startup.RegisterOnStartupCompleted(() =>
             {
-                SessionCache.xmlPathsSinceLastSession = new System.Collections.Generic.Dictionary<string, bool>(xmlPathsThisSession);
+                lock (SessionCache.xmlPathsLock)
+                {
+                    SessionCache.xmlPathsSinceLastSession.Clear();
+                    foreach (var kvp in xmlPathsThisSession)
+                    {
+                        if (!kvp.Value)
+                        {
+                            SessionCache.xmlPathsSinceLastSession.Add(kvp.Key);
+                        }
+                    }
+                }
                 DisableAndClear();
             });
         }
@@ -44,7 +54,10 @@ namespace FasterGameLoading
             patchEnabled = false;
             isXmlScanComplete = false;
             xmlPathsThisSession.Clear();
-            SessionCache.xmlPathsSinceLastSession.Clear();
+            lock (SessionCache.xmlPathsLock)
+            {
+                SessionCache.xmlPathsSinceLastSession.Clear();
+            }
         }
 
         public static bool Prefix(string xpath, ref XmlNode __result)
@@ -54,8 +67,13 @@ namespace FasterGameLoading
                 return true;
             }
 
-            // 單一次 TryGetValue 查詢，取代原先兩次 Contains 呼叫
-            if (SessionCache.xmlPathsSinceLastSession.TryGetValue(xpath, out bool succeeded) && !succeeded)
+            bool found = false;
+            lock (SessionCache.xmlPathsLock)
+            {
+                found = SessionCache.xmlPathsSinceLastSession.Contains(xpath);
+            }
+
+            if (found)
             {
                 __result = null;
                 return false;

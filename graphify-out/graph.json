@@ -448,7 +448,7 @@
       "label": ".SettingsCategory()",
       "file_type": "code",
       "source_file": "Source/Core/FasterGameLoadingMod.cs",
-      "source_location": "L58",
+      "source_location": "L90",
       "id": "core_fastergameloadingmod_fastergameloadingmod_settingscategory",
       "community": 10,
       "norm_label": ".settingscategory()"
@@ -457,10 +457,46 @@
       "label": ".DoSettingsWindowContents()",
       "file_type": "code",
       "source_file": "Source/Core/FasterGameLoadingMod.cs",
-      "source_location": "L63",
+      "source_location": "L95",
       "id": "core_fastergameloadingmod_fastergameloadingmod_dosettingswindowcontents",
       "community": 10,
       "norm_label": ".dosettingswindowcontents()"
+    },
+    {
+      "label": "JITPrecompiler.cs",
+      "file_type": "code",
+      "source_file": "Source/Core/JITPrecompiler.cs",
+      "source_location": "L1",
+      "id": "source_core_jitprecompiler_cs",
+      "community": 115,
+      "norm_label": "jitprecompiler.cs"
+    },
+    {
+      "label": "FasterGameLoading",
+      "file_type": "code",
+      "source_file": "Source/Core/JITPrecompiler.cs",
+      "source_location": "L8",
+      "id": "core_jitprecompiler_fastergameloading",
+      "community": 115,
+      "norm_label": "fastergameloading"
+    },
+    {
+      "label": "JITPrecompiler",
+      "file_type": "code",
+      "source_file": "Source/Core/JITPrecompiler.cs",
+      "source_location": "L15",
+      "id": "core_jitprecompiler_jitprecompiler",
+      "community": 115,
+      "norm_label": "jitprecompiler"
+    },
+    {
+      "label": ".StartPrecompilation()",
+      "file_type": "code",
+      "source_file": "Source/Core/JITPrecompiler.cs",
+      "source_location": "L20",
+      "id": "core_jitprecompiler_jitprecompiler_startprecompilation",
+      "community": 115,
+      "norm_label": ".startprecompilation()"
     },
     {
       "label": "Startup.cs",
@@ -475,7 +511,7 @@
       "label": "FasterGameLoading",
       "file_type": "code",
       "source_file": "Source/Core/Startup.cs",
-      "source_location": "L5",
+      "source_location": "L7",
       "id": "core_startup_fastergameloading",
       "community": 34,
       "norm_label": "fastergameloading"
@@ -484,16 +520,34 @@
       "label": "Startup",
       "file_type": "code",
       "source_file": "Source/Core/Startup.cs",
-      "source_location": "L11",
+      "source_location": "L13",
       "id": "core_startup_startup",
       "community": 34,
       "norm_label": "startup"
     },
     {
+      "label": "List",
+      "file_type": "code",
+      "source_file": "Source/Core/Startup.cs",
+      "source_location": "L16",
+      "id": "source_core_startup_cs_list",
+      "community": 34,
+      "norm_label": "list"
+    },
+    {
+      "label": ".RegisterOnStartupCompleted()",
+      "file_type": "code",
+      "source_file": "Source/Core/Startup.cs",
+      "source_location": "L21",
+      "id": "core_startup_startup_registeronstartupcompleted",
+      "community": 34,
+      "norm_label": ".registeronstartupcompleted()"
+    },
+    {
       "label": ".Postfix()",
       "file_type": "code",
       "source_file": "Source/Core/Startup.cs",
-      "source_location": "L14",
+      "source_location": "L29",
       "id": "core_startup_startup_postfix",
       "community": 34,
       "norm_label": ".postfix()"
@@ -628,7 +682,7 @@
       "label": ".ResetEarlyLoading()",
       "file_type": "code",
       "source_file": "Source/DelayGraphicAndIconLoading/DelayedActions.cs",
-      "source_location": "L188",
+      "source_location": "L206",
       "id": "delaygraphicandiconloading_delayedactions_delayedactions_resetearlyloading",
       "community": 6,
       "norm_label": ".resetearlyloading()"
@@ -637,7 +691,7 @@
       "label": ".PerformActions()",
       "file_type": "code",
       "source_file": "Source/DelayGraphicAndIconLoading/DelayedActions.cs",
-      "source_location": "L206",
+      "source_location": "L224",
       "id": "delaygraphicandiconloading_delayedactions_delayedactions_performactions",
       "community": 6,
       "norm_label": ".performactions()"
@@ -646,7 +700,7 @@
       "label": ".LoadDeferredGraphicsCoroutine()",
       "file_type": "code",
       "source_file": "Source/DelayGraphicAndIconLoading/DelayedActions.cs",
-      "source_location": "L229",
+      "source_location": "L247",
       "id": "delaygraphicandiconloading_delayedactions_delayedactions_loaddeferredgraphicscoroutine",
       "community": 6,
       "norm_label": ".loaddeferredgraphicscoroutine()"
@@ -655,7 +709,7 @@
       "label": ".BakeDeferredAtlasesCoroutine()",
       "file_type": "code",
       "source_file": "Source/DelayGraphicAndIconLoading/DelayedActions.cs",
-      "source_location": "L307",
+      "source_location": "L325",
       "id": "delaygraphicandiconloading_delayedactions_delayedactions_bakedeferredatlasescoroutine",
       "community": 6,
       "norm_label": ".bakedeferredatlasescoroutine()"
@@ -664,7 +718,7 @@
       "label": ".UpdateMapMeshForLoadedDefs()",
       "file_type": "code",
       "source_file": "Source/DelayGraphicAndIconLoading/DelayedActions.cs",
-      "source_location": "L362",
+      "source_location": "L380",
       "id": "delaygraphicandiconloading_delayedactions_delayedactions_updatemapmeshforloadeddefs",
       "community": 6,
       "norm_label": ".updatemapmeshforloadeddefs()"
@@ -673,7 +727,7 @@
       "label": ".LoadDeferredIconsCoroutine()",
       "file_type": "code",
       "source_file": "Source/DelayGraphicAndIconLoading/DelayedActions.cs",
-      "source_location": "L392",
+      "source_location": "L410",
       "id": "delaygraphicandiconloading_delayedactions_delayedactions_loaddeferrediconscoroutine",
       "community": 6,
       "norm_label": ".loaddeferrediconscoroutine()"
@@ -682,7 +736,7 @@
       "label": ".ResolveSubSoundDefsCoroutine()",
       "file_type": "code",
       "source_file": "Source/DelayGraphicAndIconLoading/DelayedActions.cs",
-      "source_location": "L441",
+      "source_location": "L459",
       "id": "delaygraphicandiconloading_delayedactions_delayedactions_resolvesubsounddefscoroutine",
       "community": 6,
       "norm_label": ".resolvesubsounddefscoroutine()"
@@ -691,7 +745,7 @@
       "label": ".PerformAdaptiveStaticAtlasBake()",
       "file_type": "code",
       "source_file": "Source/DelayGraphicAndIconLoading/DelayedActions.cs",
-      "source_location": "L489",
+      "source_location": "L507",
       "id": "delaygraphicandiconloading_delayedactions_delayedactions_performadaptivestaticatlasbake",
       "community": 6,
       "norm_label": ".performadaptivestaticatlasbake()"
@@ -700,7 +754,7 @@
       "label": ".TryBakeSingleBatch()",
       "file_type": "code",
       "source_file": "Source/DelayGraphicAndIconLoading/DelayedActions.cs",
-      "source_location": "L609",
+      "source_location": "L627",
       "id": "delaygraphicandiconloading_delayedactions_delayedactions_trybakesinglebatch",
       "community": 6,
       "norm_label": ".trybakesinglebatch()"
@@ -709,7 +763,7 @@
       "label": ".Error()",
       "file_type": "code",
       "source_file": "Source/DelayGraphicAndIconLoading/DelayedActions.cs",
-      "source_location": "L681",
+      "source_location": "L699",
       "id": "delaygraphicandiconloading_delayedactions_delayedactions_error",
       "community": 6,
       "norm_label": ".error()"
@@ -1294,7 +1348,7 @@
       "label": ".ClearCache()",
       "file_type": "code",
       "source_file": "Source/EarlyModContentLoading/GenTypes_GetTypeInAnyAssemblyInt_Patch.cs",
-      "source_location": "L25",
+      "source_location": "L30",
       "id": "earlymodcontentloading_gentypes_gettypeinanyassemblyint_patch_gentypes_gettypeinanyassemblyint_patch_clearcache",
       "community": 94,
       "norm_label": ".clearcache()"
@@ -1303,7 +1357,7 @@
       "label": ".Prefix()",
       "file_type": "code",
       "source_file": "Source/EarlyModContentLoading/GenTypes_GetTypeInAnyAssemblyInt_Patch.cs",
-      "source_location": "L31",
+      "source_location": "L36",
       "id": "earlymodcontentloading_gentypes_gettypeinanyassemblyint_patch_gentypes_gettypeinanyassemblyint_patch_prefix",
       "community": 94,
       "norm_label": ".prefix()"
@@ -1312,7 +1366,7 @@
       "label": ".Postfix()",
       "file_type": "code",
       "source_file": "Source/EarlyModContentLoading/GenTypes_GetTypeInAnyAssemblyInt_Patch.cs",
-      "source_location": "L50",
+      "source_location": "L55",
       "id": "earlymodcontentloading_gentypes_gettypeinanyassemblyint_patch_gentypes_gettypeinanyassemblyint_patch_postfix",
       "community": 94,
       "norm_label": ".postfix()"
@@ -1438,7 +1492,7 @@
       "label": "FasterGameLoading.Tests",
       "file_type": "code",
       "source_file": "Source/FasterGameLoading.Tests/HarmonyPatchTests.cs",
-      "source_location": "L8",
+      "source_location": "L12",
       "id": "fastergameloading_tests_harmonypatchtests_fastergameloading_tests",
       "community": 77,
       "norm_label": "fastergameloading.tests"
@@ -1447,7 +1501,7 @@
       "label": "HarmonyPatchTests",
       "file_type": "code",
       "source_file": "Source/FasterGameLoading.Tests/HarmonyPatchTests.cs",
-      "source_location": "L10",
+      "source_location": "L14",
       "id": "fastergameloading_tests_harmonypatchtests_harmonypatchtests",
       "community": 77,
       "norm_label": "harmonypatchtests"
@@ -1456,7 +1510,7 @@
       "label": "Harmony",
       "file_type": "code",
       "source_file": "Source/FasterGameLoading.Tests/HarmonyPatchTests.cs",
-      "source_location": "L13",
+      "source_location": "L17",
       "id": "source_fastergameloading_tests_harmonypatchtests_cs_harmony",
       "community": 77,
       "norm_label": "harmony"
@@ -1465,7 +1519,7 @@
       "label": ".OneTimeSetUp()",
       "file_type": "code",
       "source_file": "Source/FasterGameLoading.Tests/HarmonyPatchTests.cs",
-      "source_location": "L15",
+      "source_location": "L19",
       "id": "fastergameloading_tests_harmonypatchtests_harmonypatchtests_onetimesetup",
       "community": 77,
       "norm_label": ".onetimesetup()"
@@ -1474,7 +1528,7 @@
       "label": ".OneTimeTearDown()",
       "file_type": "code",
       "source_file": "Source/FasterGameLoading.Tests/HarmonyPatchTests.cs",
-      "source_location": "L38",
+      "source_location": "L44",
       "id": "fastergameloading_tests_harmonypatchtests_harmonypatchtests_onetimeteardown",
       "community": 77,
       "norm_label": ".onetimeteardown()"
@@ -1483,7 +1537,7 @@
       "label": ".SetUp()",
       "file_type": "code",
       "source_file": "Source/FasterGameLoading.Tests/HarmonyPatchTests.cs",
-      "source_location": "L44",
+      "source_location": "L50",
       "id": "fastergameloading_tests_harmonypatchtests_harmonypatchtests_setup",
       "community": 77,
       "norm_label": ".setup()"
@@ -1492,7 +1546,7 @@
       "label": ".TearDown()",
       "file_type": "code",
       "source_file": "Source/FasterGameLoading.Tests/HarmonyPatchTests.cs",
-      "source_location": "L64",
+      "source_location": "L74",
       "id": "fastergameloading_tests_harmonypatchtests_harmonypatchtests_teardown",
       "community": 77,
       "norm_label": ".teardown()"
@@ -1501,7 +1555,7 @@
       "label": ".TestXmlNode_NoPatch()",
       "file_type": "code",
       "source_file": "Source/FasterGameLoading.Tests/HarmonyPatchTests.cs",
-      "source_location": "L81",
+      "source_location": "L91",
       "id": "fastergameloading_tests_harmonypatchtests_harmonypatchtests_testxmlnode_nopatch",
       "community": 77,
       "norm_label": ".testxmlnode_nopatch()"
@@ -1510,7 +1564,7 @@
       "label": ".TestAccessTools_TypeByName_Patch_HitsRuntimeCache()",
       "file_type": "code",
       "source_file": "Source/FasterGameLoading.Tests/HarmonyPatchTests.cs",
-      "source_location": "L91",
+      "source_location": "L101",
       "id": "fastergameloading_tests_harmonypatchtests_harmonypatchtests_testaccesstools_typebyname_patch_hitsruntimecache",
       "community": 77,
       "norm_label": ".testaccesstools_typebyname_patch_hitsruntimecache()"
@@ -1519,7 +1573,7 @@
       "label": ".TestAccessTools_TypeByName_Patch_HitsSessionCache()",
       "file_type": "code",
       "source_file": "Source/FasterGameLoading.Tests/HarmonyPatchTests.cs",
-      "source_location": "L106",
+      "source_location": "L116",
       "id": "fastergameloading_tests_harmonypatchtests_harmonypatchtests_testaccesstools_typebyname_patch_hitssessioncache",
       "community": 77,
       "norm_label": ".testaccesstools_typebyname_patch_hitssessioncache()"
@@ -1528,7 +1582,7 @@
       "label": ".TestAccessTools_AllTypes_Patch_BypassesWithCache()",
       "file_type": "code",
       "source_file": "Source/FasterGameLoading.Tests/HarmonyPatchTests.cs",
-      "source_location": "L124",
+      "source_location": "L134",
       "id": "fastergameloading_tests_harmonypatchtests_harmonypatchtests_testaccesstools_alltypes_patch_bypasseswithcache",
       "community": 77,
       "norm_label": ".testaccesstools_alltypes_patch_bypasseswithcache()"
@@ -1537,7 +1591,7 @@
       "label": ".TestXmlNode_SelectSingleNode_Patch_Prefix_InterceptsCachedMissingNode()",
       "file_type": "code",
       "source_file": "Source/FasterGameLoading.Tests/HarmonyPatchTests.cs",
-      "source_location": "L141",
+      "source_location": "L151",
       "id": "fastergameloading_tests_harmonypatchtests_harmonypatchtests_testxmlnode_selectsinglenode_patch_prefix_interceptscachedmissingnode",
       "community": 77,
       "norm_label": ".testxmlnode_selectsinglenode_patch_prefix_interceptscachedmissingnode()"
@@ -1546,7 +1600,7 @@
       "label": ".TestXmlNode_SelectSingleNode_Patch_Postfix_RecordsNodes()",
       "file_type": "code",
       "source_file": "Source/FasterGameLoading.Tests/HarmonyPatchTests.cs",
-      "source_location": "L159",
+      "source_location": "L169",
       "id": "fastergameloading_tests_harmonypatchtests_harmonypatchtests_testxmlnode_selectsinglenode_patch_postfix_recordsnodes",
       "community": 77,
       "norm_label": ".testxmlnode_selectsinglenode_patch_postfix_recordsnodes()"
@@ -1555,10 +1609,55 @@
       "label": ".TestXmlNode_SelectSingleNode_Patch_ConcurrencySafety()",
       "file_type": "code",
       "source_file": "Source/FasterGameLoading.Tests/HarmonyPatchTests.cs",
-      "source_location": "L184",
+      "source_location": "L194",
       "id": "fastergameloading_tests_harmonypatchtests_harmonypatchtests_testxmlnode_selectsinglenode_patch_concurrencysafety",
       "community": 77,
       "norm_label": ".testxmlnode_selectsinglenode_patch_concurrencysafety()"
+    },
+    {
+      "label": ".TestXmlChangeDetector_CalculatesConsistentHash()",
+      "file_type": "code",
+      "source_file": "Source/FasterGameLoading.Tests/HarmonyPatchTests.cs",
+      "source_location": "L228",
+      "id": "fastergameloading_tests_harmonypatchtests_harmonypatchtests_testxmlchangedetector_calculatesconsistenthash",
+      "community": 77,
+      "norm_label": ".testxmlchangedetector_calculatesconsistenthash()"
+    },
+    {
+      "label": ".TestJITPrecompiler_RunsWithoutExceptions()",
+      "file_type": "code",
+      "source_file": "Source/FasterGameLoading.Tests/HarmonyPatchTests.cs",
+      "source_location": "L280",
+      "id": "fastergameloading_tests_harmonypatchtests_harmonypatchtests_testjitprecompiler_runswithoutexceptions",
+      "community": 77,
+      "norm_label": ".testjitprecompiler_runswithoutexceptions()"
+    },
+    {
+      "label": ".TestDirectXmlLoader_XmlAssetsInModFolder_Patch_FallbackSafety()",
+      "file_type": "code",
+      "source_file": "Source/FasterGameLoading.Tests/HarmonyPatchTests.cs",
+      "source_location": "L287",
+      "id": "fastergameloading_tests_harmonypatchtests_harmonypatchtests_testdirectxmlloader_xmlassetsinmodfolder_patch_fallbacksafety",
+      "community": 77,
+      "norm_label": ".testdirectxmlloader_xmlassetsinmodfolder_patch_fallbacksafety()"
+    },
+    {
+      "label": ".TestLazyTextureLoader_ShouldLazyLoad_Heuristics()",
+      "file_type": "code",
+      "source_file": "Source/FasterGameLoading.Tests/HarmonyPatchTests.cs",
+      "source_location": "L297",
+      "id": "fastergameloading_tests_harmonypatchtests_harmonypatchtests_testlazytextureloader_shouldlazyload_heuristics",
+      "community": 77,
+      "norm_label": ".testlazytextureloader_shouldlazyload_heuristics()"
+    },
+    {
+      "label": ".TestLazyTextureLoader_TriggerLazyLoad_OnDemand()",
+      "file_type": "code",
+      "source_file": "Source/FasterGameLoading.Tests/HarmonyPatchTests.cs",
+      "source_location": "L313",
+      "id": "fastergameloading_tests_harmonypatchtests_harmonypatchtests_testlazytextureloader_triggerlazyload_ondemand",
+      "community": 77,
+      "norm_label": ".testlazytextureloader_triggerlazyload_ondemand()"
     },
     {
       "label": "TextureCacheManagerTests.cs",
@@ -1755,7 +1854,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L1",
       "id": "source_fastergameloading_tests_obj_fastergameloading_tests_csproj_nuget_dgspec_json",
-      "community": 84,
+      "community": 61,
       "norm_label": "fastergameloading.tests.csproj.nuget.dgspec.json"
     },
     {
@@ -1764,7 +1863,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L2",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_format",
-      "community": 84,
+      "community": 61,
       "norm_label": "format"
     },
     {
@@ -1773,7 +1872,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L3",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_restore",
-      "community": 84,
+      "community": 61,
       "norm_label": "restore"
     },
     {
@@ -1782,7 +1881,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L4",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_restore_c_program_files_x86_steam_steamapps_common_rimworld_mods_fastergameloading_continued_source_fastergameloading_tests_fastergameloading_tests_csproj",
-      "community": 84,
+      "community": 61,
       "norm_label": "c:\\\\program files (x86)\\\\steam\\\\steamapps\\\\common\\\\rimworld\\\\mods\\\\fastergameloading---continued\\\\source\\\\fastergameloading.tests\\\\fastergameloading.tests.csproj"
     },
     {
@@ -1791,7 +1890,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L6",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_projects",
-      "community": 84,
+      "community": 61,
       "norm_label": "projects"
     },
     {
@@ -1800,7 +1899,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L7",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_projects_c_program_files_x86_steam_steamapps_common_rimworld_mods_fastergameloading_continued_source_fastergameloading_csproj",
-      "community": 84,
+      "community": 61,
       "norm_label": "c:\\\\program files (x86)\\\\steam\\\\steamapps\\\\common\\\\rimworld\\\\mods\\\\fastergameloading---continued\\\\source\\\\fastergameloading.csproj"
     },
     {
@@ -1809,7 +1908,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L8",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_c_program_files_x86_steam_steamapps_common_rimworld_mods_fastergameloading_continued_source_fastergameloading_csproj_version",
-      "community": 84,
+      "community": 61,
       "norm_label": "version"
     },
     {
@@ -1899,7 +1998,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L23",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_restore_sources",
-      "community": 113,
+      "community": 61,
       "norm_label": "sources"
     },
     {
@@ -1908,7 +2007,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L24",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_sources_c_program_files_x86_microsoft_sdks_nugetpackages",
-      "community": 113,
+      "community": 61,
       "norm_label": "c:\\\\program files (x86)\\\\microsoft sdks\\\\nugetpackages\\\\"
     },
     {
@@ -1917,7 +2016,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L25",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_sources_https_api_nuget_org_v3_index_json",
-      "community": 113,
+      "community": 61,
       "norm_label": "https://api.nuget.org/v3/index.json"
     },
     {
@@ -1926,7 +2025,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L27",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_restore_frameworks",
-      "community": 79,
+      "community": 61,
       "norm_label": "frameworks"
     },
     {
@@ -1935,7 +2034,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L28",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_frameworks_net472",
-      "community": 79,
+      "community": 61,
       "norm_label": "net472"
     },
     {
@@ -1944,7 +2043,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L29",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_net472_framework",
-      "community": 79,
+      "community": 61,
       "norm_label": "framework"
     },
     {
@@ -1953,7 +2052,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L30",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_net472_targetalias",
-      "community": 79,
+      "community": 61,
       "norm_label": "targetalias"
     },
     {
@@ -1962,7 +2061,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L31",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_net472_projectreferences",
-      "community": 79,
+      "community": 61,
       "norm_label": "projectreferences"
     },
     {
@@ -1989,7 +2088,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L39",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_restore_restoreauditproperties",
-      "community": 112,
+      "community": 61,
       "norm_label": "restoreauditproperties"
     },
     {
@@ -1998,7 +2097,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L40",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_restoreauditproperties_enableaudit",
-      "community": 112,
+      "community": 61,
       "norm_label": "enableaudit"
     },
     {
@@ -2007,7 +2106,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L41",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_restoreauditproperties_auditlevel",
-      "community": 112,
+      "community": 61,
       "norm_label": "auditlevel"
     },
     {
@@ -2016,7 +2115,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L42",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_restoreauditproperties_auditmode",
-      "community": 112,
+      "community": 61,
       "norm_label": "auditmode"
     },
     {
@@ -2034,7 +2133,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L46",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_c_program_files_x86_steam_steamapps_common_rimworld_mods_fastergameloading_continued_source_fastergameloading_csproj_frameworks",
-      "community": 84,
+      "community": 61,
       "norm_label": "frameworks"
     },
     {
@@ -2052,7 +2151,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L51",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_dependencies_krafs_publicizer",
-      "community": 111,
+      "community": 58,
       "norm_label": "krafs.publicizer"
     },
     {
@@ -2061,7 +2160,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L52",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_krafs_publicizer_include",
-      "community": 111,
+      "community": 58,
       "norm_label": "include"
     },
     {
@@ -2070,7 +2169,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L53",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_krafs_publicizer_suppressparent",
-      "community": 111,
+      "community": 58,
       "norm_label": "suppressparent"
     },
     {
@@ -2079,7 +2178,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L54",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_krafs_publicizer_target",
-      "community": 111,
+      "community": 58,
       "norm_label": "target"
     },
     {
@@ -2088,7 +2187,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L55",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_krafs_publicizer_version",
-      "community": 111,
+      "community": 58,
       "norm_label": "version"
     },
     {
@@ -2160,7 +2259,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L67",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_net472_runtimeidentifiergraphpath",
-      "community": 79,
+      "community": 61,
       "norm_label": "runtimeidentifiergraphpath"
     },
     {
@@ -2169,7 +2268,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L71",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_projects_c_program_files_x86_steam_steamapps_common_rimworld_mods_fastergameloading_continued_source_fastergameloading_tests_fastergameloading_tests_csproj",
-      "community": 79,
+      "community": 61,
       "norm_label": "c:\\\\program files (x86)\\\\steam\\\\steamapps\\\\common\\\\rimworld\\\\mods\\\\fastergameloading---continued\\\\source\\\\fastergameloading.tests\\\\fastergameloading.tests.csproj"
     },
     {
@@ -2178,7 +2277,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L72",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_c_program_files_x86_steam_steamapps_common_rimworld_mods_fastergameloading_continued_source_fastergameloading_tests_fastergameloading_tests_csproj_version",
-      "community": 79,
+      "community": 61,
       "norm_label": "version"
     },
     {
@@ -2196,7 +2295,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L96",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_projectreferences_c_program_files_x86_steam_steamapps_common_rimworld_mods_fastergameloading_continued_source_fastergameloading_csproj",
-      "community": 79,
+      "community": 61,
       "norm_label": "c:\\\\program files (x86)\\\\steam\\\\steamapps\\\\common\\\\rimworld\\\\mods\\\\fastergameloading---continued\\\\source\\\\fastergameloading.csproj"
     },
     {
@@ -2205,7 +2304,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L114",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_c_program_files_x86_steam_steamapps_common_rimworld_mods_fastergameloading_continued_source_fastergameloading_tests_fastergameloading_tests_csproj_frameworks",
-      "community": 79,
+      "community": 61,
       "norm_label": "frameworks"
     },
     {
@@ -3492,7 +3591,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L147",
       "id": "obj_project_assets_microsoft_net_test_sdk_17_5_0_type",
-      "community": 74,
+      "community": 62,
       "norm_label": "type"
     },
     {
@@ -3681,7 +3780,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L181",
       "id": "obj_project_assets_net472_nunit3testadapter_4_4_2",
-      "community": 109,
+      "community": 78,
       "norm_label": "nunit3testadapter/4.4.2"
     },
     {
@@ -3690,7 +3789,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L182",
       "id": "obj_project_assets_nunit3testadapter_4_4_2_type",
-      "community": 109,
+      "community": 78,
       "norm_label": "type"
     },
     {
@@ -3699,7 +3798,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L183",
       "id": "obj_project_assets_nunit3testadapter_4_4_2_build",
-      "community": 109,
+      "community": 78,
       "norm_label": "build"
     },
     {
@@ -3708,7 +3807,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L184",
       "id": "obj_project_assets_build_build_net462_nunit3testadapter_props",
-      "community": 109,
+      "community": 78,
       "norm_label": "build/net462/nunit3testadapter.props"
     },
     {
@@ -3744,7 +3843,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L190",
       "id": "obj_project_assets_fastergameloading_1_0_0_dependencies",
-      "community": 57,
+      "community": 113,
       "norm_label": "dependencies"
     },
     {
@@ -3753,7 +3852,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L191",
       "id": "source_fastergameloading_tests_obj_project_assets_json_obj_project_assets_dependencies_krafs_rimworld_ref",
-      "community": 57,
+      "community": 113,
       "norm_label": "krafs.rimworld.ref"
     },
     {
@@ -3762,7 +3861,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L192",
       "id": "source_fastergameloading_tests_obj_project_assets_json_obj_project_assets_dependencies_lib_harmony",
-      "community": 57,
+      "community": 113,
       "norm_label": "lib.harmony"
     },
     {
@@ -3996,7 +4095,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L491",
       "id": "obj_project_assets_libraries_nunit3testadapter_4_4_2",
-      "community": 109,
+      "community": 74,
       "norm_label": "nunit3testadapter/4.4.2"
     },
     {
@@ -4005,7 +4104,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L492",
       "id": "obj_project_assets_nunit3testadapter_4_4_2_sha512",
-      "community": 109,
+      "community": 74,
       "norm_label": "sha512"
     },
     {
@@ -4014,7 +4113,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L494",
       "id": "obj_project_assets_nunit3testadapter_4_4_2_path",
-      "community": 109,
+      "community": 74,
       "norm_label": "path"
     },
     {
@@ -4023,7 +4122,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L495",
       "id": "obj_project_assets_nunit3testadapter_4_4_2_files",
-      "community": 109,
+      "community": 74,
       "norm_label": "files"
     },
     {
@@ -4095,7 +4194,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L536",
       "id": "source_fastergameloading_tests_obj_project_assets_json_obj_project_assets_project",
-      "community": 57,
+      "community": 104,
       "norm_label": "project"
     },
     {
@@ -4104,7 +4203,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L537",
       "id": "source_fastergameloading_tests_obj_project_assets_json_obj_project_assets_project_version",
-      "community": 57,
+      "community": 104,
       "norm_label": "version"
     },
     {
@@ -4194,7 +4293,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L552",
       "id": "source_fastergameloading_tests_obj_project_assets_json_obj_project_assets_restore_sources",
-      "community": 57,
+      "community": 118,
       "norm_label": "sources"
     },
     {
@@ -4203,7 +4302,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L553",
       "id": "source_fastergameloading_tests_obj_project_assets_json_obj_project_assets_sources_c_program_files_x86_microsoft_sdks_nugetpackages",
-      "community": 57,
+      "community": 118,
       "norm_label": "c:\\\\program files (x86)\\\\microsoft sdks\\\\nugetpackages\\\\"
     },
     {
@@ -4212,7 +4311,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L554",
       "id": "source_fastergameloading_tests_obj_project_assets_json_obj_project_assets_sources_https_api_nuget_org_v3_index_json",
-      "community": 57,
+      "community": 118,
       "norm_label": "https://api.nuget.org/v3/index.json"
     },
     {
@@ -4221,7 +4320,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L556",
       "id": "source_fastergameloading_tests_obj_project_assets_json_obj_project_assets_restore_frameworks",
-      "community": 57,
+      "community": 84,
       "norm_label": "frameworks"
     },
     {
@@ -4230,7 +4329,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L557",
       "id": "source_fastergameloading_tests_obj_project_assets_json_obj_project_assets_frameworks_net472",
-      "community": 57,
+      "community": 84,
       "norm_label": "net472"
     },
     {
@@ -4239,7 +4338,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L558",
       "id": "source_fastergameloading_tests_obj_project_assets_json_obj_project_assets_net472_framework",
-      "community": 57,
+      "community": 84,
       "norm_label": "framework"
     },
     {
@@ -4248,7 +4347,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L559",
       "id": "source_fastergameloading_tests_obj_project_assets_json_obj_project_assets_net472_targetalias",
-      "community": 57,
+      "community": 84,
       "norm_label": "targetalias"
     },
     {
@@ -4257,7 +4356,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L560",
       "id": "source_fastergameloading_tests_obj_project_assets_json_obj_project_assets_net472_projectreferences",
-      "community": 57,
+      "community": 84,
       "norm_label": "projectreferences"
     },
     {
@@ -4266,7 +4365,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L561",
       "id": "obj_project_assets_projectreferences_c_program_files_x86_steam_steamapps_common_rimworld_mods_fastergameloading_continued_source_fastergameloading_csproj",
-      "community": 57,
+      "community": 84,
       "norm_label": "c:\\\\program files (x86)\\\\steam\\\\steamapps\\\\common\\\\rimworld\\\\mods\\\\fastergameloading---continued\\\\source\\\\fastergameloading.csproj"
     },
     {
@@ -4275,7 +4374,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L562",
       "id": "obj_project_assets_c_program_files_x86_steam_steamapps_common_rimworld_mods_fastergameloading_continued_source_fastergameloading_csproj_projectpath",
-      "community": 57,
+      "community": 84,
       "norm_label": "projectpath"
     },
     {
@@ -4302,7 +4401,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L572",
       "id": "source_fastergameloading_tests_obj_project_assets_json_obj_project_assets_restore_restoreauditproperties",
-      "community": 57,
+      "community": 116,
       "norm_label": "restoreauditproperties"
     },
     {
@@ -4311,7 +4410,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L573",
       "id": "source_fastergameloading_tests_obj_project_assets_json_obj_project_assets_restoreauditproperties_enableaudit",
-      "community": 57,
+      "community": 116,
       "norm_label": "enableaudit"
     },
     {
@@ -4320,7 +4419,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L574",
       "id": "source_fastergameloading_tests_obj_project_assets_json_obj_project_assets_restoreauditproperties_auditlevel",
-      "community": 57,
+      "community": 116,
       "norm_label": "auditlevel"
     },
     {
@@ -4329,7 +4428,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L575",
       "id": "source_fastergameloading_tests_obj_project_assets_json_obj_project_assets_restoreauditproperties_auditmode",
-      "community": 57,
+      "community": 116,
       "norm_label": "auditmode"
     },
     {
@@ -4347,7 +4446,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L579",
       "id": "source_fastergameloading_tests_obj_project_assets_json_obj_project_assets_project_frameworks",
-      "community": 57,
+      "community": 104,
       "norm_label": "frameworks"
     },
     {
@@ -4356,7 +4455,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L583",
       "id": "source_fastergameloading_tests_obj_project_assets_json_obj_project_assets_net472_dependencies",
-      "community": 57,
+      "community": 79,
       "norm_label": "dependencies"
     },
     {
@@ -4365,7 +4464,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L585",
       "id": "source_fastergameloading_tests_obj_project_assets_json_obj_project_assets_lib_harmony_target",
-      "community": 57,
+      "community": 113,
       "norm_label": "target"
     },
     {
@@ -4374,7 +4473,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L586",
       "id": "source_fastergameloading_tests_obj_project_assets_json_obj_project_assets_lib_harmony_version",
-      "community": 57,
+      "community": 113,
       "norm_label": "version"
     },
     {
@@ -4383,7 +4482,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L588",
       "id": "obj_project_assets_dependencies_microsoft_net_test_sdk",
-      "community": 57,
+      "community": 79,
       "norm_label": "microsoft.net.test.sdk"
     },
     {
@@ -4392,7 +4491,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L589",
       "id": "obj_project_assets_microsoft_net_test_sdk_target",
-      "community": 57,
+      "community": 79,
       "norm_label": "target"
     },
     {
@@ -4401,7 +4500,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L590",
       "id": "obj_project_assets_microsoft_net_test_sdk_version",
-      "community": 57,
+      "community": 79,
       "norm_label": "version"
     },
     {
@@ -4410,7 +4509,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L592",
       "id": "obj_project_assets_dependencies_nunit",
-      "community": 57,
+      "community": 79,
       "norm_label": "nunit"
     },
     {
@@ -4419,7 +4518,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L593",
       "id": "obj_project_assets_nunit_target",
-      "community": 57,
+      "community": 79,
       "norm_label": "target"
     },
     {
@@ -4428,7 +4527,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L594",
       "id": "obj_project_assets_nunit_version",
-      "community": 57,
+      "community": 79,
       "norm_label": "version"
     },
     {
@@ -4437,7 +4536,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L596",
       "id": "obj_project_assets_dependencies_nunit3testadapter",
-      "community": 57,
+      "community": 79,
       "norm_label": "nunit3testadapter"
     },
     {
@@ -4446,7 +4545,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L597",
       "id": "obj_project_assets_nunit3testadapter_target",
-      "community": 57,
+      "community": 79,
       "norm_label": "target"
     },
     {
@@ -4455,7 +4554,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L598",
       "id": "obj_project_assets_nunit3testadapter_version",
-      "community": 57,
+      "community": 79,
       "norm_label": "version"
     },
     {
@@ -4464,7 +4563,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/project.assets.json",
       "source_location": "L601",
       "id": "source_fastergameloading_tests_obj_project_assets_json_obj_project_assets_net472_runtimeidentifiergraphpath",
-      "community": 57,
+      "community": 84,
       "norm_label": "runtimeidentifiergraphpath"
     },
     {
@@ -6880,10 +6979,28 @@
       "norm_label": "bool"
     },
     {
+      "label": "Vector2",
+      "file_type": "code",
+      "source_file": "Source/Settings/FasterGameLoadingSettings.cs",
+      "source_location": "L45",
+      "id": "vector2",
+      "community": 18,
+      "norm_label": "vector2"
+    },
+    {
+      "label": "float",
+      "file_type": "code",
+      "source_file": "Source/Settings/FasterGameLoadingSettings.cs",
+      "source_location": "L46",
+      "id": "source_settings_fastergameloadingsettings_cs_float",
+      "community": 18,
+      "norm_label": "float"
+    },
+    {
       "label": ".DoSettingsWindowContents()",
       "file_type": "code",
       "source_file": "Source/Settings/FasterGameLoadingSettings.cs",
-      "source_location": "L41",
+      "source_location": "L48",
       "id": "settings_fastergameloadingsettings_fastergameloadingsettings_dosettingswindowcontents",
       "community": 18,
       "norm_label": ".dosettingswindowcontents()"
@@ -6892,7 +7009,7 @@
       "label": ".ExposeData()",
       "file_type": "code",
       "source_file": "Source/Settings/FasterGameLoadingSettings.cs",
-      "source_location": "L100",
+      "source_location": "L114",
       "id": "settings_fastergameloadingsettings_fastergameloadingsettings_exposedata",
       "community": 18,
       "norm_label": ".exposedata()"
@@ -6943,11 +7060,20 @@
       "norm_label": "list"
     },
     {
+      "label": "long",
+      "file_type": "code",
+      "source_file": "Source/Settings/SessionCache.cs",
+      "source_location": "L42",
+      "id": "source_settings_sessioncache_cs_long",
+      "community": 11,
+      "norm_label": "long"
+    },
+    {
       "label": "float",
       "file_type": "code",
       "source_file": "Source/Settings/SessionCache.cs",
-      "source_location": "L47",
-      "id": "float",
+      "source_location": "L53",
+      "id": "source_settings_sessioncache_cs_float",
       "community": 11,
       "norm_label": "float"
     },
@@ -6955,7 +7081,7 @@
       "label": "int",
       "file_type": "code",
       "source_file": "Source/Settings/SessionCache.cs",
-      "source_location": "L53",
+      "source_location": "L59",
       "id": "source_settings_sessioncache_cs_int",
       "community": 11,
       "norm_label": "int"
@@ -6964,7 +7090,7 @@
       "label": ".GetModContent()",
       "file_type": "code",
       "source_file": "Source/Settings/SessionCache.cs",
-      "source_location": "L71",
+      "source_location": "L77",
       "id": "settings_sessioncache_sessioncache_getmodcontent",
       "community": 11,
       "norm_label": ".getmodcontent()"
@@ -6973,7 +7099,7 @@
       "label": ".ExposeData()",
       "file_type": "code",
       "source_file": "Source/Settings/SessionCache.cs",
-      "source_location": "L86",
+      "source_location": "L92",
       "id": "settings_sessioncache_sessioncache_exposedata",
       "community": 11,
       "norm_label": ".exposedata()"
@@ -7222,6 +7348,69 @@
       "norm_label": ".getrawbytessafe()"
     },
     {
+      "label": "LazyTextureLoader.cs",
+      "file_type": "code",
+      "source_file": "Source/TextureDownscaler/LazyTextureLoader.cs",
+      "source_location": "L1",
+      "id": "source_texturedownscaler_lazytextureloader_cs",
+      "community": 109,
+      "norm_label": "lazytextureloader.cs"
+    },
+    {
+      "label": "FasterGameLoading",
+      "file_type": "code",
+      "source_file": "Source/TextureDownscaler/LazyTextureLoader.cs",
+      "source_location": "L7",
+      "id": "texturedownscaler_lazytextureloader_fastergameloading",
+      "community": 109,
+      "norm_label": "fastergameloading"
+    },
+    {
+      "label": "LazyTextureLoader",
+      "file_type": "code",
+      "source_file": "Source/TextureDownscaler/LazyTextureLoader.cs",
+      "source_location": "L12",
+      "id": "texturedownscaler_lazytextureloader_lazytextureloader",
+      "community": 109,
+      "norm_label": "lazytextureloader"
+    },
+    {
+      "label": "ConcurrentDictionary",
+      "file_type": "code",
+      "source_file": "Source/TextureDownscaler/LazyTextureLoader.cs",
+      "source_location": "L15",
+      "id": "source_texturedownscaler_lazytextureloader_cs_concurrentdictionary",
+      "community": 109,
+      "norm_label": "concurrentdictionary"
+    },
+    {
+      "label": ".RegisterLazyTexture()",
+      "file_type": "code",
+      "source_file": "Source/TextureDownscaler/LazyTextureLoader.cs",
+      "source_location": "L25",
+      "id": "texturedownscaler_lazytextureloader_lazytextureloader_registerlazytexture",
+      "community": 109,
+      "norm_label": ".registerlazytexture()"
+    },
+    {
+      "label": ".TriggerLazyLoadIfPending()",
+      "file_type": "code",
+      "source_file": "Source/TextureDownscaler/LazyTextureLoader.cs",
+      "source_location": "L34",
+      "id": "texturedownscaler_lazytextureloader_lazytextureloader_triggerlazyloadifpending",
+      "community": 109,
+      "norm_label": ".triggerlazyloadifpending()"
+    },
+    {
+      "label": ".ShouldLazyLoad()",
+      "file_type": "code",
+      "source_file": "Source/TextureDownscaler/LazyTextureLoader.cs",
+      "source_location": "L72",
+      "id": "texturedownscaler_lazytextureloader_lazytextureloader_shouldlazyload",
+      "community": 109,
+      "norm_label": ".shouldlazyload()"
+    },
+    {
       "label": "ModContentLoaderTexture2D_LoadTexture_Patch.cs",
       "file_type": "code",
       "source_file": "Source/TextureDownscaler/ModContentLoaderTexture2D_LoadTexture_Patch.cs",
@@ -7270,7 +7459,7 @@
       "label": ".RegisterBionicIconIfApplicable()",
       "file_type": "code",
       "source_file": "Source/TextureDownscaler/ModContentLoaderTexture2D_LoadTexture_Patch.cs",
-      "source_location": "L40",
+      "source_location": "L53",
       "id": "texturedownscaler_modcontentloadertexture2d_loadtexture_patch_modcontentloadertexture2d_loadtexture_patch_registerbioniciconifapplicable",
       "community": 85,
       "norm_label": ".registerbioniciconifapplicable()"
@@ -7279,7 +7468,7 @@
       "label": ".Prefix()",
       "file_type": "code",
       "source_file": "Source/TextureDownscaler/ModContentLoaderTexture2D_LoadTexture_Patch.cs",
-      "source_location": "L48",
+      "source_location": "L61",
       "id": "texturedownscaler_modcontentloadertexture2d_loadtexture_patch_modcontentloadertexture2d_loadtexture_patch_prefix",
       "community": 85,
       "norm_label": ".prefix()"
@@ -7288,7 +7477,7 @@
       "label": ".Postfix()",
       "file_type": "code",
       "source_file": "Source/TextureDownscaler/ModContentLoaderTexture2D_LoadTexture_Patch.cs",
-      "source_location": "L129",
+      "source_location": "L161",
       "id": "texturedownscaler_modcontentloadertexture2d_loadtexture_patch_modcontentloadertexture2d_loadtexture_patch_postfix",
       "community": 85,
       "norm_label": ".postfix()"
@@ -7559,7 +7748,7 @@
       "file_type": "code",
       "source_file": "Source/TextureDownscaler/TextureResize.cs",
       "source_location": "L26",
-      "id": "long",
+      "id": "source_texturedownscaler_textureresize_cs_long",
       "community": 76,
       "norm_label": "long"
     },
@@ -8095,6 +8284,159 @@
       "norm_label": ".shouldbeloadedimmediately()"
     },
     {
+      "label": "DirectXmlLoader_XmlAssetsInModFolder_Patch.cs",
+      "file_type": "code",
+      "source_file": "Source/XMLLoadingCache/DirectXmlLoader_XmlAssetsInModFolder_Patch.cs",
+      "source_location": "L1",
+      "id": "source_xmlloadingcache_directxmlloader_xmlassetsinmodfolder_patch_cs",
+      "community": 117,
+      "norm_label": "directxmlloader_xmlassetsinmodfolder_patch.cs"
+    },
+    {
+      "label": "FasterGameLoading",
+      "file_type": "code",
+      "source_file": "Source/XMLLoadingCache/DirectXmlLoader_XmlAssetsInModFolder_Patch.cs",
+      "source_location": "L8",
+      "id": "xmlloadingcache_directxmlloader_xmlassetsinmodfolder_patch_fastergameloading",
+      "community": 117,
+      "norm_label": "fastergameloading"
+    },
+    {
+      "label": "DirectXmlLoader_XmlAssetsInModFolder_Patch",
+      "file_type": "code",
+      "source_file": "Source/XMLLoadingCache/DirectXmlLoader_XmlAssetsInModFolder_Patch.cs",
+      "source_location": "L14",
+      "id": "xmlloadingcache_directxmlloader_xmlassetsinmodfolder_patch_directxmlloader_xmlassetsinmodfolder_patch",
+      "community": 117,
+      "norm_label": "directxmlloader_xmlassetsinmodfolder_patch"
+    },
+    {
+      "label": ".Prefix()",
+      "file_type": "code",
+      "source_file": "Source/XMLLoadingCache/DirectXmlLoader_XmlAssetsInModFolder_Patch.cs",
+      "source_location": "L17",
+      "id": "xmlloadingcache_directxmlloader_xmlassetsinmodfolder_patch_directxmlloader_xmlassetsinmodfolder_patch_prefix",
+      "community": 117,
+      "norm_label": ".prefix()"
+    },
+    {
+      "label": "Graphic_Mat_Patch.cs",
+      "file_type": "code",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L1",
+      "id": "source_xmlloadingcache_graphic_mat_patch_cs",
+      "community": 111,
+      "norm_label": "graphic_mat_patch.cs"
+    },
+    {
+      "label": "FasterGameLoading",
+      "file_type": "code",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L5",
+      "id": "xmlloadingcache_graphic_mat_patch_fastergameloading",
+      "community": 111,
+      "norm_label": "fastergameloading"
+    },
+    {
+      "label": "Graphic_Mat_Patch",
+      "file_type": "code",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L11",
+      "id": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch",
+      "community": 111,
+      "norm_label": "graphic_mat_patch"
+    },
+    {
+      "label": ".Draw_Prefix()",
+      "file_type": "code",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L14",
+      "id": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_draw_prefix",
+      "community": 111,
+      "norm_label": ".draw_prefix()"
+    },
+    {
+      "label": ".DrawWorker_Prefix()",
+      "file_type": "code",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L24",
+      "id": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_drawworker_prefix",
+      "community": 111,
+      "norm_label": ".drawworker_prefix()"
+    },
+    {
+      "label": ".TriggerLazyLoadForGraphic()",
+      "file_type": "code",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L37",
+      "id": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_triggerlazyloadforgraphic",
+      "community": 111,
+      "norm_label": ".triggerlazyloadforgraphic()"
+    },
+    {
+      "label": ".TriggerLazyLoad()",
+      "file_type": "code",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L84",
+      "id": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_triggerlazyload",
+      "community": 111,
+      "norm_label": ".triggerlazyload()"
+    },
+    {
+      "label": "XmlChangeDetector.cs",
+      "file_type": "code",
+      "source_file": "Source/XMLLoadingCache/XmlChangeDetector.cs",
+      "source_location": "L1",
+      "id": "source_xmlloadingcache_xmlchangedetector_cs",
+      "community": 112,
+      "norm_label": "xmlchangedetector.cs"
+    },
+    {
+      "label": "FasterGameLoading",
+      "file_type": "code",
+      "source_file": "Source/XMLLoadingCache/XmlChangeDetector.cs",
+      "source_location": "L6",
+      "id": "xmlloadingcache_xmlchangedetector_fastergameloading",
+      "community": 112,
+      "norm_label": "fastergameloading"
+    },
+    {
+      "label": "XmlChangeDetector",
+      "file_type": "code",
+      "source_file": "Source/XMLLoadingCache/XmlChangeDetector.cs",
+      "source_location": "L12",
+      "id": "xmlloadingcache_xmlchangedetector_xmlchangedetector",
+      "community": 112,
+      "norm_label": "xmlchangedetector"
+    },
+    {
+      "label": "bool",
+      "file_type": "code",
+      "source_file": "Source/XMLLoadingCache/XmlChangeDetector.cs",
+      "source_location": "L17",
+      "id": "source_xmlloadingcache_xmlchangedetector_cs_bool",
+      "community": 112,
+      "norm_label": "bool"
+    },
+    {
+      "label": ".ScanXmlFilesAsync()",
+      "file_type": "code",
+      "source_file": "Source/XMLLoadingCache/XmlChangeDetector.cs",
+      "source_location": "L19",
+      "id": "xmlloadingcache_xmlchangedetector_xmlchangedetector_scanxmlfilesasync",
+      "community": 112,
+      "norm_label": ".scanxmlfilesasync()"
+    },
+    {
+      "label": ".ScanDirectory()",
+      "file_type": "code",
+      "source_file": "Source/XMLLoadingCache/XmlChangeDetector.cs",
+      "source_location": "L79",
+      "id": "xmlloadingcache_xmlchangedetector_xmlchangedetector_scandirectory",
+      "community": 112,
+      "norm_label": ".scandirectory()"
+    },
+    {
       "label": "XMLNode_SelectSingleNodes_Patch.cs",
       "file_type": "code",
       "source_file": "Source/XMLLoadingCache/XMLNode_SelectSingleNodes_Patch.cs",
@@ -8143,7 +8485,7 @@
       "label": ".DisableAndClear()",
       "file_type": "code",
       "source_file": "Source/XMLLoadingCache/XMLNode_SelectSingleNodes_Patch.cs",
-      "source_location": "L27",
+      "source_location": "L42",
       "id": "xmlloadingcache_xmlnode_selectsinglenodes_patch_xmlnode_selectsinglenode_patch_disableandclear",
       "community": 87,
       "norm_label": ".disableandclear()"
@@ -8152,7 +8494,7 @@
       "label": ".Prefix()",
       "file_type": "code",
       "source_file": "Source/XMLLoadingCache/XMLNode_SelectSingleNodes_Patch.cs",
-      "source_location": "L34",
+      "source_location": "L50",
       "id": "xmlloadingcache_xmlnode_selectsinglenodes_patch_xmlnode_selectsinglenode_patch_prefix",
       "community": 87,
       "norm_label": ".prefix()"
@@ -8161,7 +8503,7 @@
       "label": ".Postfix()",
       "file_type": "code",
       "source_file": "Source/XMLLoadingCache/XMLNode_SelectSingleNodes_Patch.cs",
-      "source_location": "L50",
+      "source_location": "L67",
       "id": "xmlloadingcache_xmlnode_selectsinglenodes_patch_xmlnode_selectsinglenode_patch_postfix",
       "community": 87,
       "norm_label": ".postfix()"
@@ -8174,6 +8516,159 @@
       "id": "readme_md",
       "community": 42,
       "norm_label": "readme.md"
+    },
+    {
+      "label": "Faster Game Loading - Continued",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "id": "fastergameloading_continued_readme_faster_game_loading_continued",
+      "community": 42,
+      "norm_label": "faster game loading - continued"
+    },
+    {
+      "label": "\ud83c\udfae RimWorld \u904a\u6232\u555f\u52d5\u6d41\u7a0b\u8207\u672c\u6a21\u7d44\u512a\u5316\u5207\u5165\u9ede",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L9",
+      "id": "fastergameloading_continued_readme_rimworld_\u904a\u6232\u555f\u52d5\u6d41\u7a0b\u8207\u672c\u6a21\u7d44\u512a\u5316\u5207\u5165\u9ede",
+      "community": 42,
+      "norm_label": "\ud83c\udfae rimworld \u904a\u6232\u555f\u52d5\u6d41\u7a0b\u8207\u672c\u6a21\u7d44\u512a\u5316\u5207\u5165\u9ede"
+    },
+    {
+      "label": "code:mermaid (graph TD)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L13",
+      "id": "fastergameloading_continued_readme_codeblock_1",
+      "community": 42,
+      "norm_label": "code:mermaid (graph td)"
+    },
+    {
+      "label": "1. \u521d\u59cb\u5316\u8207 Assembly \u8f09\u5165\u968e\u6bb5",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L32",
+      "id": "fastergameloading_continued_readme_1_\u521d\u59cb\u5316\u8207_assembly_\u8f09\u5165\u968e\u6bb5",
+      "community": 42,
+      "norm_label": "1. \u521d\u59cb\u5316\u8207 assembly \u8f09\u5165\u968e\u6bb5"
+    },
+    {
+      "label": "2. XML/Defs \u8b80\u53d6\u8207 XPath \u67e5\u8a62\u968e\u6bb5",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L38",
+      "id": "fastergameloading_continued_readme_2_xml_defs_\u8b80\u53d6\u8207_xpath_\u67e5\u8a62\u968e\u6bb5",
+      "community": 42,
+      "norm_label": "2. xml/defs \u8b80\u53d6\u8207 xpath \u67e5\u8a62\u968e\u6bb5"
+    },
+    {
+      "label": "3. \u6750\u8cea\u8cbc\u5716\u8f09\u5165\u968e\u6bb5",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L45",
+      "id": "fastergameloading_continued_readme_3_\u6750\u8cea\u8cbc\u5716\u8f09\u5165\u968e\u6bb5",
+      "community": 42,
+      "norm_label": "3. \u6750\u8cea\u8cbc\u5716\u8f09\u5165\u968e\u6bb5"
+    },
+    {
+      "label": "4. \u5716\u96c6\u70d8\u7119\u8207\u5feb\u53d6\u968e\u6bb5",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L51",
+      "id": "fastergameloading_continued_readme_4_\u5716\u96c6\u70d8\u7119\u8207\u5feb\u53d6\u968e\u6bb5",
+      "community": 42,
+      "norm_label": "4. \u5716\u96c6\u70d8\u7119\u8207\u5feb\u53d6\u968e\u6bb5"
+    },
+    {
+      "label": "\ud83d\udee0\ufe0f \u5404\u512a\u5316\u529f\u80fd\u6280\u8853\u7d30\u7bc0\u8207\u6982\u5ff5",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L59",
+      "id": "fastergameloading_continued_readme_\u5404\u512a\u5316\u529f\u80fd\u6280\u8853\u7d30\u7bc0\u8207\u6982\u5ff5",
+      "community": 42,
+      "norm_label": "\ud83d\udee0\ufe0f \u5404\u512a\u5316\u529f\u80fd\u6280\u8853\u7d30\u7bc0\u8207\u6982\u5ff5"
+    },
+    {
+      "label": "1. \u4f9d\u9700\u6c42\u5ef6\u9072\u52a0\u8f09\u6750\u8cea (Lazy Load Textures on Demand)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L61",
+      "id": "fastergameloading_continued_readme_1_\u4f9d\u9700\u6c42\u5ef6\u9072\u52a0\u8f09\u6750\u8cea_lazy_load_textures_on_demand",
+      "community": 42,
+      "norm_label": "1. \u4f9d\u9700\u6c42\u5ef6\u9072\u52a0\u8f09\u6750\u8cea (lazy load textures on demand)"
+    },
+    {
+      "label": "2. XPath \u5feb\u53d6\u8207 XML \u8b8a\u66f4\u5075\u6e2c (XPath Caching & Change Detection)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L68",
+      "id": "fastergameloading_continued_readme_2_xpath_\u5feb\u53d6\u8207_xml_\u8b8a\u66f4\u5075\u6e2c_xpath_caching_change_detection",
+      "community": 42,
+      "norm_label": "2. xpath \u5feb\u53d6\u8207 xml \u8b8a\u66f4\u5075\u6e2c (xpath caching & change detection)"
+    },
+    {
+      "label": "3. \u80cc\u666f\u57f7\u884c\u7dd2 JIT \u9810\u7de8\u8b6f (Background JIT Pre-compilation)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L74",
+      "id": "fastergameloading_continued_readme_3_\u80cc\u666f\u57f7\u884c\u7dd2_jit_\u9810\u7de8\u8b6f_background_jit_pre_compilation",
+      "community": 42,
+      "norm_label": "3. \u80cc\u666f\u57f7\u884c\u7dd2 jit \u9810\u7de8\u8b6f (background jit pre-compilation)"
+    },
+    {
+      "label": "4. \u591a\u57f7\u884c\u7dd2\u4e26\u884c XML \u8f09\u5165\u8207\u89e3\u6790 (Parallel XML Loading & Parsing)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L80",
+      "id": "fastergameloading_continued_readme_4_\u591a\u57f7\u884c\u7dd2\u4e26\u884c_xml_\u8f09\u5165\u8207\u89e3\u6790_parallel_xml_loading_parsing",
+      "community": 42,
+      "norm_label": "4. \u591a\u57f7\u884c\u7dd2\u4e26\u884c xml \u8f09\u5165\u8207\u89e3\u6790 (parallel xml loading & parsing)"
+    },
+    {
+      "label": "5. `delayedActions` \u7684 Unity \u7269\u4ef6\u7a7a\u503c\u5b89\u5168\u6027 (Null Safety in DelayedActions)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L86",
+      "id": "fastergameloading_continued_readme_5_delayedactions_\u7684_unity_\u7269\u4ef6\u7a7a\u503c\u5b89\u5168\u6027_null_safety_in_delayedactions",
+      "community": 42,
+      "norm_label": "5. `delayedactions` \u7684 unity \u7269\u4ef6\u7a7a\u503c\u5b89\u5168\u6027 (null safety in delayedactions)"
+    },
+    {
+      "label": "\u2699\ufe0f \u63a8\u85a6\u642d\u914d\u8207\u76f8\u5bb9\u6027",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L93",
+      "id": "fastergameloading_continued_readme_\u63a8\u85a6\u642d\u914d\u8207\u76f8\u5bb9\u6027",
+      "community": 42,
+      "norm_label": "\u2699\ufe0f \u63a8\u85a6\u642d\u914d\u8207\u76f8\u5bb9\u6027"
+    },
+    {
+      "label": "\ud83d\udce2 \u8072\u660e\u8207\u81f4\u8b1d",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L100",
+      "id": "fastergameloading_continued_readme_\u8072\u660e\u8207\u81f4\u8b1d",
+      "community": 42,
+      "norm_label": "\ud83d\udce2 \u8072\u660e\u8207\u81f4\u8b1d"
+    },
+    {
+      "label": "float",
+      "file_type": "code",
+      "source_file": "Source/Settings/SessionCache.cs",
+      "source_location": "L47",
+      "community": 11,
+      "norm_label": "float",
+      "id": "float"
+    },
+    {
+      "label": "long",
+      "file_type": "code",
+      "source_file": "Source/TextureDownscaler/TextureResize.cs",
+      "source_location": "L26",
+      "community": 76,
+      "norm_label": "long",
+      "id": "long"
     },
     {
       "label": "Harmony",
@@ -13336,6 +13831,36 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "Source/Core/JITPrecompiler.cs",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "source_core_jitprecompiler_cs",
+      "target": "core_jitprecompiler_fastergameloading",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Core/JITPrecompiler.cs",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "source_core_jitprecompiler_cs",
+      "target": "core_jitprecompiler_jitprecompiler",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Core/JITPrecompiler.cs",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "core_jitprecompiler_jitprecompiler",
+      "target": "core_jitprecompiler_jitprecompiler_startprecompilation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "Source/Core/Startup.cs",
       "source_location": "L5",
       "weight": 1.0,
@@ -13362,6 +13887,27 @@
       "confidence_score": 1.0,
       "source": "core_startup_cs",
       "target": "core_startup_fastergameloading"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Core/Startup.cs",
+      "source_location": "L16",
+      "weight": 1.0,
+      "context": "field",
+      "source": "core_startup_startup",
+      "target": "source_core_startup_cs_list",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Core/Startup.cs",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "core_startup_startup",
+      "target": "core_startup_startup_registeronstartupcompleted",
+      "confidence_score": 1.0
     },
     {
       "relation": "method",
@@ -14597,8 +15143,58 @@
       "source_file": "Source/FasterGameLoading.Tests/HarmonyPatchTests.cs",
       "source_location": "L184",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "fastergameloading_tests_harmonypatchtests_harmonypatchtests",
-      "target": "fastergameloading_tests_harmonypatchtests_harmonypatchtests_testxmlnode_selectsinglenode_patch_concurrencysafety",
+      "target": "fastergameloading_tests_harmonypatchtests_harmonypatchtests_testxmlnode_selectsinglenode_patch_concurrencysafety"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/FasterGameLoading.Tests/HarmonyPatchTests.cs",
+      "source_location": "L228",
+      "weight": 1.0,
+      "source": "fastergameloading_tests_harmonypatchtests_harmonypatchtests",
+      "target": "fastergameloading_tests_harmonypatchtests_harmonypatchtests_testxmlchangedetector_calculatesconsistenthash",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/FasterGameLoading.Tests/HarmonyPatchTests.cs",
+      "source_location": "L280",
+      "weight": 1.0,
+      "source": "fastergameloading_tests_harmonypatchtests_harmonypatchtests",
+      "target": "fastergameloading_tests_harmonypatchtests_harmonypatchtests_testjitprecompiler_runswithoutexceptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/FasterGameLoading.Tests/HarmonyPatchTests.cs",
+      "source_location": "L287",
+      "weight": 1.0,
+      "source": "fastergameloading_tests_harmonypatchtests_harmonypatchtests",
+      "target": "fastergameloading_tests_harmonypatchtests_harmonypatchtests_testdirectxmlloader_xmlassetsinmodfolder_patch_fallbacksafety",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/FasterGameLoading.Tests/HarmonyPatchTests.cs",
+      "source_location": "L297",
+      "weight": 1.0,
+      "source": "fastergameloading_tests_harmonypatchtests_harmonypatchtests",
+      "target": "fastergameloading_tests_harmonypatchtests_harmonypatchtests_testlazytextureloader_shouldlazyload_heuristics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/FasterGameLoading.Tests/HarmonyPatchTests.cs",
+      "source_location": "L313",
+      "weight": 1.0,
+      "source": "fastergameloading_tests_harmonypatchtests_harmonypatchtests",
+      "target": "fastergameloading_tests_harmonypatchtests_harmonypatchtests_testlazytextureloader_triggerlazyload_ondemand",
       "confidence_score": 1.0
     },
     {
@@ -20916,6 +21512,28 @@
       "target": "source_settings_fastergameloadingsettings_cs_bool"
     },
     {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Settings/FasterGameLoadingSettings.cs",
+      "source_location": "L45",
+      "weight": 1.0,
+      "context": "field",
+      "source": "settings_fastergameloadingsettings_fastergameloadingsettings",
+      "target": "vector2",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Settings/FasterGameLoadingSettings.cs",
+      "source_location": "L46",
+      "weight": 1.0,
+      "context": "field",
+      "source": "settings_fastergameloadingsettings_fastergameloadingsettings",
+      "target": "source_settings_fastergameloadingsettings_cs_float",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "Settings/FasterGameLoadingSettings.cs",
@@ -21011,13 +21629,24 @@
     {
       "relation": "references",
       "confidence": "EXTRACTED",
-      "source_file": "Settings/SessionCache.cs",
-      "source_location": "L44",
+      "source_file": "Source/Settings/SessionCache.cs",
+      "source_location": "L42",
       "weight": 1.0,
       "context": "field",
-      "confidence_score": 1.0,
       "source": "settings_sessioncache_sessioncache",
-      "target": "float"
+      "target": "source_settings_sessioncache_cs_long",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Settings/SessionCache.cs",
+      "source_location": "L53",
+      "weight": 1.0,
+      "context": "field",
+      "source": "settings_sessioncache_sessioncache",
+      "target": "source_settings_sessioncache_cs_float",
+      "confidence_score": 1.0
     },
     {
       "relation": "references",
@@ -21049,6 +21678,17 @@
       "confidence_score": 1.0,
       "source": "settings_sessioncache_sessioncache",
       "target": "settings_sessioncache_sessioncache_exposedata"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Settings/SessionCache.cs",
+      "source_location": "L44",
+      "weight": 1.0,
+      "context": "field",
+      "confidence_score": 1.0,
+      "source": "settings_sessioncache_sessioncache",
+      "target": "float"
     },
     {
       "relation": "contains",
@@ -21472,6 +22112,67 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "Source/TextureDownscaler/LazyTextureLoader.cs",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "source_texturedownscaler_lazytextureloader_cs",
+      "target": "texturedownscaler_lazytextureloader_fastergameloading",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/TextureDownscaler/LazyTextureLoader.cs",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "source_texturedownscaler_lazytextureloader_cs",
+      "target": "texturedownscaler_lazytextureloader_lazytextureloader",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/TextureDownscaler/LazyTextureLoader.cs",
+      "source_location": "L15",
+      "weight": 1.0,
+      "context": "field",
+      "source": "texturedownscaler_lazytextureloader_lazytextureloader",
+      "target": "source_texturedownscaler_lazytextureloader_cs_concurrentdictionary",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/TextureDownscaler/LazyTextureLoader.cs",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "texturedownscaler_lazytextureloader_lazytextureloader",
+      "target": "texturedownscaler_lazytextureloader_lazytextureloader_registerlazytexture",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/TextureDownscaler/LazyTextureLoader.cs",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "texturedownscaler_lazytextureloader_lazytextureloader",
+      "target": "texturedownscaler_lazytextureloader_lazytextureloader_triggerlazyloadifpending",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/TextureDownscaler/LazyTextureLoader.cs",
+      "source_location": "L72",
+      "weight": 1.0,
+      "source": "texturedownscaler_lazytextureloader_lazytextureloader",
+      "target": "texturedownscaler_lazytextureloader_lazytextureloader_shouldlazyload",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "Source/TextureDownscaler/ModContentLoaderTexture2D_LoadTexture_Patch.cs",
       "source_location": "L10",
       "weight": 1.0,
@@ -21891,9 +22592,9 @@
       "source_location": "L27",
       "weight": 1.0,
       "context": "field",
-      "confidence_score": 1.0,
       "source": "texturedownscaler_textureresize_textureresize",
-      "target": "long"
+      "target": "source_texturedownscaler_textureresize_cs_long",
+      "confidence_score": 1.0
     },
     {
       "relation": "method",
@@ -21998,6 +22699,17 @@
     {
       "relation": "references",
       "confidence": "EXTRACTED",
+      "source_file": "Source/TextureDownscaler/TextureResize.cs",
+      "source_location": "L27",
+      "weight": 1.0,
+      "context": "field",
+      "confidence_score": 1.0,
+      "source": "texturedownscaler_textureresize_textureresize",
+      "target": "long"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
       "source_file": "Source/Texture downscaler/TextureResize.cs",
       "source_location": "L24",
       "weight": 1.0,
@@ -22005,17 +22717,6 @@
       "confidence_score": 1.0,
       "source": "texture_downscaler_textureresize_textureresize",
       "target": "texturescanner"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "Texture downscaler/TextureResize.cs",
-      "source_location": "L156",
-      "weight": 1.0,
-      "context": "field",
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize",
-      "target": "long"
     },
     {
       "relation": "calls",
@@ -22770,6 +23471,191 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "Source/XMLLoadingCache/DirectXmlLoader_XmlAssetsInModFolder_Patch.cs",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "source_xmlloadingcache_directxmlloader_xmlassetsinmodfolder_patch_cs",
+      "target": "xmlloadingcache_directxmlloader_xmlassetsinmodfolder_patch_fastergameloading",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/XMLLoadingCache/DirectXmlLoader_XmlAssetsInModFolder_Patch.cs",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "source_xmlloadingcache_directxmlloader_xmlassetsinmodfolder_patch_cs",
+      "target": "xmlloadingcache_directxmlloader_xmlassetsinmodfolder_patch_directxmlloader_xmlassetsinmodfolder_patch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/XMLLoadingCache/DirectXmlLoader_XmlAssetsInModFolder_Patch.cs",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "xmlloadingcache_directxmlloader_xmlassetsinmodfolder_patch_directxmlloader_xmlassetsinmodfolder_patch",
+      "target": "xmlloadingcache_directxmlloader_xmlassetsinmodfolder_patch_directxmlloader_xmlassetsinmodfolder_patch_prefix",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "source_xmlloadingcache_graphic_mat_patch_cs",
+      "target": "xmlloadingcache_graphic_mat_patch_fastergameloading",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "source_xmlloadingcache_graphic_mat_patch_cs",
+      "target": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch",
+      "target": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_draw_prefix",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch",
+      "target": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_drawworker_prefix",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L37",
+      "weight": 1.0,
+      "source": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch",
+      "target": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_triggerlazyloadforgraphic",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L84",
+      "weight": 1.0,
+      "source": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch",
+      "target": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_triggerlazyload",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_draw_prefix",
+      "target": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_triggerlazyloadforgraphic",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_drawworker_prefix",
+      "target": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_triggerlazyloadforgraphic",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L44",
+      "weight": 1.0,
+      "source": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_triggerlazyloadforgraphic",
+      "target": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_triggerlazyload",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/XMLLoadingCache/XmlChangeDetector.cs",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "source_xmlloadingcache_xmlchangedetector_cs",
+      "target": "xmlloadingcache_xmlchangedetector_fastergameloading",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/XMLLoadingCache/XmlChangeDetector.cs",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "source_xmlloadingcache_xmlchangedetector_cs",
+      "target": "xmlloadingcache_xmlchangedetector_xmlchangedetector",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/XMLLoadingCache/XmlChangeDetector.cs",
+      "source_location": "L17",
+      "weight": 1.0,
+      "context": "field",
+      "source": "xmlloadingcache_xmlchangedetector_xmlchangedetector",
+      "target": "source_xmlloadingcache_xmlchangedetector_cs_bool",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/XMLLoadingCache/XmlChangeDetector.cs",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "xmlloadingcache_xmlchangedetector_xmlchangedetector",
+      "target": "xmlloadingcache_xmlchangedetector_xmlchangedetector_scanxmlfilesasync",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/XMLLoadingCache/XmlChangeDetector.cs",
+      "source_location": "L79",
+      "weight": 1.0,
+      "source": "xmlloadingcache_xmlchangedetector_xmlchangedetector",
+      "target": "xmlloadingcache_xmlchangedetector_xmlchangedetector_scandirectory",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/XMLLoadingCache/XmlChangeDetector.cs",
+      "source_location": "L41",
+      "weight": 1.0,
+      "source": "xmlloadingcache_xmlchangedetector_xmlchangedetector_scanxmlfilesasync",
+      "target": "xmlloadingcache_xmlchangedetector_xmlchangedetector_scandirectory",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "Source/XMLLoadingCache/XMLNode_SelectSingleNodes_Patch.cs",
       "source_location": "L6",
       "weight": 1.0,
@@ -22838,6 +23724,167 @@
       "confidence_score": 1.0,
       "source": "xmlloadingcache_xmlnode_selectsinglenodes_patch_xmlnode_selectsinglenode_patch",
       "target": "xmlloadingcache_xmlnode_selectsinglenodes_patch_xmlnode_selectsinglenode_patch_postfix"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "readme_md",
+      "target": "fastergameloading_continued_readme_faster_game_loading_continued",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "fastergameloading_continued_readme_faster_game_loading_continued",
+      "target": "fastergameloading_continued_readme_rimworld_\u904a\u6232\u555f\u52d5\u6d41\u7a0b\u8207\u672c\u6a21\u7d44\u512a\u5316\u5207\u5165\u9ede",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L59",
+      "weight": 1.0,
+      "source": "fastergameloading_continued_readme_faster_game_loading_continued",
+      "target": "fastergameloading_continued_readme_\u5404\u512a\u5316\u529f\u80fd\u6280\u8853\u7d30\u7bc0\u8207\u6982\u5ff5",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L93",
+      "weight": 1.0,
+      "source": "fastergameloading_continued_readme_faster_game_loading_continued",
+      "target": "fastergameloading_continued_readme_\u63a8\u85a6\u642d\u914d\u8207\u76f8\u5bb9\u6027",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L100",
+      "weight": 1.0,
+      "source": "fastergameloading_continued_readme_faster_game_loading_continued",
+      "target": "fastergameloading_continued_readme_\u8072\u660e\u8207\u81f4\u8b1d",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "fastergameloading_continued_readme_rimworld_\u904a\u6232\u555f\u52d5\u6d41\u7a0b\u8207\u672c\u6a21\u7d44\u512a\u5316\u5207\u5165\u9ede",
+      "target": "fastergameloading_continued_readme_codeblock_1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "fastergameloading_continued_readme_rimworld_\u904a\u6232\u555f\u52d5\u6d41\u7a0b\u8207\u672c\u6a21\u7d44\u512a\u5316\u5207\u5165\u9ede",
+      "target": "fastergameloading_continued_readme_1_\u521d\u59cb\u5316\u8207_assembly_\u8f09\u5165\u968e\u6bb5",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "fastergameloading_continued_readme_rimworld_\u904a\u6232\u555f\u52d5\u6d41\u7a0b\u8207\u672c\u6a21\u7d44\u512a\u5316\u5207\u5165\u9ede",
+      "target": "fastergameloading_continued_readme_2_xml_defs_\u8b80\u53d6\u8207_xpath_\u67e5\u8a62\u968e\u6bb5",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L45",
+      "weight": 1.0,
+      "source": "fastergameloading_continued_readme_rimworld_\u904a\u6232\u555f\u52d5\u6d41\u7a0b\u8207\u672c\u6a21\u7d44\u512a\u5316\u5207\u5165\u9ede",
+      "target": "fastergameloading_continued_readme_3_\u6750\u8cea\u8cbc\u5716\u8f09\u5165\u968e\u6bb5",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L51",
+      "weight": 1.0,
+      "source": "fastergameloading_continued_readme_rimworld_\u904a\u6232\u555f\u52d5\u6d41\u7a0b\u8207\u672c\u6a21\u7d44\u512a\u5316\u5207\u5165\u9ede",
+      "target": "fastergameloading_continued_readme_4_\u5716\u96c6\u70d8\u7119\u8207\u5feb\u53d6\u968e\u6bb5",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L61",
+      "weight": 1.0,
+      "source": "fastergameloading_continued_readme_\u5404\u512a\u5316\u529f\u80fd\u6280\u8853\u7d30\u7bc0\u8207\u6982\u5ff5",
+      "target": "fastergameloading_continued_readme_1_\u4f9d\u9700\u6c42\u5ef6\u9072\u52a0\u8f09\u6750\u8cea_lazy_load_textures_on_demand",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L68",
+      "weight": 1.0,
+      "source": "fastergameloading_continued_readme_\u5404\u512a\u5316\u529f\u80fd\u6280\u8853\u7d30\u7bc0\u8207\u6982\u5ff5",
+      "target": "fastergameloading_continued_readme_2_xpath_\u5feb\u53d6\u8207_xml_\u8b8a\u66f4\u5075\u6e2c_xpath_caching_change_detection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L74",
+      "weight": 1.0,
+      "source": "fastergameloading_continued_readme_\u5404\u512a\u5316\u529f\u80fd\u6280\u8853\u7d30\u7bc0\u8207\u6982\u5ff5",
+      "target": "fastergameloading_continued_readme_3_\u80cc\u666f\u57f7\u884c\u7dd2_jit_\u9810\u7de8\u8b6f_background_jit_pre_compilation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L80",
+      "weight": 1.0,
+      "source": "fastergameloading_continued_readme_\u5404\u512a\u5316\u529f\u80fd\u6280\u8853\u7d30\u7bc0\u8207\u6982\u5ff5",
+      "target": "fastergameloading_continued_readme_4_\u591a\u57f7\u884c\u7dd2\u4e26\u884c_xml_\u8f09\u5165\u8207\u89e3\u6790_parallel_xml_loading_parsing",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L86",
+      "weight": 1.0,
+      "source": "fastergameloading_continued_readme_\u5404\u512a\u5316\u529f\u80fd\u6280\u8853\u7d30\u7bc0\u8207\u6982\u5ff5",
+      "target": "fastergameloading_continued_readme_5_delayedactions_\u7684_unity_\u7269\u4ef6\u7a7a\u503c\u5b89\u5168\u6027_null_safety_in_delayedactions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Texture downscaler/TextureResize.cs",
+      "source_location": "L156",
+      "weight": 1.0,
+      "context": "field",
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize",
+      "target": "long"
     },
     {
       "relation": "contains",
@@ -28907,5 +29954,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "90538c1cd539f4791c213c1ab10cc4fab0639a16"
+  "built_at_commit": "46d8f4067bb40b163c293369e648b79e8de217b0"
 }

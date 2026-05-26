@@ -14,6 +14,7 @@
 
     <FGL_ClearAtlasCacheConfirmation>是否清除已快取的靜態圖集？</FGL_ClearAtlasCacheConfirmation>
     <FGL_VerboseLogging>啟用詳細日誌（輸出偵錯訊息至控制台）</FGL_VerboseLogging>
+    <FGL_JITPrecompilation>背景執行緒 JIT 預編譯（需要重新啟動）</FGL_JITPrecompilation>
 
     <!-- Texture Resizing -->
     <FGL_TextureResizingExplanation>某些模組可能包含大量高解析度紋理，載入需很長時間。使用此功能縮小高解析度紋理。原始檔案不會被修改；縮小後的版本會儲存在獨立的快取目錄中，並在下次啟動時自動載入。

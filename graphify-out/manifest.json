@@ -1,11 +1,11 @@
 {
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\.vs\\FasterGameLoading\\v18\\DocumentLayout.backup.json": {
-    "mtime": 1779717187.1941278,
+    "mtime": 1779729478.7981708,
     "ast_hash": "350261ee6cdfae9c89d6f6642965f605",
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\.vs\\FasterGameLoading\\v18\\DocumentLayout.json": {
-    "mtime": 1779717223.008362,
+    "mtime": 1779729841.8174708,
     "ast_hash": "350261ee6cdfae9c89d6f6642965f605",
     "semantic_hash": ""
   },
@@ -20,13 +20,13 @@
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\Core\\FasterGameLoadingMod.cs": {
-    "mtime": 1779714577.4030287,
-    "ast_hash": "1abe7295241bc28ab2ed5224dd4d8088",
+    "mtime": 1779722533.9806452,
+    "ast_hash": "7c11994c807be48ba2ed14ff625aee27",
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\Core\\Startup.cs": {
-    "mtime": 1779712847.1027796,
-    "ast_hash": "2c1ba5fe8502056339211ed456813f73",
+    "mtime": 1779787787.9025311,
+    "ast_hash": "43ff9f264e0965d56160664269f6c0b0",
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\Language\\LanguageDatabase_SelectLanguage_Patch.cs": {
@@ -60,13 +60,13 @@
     "semantic_hash": "896ab120ac6b6af2895fdb71c452b9d3"
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\Settings\\FasterGameLoadingSettings.cs": {
-    "mtime": 1779713345.918844,
-    "ast_hash": "3b76810e28de8c23c1e0cbf75b5bf694",
+    "mtime": 1779729308.325907,
+    "ast_hash": "6f1e2ebd1f01cdcbfbf0119a5a46394b",
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\Settings\\SessionCache.cs": {
-    "mtime": 1779712847.3229556,
-    "ast_hash": "75e32387a7876dea40fb2a064e37a92f",
+    "mtime": 1779721613.9874277,
+    "ast_hash": "dd532181192ee3c6abfc262c22b243cb",
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\Utilities\\CacheResetter.cs": {
@@ -80,9 +80,9 @@
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\README.md": {
-    "mtime": 1779712847.0797017,
-    "ast_hash": "edc96f388ba285eab08f54d98e3c67fd",
-    "semantic_hash": "edc96f388ba285eab08f54d98e3c67fd"
+    "mtime": 1779787750.2829394,
+    "ast_hash": "4a350a4ec442432b85b14665dd332799",
+    "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\About\\PublishedFileId.txt": {
     "mtime": 1779712847.072685,
@@ -170,8 +170,8 @@
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.Tests\\obj\\Debug\\net472\\FasterGameLoading.Tests.AssemblyInfo.cs": {
-    "mtime": 1779713017.9683864,
-    "ast_hash": "799688f43df6480e37c2eda1e69fe02d",
+    "mtime": 1779787209.6138618,
+    "ast_hash": "ef8bf744368ed6cf30517332a770a541",
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.Tests\\obj\\Debug\\net472\\FasterGameLoading.Tests.csproj.FileListAbsolute.txt": {
@@ -185,13 +185,13 @@
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.Tests\\obj\\Release\\net472\\FasterGameLoading.Tests.AssemblyInfo.cs": {
-    "mtime": 1779712976.2376158,
-    "ast_hash": "295cf40b68fb4b6a953d11c0561688dc",
+    "mtime": 1779723610.5045292,
+    "ast_hash": "b4dcfe86b79f6088c6181b42b0eefd58",
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.Tests\\obj\\Release\\net472\\FasterGameLoading.Tests.sourcelink.json": {
-    "mtime": 1779712976.257681,
-    "ast_hash": "2d513465858dee0c63fb503752f5795c",
+    "mtime": 1779723610.5335784,
+    "ast_hash": "e7685086a76baa37b7e2e16bcabbe4c4",
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.Tests\\obj\\Release\\net472\\FasterGameLoading.Tests.csproj.FileListAbsolute.txt": {
@@ -205,8 +205,8 @@
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\DelayGraphicAndIconLoading\\DelayedActions.cs": {
-    "mtime": 1779714572.7876515,
-    "ast_hash": "a2eaa40f8ffbd6e9854da5faa896d9ae",
+    "mtime": 1779721644.233086,
+    "ast_hash": "12ea486a23183876628b8a0f86ee261d",
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\DelayGraphicAndIconLoading\\GraphicData_Init_Patch.cs": {
@@ -255,8 +255,8 @@
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\EarlyModContentLoading\\GenTypes_GetTypeInAnyAssemblyInt_Patch.cs": {
-    "mtime": 1779712847.1092918,
-    "ast_hash": "cba483e8276fb1b1827f964f8c3598fe",
+    "mtime": 1779787790.8764665,
+    "ast_hash": "5144f75c5b7008d8a78255c8301dfeb5",
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\EarlyModContentLoading\\ModAssetBundlesHandler_ReloadAll_Patch.cs": {
@@ -285,8 +285,8 @@
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\TextureDownscaler\\ModContentLoaderTexture2D_LoadTexture_Patch.cs": {
-    "mtime": 1779715695.0807254,
-    "ast_hash": "a3a6a03cd5ef85f63e0b254ae0dada4a",
+    "mtime": 1779787789.3043175,
+    "ast_hash": "d836225874fcbca6fd1dff942bd5ebcc",
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\TextureDownscaler\\PngUtils.cs": {
@@ -315,13 +315,13 @@
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\XMLLoadingCache\\XMLNode_SelectSingleNodes_Patch.cs": {
-    "mtime": 1779721028.894089,
-    "ast_hash": "b84e3ca01baadf09c785a01a6c2663b2",
+    "mtime": 1779787793.564988,
+    "ast_hash": "fee039f379558336eb4013087c2f6648",
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.Tests\\obj\\Debug\\net472\\FasterGameLoading.Tests.sourcelink.json": {
-    "mtime": 1779713935.1225913,
-    "ast_hash": "2d513465858dee0c63fb503752f5795c",
+    "mtime": 1779787497.8457513,
+    "ast_hash": "6220d7559e254bbe08df02afa0737dcf",
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\Compatibility\\ImageOptCompat.cs": {
@@ -330,8 +330,33 @@
     "semantic_hash": ""
   },
   "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.Tests\\HarmonyPatchTests.cs": {
-    "mtime": 1779721009.5967155,
-    "ast_hash": "5b15f233bd60959f10cdd2df0a9be48d",
+    "mtime": 1779723340.5658405,
+    "ast_hash": "92f46ead5d29387af871f0a8189b30d4",
+    "semantic_hash": ""
+  },
+  "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\Core\\JITPrecompiler.cs": {
+    "mtime": 1779722526.882473,
+    "ast_hash": "f9c7ab9226205dfe37a0bcbc424f240a",
+    "semantic_hash": ""
+  },
+  "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\TextureDownscaler\\LazyTextureLoader.cs": {
+    "mtime": 1779723294.9009845,
+    "ast_hash": "fe42e8adc420f6815ea5f41a226f3c8f",
+    "semantic_hash": ""
+  },
+  "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\XMLLoadingCache\\DirectXmlLoader_XmlAssetsInModFolder_Patch.cs": {
+    "mtime": 1779722888.9086034,
+    "ast_hash": "9a3090774ffde665c03bef17c27ba58d",
+    "semantic_hash": ""
+  },
+  "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\XMLLoadingCache\\Graphic_Mat_Patch.cs": {
+    "mtime": 1779723310.4952295,
+    "ast_hash": "a164a47ceca8e52a60b304d13244f4fb",
+    "semantic_hash": ""
+  },
+  "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\XMLLoadingCache\\XmlChangeDetector.cs": {
+    "mtime": 1779721640.9052541,
+    "ast_hash": "8bbb2da3c486cc87410884be02eefc40",
     "semantic_hash": ""
   }
 }

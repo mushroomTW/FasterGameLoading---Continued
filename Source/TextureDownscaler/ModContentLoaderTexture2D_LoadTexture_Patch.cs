@@ -35,6 +35,19 @@ namespace FasterGameLoading
                 loadedTexturesThisSession.Clear();
                 bionicIconTextures.Clear();
             });
+
+            Startup.RegisterOnStartupCompleted(() =>
+            {
+                SessionCache.loadedTexturesSinceLastSession = new System.Collections.Generic.Dictionary<string, string>(loadedTexturesThisSession);
+                if (cacheLoadHits > 0
+                    || cacheLoadFailures > 0
+                    || FasterGameLoadingMod.Instance.CacheManager.CacheCount > 0)
+                {
+                    FGLLog.Message("Texture downscale cache hits: " + cacheLoadHits
+                        + ", failures: " + cacheLoadFailures
+                        + ", configured entries: " + FasterGameLoadingMod.Instance.CacheManager.CacheCount);
+                }
+            });
         }
 
         public static void RegisterBionicIconIfApplicable(string path, Texture2D tex)

@@ -20,6 +20,11 @@ namespace FasterGameLoading
         static GenTypes_GetTypeInAnyAssemblyInt_Patch()
         {
             CacheResetter.Register(() => ClearCache());
+
+            Startup.RegisterOnStartupCompleted(() =>
+            {
+                SessionCache.loadedTypesByFullNameSinceLastSession = new System.Collections.Generic.Dictionary<string, string>(loadedTypesThisSession);
+            });
         }
 
         public static void ClearCache()

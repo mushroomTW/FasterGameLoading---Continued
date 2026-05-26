@@ -1,4 +1,6 @@
 using HarmonyLib;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Verse;
 
@@ -11,21 +13,37 @@ namespace FasterGameLoading
     [HarmonyPatch(typeof(StaticConstructorOnStartupUtility), nameof(StaticConstructorOnStartupUtility.CallAll))]
     public static class Startup
     {
+        private static readonly List<Action> onStartupCompleted = new List<Action>();
+
+        /// <summary>
+        /// 註冊在遊戲啟動載入完畢（CallAll 完成）後要執行的回呼。
+        /// </summary>
+        public static void RegisterOnStartupCompleted(Action callback)
+        {
+            if (callback != null)
+            {
+                onStartupCompleted.Add(callback);
+            }
+        }
+
         public static void Postfix()
         {
             // Save current session data for cross-session caching
             SessionCache.modsInLastSession = ModsConfig.ActiveModsInLoadOrder.Select(x => x.packageIdLowerCase).ToList();
-            SessionCache.loadedTexturesSinceLastSession = new System.Collections.Generic.Dictionary<string, string>(ModContentLoaderTexture2D_LoadTexture_Patch.loadedTexturesThisSession);
-            if (ModContentLoaderTexture2D_LoadTexture_Patch.cacheLoadHits > 0
-                || ModContentLoaderTexture2D_LoadTexture_Patch.cacheLoadFailures > 0
-                || FasterGameLoadingMod.Instance.CacheManager.CacheCount > 0)
+            
+            // Execute all registered startup-completed callbacks
+            foreach (var callback in onStartupCompleted)
             {
-                FGLLog.Message("Texture downscale cache hits: " + ModContentLoaderTexture2D_LoadTexture_Patch.cacheLoadHits
-                    + ", failures: " + ModContentLoaderTexture2D_LoadTexture_Patch.cacheLoadFailures
-                    + ", configured entries: " + FasterGameLoadingMod.Instance.CacheManager.CacheCount);
+                try
+                {
+                    callback();
+                }
+                catch (Exception ex)
+                {
+                    FGLLog.Error("Error executing startup-completed callback: " + ex.Message, ex);
+                }
             }
-            SessionCache.loadedTypesByFullNameSinceLastSession = new System.Collections.Generic.Dictionary<string, string>(GenTypes_GetTypeInAnyAssemblyInt_Patch.loadedTypesThisSession);
-            SessionCache.xmlPathsSinceLastSession = new System.Collections.Generic.Dictionary<string, bool>(XmlNode_SelectSingleNode_Patch.xmlPathsThisSession);
+            onStartupCompleted.Clear();
 
             // Inject translations
             TranslationInjector.InjectTranslations();
@@ -39,9 +57,6 @@ namespace FasterGameLoading
             {
                 FasterGameLoadingMod.delayedActions.StartCoroutine(FasterGameLoadingMod.delayedActions.PerformActions());
             });
-
-            // 遊戲初始化載入完成，關閉並釋放 XML 快取
-            XmlNode_SelectSingleNode_Patch.DisableAndClear();
         }
     }
 }

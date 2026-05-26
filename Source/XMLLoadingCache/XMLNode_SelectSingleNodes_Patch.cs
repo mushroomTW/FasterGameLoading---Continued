@@ -31,6 +31,12 @@ namespace FasterGameLoading
                 isXmlScanComplete = false;
                 xmlPathsThisSession.Clear();
             });
+
+            Startup.RegisterOnStartupCompleted(() =>
+            {
+                SessionCache.xmlPathsSinceLastSession = new System.Collections.Generic.Dictionary<string, bool>(xmlPathsThisSession);
+                DisableAndClear();
+            });
         }
 
         public static void DisableAndClear()

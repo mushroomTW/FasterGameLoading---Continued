@@ -7,7 +7,7 @@
     <FGL_DelayGraphicLoading>Delay graphic and icon loading (requires restart)</FGL_DelayGraphicLoading>
     <FGL_StaticAtlasesBaking>Smarter atlas baking (requires restart)</FGL_StaticAtlasesBaking>
     <FGL_AtlasCaching>Static atlases cache (requires restart)</FGL_AtlasCaching>
-    <FGL_EnableMultiThreading>Enable multi-threaded preloading (requires restart)</FGL_EnableMultiThreading>
+    <FGL_MultiThreading>Multi-threaded preloading (requires restart)</FGL_MultiThreading>
     <FGL_XPathCaching>XPath caching (requires restart)</FGL_XPathCaching>
     <FGL_LazyTextureLoading>Lazy load textures (loads texture data when first seen in game, speeds up startup significantly)</FGL_LazyTextureLoading>
     <FGL_ClearAtlasCache>Clear atlas cache</FGL_ClearAtlasCache>

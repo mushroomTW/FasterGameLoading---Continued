@@ -167,6 +167,35 @@ namespace FasterGameLoading.Tests
         }
 
         [Test]
+        public void TestXmlNode_SelectSingleNode_Patch_BypassesWhenXmlExtensionsActive()
+        {
+            // 1. 模擬跨 session 快取記錄：/root/missing 節點是不存在的 (false)
+            string xpath = "/root/missing";
+            SessionCache.xmlPathsSinceLastSession.TryAdd(xpath, 0);
+
+            // 2. 建立一個包含此節點的 XML 檔案（實際上它是存在的）
+            var doc = new XmlDocument();
+            doc.LoadXml("<root><missing>exists</missing></root>");
+
+            // 3. 用反射強行將 isXmlExtensionsActive 設為 true 模擬 XML Extensions 啟用
+            var field = typeof(XmlNode_SelectSingleNode_Patch).GetField("isXmlExtensionsActive", BindingFlags.NonPublic | BindingFlags.Static);
+            Assert.IsNotNull(field);
+            field.SetValue(null, (bool?)true);
+
+            try
+            {
+                // 4. 進行查詢，此時因為 XML Extensions 啟用，Prefix 應該直接放行，返回真實存在的節點
+                var result = doc.SelectSingleNode(xpath);
+                Assert.IsNotNull(result, "Should bypass cache and return the node because XML Extensions is active");
+            }
+            finally
+            {
+                // 重設狀態
+                field.SetValue(null, (bool?)null);
+            }
+        }
+
+        [Test]
         public void TestXmlNode_SelectSingleNode_Patch_Postfix_RecordsNodes()
         {
             // 1. 建立測試用的 XML

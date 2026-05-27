@@ -1,16 +1,16 @@
 # Graph Report - FasterGameLoading---Continued  (2026-05-27)
 
 ## Corpus Check
-- 67 files · ~31,582 words
+- 67 files · ~31,732 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1510 nodes · 1686 edges · 127 communities (97 shown, 30 thin omitted)
+- 1511 nodes · 1687 edges · 127 communities (97 shown, 30 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.86)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `bd8007dd`
+- Built from commit: `68538cea`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -139,7 +139,7 @@
 4. `TextureResize` - 53 edges
 5. `DelayedActions` - 29 edges
 6. `DelayedActions` - 21 edges
-7. `HarmonyPatchTests` - 18 edges
+7. `HarmonyPatchTests` - 19 edges
 8. `TextureCacheManager` - 16 edges
 9. `TextureScanner` - 16 edges
 10. `TextureCacheManager` - 16 edges
@@ -339,8 +339,8 @@ Cohesion: 0.17
 Nodes (13): lib/net472/0Harmony.dll, lib/net472/0Harmony.dll, compile, files, path, runtime, sha512, type (+5 more)
 
 ### Community 66 - "Community 66"
-Cohesion: 0.20
-Nodes (10): build/Krafs.Publicizer.props, build/Krafs.Publicizer.targets, contentfiles/cs/any/Publicizer/IgnoresAccessChecksToAttribute.cs, buildAction, codeLanguage, copyToOutput, build, contentFiles (+2 more)
+Cohesion: 0.17
+Nodes (12): build/Krafs.Publicizer.props, build/Krafs.Publicizer.targets, contentfiles/cs/any/Publicizer/IgnoresAccessChecksToAttribute.cs, buildAction, codeLanguage, copyToOutput, build, contentFiles (+4 more)
 
 ### Community 67 - "Community 67"
 Cohesion: 0.17
@@ -447,8 +447,8 @@ Cohesion: 0.20
 Nodes (9): packageFolders, C:\\Users\\mushroomMaster\\.nuget\\packages\\, project, frameworks, version, projectFileDependencyGroups, net472, targets (+1 more)
 
 ### Community 108 - "Community 108"
-Cohesion: 0.15
-Nodes (13): files, path, sha512, type, files, path, sha512, libraries (+5 more)
+Cohesion: 0.18
+Nodes (11): files, path, sha512, type, files, path, sha512, libraries (+3 more)
 
 ### Community 109 - "Community 109"
 Cohesion: 0.25
@@ -484,7 +484,7 @@ Nodes (10): frameworks, version, net472, framework, projectReferences, runtimeId
 
 ### Community 120 - "Community 120"
 Cohesion: 0.25
-Nodes (7): frameworks, version, format, projects, C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.csproj, restore, C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.Tests\\FasterGameLoading.Tests.csproj
+Nodes (7): frameworks, version, format, projects, C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.Tests\\FasterGameLoading.Tests.csproj, restore, C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.Tests\\FasterGameLoading.Tests.csproj
 
 ### Community 122 - "Community 122"
 Cohesion: 0.29
@@ -511,11 +511,11 @@ Nodes (3): sources, C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\, ht
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `compile` connect `Community 0` to `Community 82`, `Community 38`?**
-  _High betweenness centrality (0.034) - this node is a cross-community bridge._
+  _High betweenness centrality (0.035) - this node is a cross-community bridge._
 - **Why does `net472` connect `Community 60` to `Community 1`, `Community 66`, `Community 82`?**
+  _High betweenness centrality (0.030) - this node is a cross-community bridge._
+- **Why does `Krafs.Rimworld.Ref/1.6.4633` connect `Community 82` to `Community 0`, `Community 60`?**
   _High betweenness centrality (0.029) - this node is a cross-community bridge._
-- **Why does `compile` connect `Community 56` to `Community 89`, `Community 108`?**
-  _High betweenness centrality (0.028) - this node is a cross-community bridge._
 - **What connects `FasterGameLoading`, `FasterGameLoading`, `HashSet` to the rest of the system?**
   _715 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**

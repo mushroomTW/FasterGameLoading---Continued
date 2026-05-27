@@ -54,9 +54,29 @@ namespace FasterGameLoading
             SessionCache.xmlPathsSinceLastSession.Clear();
         }
 
+        private static bool? isXmlExtensionsActive;
+        public static bool IsXmlExtensionsActive
+        {
+            get
+            {
+                if (!isXmlExtensionsActive.HasValue)
+                {
+                    try
+                    {
+                        isXmlExtensionsActive = Verse.ModsConfig.IsActive("krafs.xmlextensions");
+                    }
+                    catch
+                    {
+                        isXmlExtensionsActive = false;
+                    }
+                }
+                return isXmlExtensionsActive.Value;
+            }
+        }
+
         public static bool Prefix(string xpath, ref XmlNode __result)
         {
-            if (!isXmlScanComplete || !patchEnabled || !FasterGameLoadingSettings.XPathCaching)
+            if (!isXmlScanComplete || !patchEnabled || !FasterGameLoadingSettings.XPathCaching || IsXmlExtensionsActive)
             {
                 return true;
             }
@@ -74,7 +94,7 @@ namespace FasterGameLoading
 
         public static void Postfix(string xpath, XmlNode __result, bool __runOriginal)
         {
-            if (!__runOriginal || !patchEnabled || !FasterGameLoadingSettings.XPathCaching)
+            if (!__runOriginal || !patchEnabled || !FasterGameLoadingSettings.XPathCaching || IsXmlExtensionsActive)
             {
                 return;
             }

@@ -56,7 +56,7 @@ namespace FasterGameLoading
             var ls = new Listing_Standard();
             ls.Begin(viewRect);
             ls.CheckboxLabeled("FGL_EarlyModContentLoading".Translate(), ref earlyModContentLoading);
-            ls.CheckboxLabeled("FGL_EnableMultiThreading".Translate(), ref EnableMultiThreading);
+            ls.CheckboxLabeled("FGL_MultiThreading".Translate(), ref EnableMultiThreading);
             ls.CheckboxLabeled("FGL_XPathCaching".Translate(), ref XPathCaching);
             ls.CheckboxLabeled("FGL_LazyTextureLoading".Translate(), ref LazyTextureLoading);
             ls.CheckboxLabeled("FGL_DelayGraphicLoading".Translate(), ref DelayGraphicLoading);

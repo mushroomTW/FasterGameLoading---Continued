@@ -7,7 +7,7 @@
     <FGL_DelayGraphicLoading>延遲圖形和圖示載入（需要重新啟動）</FGL_DelayGraphicLoading>
     <FGL_StaticAtlasesBaking>更聰明的圖集烘焙（需要重新啟動）</FGL_StaticAtlasesBaking>
     <FGL_AtlasCaching>靜態圖集快取（需要重新啟動）</FGL_AtlasCaching>
-    <FGL_EnableMultiThreading>啟用多執行緒預載入（需要重新啟動）</FGL_EnableMultiThreading>
+    <FGL_MultiThreading>多執行緒預載入（需要重新啟動）</FGL_MultiThreading>
     <FGL_XPathCaching>XPath 快取（需要重新啟動）</FGL_XPathCaching>
     <FGL_LazyTextureLoading>依需求延遲加載材質（遊戲遊玩中首次看見時才加載貼圖數據，大幅提速啟動）</FGL_LazyTextureLoading>
     <FGL_ClearAtlasCache>清除圖集快取</FGL_ClearAtlasCache>

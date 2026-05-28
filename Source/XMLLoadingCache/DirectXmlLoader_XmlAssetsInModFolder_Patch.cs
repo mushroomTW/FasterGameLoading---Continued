@@ -72,7 +72,7 @@ namespace FasterGameLoading
                 });
 
                 // 3. 收集並過濾成功的 XML assets
-                var resultList = new List<LoadableXmlAsset>();
+                var resultList = new List<LoadableXmlAsset>(assets.Length);
                 for (int i = 0; i < assets.Length; i++)
                 {
                     if (assets[i] != null)

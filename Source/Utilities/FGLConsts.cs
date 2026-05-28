@@ -51,5 +51,31 @@ namespace FasterGameLoading
         // ── 紋理路徑字首與目錄匹配 ──
         public const string UIDirSlash = "/UI/";
         public const string TexturesDirSlash = "Textures/";
+
+        // ── JIT 排除 Assembly 常數 ──
+        public static readonly string[] IgnoredAssemblyPrefixes = new[]
+        {
+            "System",
+            "Microsoft",
+            "Unity"
+        };
+
+        public static readonly System.Collections.Generic.HashSet<string> IgnoredAssemblyExactNames = new System.Collections.Generic.HashSet<string>(System.StringComparer.OrdinalIgnoreCase)
+        {
+            "mscorlib",
+            "Assembly-CSharp",
+            "0Harmony",
+            "Mono.Cecil",
+            "Anonymously Hosted DynamicMethods Assembly"
+        };
+
+        // ── 背景延遲時間常數 ──
+        public const int AccessToolsPreloadDelayMs = 50;
+        public const int TexturePreloadDelayMs = 150;
+
+        // ── 外部 Mod 相容與 XML 目錄常數 ──
+        public const string BionicIconsModId = "bionicicons";
+        public const string DefsDirName = "Defs";
+        public const string PatchesDirName = "Patches";
     }
 }

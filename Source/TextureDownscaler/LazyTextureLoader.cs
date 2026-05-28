@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using Verse;
@@ -16,8 +17,16 @@ namespace FasterGameLoading
         /// <summary>目前是否有等待按需加載的貼圖。提供給 Draw 的 Harmony Prefix 以免去熱路徑上的字典查詢開銷。</summary>
         public static volatile bool hasPendingTextures = false;
 
+        /// <summary>排除延遲加載的材質路徑關鍵字清單。</summary>
+        public static readonly HashSet<string> ExcludePaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
         static LazyTextureLoader()
         {
+            // 載入預設排除路徑
+            ExcludePaths.Add("UI/");
+            ExcludePaths.Add("Icon");
+            ExcludePaths.Add("bionicicons");
+
             CacheResetter.Register(() =>
             {
                 pendingLazyTextures.Clear();
@@ -33,6 +42,17 @@ namespace FasterGameLoading
             if (tex == null || string.IsNullOrEmpty(originalPath)) return;
             pendingLazyTextures[tex] = originalPath;
             hasPendingTextures = true;
+        }
+
+        /// <summary>
+        /// 動態註冊排除延遲加載的路徑關鍵字。
+        /// </summary>
+        public static void RegisterExcludePath(string path)
+        {
+            if (!string.IsNullOrEmpty(path))
+            {
+                ExcludePaths.Add(path);
+            }
         }
 
         /// <summary>
@@ -86,18 +106,13 @@ namespace FasterGameLoading
 
             var normalized = path.Replace('\\', '/');
 
-            // 排除 UI 和 Icon，避免主選單、按鈕等控制介面透明或壞掉
-            if (normalized.IndexOf("UI/", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                normalized.IndexOf("/UI/", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                normalized.IndexOf("Icon", StringComparison.OrdinalIgnoreCase) >= 0)
+            // 遍歷排除清單，比對是否包含排除的關鍵字
+            foreach (var exclude in ExcludePaths)
             {
-                return false;
-            }
-
-            // 排除 Bionic Icons 等醫療界面關鍵元件
-            if (normalized.IndexOf("bionicicons", StringComparison.OrdinalIgnoreCase) >= 0)
-            {
-                return false;
+                if (normalized.IndexOf(exclude, StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    return false;
+                }
             }
 
             // 僅對遊戲世界中的 Def 物件貼圖進行延遲加載

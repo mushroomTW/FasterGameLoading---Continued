@@ -48,7 +48,7 @@ namespace FasterGameLoading
             Task.Run(() =>
             {
                 // 稍微延遲 50 毫秒，避開啟動時的併發載入高峰
-                System.Threading.Thread.Sleep(50);
+                System.Threading.Thread.Sleep(FGLConsts.AccessToolsPreloadDelayMs);
 
                 var types = assembliesSnapshot
                     .SelectMany(assembly =>

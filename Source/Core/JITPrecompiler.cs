@@ -70,16 +70,7 @@ namespace FasterGameLoading
                         try
                         {
                             var name = assembly.GetName().Name;
-                            // 排除系統元件、Unity 原生元件、Harmony 元件以及遊戲本體，
-                            // 專注預熱載入的第三方 Mod 程式集。
-                            if (name.StartsWith("System", StringComparison.OrdinalIgnoreCase) ||
-                                name.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase) ||
-                                name.StartsWith("Unity", StringComparison.OrdinalIgnoreCase) ||
-                                name.Equals("mscorlib", StringComparison.OrdinalIgnoreCase) ||
-                                name.Equals("Assembly-CSharp", StringComparison.OrdinalIgnoreCase) ||
-                                name.Equals("0Harmony", StringComparison.OrdinalIgnoreCase) ||
-                                name.Equals("Mono.Cecil", StringComparison.OrdinalIgnoreCase) ||
-                                name.Equals("Anonymously Hosted DynamicMethods Assembly", StringComparison.Ordinal))
+                            if (ShouldIgnoreAssembly(name))
                             {
                                 continue;
                             }
@@ -176,6 +167,29 @@ namespace FasterGameLoading
                     FGLLog.Warning("Error during background JIT pre-compilation: " + ex.Message);
                 }
             });
+        }
+
+        /// <summary>
+        /// 判斷是否應該忽略此 Assembly 的 JIT 預編譯。
+        /// </summary>
+        private static bool ShouldIgnoreAssembly(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return true;
+
+            if (FGLConsts.IgnoredAssemblyExactNames.Contains(name))
+            {
+                return true;
+            }
+
+            foreach (var prefix in FGLConsts.IgnoredAssemblyPrefixes)
+            {
+                if (name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

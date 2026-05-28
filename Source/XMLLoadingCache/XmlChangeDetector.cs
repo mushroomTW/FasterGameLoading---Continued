@@ -35,14 +35,14 @@ namespace FasterGameLoading
                         continue;
 
                     // 掃描 Defs 目錄
-                    var defsPath = Path.Combine(modPath, "Defs");
+                    var defsPath = Path.Combine(modPath, FGLConsts.DefsDirName);
                     if (Directory.Exists(defsPath))
                     {
                         ScanDirectory(defsPath, ref combinedHash, ref xmlCount);
                     }
 
                     // 掃描 Patches 目錄
-                    var patchesPath = Path.Combine(modPath, "Patches");
+                    var patchesPath = Path.Combine(modPath, FGLConsts.PatchesDirName);
                     if (Directory.Exists(patchesPath))
                     {
                         ScanDirectory(patchesPath, ref combinedHash, ref xmlCount);

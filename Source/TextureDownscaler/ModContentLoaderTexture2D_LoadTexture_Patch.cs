@@ -76,7 +76,7 @@ namespace FasterGameLoading
                 try
                 {
                     // 延遲 150ms 啟動，避免與啟動時最密集的 XML/Def I/O 爭奪頻寬
-                    System.Threading.Thread.Sleep(150);
+                    Thread.Sleep(FGLConsts.TexturePreloadDelayMs);
                     var semaphore = new SemaphoreSlim(2); // 限制 2 個並行 I/O 執行緒，防止硬碟頻寬飽和
                     Parallel.ForEach(cacheCopy.Values, cachePath =>
                     {
@@ -109,7 +109,7 @@ namespace FasterGameLoading
 
         public static void RegisterBionicIconIfApplicable(string path, Texture2D tex)
         {
-            if (tex != null && path.IndexOf("bionicicons", StringComparison.OrdinalIgnoreCase) >= 0)
+            if (tex != null && path.IndexOf(FGLConsts.BionicIconsModId, StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 bionicIconTextures[tex] = true;
             }

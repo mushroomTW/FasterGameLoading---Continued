@@ -28,10 +28,22 @@ namespace FasterGameLoading
 
         public static void Postfix()
         {
-            // Save current session data for cross-session caching
-            SessionCache.modsInLastSession = ModsConfig.ActiveModsInLoadOrder.Select(x => x.packageIdLowerCase).ToList();
+            // 儲存目前 session 的數據，以用於跨 session 快取（使用 loop 避免 LINQ 分配）
+            var activeMods = ModsConfig.ActiveModsInLoadOrder;
+            var mods = new List<string>();
+            if (activeMods != null)
+            {
+                foreach (var mod in activeMods)
+                {
+                    if (mod != null)
+                    {
+                        mods.Add(mod.packageIdLowerCase);
+                    }
+                }
+            }
+            SessionCache.modsInLastSession = mods;
             
-            // Execute all registered startup-completed callbacks
+            // 執行所有註冊的啟動完成回呼
             foreach (var callback in onStartupCompleted)
             {
                 try
@@ -56,18 +68,9 @@ namespace FasterGameLoading
                         var patchInfo = Harmony.GetPatchInfo(method);
                         if (patchInfo == null) continue;
 
-                        var patches = patchInfo.Prefixes.Concat(patchInfo.Postfixes).Concat(patchInfo.Transpilers);
-                        foreach (var patch in patches)
-                        {
-                            if (patch?.PatchMethod?.DeclaringType?.Assembly != null)
-                            {
-                                var name = patch.PatchMethod.DeclaringType.Assembly.GetName().Name;
-                                if (name != "FasterGameLoading")
-                                {
-                                    patchedAssemblies.Add(name);
-                                }
-                            }
-                        }
+                        AddPatchAssemblies(patchInfo.Prefixes, patchedAssemblies);
+                        AddPatchAssemblies(patchInfo.Postfixes, patchedAssemblies);
+                        AddPatchAssemblies(patchInfo.Transpilers, patchedAssemblies);
                     }
                 }
                 catch (Exception ex)
@@ -78,12 +81,22 @@ namespace FasterGameLoading
                 {
                     SessionCache.patchedAssembliesLastSession = patchedAssemblies.ToList();
                 }
+
+                // 在背景背景執行緒啟動過期/無效的材質快取自動清理，避免阻塞啟動流程與主頁面
+                try
+                {
+                    FasterGameLoadingMod.Instance?.CacheManager?.CleanupObsoleteCacheFiles();
+                }
+                catch (Exception ex)
+                {
+                    FGLLog.Warning("Error executing obsolete cache cleanup: " + ex.Message);
+                }
             });
 
-            // Inject translations
+            // 注入翻譯
             TranslationInjector.InjectTranslations();
 
-            // Schedule setting write and delayed actions via LongEventHandler to avoid blocking startup
+            // 透過 LongEventHandler 排程設定寫入與延遲動作，以避免阻塞啟動流程
             LongEventHandler.toExecuteWhenFinished.Add(delegate
             {
                 LoadedModManager.GetMod<FasterGameLoadingMod>().WriteSettings();
@@ -92,6 +105,22 @@ namespace FasterGameLoading
             {
                 FasterGameLoadingMod.delayedActions.StartCoroutine(FasterGameLoadingMod.delayedActions.PerformActions());
             });
+        }
+
+        private static void AddPatchAssemblies(IEnumerable<Patch> patches, HashSet<string> patchedAssemblies)
+        {
+            if (patches == null) return;
+            foreach (var patch in patches)
+            {
+                if (patch?.PatchMethod?.DeclaringType?.Assembly != null)
+                {
+                    var name = patch.PatchMethod.DeclaringType.Assembly.GetName().Name;
+                    if (name != "FasterGameLoading")
+                    {
+                        patchedAssemblies.Add(name);
+                    }
+                }
+            }
         }
     }
 }

@@ -12,6 +12,9 @@ namespace FasterGameLoading
     [HarmonyPatch(typeof(World), "FinalizeInit")]
     public class World_FinalizeInit_Patch
     {
+        /// <summary>
+        /// 於世界初始化完成後，觸發所有累積的聲音解析任務，並在完成後取消 SoundStarter 補丁的攔截。
+        /// </summary>
         public static void Postfix()
         {
             LongEventHandler.ExecuteWhenFinished(delegate

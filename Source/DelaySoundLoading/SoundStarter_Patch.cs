@@ -13,14 +13,23 @@ namespace FasterGameLoading
     [HarmonyPatch]
     internal static class SoundStarter_Patch
     {
+        /// <summary>
+        /// 攔截主鏡頭單次音效播放。
+        /// </summary>
         [HarmonyPatch(typeof(SoundStarter), "PlayOneShotOnCamera")]
         [HarmonyPrefix]
         static bool PlayOneShotOnCamera_Patch() => false;
 
+        /// <summary>
+        /// 攔截一般單次音效播放。
+        /// </summary>
         [HarmonyPatch(typeof(SoundStarter), "PlayOneShot")]
         [HarmonyPrefix]
         static bool PlayOneShot_Patch() => false;
 
+        /// <summary>
+        /// 攔截持續性音效 (Sustainer) 生成，返回 null。
+        /// </summary>
         [HarmonyPatch(typeof(SoundStarter), "TrySpawnSustainer")]
         [HarmonyPrefix]
         static bool TrySpawnSustainer_Patch(ref Sustainer __result)
@@ -29,6 +38,9 @@ namespace FasterGameLoading
             return false;
         }
 
+        /// <summary>
+        /// 攔截 SubSoundDef 的播放嘗試。
+        /// </summary>
         [HarmonyPatch(typeof(SubSoundDef), nameof(SubSoundDef.TryPlay))]
         [HarmonyPrefix]
         static bool TryPlay_Patch() => false;

@@ -215,7 +215,7 @@ namespace FasterGameLoading
 
             if (FasterGameLoadingSettings.StaticAtlasesBaking)
             {
-                if (FasterGameLoadingSettings.AtlasCaching && StaticAtlasCache.TryLoadFromCache())
+                if (FasterGameLoadingSettings.AtlasCaching && AtlasCacheReader.TryLoadFromCache())
                 {
                     FGLLog.Message("Static atlases loaded from cache (Raw DXT bytes)");
                 }
@@ -224,7 +224,7 @@ namespace FasterGameLoading
                     string queueHash = null;
                     if (FasterGameLoadingSettings.AtlasCaching)
                     {
-                        queueHash = StaticAtlasCache.ComputeQueueHash();
+                        queueHash = AtlasHashCalculator.ComputeQueueHash();
                     }
 
                     var adaptiveBake = AdaptiveAtlasBaker.PerformAdaptiveStaticAtlasBake(this);
@@ -242,7 +242,7 @@ namespace FasterGameLoading
 
                     if (FasterGameLoadingSettings.AtlasCaching && !AdaptiveStaticAtlasBakeFailed && queueHash != null)
                     {
-                        var saveCache = StaticAtlasCache.SaveToCacheCoroutine(
+                        var saveCache = AtlasCacheWriter.SaveToCacheCoroutine(
                             GlobalTextureAtlasManager.staticTextureAtlases, queueHash);
                         while (saveCache.MoveNext())
                         {

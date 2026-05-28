@@ -1,5 +1,53 @@
-﻿[*.cs]
+root = true
 
-# IDE0058: Expression value is never used
+[*.cs]
+# ── 基本排版與縮排規則 ──
+indent_style = space
+indent_size = 4
+end_of_line = crlf
+charset = utf-8-bom
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# ── 診斷規則 (Diagnostics) ──
+# IDE0058: 未使用的運算式值
 dotnet_diagnostic.IDE0058.severity = none
+# IDE0002: 簡化名稱
 dotnet_diagnostic.IDE0002.severity = error
+
+# ── C# 代碼風格偏好 (Code Style Preferences) ──
+# using 排序：System 命名空間置頂並按字母排序
+dotnet_sort_system_directives_first = true:suggestion
+# var 偏好：在初始化型別明確時使用 var
+csharp_style_var_when_type_is_apparent = true:suggestion
+csharp_style_var_elsewhere = true:suggestion
+
+# ── 花括號與換行樣式偏好 (Formatting Preferences) ──
+# 類別、方法、命名空間、屬性、存取器的花括號必須置於新的一行
+csharp_new_line_before_open_brace = all
+# 控制流語句 (if, catch 等) 的 open brace 置於新的一行
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+
+# ── 命名規範 (Naming Conventions) ──
+# 規則 1: 類別、結構、介面、列舉、方法使用 PascalCase
+dotnet_naming_rule.types_and_methods_should_be_pascal_case.severity = suggestion
+dotnet_naming_rule.types_and_methods_should_be_pascal_case.symbols = types_and_methods
+dotnet_naming_rule.types_and_methods_should_be_pascal_case.style = pascal_case
+
+dotnet_naming_symbols.types_and_methods.applicable_kinds = class, struct, interface, enum, method
+dotnet_naming_symbols.types_and_methods.applicable_accessibilities = *
+
+dotnet_naming_style.pascal_case.capitalization = pascal_case
+
+# 規則 2: 私有欄位使用底線前綴並配合 camelCase
+dotnet_naming_rule.private_fields_should_start_with_underscore.severity = suggestion
+dotnet_naming_rule.private_fields_should_start_with_underscore.symbols = private_fields
+dotnet_naming_rule.private_fields_should_start_with_underscore.style = camel_case_with_underscore
+
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+
+dotnet_naming_style.camel_case_with_underscore.required_prefix = _
+dotnet_naming_style.camel_case_with_underscore.capitalization = camel_case

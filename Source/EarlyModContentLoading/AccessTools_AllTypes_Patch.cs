@@ -64,6 +64,9 @@ namespace FasterGameLoading
             });
         }
 
+        /// <summary>
+        /// 前置攔截：如果已經有全類型快取，則直接回傳快取結果並跳過原方法。
+        /// </summary>
         public static bool Prefix(ref IEnumerable<Type> __result)
         {
             // double-checked locking：先讀取 volatile，再 lock 檢查

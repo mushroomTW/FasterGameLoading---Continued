@@ -131,5 +131,52 @@ namespace FasterGameLoading.Tests
             Assert.AreEqual(0, manager.CacheCount);
             Assert.IsFalse(Directory.Exists(tempDir));
         }
+
+        [Test]
+        public void TestCleanupObsoleteCacheFiles()
+        {
+            // 1. 建立測試環境：一個存在的原始檔案，一個不存在的原始檔案
+            string originalExist = Path.Combine(tempDir, "exist.png");
+            string originalDeleted = Path.Combine(tempDir, "deleted.png");
+            
+            File.WriteAllBytes(originalExist, new byte[] { 1 });
+            // deleted.png 刻意不建立，模擬已被刪除或更名的原始檔案
+            
+            string cacheDir = manager.CacheDirectory;
+            if (!Directory.Exists(cacheDir))
+            {
+                Directory.CreateDirectory(cacheDir);
+            }
+            
+            string cacheExistPath = Path.Combine(cacheDir, "cache_exist.png");
+            string cacheDeletedPath = Path.Combine(cacheDir, "cache_deleted.png");
+            string cacheUnreferencedPath = Path.Combine(cacheDir, "cache_unref.png");
+            
+            File.WriteAllBytes(cacheExistPath, new byte[] { 2 });
+            File.WriteAllBytes(cacheDeletedPath, new byte[] { 3 });
+            File.WriteAllBytes(cacheUnreferencedPath, new byte[] { 4 });
+            
+            // 2. 註冊對照字典
+            manager.SetCacheEntry(originalExist, cacheExistPath);
+            manager.SetCacheEntry(originalDeleted, cacheDeletedPath);
+            // cacheUnreferencedPath 刻意不註冊，模擬孤立的無效快取檔案
+            
+            Assert.AreEqual(2, manager.CacheCount);
+            Assert.IsTrue(File.Exists(cacheExistPath));
+            Assert.IsTrue(File.Exists(cacheDeletedPath));
+            Assert.IsTrue(File.Exists(cacheUnreferencedPath));
+            
+            // 3. 執行清理
+            manager.CleanupObsoleteCacheFiles();
+            
+            // 4. 驗證字典與實體檔案清理結果
+            Assert.AreEqual(1, manager.CacheCount);
+            Assert.IsTrue(manager.ResizedTextureCache.ContainsKey(originalExist));
+            Assert.IsFalse(manager.ResizedTextureCache.ContainsKey(originalDeleted));
+            
+            Assert.IsTrue(File.Exists(cacheExistPath));
+            Assert.IsFalse(File.Exists(cacheDeletedPath));
+            Assert.IsFalse(File.Exists(cacheUnreferencedPath));
+        }
     }
 }

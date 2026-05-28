@@ -67,11 +67,8 @@ namespace FasterGameLoading
 
         // ── 執行期查詢快取（不持久化） ──
 
-        private static Dictionary<string, ModContentPack> modsByPackageIds = new();
-
         static SessionCache()
         {
-            CacheResetter.Register(() => modsByPackageIds.Clear());
             if (WEIGHTS.Length != HISTORY_SIZE)
             {
                 FGLLog.Error("WEIGHTS length must match HISTORY_SIZE!");
@@ -79,7 +76,6 @@ namespace FasterGameLoading
         }
 
         /// <summary>
-        /// 根據 packageId 取得        /// <summary>
         /// 由 FasterGameLoadingSettings.ExposeData() 委派呼叫，
         /// 處理所有跨 session 快取資料的序列化。
         /// </summary>

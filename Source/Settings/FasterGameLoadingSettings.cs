@@ -132,7 +132,7 @@ namespace FasterGameLoading
 
 
             // 紋理快取
-            var cacheManager = FasterGameLoadingMod.Instance?.CacheManager;
+            var cacheManager = FasterGameLoadingMod.Instance?.CacheManager as TextureCacheManager;
             if (cacheManager != null)
             {
                 Scribe_Collections.Look(ref cacheManager.resizedTextureCache, "resizedTextureCache", LookMode.Value, LookMode.Value);

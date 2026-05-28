@@ -64,9 +64,9 @@ namespace FasterGameLoading
             if (cacheManager == null) return;
 
             System.Collections.Generic.Dictionary<string, string> cacheCopy;
-            lock (cacheManager.resizedTextureCache)
+            lock (cacheManager.ResizedTextureCache)
             {
-                cacheCopy = new System.Collections.Generic.Dictionary<string, string>(cacheManager.resizedTextureCache);
+                cacheCopy = new System.Collections.Generic.Dictionary<string, string>(cacheManager.ResizedTextureCache);
             }
 
             if (cacheCopy.Count == 0) return;
@@ -139,7 +139,7 @@ namespace FasterGameLoading
                 // 檢查是否有降質快取可用
                 FasterGameLoadingMod.Instance.CacheManager.TryGetCachedTexturePath(fullPath, out var lazyCachePath);
 
-                var tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+                var tex = new Texture2D(FGLConsts.PlaceholderTextureSize, FGLConsts.PlaceholderTextureSize, TextureFormat.RGBA32, false);
                 tex.name = Path.GetFileNameWithoutExtension(fullPath);
 
                 LazyTextureLoader.RegisterLazyTexture(tex, lazyCachePath ?? fullPath);
@@ -163,7 +163,7 @@ namespace FasterGameLoading
                         data = File.ReadAllBytes(cachePath);
                     }
                     bool useMipmaps = !fullPath.NormalizePath().Contains(FGLConsts.UIDirSlash);
-                    var tex = new Texture2D(2, 2, TextureFormat.RGBA32, useMipmaps);
+                    var tex = new Texture2D(FGLConsts.PlaceholderTextureSize, FGLConsts.PlaceholderTextureSize, TextureFormat.RGBA32, useMipmaps);
                     var textureAccepted = false;
 
                     try

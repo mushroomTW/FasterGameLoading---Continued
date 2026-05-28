@@ -18,11 +18,18 @@ namespace FasterGameLoading
         {
             CacheResetter.Register(() => loadedMods.Clear());
         }
+        /// <summary>
+        /// 前置攔截：若是該 ModContentPack 已經在預載入階段完成處理，則直接跳過 ReloadContentInt 執行。
+        /// </summary>
         public static bool Prefix(ModContentPack __instance)
         {
             if (loadedMods.Contains(__instance)) return false;
             return true;
         }
+
+        /// <summary>
+        /// 後置處理：將已載入完成的 ModContentPack 標記至已載入清單，並檢查是否需要重新掃描 Alien Races 的貼圖。
+        /// </summary>
         public static void Postfix(ModContentPack __instance)
         {
             loadedMods.Add(__instance);

@@ -14,6 +14,10 @@ namespace FasterGameLoading
     [HarmonyPatch]
     static class SubSoundDef_ResolvePatch
     {
+        /// <summary>
+        /// 轉譯器：攔截並修改 ResolveReferences 中調用 ExecuteWhenFinished 的 IL 代碼，
+        /// 將其導向我們自訂的延遲執行邏輯。
+        /// </summary>
         [HarmonyPatch(typeof(SubSoundDef), "ResolveReferences")]
         [HarmonyTranspiler]
         static IEnumerable<CodeInstruction> LateExecute(IEnumerable<CodeInstruction> codeInstructions)

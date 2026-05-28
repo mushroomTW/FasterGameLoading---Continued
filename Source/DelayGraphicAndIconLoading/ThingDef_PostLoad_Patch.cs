@@ -13,8 +13,15 @@ namespace FasterGameLoading
     [HarmonyPatch(typeof(ThingDef), "PostLoad")]
     public static class ThingDef_PostLoad_Patch
     {
+        /// <summary>
+        /// 決定是否啟用此補丁（當延遲圖形載入設定開啟時）。
+        /// </summary>
         public static bool Prepare() => FasterGameLoadingSettings.DelayGraphicLoading;
 
+        /// <summary>
+        /// 轉譯器：攔截並修改 ThingDef.PostLoad 中調用 ExecuteWhenFinished 的 IL 代碼，
+        /// 將其導向我們自訂的延遲執行邏輯。
+        /// </summary>
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> codeInstructions)
         {
             var execute = AccessTools.Method(typeof(LongEventHandler), nameof(LongEventHandler.ExecuteWhenFinished));
@@ -23,7 +30,7 @@ namespace FasterGameLoading
             {
                 if (code.Calls(execute))
                 {
-                    // Replace ExecuteWhenFinished(action) with ExecuteDelayed(action, this)
+                    // 將 ExecuteWhenFinished(action) 替換為 ExecuteDelayed(action, this)
                     yield return new CodeInstruction(OpCodes.Ldarg_0);
                     yield return new CodeInstruction(OpCodes.Call, executeDelayed);
                 }

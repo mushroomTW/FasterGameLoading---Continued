@@ -1,4 +1,5 @@
 using HarmonyLib;
+using System;
 using System.Reflection;
 
 namespace FasterGameLoading
@@ -26,7 +27,7 @@ namespace FasterGameLoading
     [HarmonyPatch]
     internal static class FGLProgressReporter
     {
-        private static readonly FieldInfo PauseField;
+        private static readonly Func<bool> GetIsPaused;
 
         static FGLProgressReporter()
         {
@@ -36,8 +37,24 @@ namespace FasterGameLoading
                 "FasterGameLoading_DelayedActions_LateUpdate_Patches");
             if (type != null)
             {
-                PauseField = AccessTools.Field(
+                var pauseField = AccessTools.Field(
                     type, "_pauseFasterGameLoading_DelayedActions_LateUpdate");
+                if (pauseField != null)
+                {
+                    try
+                    {
+                        // 使用 DynamicMethod 動態生成 IL 讀取方法，消除反射 GetValue 開銷
+                        var dm = new System.Reflection.Emit.DynamicMethod("GetIsPaused", typeof(bool), null, type, true);
+                        var il = dm.GetILGenerator();
+                        il.Emit(System.Reflection.Emit.OpCodes.Ldsfld, pauseField);
+                        il.Emit(System.Reflection.Emit.OpCodes.Ret);
+                        GetIsPaused = (Func<bool>)dm.CreateDelegate(typeof(Func<bool>));
+                    }
+                    catch (Exception ex)
+                    {
+                        FGLLog.Warning("Failed to compile fast delegate for FGLProgressReporter pause field: " + ex.Message);
+                    }
+                }
             }
         }
 
@@ -65,7 +82,7 @@ namespace FasterGameLoading
         internal static void Postfix(ref bool __result)
         {
             if (!__result) return;          // 原本就 false → 不用改
-            if (PauseField == null) return;  // 找不到 flag → 安全跳過
+            if (GetIsPaused == null) return; // 找不到 flag → 安全跳過
 
             // 如果沒有啟用提早載入，或者提早載入已經完成，則不修改 __result，讓進度條可以消失。
             if (!FasterGameLoadingSettings.earlyModContentLoading) return;
@@ -76,8 +93,7 @@ namespace FasterGameLoading
 
             try
             {
-                var isPaused = (bool)(PauseField.GetValue(null) ?? false);
-                if (isPaused)
+                if (GetIsPaused())
                 {
                     // Loading Progress 正在接手載入中，FGL 內容尚未完成
                     __result = false;

@@ -9,6 +9,7 @@ namespace FasterGameLoading
         public const string LogPrefix = "[FasterGameLoading] ";
         public const string ModName = "FasterGameLoading";
         public const string SoundStarterCategory = "SoundStarter";
+        public const int PlaceholderTextureSize = 2;
 
         // ── Def 與型別匹配關鍵字 ──
         public const string BuildingPipe = "Building_Pipe";

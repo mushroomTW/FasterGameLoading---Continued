@@ -214,7 +214,7 @@
       "label": "FasterGameLoading",
       "file_type": "code",
       "source_file": "Source/Compatibility/FGLProgressReporter.cs",
-      "source_location": "L4",
+      "source_location": "L5",
       "id": "compatibility_fglprogressreporter_fastergameloading",
       "community": 46,
       "norm_label": "fastergameloading"
@@ -223,25 +223,25 @@
       "label": "FGLProgressReporter",
       "file_type": "code",
       "source_file": "Source/Compatibility/FGLProgressReporter.cs",
-      "source_location": "L26",
+      "source_location": "L27",
       "id": "compatibility_fglprogressreporter_fglprogressreporter",
       "community": 46,
       "norm_label": "fglprogressreporter"
     },
     {
-      "label": "FieldInfo",
+      "label": "Func",
       "file_type": "code",
       "source_file": "Source/Compatibility/FGLProgressReporter.cs",
-      "source_location": "L29",
-      "id": "fieldinfo",
+      "source_location": "L30",
+      "id": "func",
       "community": 46,
-      "norm_label": "fieldinfo"
+      "norm_label": "func"
     },
     {
       "label": ".Prepare()",
       "file_type": "code",
       "source_file": "Source/Compatibility/FGLProgressReporter.cs",
-      "source_location": "L45",
+      "source_location": "L62",
       "id": "compatibility_fglprogressreporter_fglprogressreporter_prepare",
       "community": 46,
       "norm_label": ".prepare()"
@@ -250,7 +250,7 @@
       "label": ".TargetMethod()",
       "file_type": "code",
       "source_file": "Source/Compatibility/FGLProgressReporter.cs",
-      "source_location": "L52",
+      "source_location": "L69",
       "id": "compatibility_fglprogressreporter_fglprogressreporter_targetmethod",
       "community": 46,
       "norm_label": ".targetmethod()"
@@ -259,7 +259,7 @@
       "label": ".Postfix()",
       "file_type": "code",
       "source_file": "Source/Compatibility/FGLProgressReporter.cs",
-      "source_location": "L65",
+      "source_location": "L82",
       "id": "compatibility_fglprogressreporter_fglprogressreporter_postfix",
       "community": 46,
       "norm_label": ".postfix()"
@@ -448,7 +448,7 @@
       "label": ".SettingsCategory()",
       "file_type": "code",
       "source_file": "Source/Core/FasterGameLoadingMod.cs",
-      "source_location": "L97",
+      "source_location": "L98",
       "id": "core_fastergameloadingmod_fastergameloadingmod_settingscategory",
       "community": 10,
       "norm_label": ".settingscategory()"
@@ -457,7 +457,7 @@
       "label": ".DoSettingsWindowContents()",
       "file_type": "code",
       "source_file": "Source/Core/FasterGameLoadingMod.cs",
-      "source_location": "L102",
+      "source_location": "L103",
       "id": "core_fastergameloadingmod_fastergameloadingmod_dosettingswindowcontents",
       "community": 10,
       "norm_label": ".dosettingswindowcontents()"
@@ -551,6 +551,15 @@
       "id": "core_startup_startup_postfix",
       "community": 34,
       "norm_label": ".postfix()"
+    },
+    {
+      "label": ".AddPatchAssemblies()",
+      "file_type": "code",
+      "source_file": "Source/Core/Startup.cs",
+      "source_location": "L110",
+      "id": "core_startup_startup_addpatchassemblies",
+      "community": 34,
+      "norm_label": ".addpatchassemblies()"
     },
     {
       "label": "DeferredLoader.cs",
@@ -922,6 +931,69 @@
       "norm_label": ".issameborderdata()"
     },
     {
+      "label": "Graphic_Mat_Patch.cs",
+      "file_type": "code",
+      "source_file": "Source/DelayGraphicAndIconLoading/Graphic_Mat_Patch.cs",
+      "source_location": "L1",
+      "id": "source_delaygraphicandiconloading_graphic_mat_patch_cs",
+      "community": 127,
+      "norm_label": "graphic_mat_patch.cs"
+    },
+    {
+      "label": "FasterGameLoading",
+      "file_type": "code",
+      "source_file": "Source/DelayGraphicAndIconLoading/Graphic_Mat_Patch.cs",
+      "source_location": "L5",
+      "id": "delaygraphicandiconloading_graphic_mat_patch_fastergameloading",
+      "community": 127,
+      "norm_label": "fastergameloading"
+    },
+    {
+      "label": "Graphic_Mat_Patch",
+      "file_type": "code",
+      "source_file": "Source/DelayGraphicAndIconLoading/Graphic_Mat_Patch.cs",
+      "source_location": "L11",
+      "id": "delaygraphicandiconloading_graphic_mat_patch_graphic_mat_patch",
+      "community": 127,
+      "norm_label": "graphic_mat_patch"
+    },
+    {
+      "label": ".Draw_Prefix()",
+      "file_type": "code",
+      "source_file": "Source/DelayGraphicAndIconLoading/Graphic_Mat_Patch.cs",
+      "source_location": "L14",
+      "id": "delaygraphicandiconloading_graphic_mat_patch_graphic_mat_patch_draw_prefix",
+      "community": 127,
+      "norm_label": ".draw_prefix()"
+    },
+    {
+      "label": ".DrawWorker_Prefix()",
+      "file_type": "code",
+      "source_file": "Source/DelayGraphicAndIconLoading/Graphic_Mat_Patch.cs",
+      "source_location": "L24",
+      "id": "delaygraphicandiconloading_graphic_mat_patch_graphic_mat_patch_drawworker_prefix",
+      "community": 127,
+      "norm_label": ".drawworker_prefix()"
+    },
+    {
+      "label": ".TriggerLazyLoadForGraphic()",
+      "file_type": "code",
+      "source_file": "Source/DelayGraphicAndIconLoading/Graphic_Mat_Patch.cs",
+      "source_location": "L37",
+      "id": "delaygraphicandiconloading_graphic_mat_patch_graphic_mat_patch_triggerlazyloadforgraphic",
+      "community": 127,
+      "norm_label": ".triggerlazyloadforgraphic()"
+    },
+    {
+      "label": ".TriggerLazyLoad()",
+      "file_type": "code",
+      "source_file": "Source/DelayGraphicAndIconLoading/Graphic_Mat_Patch.cs",
+      "source_location": "L84",
+      "id": "delaygraphicandiconloading_graphic_mat_patch_graphic_mat_patch_triggerlazyload",
+      "community": 127,
+      "norm_label": ".triggerlazyload()"
+    },
+    {
       "label": "ThingDef_PostLoad_Patch.cs",
       "file_type": "code",
       "source_file": "Source/DelayGraphicAndIconLoading/ThingDef_PostLoad_Patch.cs",
@@ -952,7 +1024,7 @@
       "label": ".Prepare()",
       "file_type": "code",
       "source_file": "Source/DelayGraphicAndIconLoading/ThingDef_PostLoad_Patch.cs",
-      "source_location": "L16",
+      "source_location": "L19",
       "id": "delaygraphicandiconloading_thingdef_postload_patch_thingdef_postload_patch_prepare",
       "community": 96,
       "norm_label": ".prepare()"
@@ -961,7 +1033,7 @@
       "label": ".Transpiler()",
       "file_type": "code",
       "source_file": "Source/DelayGraphicAndIconLoading/ThingDef_PostLoad_Patch.cs",
-      "source_location": "L18",
+      "source_location": "L25",
       "id": "delaygraphicandiconloading_thingdef_postload_patch_thingdef_postload_patch_transpiler",
       "community": 96,
       "norm_label": ".transpiler()"
@@ -970,7 +1042,7 @@
       "label": ".ExecuteDelayed()",
       "file_type": "code",
       "source_file": "Source/DelayGraphicAndIconLoading/ThingDef_PostLoad_Patch.cs",
-      "source_location": "L40",
+      "source_location": "L47",
       "id": "delaygraphicandiconloading_thingdef_postload_patch_thingdef_postload_patch_executedelayed",
       "community": 96,
       "norm_label": ".executedelayed()"
@@ -1006,7 +1078,7 @@
       "label": ".PlayOneShotOnCamera_Patch()",
       "file_type": "code",
       "source_file": "Source/DelaySoundLoading/SoundStarter_Patch.cs",
-      "source_location": "L16",
+      "source_location": "L19",
       "id": "delaysoundloading_soundstarter_patch_soundstarter_patch_playoneshotoncamera_patch",
       "community": 83,
       "norm_label": ".playoneshotoncamera_patch()"
@@ -1015,7 +1087,7 @@
       "label": ".PlayOneShot_Patch()",
       "file_type": "code",
       "source_file": "Source/DelaySoundLoading/SoundStarter_Patch.cs",
-      "source_location": "L20",
+      "source_location": "L26",
       "id": "delaysoundloading_soundstarter_patch_soundstarter_patch_playoneshot_patch",
       "community": 83,
       "norm_label": ".playoneshot_patch()"
@@ -1024,7 +1096,7 @@
       "label": ".TrySpawnSustainer_Patch()",
       "file_type": "code",
       "source_file": "Source/DelaySoundLoading/SoundStarter_Patch.cs",
-      "source_location": "L24",
+      "source_location": "L33",
       "id": "delaysoundloading_soundstarter_patch_soundstarter_patch_tryspawnsustainer_patch",
       "community": 83,
       "norm_label": ".tryspawnsustainer_patch()"
@@ -1033,7 +1105,7 @@
       "label": ".TryPlay_Patch()",
       "file_type": "code",
       "source_file": "Source/DelaySoundLoading/SoundStarter_Patch.cs",
-      "source_location": "L32",
+      "source_location": "L44",
       "id": "delaysoundloading_soundstarter_patch_soundstarter_patch_tryplay_patch",
       "community": 83,
       "norm_label": ".tryplay_patch()"
@@ -1042,7 +1114,7 @@
       "label": "bool",
       "file_type": "code",
       "source_file": "Source/DelaySoundLoading/SoundStarter_Patch.cs",
-      "source_location": "L36",
+      "source_location": "L48",
       "id": "source_delaysoundloading_soundstarter_patch_cs_bool",
       "community": 83,
       "norm_label": "bool"
@@ -1051,7 +1123,7 @@
       "label": ".ResetUnpatchedStatus()",
       "file_type": "code",
       "source_file": "Source/DelaySoundLoading/SoundStarter_Patch.cs",
-      "source_location": "L38",
+      "source_location": "L50",
       "id": "delaysoundloading_soundstarter_patch_soundstarter_patch_resetunpatchedstatus",
       "community": 83,
       "norm_label": ".resetunpatchedstatus()"
@@ -1060,7 +1132,7 @@
       "label": ".Unpatch()",
       "file_type": "code",
       "source_file": "Source/DelaySoundLoading/SoundStarter_Patch.cs",
-      "source_location": "L46",
+      "source_location": "L58",
       "id": "delaysoundloading_soundstarter_patch_soundstarter_patch_unpatch",
       "community": 83,
       "norm_label": ".unpatch()"
@@ -1096,7 +1168,7 @@
       "label": ".LateExecute()",
       "file_type": "code",
       "source_file": "Source/DelaySoundLoading/SubSoundDef_Resolve_Patch.cs",
-      "source_location": "L17",
+      "source_location": "L21",
       "id": "delaysoundloading_subsounddef_resolve_patch_subsounddef_resolvepatch_lateexecute",
       "community": 102,
       "norm_label": ".lateexecute()"
@@ -1105,7 +1177,7 @@
       "label": ".ExecuteDelayed()",
       "file_type": "code",
       "source_file": "Source/DelaySoundLoading/SubSoundDef_Resolve_Patch.cs",
-      "source_location": "L38",
+      "source_location": "L42",
       "id": "delaysoundloading_subsounddef_resolve_patch_subsounddef_resolvepatch_executedelayed",
       "community": 102,
       "norm_label": ".executedelayed()"
@@ -1141,7 +1213,7 @@
       "label": ".Postfix()",
       "file_type": "code",
       "source_file": "Source/DelaySoundLoading/World_FinalizeInit_Patch.cs",
-      "source_location": "L15",
+      "source_location": "L18",
       "id": "delaysoundloading_world_finalizeinit_patch_world_finalizeinit_patch_postfix",
       "community": 106,
       "norm_label": ".postfix()"
@@ -1204,7 +1276,7 @@
       "label": ".Prefix()",
       "file_type": "code",
       "source_file": "Source/EarlyModContentLoading/AccessTools_AllTypes_Patch.cs",
-      "source_location": "L67",
+      "source_location": "L70",
       "id": "earlymodcontentloading_accesstools_alltypes_patch_accesstools_alltypes_patch_prefix",
       "community": 93,
       "norm_label": ".prefix()"
@@ -1213,7 +1285,7 @@
       "label": ".WarmupTypeCache()",
       "file_type": "code",
       "source_file": "Source/EarlyModContentLoading/AccessTools_AllTypes_Patch.cs",
-      "source_location": "L99",
+      "source_location": "L102",
       "id": "earlymodcontentloading_accesstools_alltypes_patch_accesstools_alltypes_patch_warmuptypecache",
       "community": 93,
       "norm_label": ".warmuptypecache()"
@@ -1249,7 +1321,7 @@
       "label": ".Prefix()",
       "file_type": "code",
       "source_file": "Source/EarlyModContentLoading/AccessTools_TypeByName_Patch.cs",
-      "source_location": "L16",
+      "source_location": "L19",
       "id": "earlymodcontentloading_accesstools_typebyname_patch_accesstools_typebyname_patch_prefix",
       "community": 103,
       "norm_label": ".prefix()"
@@ -1258,7 +1330,7 @@
       "label": ".Postfix()",
       "file_type": "code",
       "source_file": "Source/EarlyModContentLoading/AccessTools_TypeByName_Patch.cs",
-      "source_location": "L36",
+      "source_location": "L42",
       "id": "earlymodcontentloading_accesstools_typebyname_patch_accesstools_typebyname_patch_postfix",
       "community": 103,
       "norm_label": ".postfix()"
@@ -1429,7 +1501,7 @@
       "label": ".Prefix()",
       "file_type": "code",
       "source_file": "Source/EarlyModContentLoading/GenTypes_AllLeafSubclasses_Patch.cs",
-      "source_location": "L28",
+      "source_location": "L31",
       "id": "earlymodcontentloading_gentypes_allleafsubclasses_patch_gentypes_allleafsubclasses_patch_prefix",
       "community": 98,
       "norm_label": ".prefix()"
@@ -1483,7 +1555,7 @@
       "label": ".Prefix()",
       "file_type": "code",
       "source_file": "Source/EarlyModContentLoading/GenTypes_GetTypeInAnyAssemblyInt_Patch.cs",
-      "source_location": "L36",
+      "source_location": "L39",
       "id": "earlymodcontentloading_gentypes_gettypeinanyassemblyint_patch_gentypes_gettypeinanyassemblyint_patch_prefix",
       "community": 94,
       "norm_label": ".prefix()"
@@ -1492,7 +1564,7 @@
       "label": ".Postfix()",
       "file_type": "code",
       "source_file": "Source/EarlyModContentLoading/GenTypes_GetTypeInAnyAssemblyInt_Patch.cs",
-      "source_location": "L55",
+      "source_location": "L61",
       "id": "earlymodcontentloading_gentypes_gettypeinanyassemblyint_patch_gentypes_gettypeinanyassemblyint_patch_postfix",
       "community": 94,
       "norm_label": ".postfix()"
@@ -1537,7 +1609,7 @@
       "label": ".Prefix()",
       "file_type": "code",
       "source_file": "Source/EarlyModContentLoading/ModAssetBundlesHandler_ReloadAll_Patch.cs",
-      "source_location": "L22",
+      "source_location": "L25",
       "id": "earlymodcontentloading_modassetbundleshandler_reloadall_patch_modassetbundleshandler_reloadall_patch_prefix",
       "community": 99,
       "norm_label": ".prefix()"
@@ -1546,7 +1618,7 @@
       "label": ".Postfix()",
       "file_type": "code",
       "source_file": "Source/EarlyModContentLoading/ModAssetBundlesHandler_ReloadAll_Patch.cs",
-      "source_location": "L30",
+      "source_location": "L36",
       "id": "earlymodcontentloading_modassetbundleshandler_reloadall_patch_modassetbundleshandler_reloadall_patch_postfix",
       "community": 99,
       "norm_label": ".postfix()"
@@ -1591,7 +1663,7 @@
       "label": ".Prefix()",
       "file_type": "code",
       "source_file": "Source/EarlyModContentLoading/ModContentPack_ReloadContentInt_Patch.cs",
-      "source_location": "L21",
+      "source_location": "L24",
       "id": "earlymodcontentloading_modcontentpack_reloadcontentint_patch_modcontentpack_reloadcontentint_patch_prefix",
       "community": 100,
       "norm_label": ".prefix()"
@@ -1600,7 +1672,7 @@
       "label": ".Postfix()",
       "file_type": "code",
       "source_file": "Source/EarlyModContentLoading/ModContentPack_ReloadContentInt_Patch.cs",
-      "source_location": "L26",
+      "source_location": "L33",
       "id": "earlymodcontentloading_modcontentpack_reloadcontentint_patch_modcontentpack_reloadcontentint_patch_postfix",
       "community": 100,
       "norm_label": ".postfix()"
@@ -1835,7 +1907,7 @@
       "file_type": "code",
       "source_file": "Source/FasterGameLoading.Tests/TextureCacheManagerTests.cs",
       "source_location": "L11",
-      "id": "source_fastergameloading_tests_texturecachemanagertests_cs_texturecachemanager",
+      "id": "texturecachemanager",
       "community": 67,
       "norm_label": "texturecachemanager"
     },
@@ -1901,6 +1973,15 @@
       "id": "fastergameloading_tests_texturecachemanagertests_texturecachemanagertests_testclearcache_deletesdirectoryandclearsdictionary",
       "community": 67,
       "norm_label": ".testclearcache_deletesdirectoryandclearsdictionary()"
+    },
+    {
+      "label": ".TestCleanupObsoleteCacheFiles()",
+      "file_type": "code",
+      "source_file": "Source/FasterGameLoading.Tests/TextureCacheManagerTests.cs",
+      "source_location": "L135",
+      "id": "fastergameloading_tests_texturecachemanagertests_texturecachemanagertests_testcleanupobsoletecachefiles",
+      "community": 67,
+      "norm_label": ".testcleanupobsoletecachefiles()"
     },
     {
       "label": "UtilsTests.cs",
@@ -1989,7 +2070,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L1",
       "id": "source_fastergameloading_tests_obj_fastergameloading_tests_csproj_nuget_dgspec_json",
-      "community": 120,
+      "community": 125,
       "norm_label": "fastergameloading.tests.csproj.nuget.dgspec.json"
     },
     {
@@ -1998,7 +2079,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L2",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_format",
-      "community": 120,
+      "community": 125,
       "norm_label": "format"
     },
     {
@@ -2007,7 +2088,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L3",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_restore",
-      "community": 120,
+      "community": 125,
       "norm_label": "restore"
     },
     {
@@ -2016,7 +2097,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L4",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_restore_c_program_files_x86_steam_steamapps_common_rimworld_mods_fastergameloading_continued_source_fastergameloading_tests_fastergameloading_tests_csproj",
-      "community": 120,
+      "community": 125,
       "norm_label": "c:\\\\program files (x86)\\\\steam\\\\steamapps\\\\common\\\\rimworld\\\\mods\\\\fastergameloading---continued\\\\source\\\\fastergameloading.tests\\\\fastergameloading.tests.csproj"
     },
     {
@@ -2025,7 +2106,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L6",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_projects",
-      "community": 120,
+      "community": 125,
       "norm_label": "projects"
     },
     {
@@ -2034,7 +2115,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L7",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_projects_c_program_files_x86_steam_steamapps_common_rimworld_mods_fastergameloading_continued_source_fastergameloading_csproj",
-      "community": 119,
+      "community": 125,
       "norm_label": "c:\\\\program files (x86)\\\\steam\\\\steamapps\\\\common\\\\rimworld\\\\mods\\\\fastergameloading---continued\\\\source\\\\fastergameloading.csproj"
     },
     {
@@ -2043,7 +2124,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L8",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_c_program_files_x86_steam_steamapps_common_rimworld_mods_fastergameloading_continued_source_fastergameloading_csproj_version",
-      "community": 119,
+      "community": 125,
       "norm_label": "version"
     },
     {
@@ -2133,7 +2214,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L23",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_restore_sources",
-      "community": 126,
+      "community": 132,
       "norm_label": "sources"
     },
     {
@@ -2142,7 +2223,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L24",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_sources_c_program_files_x86_microsoft_sdks_nugetpackages",
-      "community": 126,
+      "community": 132,
       "norm_label": "c:\\\\program files (x86)\\\\microsoft sdks\\\\nugetpackages\\\\"
     },
     {
@@ -2151,7 +2232,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L25",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_sources_https_api_nuget_org_v3_index_json",
-      "community": 126,
+      "community": 132,
       "norm_label": "https://api.nuget.org/v3/index.json"
     },
     {
@@ -2160,7 +2241,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L27",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_restore_frameworks",
-      "community": 119,
+      "community": 123,
       "norm_label": "frameworks"
     },
     {
@@ -2169,7 +2250,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L28",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_frameworks_net472",
-      "community": 119,
+      "community": 123,
       "norm_label": "net472"
     },
     {
@@ -2178,7 +2259,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L29",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_net472_framework",
-      "community": 119,
+      "community": 123,
       "norm_label": "framework"
     },
     {
@@ -2187,7 +2268,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L30",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_net472_targetalias",
-      "community": 119,
+      "community": 123,
       "norm_label": "targetalias"
     },
     {
@@ -2196,7 +2277,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L31",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_net472_projectreferences",
-      "community": 119,
+      "community": 123,
       "norm_label": "projectreferences"
     },
     {
@@ -2223,7 +2304,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L39",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_restore_restoreauditproperties",
-      "community": 125,
+      "community": 131,
       "norm_label": "restoreauditproperties"
     },
     {
@@ -2232,7 +2313,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L40",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_restoreauditproperties_enableaudit",
-      "community": 125,
+      "community": 131,
       "norm_label": "enableaudit"
     },
     {
@@ -2241,7 +2322,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L41",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_restoreauditproperties_auditlevel",
-      "community": 125,
+      "community": 131,
       "norm_label": "auditlevel"
     },
     {
@@ -2250,7 +2331,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L42",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_restoreauditproperties_auditmode",
-      "community": 125,
+      "community": 131,
       "norm_label": "auditmode"
     },
     {
@@ -2268,7 +2349,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L46",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_c_program_files_x86_steam_steamapps_common_rimworld_mods_fastergameloading_continued_source_fastergameloading_csproj_frameworks",
-      "community": 119,
+      "community": 125,
       "norm_label": "frameworks"
     },
     {
@@ -2286,7 +2367,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L51",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_dependencies_krafs_publicizer",
-      "community": 123,
+      "community": 126,
       "norm_label": "krafs.publicizer"
     },
     {
@@ -2295,7 +2376,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L52",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_krafs_publicizer_include",
-      "community": 123,
+      "community": 126,
       "norm_label": "include"
     },
     {
@@ -2304,7 +2385,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L53",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_krafs_publicizer_suppressparent",
-      "community": 123,
+      "community": 126,
       "norm_label": "suppressparent"
     },
     {
@@ -2313,7 +2394,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L54",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_krafs_publicizer_target",
-      "community": 123,
+      "community": 126,
       "norm_label": "target"
     },
     {
@@ -2322,7 +2403,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L55",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_krafs_publicizer_version",
-      "community": 123,
+      "community": 126,
       "norm_label": "version"
     },
     {
@@ -2394,7 +2475,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L67",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_net472_runtimeidentifiergraphpath",
-      "community": 119,
+      "community": 123,
       "norm_label": "runtimeidentifiergraphpath"
     },
     {
@@ -2403,7 +2484,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L71",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_projects_c_program_files_x86_steam_steamapps_common_rimworld_mods_fastergameloading_continued_source_fastergameloading_tests_fastergameloading_tests_csproj",
-      "community": 120,
+      "community": 123,
       "norm_label": "c:\\\\program files (x86)\\\\steam\\\\steamapps\\\\common\\\\rimworld\\\\mods\\\\fastergameloading---continued\\\\source\\\\fastergameloading.tests\\\\fastergameloading.tests.csproj"
     },
     {
@@ -2412,7 +2493,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L72",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_c_program_files_x86_steam_steamapps_common_rimworld_mods_fastergameloading_continued_source_fastergameloading_tests_fastergameloading_tests_csproj_version",
-      "community": 120,
+      "community": 123,
       "norm_label": "version"
     },
     {
@@ -2430,7 +2511,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L96",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_projectreferences_c_program_files_x86_steam_steamapps_common_rimworld_mods_fastergameloading_continued_source_fastergameloading_csproj",
-      "community": 119,
+      "community": 123,
       "norm_label": "c:\\\\program files (x86)\\\\steam\\\\steamapps\\\\common\\\\rimworld\\\\mods\\\\fastergameloading---continued\\\\source\\\\fastergameloading.csproj"
     },
     {
@@ -2439,7 +2520,7 @@
       "source_file": "Source/FasterGameLoading.Tests/obj/FasterGameLoading.Tests.csproj.nuget.dgspec.json",
       "source_location": "L114",
       "id": "obj_fastergameloading_tests_csproj_nuget_dgspec_c_program_files_x86_steam_steamapps_common_rimworld_mods_fastergameloading_continued_source_fastergameloading_tests_fastergameloading_tests_csproj_frameworks",
-      "community": 120,
+      "community": 123,
       "norm_label": "frameworks"
     },
     {
@@ -4813,7 +4894,7 @@
       "label": "LanguageDatabase_SelectLanguage_Patch",
       "file_type": "code",
       "source_file": "Source/Language/LanguageDatabase_SelectLanguage_Patch.cs",
-      "source_location": "L6",
+      "source_location": "L9",
       "id": "language_languagedatabase_selectlanguage_patch_languagedatabase_selectlanguage_patch",
       "community": 36,
       "norm_label": "languagedatabase_selectlanguage_patch"
@@ -4822,7 +4903,7 @@
       "label": ".Prefix()",
       "file_type": "code",
       "source_file": "Source/Language/LanguageDatabase_SelectLanguage_Patch.cs",
-      "source_location": "L18",
+      "source_location": "L24",
       "id": "language_languagedatabase_selectlanguage_patch_languagedatabase_selectlanguage_patch_prefix",
       "community": 36,
       "norm_label": ".prefix()"
@@ -4858,7 +4939,7 @@
       "label": ".InjectTranslations()",
       "file_type": "code",
       "source_file": "Source/Language/TranslationInjector.cs",
-      "source_location": "L22",
+      "source_location": "L20",
       "id": "language_translationinjector_translationinjector_injecttranslations",
       "community": 29,
       "norm_label": ".injecttranslations()"
@@ -4867,7 +4948,7 @@
       "label": ".LoadKeyedTranslationsFromFile()",
       "file_type": "code",
       "source_file": "Source/Language/TranslationInjector.cs",
-      "source_location": "L74",
+      "source_location": "L72",
       "id": "language_translationinjector_translationinjector_loadkeyedtranslationsfromfile",
       "community": 29,
       "norm_label": ".loadkeyedtranslationsfromfile()"
@@ -7243,7 +7324,7 @@
       "label": ".ExposeData()",
       "file_type": "code",
       "source_file": "Source/Settings/SessionCache.cs",
-      "source_location": "L86",
+      "source_location": "L82",
       "id": "settings_sessioncache_sessioncache_exposedata",
       "community": 11,
       "norm_label": ".exposedata()"
@@ -7375,6 +7456,213 @@
       "norm_label": ".customapply()"
     },
     {
+      "label": "AtlasCacheReader.cs",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheReader.cs",
+      "source_location": "L1",
+      "id": "source_staticatlasescache_atlascachereader_cs",
+      "community": 128,
+      "norm_label": "atlascachereader.cs"
+    },
+    {
+      "label": "FasterGameLoading",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheReader.cs",
+      "source_location": "L8",
+      "id": "staticatlasescache_atlascachereader_fastergameloading",
+      "community": 128,
+      "norm_label": "fastergameloading"
+    },
+    {
+      "label": "AtlasCacheReader",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheReader.cs",
+      "source_location": "L13",
+      "id": "staticatlasescache_atlascachereader_atlascachereader",
+      "community": 128,
+      "norm_label": "atlascachereader"
+    },
+    {
+      "label": ".TryLoadFromCache()",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheReader.cs",
+      "source_location": "L18",
+      "id": "staticatlasescache_atlascachereader_atlascachereader_tryloadfromcache",
+      "community": 128,
+      "norm_label": ".tryloadfromcache()"
+    },
+    {
+      "label": ".ValidateManifest()",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheReader.cs",
+      "source_location": "L66",
+      "id": "staticatlasescache_atlascachereader_atlascachereader_validatemanifest",
+      "community": 128,
+      "norm_label": ".validatemanifest()"
+    },
+    {
+      "label": ".RebuildAtlas()",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheReader.cs",
+      "source_location": "L75",
+      "id": "staticatlasescache_atlascachereader_atlascachereader_rebuildatlas",
+      "community": 128,
+      "norm_label": ".rebuildatlas()"
+    },
+    {
+      "label": ".LoadColorAndMaskTextures()",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheReader.cs",
+      "source_location": "L122",
+      "id": "staticatlasescache_atlascachereader_atlascachereader_loadcolorandmasktextures",
+      "community": 128,
+      "norm_label": ".loadcolorandmasktextures()"
+    },
+    {
+      "label": ".CommitAtlasesToManager()",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheReader.cs",
+      "source_location": "L174",
+      "id": "staticatlasescache_atlascachereader_atlascachereader_commitatlasestomanager",
+      "community": 128,
+      "norm_label": ".commitatlasestomanager()"
+    },
+    {
+      "label": ".DestroyAtlases()",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheReader.cs",
+      "source_location": "L186",
+      "id": "staticatlasescache_atlascachereader_atlascachereader_destroyatlases",
+      "community": 128,
+      "norm_label": ".destroyatlases()"
+    },
+    {
+      "label": ".DestroyAtlasTextures()",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheReader.cs",
+      "source_location": "L196",
+      "id": "staticatlasescache_atlascachereader_atlascachereader_destroyatlastextures",
+      "community": 128,
+      "norm_label": ".destroyatlastextures()"
+    },
+    {
+      "label": "AtlasCacheWriter.cs",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheWriter.cs",
+      "source_location": "L1",
+      "id": "source_staticatlasescache_atlascachewriter_cs",
+      "community": 129,
+      "norm_label": "atlascachewriter.cs"
+    },
+    {
+      "label": "FasterGameLoading",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheWriter.cs",
+      "source_location": "L9",
+      "id": "staticatlasescache_atlascachewriter_fastergameloading",
+      "community": 129,
+      "norm_label": "fastergameloading"
+    },
+    {
+      "label": "AtlasCacheWriter",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheWriter.cs",
+      "source_location": "L14",
+      "id": "staticatlasescache_atlascachewriter_atlascachewriter",
+      "community": 129,
+      "norm_label": "atlascachewriter"
+    },
+    {
+      "label": ".SaveToCacheCoroutine()",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheWriter.cs",
+      "source_location": "L20",
+      "id": "staticatlasescache_atlascachewriter_atlascachewriter_savetocachecoroutine",
+      "community": 129,
+      "norm_label": ".savetocachecoroutine()"
+    },
+    {
+      "label": ".SaveSingleAtlas()",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheWriter.cs",
+      "source_location": "L81",
+      "id": "staticatlasescache_atlascachewriter_atlascachewriter_savesingleatlas",
+      "community": 129,
+      "norm_label": ".savesingleatlas()"
+    },
+    {
+      "label": ".ReleaseAtlasTextures()",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheWriter.cs",
+      "source_location": "L196",
+      "id": "staticatlasescache_atlascachewriter_atlascachewriter_releaseatlastextures",
+      "community": 129,
+      "norm_label": ".releaseatlastextures()"
+    },
+    {
+      "label": ".AlignToBlockSize()",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheWriter.cs",
+      "source_location": "L226",
+      "id": "staticatlasescache_atlascachewriter_atlascachewriter_aligntoblocksize",
+      "community": 129,
+      "norm_label": ".aligntoblocksize()"
+    },
+    {
+      "label": ".GetRawBytesSafe()",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheWriter.cs",
+      "source_location": "L236",
+      "id": "staticatlasescache_atlascachewriter_atlascachewriter_getrawbytessafe",
+      "community": 129,
+      "norm_label": ".getrawbytessafe()"
+    },
+    {
+      "label": "AtlasHashCalculator.cs",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/AtlasHashCalculator.cs",
+      "source_location": "L1",
+      "id": "source_staticatlasescache_atlashashcalculator_cs",
+      "community": 130,
+      "norm_label": "atlashashcalculator.cs"
+    },
+    {
+      "label": "FasterGameLoading",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/AtlasHashCalculator.cs",
+      "source_location": "L6",
+      "id": "staticatlasescache_atlashashcalculator_fastergameloading",
+      "community": 130,
+      "norm_label": "fastergameloading"
+    },
+    {
+      "label": "AtlasHashCalculator",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/AtlasHashCalculator.cs",
+      "source_location": "L12",
+      "id": "staticatlasescache_atlashashcalculator_atlashashcalculator",
+      "community": 130,
+      "norm_label": "atlashashcalculator"
+    },
+    {
+      "label": ".ComputeModsHash()",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/AtlasHashCalculator.cs",
+      "source_location": "L17",
+      "id": "staticatlasescache_atlashashcalculator_atlashashcalculator_computemodshash",
+      "community": 130,
+      "norm_label": ".computemodshash()"
+    },
+    {
+      "label": ".ComputeQueueHash()",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/AtlasHashCalculator.cs",
+      "source_location": "L28",
+      "id": "staticatlasescache_atlashashcalculator_atlashashcalculator_computequeuehash",
+      "community": 130,
+      "norm_label": ".computequeuehash()"
+    },
+    {
       "label": "StaticAtlasCache.cs",
       "file_type": "code",
       "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
@@ -7387,7 +7675,7 @@
       "label": "FasterGameLoading",
       "file_type": "code",
       "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
-      "source_location": "L12",
+      "source_location": "L7",
       "id": "staticatlasescache_staticatlascache_fastergameloading",
       "community": 68,
       "norm_label": "fastergameloading"
@@ -7396,7 +7684,7 @@
       "label": "StaticAtlasCache",
       "file_type": "code",
       "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
-      "source_location": "L19",
+      "source_location": "L12",
       "id": "staticatlasescache_staticatlascache_staticatlascache",
       "community": 68,
       "norm_label": "staticatlascache"
@@ -7405,7 +7693,7 @@
       "label": "Manifest",
       "file_type": "code",
       "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
-      "source_location": "L26",
+      "source_location": "L24",
       "id": "staticatlasescache_staticatlascache_manifest",
       "community": 68,
       "norm_label": "manifest"
@@ -7414,7 +7702,7 @@
       "label": "int",
       "file_type": "code",
       "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
-      "source_location": "L29",
+      "source_location": "L27",
       "id": "source_staticatlasescache_staticatlascache_cs_int",
       "community": 68,
       "norm_label": "int"
@@ -7423,7 +7711,7 @@
       "label": "string",
       "file_type": "code",
       "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
-      "source_location": "L31",
+      "source_location": "L29",
       "id": "source_staticatlasescache_staticatlascache_cs_string",
       "community": 68,
       "norm_label": "string"
@@ -7432,7 +7720,7 @@
       "label": "List",
       "file_type": "code",
       "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
-      "source_location": "L34",
+      "source_location": "L32",
       "id": "source_staticatlasescache_staticatlascache_cs_list",
       "community": 68,
       "norm_label": "list"
@@ -7441,7 +7729,7 @@
       "label": "AtlasInfo",
       "file_type": "code",
       "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
-      "source_location": "L38",
+      "source_location": "L36",
       "id": "staticatlasescache_staticatlascache_atlasinfo",
       "community": 68,
       "norm_label": "atlasinfo"
@@ -7450,7 +7738,7 @@
       "label": "bool",
       "file_type": "code",
       "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
-      "source_location": "L42",
+      "source_location": "L40",
       "id": "source_staticatlasescache_staticatlascache_cs_bool",
       "community": 68,
       "norm_label": "bool"
@@ -7459,82 +7747,37 @@
       "label": ".ClearCache()",
       "file_type": "code",
       "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
-      "source_location": "L54",
+      "source_location": "L52",
       "id": "staticatlasescache_staticatlascache_staticatlascache_clearcache",
       "community": 68,
       "norm_label": ".clearcache()"
     },
     {
-      "label": ".ComputeModsHash()",
+      "label": ".ClearCacheInternal()",
       "file_type": "code",
       "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
-      "source_location": "L75",
-      "id": "staticatlasescache_staticatlascache_staticatlascache_computemodshash",
+      "source_location": "L60",
+      "id": "staticatlasescache_staticatlascache_staticatlascache_clearcacheinternal",
       "community": 68,
-      "norm_label": ".computemodshash()"
+      "norm_label": ".clearcacheinternal()"
     },
     {
-      "label": ".ComputeQueueHash()",
+      "label": "AtlasCacheManagerImpl",
       "file_type": "code",
       "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
-      "source_location": "L84",
-      "id": "staticatlasescache_staticatlascache_staticatlascache_computequeuehash",
+      "source_location": "L80",
+      "id": "staticatlasescache_staticatlascache_atlascachemanagerimpl",
       "community": 68,
-      "norm_label": ".computequeuehash()"
+      "norm_label": "atlascachemanagerimpl"
     },
     {
-      "label": ".TryLoadFromCache()",
+      "label": ".ClearCache()",
       "file_type": "code",
       "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
-      "source_location": "L107",
-      "id": "staticatlasescache_staticatlascache_staticatlascache_tryloadfromcache",
+      "source_location": "L85",
+      "id": "staticatlasescache_staticatlascache_atlascachemanagerimpl_clearcache",
       "community": 68,
-      "norm_label": ".tryloadfromcache()"
-    },
-    {
-      "label": ".DestroyAtlases()",
-      "file_type": "code",
-      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
-      "source_location": "L244",
-      "id": "staticatlasescache_staticatlascache_staticatlascache_destroyatlases",
-      "community": 68,
-      "norm_label": ".destroyatlases()"
-    },
-    {
-      "label": ".DestroyAtlasTextures()",
-      "file_type": "code",
-      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
-      "source_location": "L254",
-      "id": "staticatlasescache_staticatlascache_staticatlascache_destroyatlastextures",
-      "community": 68,
-      "norm_label": ".destroyatlastextures()"
-    },
-    {
-      "label": ".SaveToCacheCoroutine()",
-      "file_type": "code",
-      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
-      "source_location": "L272",
-      "id": "staticatlasescache_staticatlascache_staticatlascache_savetocachecoroutine",
-      "community": 68,
-      "norm_label": ".savetocachecoroutine()"
-    },
-    {
-      "label": ".AlignToBlockSize()",
-      "file_type": "code",
-      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
-      "source_location": "L434",
-      "id": "staticatlasescache_staticatlascache_staticatlascache_aligntoblocksize",
-      "community": 68,
-      "norm_label": ".aligntoblocksize()"
-    },
-    {
-      "label": ".GetRawBytesSafe()",
-      "file_type": "code",
-      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
-      "source_location": "L444",
-      "id": "staticatlasescache_staticatlascache_staticatlascache_getrawbytessafe",
-      "community": 68,
-      "norm_label": ".getrawbytessafe()"
+      "norm_label": ".clearcache()"
     },
     {
       "label": "LazyTextureLoader.cs",
@@ -7771,6 +8014,15 @@
       "norm_label": "texturecachemanager"
     },
     {
+      "label": "ITextureCacheManager",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "id": "itexturecachemanager",
+      "community": 69,
+      "norm_label": "itexturecachemanager"
+    },
+    {
       "label": "Dictionary",
       "file_type": "code",
       "source_file": "Source/TextureDownscaler/TextureCacheManager.cs",
@@ -7783,7 +8035,7 @@
       "label": "object",
       "file_type": "code",
       "source_file": "Source/TextureDownscaler/TextureCacheManager.cs",
-      "source_location": "L18",
+      "source_location": "L21",
       "id": "source_texturedownscaler_texturecachemanager_cs_object",
       "community": 69,
       "norm_label": "object"
@@ -7792,7 +8044,7 @@
       "label": "ConcurrentDictionary",
       "file_type": "code",
       "source_file": "Source/TextureDownscaler/TextureCacheManager.cs",
-      "source_location": "L19",
+      "source_location": "L22",
       "id": "source_texturedownscaler_texturecachemanager_cs_concurrentdictionary",
       "community": 69,
       "norm_label": "concurrentdictionary"
@@ -7801,7 +8053,7 @@
       "label": "string",
       "file_type": "code",
       "source_file": "Source/TextureDownscaler/TextureCacheManager.cs",
-      "source_location": "L20",
+      "source_location": "L23",
       "id": "source_texturedownscaler_texturecachemanager_cs_string",
       "community": 69,
       "norm_label": "string"
@@ -7810,7 +8062,7 @@
       "label": ".BuildCacheDirectory()",
       "file_type": "code",
       "source_file": "Source/TextureDownscaler/TextureCacheManager.cs",
-      "source_location": "L25",
+      "source_location": "L28",
       "id": "texturedownscaler_texturecachemanager_texturecachemanager_buildcachedirectory",
       "community": 69,
       "norm_label": ".buildcachedirectory()"
@@ -7819,7 +8071,7 @@
       "label": ".GetCachePath()",
       "file_type": "code",
       "source_file": "Source/TextureDownscaler/TextureCacheManager.cs",
-      "source_location": "L51",
+      "source_location": "L54",
       "id": "texturedownscaler_texturecachemanager_texturecachemanager_getcachepath",
       "community": 69,
       "norm_label": ".getcachepath()"
@@ -7828,7 +8080,7 @@
       "label": ".GetCacheKey()",
       "file_type": "code",
       "source_file": "Source/TextureDownscaler/TextureCacheManager.cs",
-      "source_location": "L68",
+      "source_location": "L71",
       "id": "texturedownscaler_texturecachemanager_texturecachemanager_getcachekey",
       "community": 69,
       "norm_label": ".getcachekey()"
@@ -7837,7 +8089,7 @@
       "label": ".TryGetCachedTexturePath()",
       "file_type": "code",
       "source_file": "Source/TextureDownscaler/TextureCacheManager.cs",
-      "source_location": "L113",
+      "source_location": "L116",
       "id": "texturedownscaler_texturecachemanager_texturecachemanager_trygetcachedtexturepath",
       "community": 69,
       "norm_label": ".trygetcachedtexturepath()"
@@ -7846,7 +8098,7 @@
       "label": ".IsCacheFresh()",
       "file_type": "code",
       "source_file": "Source/TextureDownscaler/TextureCacheManager.cs",
-      "source_location": "L137",
+      "source_location": "L140",
       "id": "texturedownscaler_texturecachemanager_texturecachemanager_iscachefresh",
       "community": 69,
       "norm_label": ".iscachefresh()"
@@ -7855,7 +8107,7 @@
       "label": ".RemoveCachedTexturePath()",
       "file_type": "code",
       "source_file": "Source/TextureDownscaler/TextureCacheManager.cs",
-      "source_location": "L166",
+      "source_location": "L169",
       "id": "texturedownscaler_texturecachemanager_texturecachemanager_removecachedtexturepath",
       "community": 69,
       "norm_label": ".removecachedtexturepath()"
@@ -7864,7 +8116,7 @@
       "label": ".ClearCache()",
       "file_type": "code",
       "source_file": "Source/TextureDownscaler/TextureCacheManager.cs",
-      "source_location": "L175",
+      "source_location": "L178",
       "id": "texturedownscaler_texturecachemanager_texturecachemanager_clearcache",
       "community": 69,
       "norm_label": ".clearcache()"
@@ -7873,7 +8125,7 @@
       "label": ".SetupResizeStagingDirectory()",
       "file_type": "code",
       "source_file": "Source/TextureDownscaler/TextureCacheManager.cs",
-      "source_location": "L200",
+      "source_location": "L203",
       "id": "texturedownscaler_texturecachemanager_texturecachemanager_setupresizestagingdirectory",
       "community": 69,
       "norm_label": ".setupresizestagingdirectory()"
@@ -7882,7 +8134,7 @@
       "label": ".RestorePreviousCacheState()",
       "file_type": "code",
       "source_file": "Source/TextureDownscaler/TextureCacheManager.cs",
-      "source_location": "L223",
+      "source_location": "L226",
       "id": "texturedownscaler_texturecachemanager_texturecachemanager_restorepreviouscachestate",
       "community": 69,
       "norm_label": ".restorepreviouscachestate()"
@@ -7891,7 +8143,7 @@
       "label": ".ReplaceTextureCacheDirectory()",
       "file_type": "code",
       "source_file": "Source/TextureDownscaler/TextureCacheManager.cs",
-      "source_location": "L245",
+      "source_location": "L248",
       "id": "texturedownscaler_texturecachemanager_texturecachemanager_replacetexturecachedirectory",
       "community": 69,
       "norm_label": ".replacetexturecachedirectory()"
@@ -7900,10 +8152,19 @@
       "label": ".SetCacheEntry()",
       "file_type": "code",
       "source_file": "Source/TextureDownscaler/TextureCacheManager.cs",
-      "source_location": "L287",
+      "source_location": "L290",
       "id": "texturedownscaler_texturecachemanager_texturecachemanager_setcacheentry",
       "community": 69,
       "norm_label": ".setcacheentry()"
+    },
+    {
+      "label": ".CleanupObsoleteCacheFiles()",
+      "file_type": "code",
+      "source_file": "Source/TextureDownscaler/TextureCacheManager.cs",
+      "source_location": "L301",
+      "id": "texturedownscaler_texturecachemanager_texturecachemanager_cleanupobsoletecachefiles",
+      "community": 69,
+      "norm_label": ".cleanupobsoletecachefiles()"
     },
     {
       "label": "TextureResize.cs",
@@ -7933,13 +8194,13 @@
       "norm_label": "textureresize"
     },
     {
-      "label": "TextureCacheManager",
+      "label": "ITextureCacheManager",
       "file_type": "code",
       "source_file": "Source/TextureDownscaler/TextureResize.cs",
       "source_location": "L23",
-      "id": "source_texturedownscaler_textureresize_cs_texturecachemanager",
+      "id": "source_texturedownscaler_textureresize_cs_itexturecachemanager",
       "community": 76,
-      "norm_label": "texturecachemanager"
+      "norm_label": "itexturecachemanager"
     },
     {
       "label": "TextureScanner",
@@ -8356,6 +8617,15 @@
       "norm_label": "string"
     },
     {
+      "label": "int",
+      "file_type": "code",
+      "source_file": "Source/Utilities/FGLConsts.cs",
+      "source_location": "L12",
+      "id": "source_utilities_fglconsts_cs_int",
+      "community": 52,
+      "norm_label": "int"
+    },
+    {
       "label": "FGLLog.cs",
       "file_type": "code",
       "source_file": "Source/Utilities/FGLLog.cs",
@@ -8417,6 +8687,204 @@
       "id": "utilities_fgllog_fgllog_error",
       "community": 7,
       "norm_label": ".error()"
+    },
+    {
+      "label": "IAtlasCacheManager.cs",
+      "file_type": "code",
+      "source_file": "Source/Utilities/IAtlasCacheManager.cs",
+      "source_location": "L1",
+      "id": "source_utilities_iatlascachemanager_cs",
+      "community": 68,
+      "norm_label": "iatlascachemanager.cs"
+    },
+    {
+      "label": "FasterGameLoading",
+      "file_type": "code",
+      "source_file": "Source/Utilities/IAtlasCacheManager.cs",
+      "source_location": "L1",
+      "id": "utilities_iatlascachemanager_fastergameloading",
+      "community": 68,
+      "norm_label": "fastergameloading"
+    },
+    {
+      "label": "IAtlasCacheManager",
+      "file_type": "code",
+      "source_file": "Source/Utilities/IAtlasCacheManager.cs",
+      "source_location": "L6",
+      "id": "utilities_iatlascachemanager_iatlascachemanager",
+      "community": 68,
+      "norm_label": "iatlascachemanager"
+    },
+    {
+      "label": ".ClearCache()",
+      "file_type": "code",
+      "source_file": "Source/Utilities/IAtlasCacheManager.cs",
+      "source_location": "L15",
+      "id": "utilities_iatlascachemanager_iatlascachemanager_clearcache",
+      "community": 68,
+      "norm_label": ".clearcache()"
+    },
+    {
+      "label": "IORetryHelper.cs",
+      "file_type": "code",
+      "source_file": "Source/Utilities/IORetryHelper.cs",
+      "source_location": "L1",
+      "id": "source_utilities_ioretryhelper_cs",
+      "community": 120,
+      "norm_label": "ioretryhelper.cs"
+    },
+    {
+      "label": "FasterGameLoading",
+      "file_type": "code",
+      "source_file": "Source/Utilities/IORetryHelper.cs",
+      "source_location": "L5",
+      "id": "utilities_ioretryhelper_fastergameloading",
+      "community": 120,
+      "norm_label": "fastergameloading"
+    },
+    {
+      "label": "IORetryHelper",
+      "file_type": "code",
+      "source_file": "Source/Utilities/IORetryHelper.cs",
+      "source_location": "L11",
+      "id": "utilities_ioretryhelper_ioretryhelper",
+      "community": 120,
+      "norm_label": "ioretryhelper"
+    },
+    {
+      "label": ".WriteAllBytesWithRetry()",
+      "file_type": "code",
+      "source_file": "Source/Utilities/IORetryHelper.cs",
+      "source_location": "L16",
+      "id": "utilities_ioretryhelper_ioretryhelper_writeallbyteswithretry",
+      "community": 120,
+      "norm_label": ".writeallbyteswithretry()"
+    },
+    {
+      "label": ".WriteAllTextWithRetry()",
+      "file_type": "code",
+      "source_file": "Source/Utilities/IORetryHelper.cs",
+      "source_location": "L41",
+      "id": "utilities_ioretryhelper_ioretryhelper_writealltextwithretry",
+      "community": 120,
+      "norm_label": ".writealltextwithretry()"
+    },
+    {
+      "label": "ITextureCacheManager.cs",
+      "file_type": "code",
+      "source_file": "Source/Utilities/ITextureCacheManager.cs",
+      "source_location": "L1",
+      "id": "source_utilities_itexturecachemanager_cs",
+      "community": 81,
+      "norm_label": "itexturecachemanager.cs"
+    },
+    {
+      "label": "FasterGameLoading",
+      "file_type": "code",
+      "source_file": "Source/Utilities/ITextureCacheManager.cs",
+      "source_location": "L3",
+      "id": "utilities_itexturecachemanager_fastergameloading",
+      "community": 81,
+      "norm_label": "fastergameloading"
+    },
+    {
+      "label": "ITextureCacheManager",
+      "file_type": "code",
+      "source_file": "Source/Utilities/ITextureCacheManager.cs",
+      "source_location": "L8",
+      "id": "utilities_itexturecachemanager_itexturecachemanager",
+      "community": 81,
+      "norm_label": "itexturecachemanager"
+    },
+    {
+      "label": ".BuildCacheDirectory()",
+      "file_type": "code",
+      "source_file": "Source/Utilities/ITextureCacheManager.cs",
+      "source_location": "L20",
+      "id": "utilities_itexturecachemanager_itexturecachemanager_buildcachedirectory",
+      "community": 81,
+      "norm_label": ".buildcachedirectory()"
+    },
+    {
+      "label": ".GetCachePath()",
+      "file_type": "code",
+      "source_file": "Source/Utilities/ITextureCacheManager.cs",
+      "source_location": "L23",
+      "id": "utilities_itexturecachemanager_itexturecachemanager_getcachepath",
+      "community": 81,
+      "norm_label": ".getcachepath()"
+    },
+    {
+      "label": ".TryGetCachedTexturePath()",
+      "file_type": "code",
+      "source_file": "Source/Utilities/ITextureCacheManager.cs",
+      "source_location": "L26",
+      "id": "utilities_itexturecachemanager_itexturecachemanager_trygetcachedtexturepath",
+      "community": 81,
+      "norm_label": ".trygetcachedtexturepath()"
+    },
+    {
+      "label": ".RemoveCachedTexturePath()",
+      "file_type": "code",
+      "source_file": "Source/Utilities/ITextureCacheManager.cs",
+      "source_location": "L29",
+      "id": "utilities_itexturecachemanager_itexturecachemanager_removecachedtexturepath",
+      "community": 81,
+      "norm_label": ".removecachedtexturepath()"
+    },
+    {
+      "label": ".ClearCache()",
+      "file_type": "code",
+      "source_file": "Source/Utilities/ITextureCacheManager.cs",
+      "source_location": "L32",
+      "id": "utilities_itexturecachemanager_itexturecachemanager_clearcache",
+      "community": 81,
+      "norm_label": ".clearcache()"
+    },
+    {
+      "label": ".SetupResizeStagingDirectory()",
+      "file_type": "code",
+      "source_file": "Source/Utilities/ITextureCacheManager.cs",
+      "source_location": "L35",
+      "id": "utilities_itexturecachemanager_itexturecachemanager_setupresizestagingdirectory",
+      "community": 81,
+      "norm_label": ".setupresizestagingdirectory()"
+    },
+    {
+      "label": ".ReplaceTextureCacheDirectory()",
+      "file_type": "code",
+      "source_file": "Source/Utilities/ITextureCacheManager.cs",
+      "source_location": "L38",
+      "id": "utilities_itexturecachemanager_itexturecachemanager_replacetexturecachedirectory",
+      "community": 81,
+      "norm_label": ".replacetexturecachedirectory()"
+    },
+    {
+      "label": ".RestorePreviousCacheState()",
+      "file_type": "code",
+      "source_file": "Source/Utilities/ITextureCacheManager.cs",
+      "source_location": "L41",
+      "id": "utilities_itexturecachemanager_itexturecachemanager_restorepreviouscachestate",
+      "community": 81,
+      "norm_label": ".restorepreviouscachestate()"
+    },
+    {
+      "label": ".SetCacheEntry()",
+      "file_type": "code",
+      "source_file": "Source/Utilities/ITextureCacheManager.cs",
+      "source_location": "L47",
+      "id": "utilities_itexturecachemanager_itexturecachemanager_setcacheentry",
+      "community": 81,
+      "norm_label": ".setcacheentry()"
+    },
+    {
+      "label": ".CleanupObsoleteCacheFiles()",
+      "file_type": "code",
+      "source_file": "Source/Utilities/ITextureCacheManager.cs",
+      "source_location": "L50",
+      "id": "utilities_itexturecachemanager_itexturecachemanager_cleanupobsoletecachefiles",
+      "community": 81,
+      "norm_label": ".cleanupobsoletecachefiles()"
     },
     {
       "label": "Utils.cs",
@@ -8516,69 +8984,6 @@
       "id": "xmlloadingcache_directxmlloader_xmlassetsinmodfolder_patch_directxmlloader_xmlassetsinmodfolder_patch_prefix",
       "community": 117,
       "norm_label": ".prefix()"
-    },
-    {
-      "label": "Graphic_Mat_Patch.cs",
-      "file_type": "code",
-      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
-      "source_location": "L1",
-      "id": "source_xmlloadingcache_graphic_mat_patch_cs",
-      "community": 111,
-      "norm_label": "graphic_mat_patch.cs"
-    },
-    {
-      "label": "FasterGameLoading",
-      "file_type": "code",
-      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
-      "source_location": "L5",
-      "id": "xmlloadingcache_graphic_mat_patch_fastergameloading",
-      "community": 111,
-      "norm_label": "fastergameloading"
-    },
-    {
-      "label": "Graphic_Mat_Patch",
-      "file_type": "code",
-      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
-      "source_location": "L11",
-      "id": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch",
-      "community": 111,
-      "norm_label": "graphic_mat_patch"
-    },
-    {
-      "label": ".Draw_Prefix()",
-      "file_type": "code",
-      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
-      "source_location": "L14",
-      "id": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_draw_prefix",
-      "community": 111,
-      "norm_label": ".draw_prefix()"
-    },
-    {
-      "label": ".DrawWorker_Prefix()",
-      "file_type": "code",
-      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
-      "source_location": "L24",
-      "id": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_drawworker_prefix",
-      "community": 111,
-      "norm_label": ".drawworker_prefix()"
-    },
-    {
-      "label": ".TriggerLazyLoadForGraphic()",
-      "file_type": "code",
-      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
-      "source_location": "L37",
-      "id": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_triggerlazyloadforgraphic",
-      "community": 111,
-      "norm_label": ".triggerlazyloadforgraphic()"
-    },
-    {
-      "label": ".TriggerLazyLoad()",
-      "file_type": "code",
-      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
-      "source_location": "L84",
-      "id": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_triggerlazyload",
-      "community": 111,
-      "norm_label": ".triggerlazyload()"
     },
     {
       "label": "XmlChangeDetector.cs",
@@ -8806,13 +9211,13 @@
       "norm_label": "1. \u63d0\u65e9\u8f09\u5165\u6a21\u7d44\u5167\u5bb9 (early mod content loading)"
     },
     {
-      "label": "2. \u555f\u7528\u591a\u57f7\u884c\u7dd2\u9810\u8f09\u5165 / \u591a\u57f7\u884c\u7dd2\u4e26\u884c XML \u8f09\u5165\u8207\u89e3\u6790 (Enable multi-threaded preloading)",
+      "label": "2. \u591a\u57f7\u884c\u7dd2\u9810\u8f09\u5165 / \u591a\u57f7\u884c\u7dd2\u4e26\u884c XML \u8f09\u5165\u8207\u89e3\u6790 (Enable multi-threaded preloading)",
       "file_type": "document",
       "source_file": "README.md",
       "source_location": "L77",
-      "id": "fastergameloading_continued_readme_2_\u555f\u7528\u591a\u57f7\u884c\u7dd2\u9810\u8f09\u5165_\u591a\u57f7\u884c\u7dd2\u4e26\u884c_xml_\u8f09\u5165\u8207\u89e3\u6790_enable_multi_threaded_preloading",
+      "id": "fastergameloading_continued_readme_2_\u591a\u57f7\u884c\u7dd2\u9810\u8f09\u5165_\u591a\u57f7\u884c\u7dd2\u4e26\u884c_xml_\u8f09\u5165\u8207\u89e3\u6790_enable_multi_threaded_preloading",
       "community": 42,
-      "norm_label": "2. \u555f\u7528\u591a\u57f7\u884c\u7dd2\u9810\u8f09\u5165 / \u591a\u57f7\u884c\u7dd2\u4e26\u884c xml \u8f09\u5165\u8207\u89e3\u6790 (enable multi-threaded preloading)"
+      "norm_label": "2. \u591a\u57f7\u884c\u7dd2\u9810\u8f09\u5165 / \u591a\u57f7\u884c\u7dd2\u4e26\u884c xml \u8f09\u5165\u8207\u89e3\u6790 (enable multi-threaded preloading)"
     },
     {
       "label": "3. XPath \u5feb\u53d6\u8207\u80cc\u666f\u8b8a\u66f4\u5075\u6e2c (XPath Caching)",
@@ -8912,6 +9317,177 @@
       "id": "fastergameloading_continued_readme_\u8072\u660e\u8207\u81f4\u8b1d",
       "community": 42,
       "norm_label": "\ud83d\udce2 \u8072\u660e\u8207\u81f4\u8b1d"
+    },
+    {
+      "label": "TextureCacheManager",
+      "file_type": "code",
+      "source_file": "Source/FasterGameLoading.Tests/TextureCacheManagerTests.cs",
+      "source_location": "L11",
+      "community": 67,
+      "norm_label": "texturecachemanager",
+      "id": "source_fastergameloading_tests_texturecachemanagertests_cs_texturecachemanager"
+    },
+    {
+      "label": "TextureCacheManager",
+      "file_type": "code",
+      "source_file": "Source/TextureDownscaler/TextureResize.cs",
+      "source_location": "L23",
+      "community": 76,
+      "norm_label": "texturecachemanager",
+      "id": "source_texturedownscaler_textureresize_cs_texturecachemanager"
+    },
+    {
+      "label": "FieldInfo",
+      "file_type": "code",
+      "source_file": "Source/Compatibility/FGLProgressReporter.cs",
+      "source_location": "L29",
+      "community": 46,
+      "norm_label": "fieldinfo",
+      "id": "fieldinfo"
+    },
+    {
+      "label": ".ComputeModsHash()",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
+      "source_location": "L75",
+      "community": 68,
+      "norm_label": ".computemodshash()",
+      "id": "staticatlasescache_staticatlascache_staticatlascache_computemodshash"
+    },
+    {
+      "label": ".ComputeQueueHash()",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
+      "source_location": "L84",
+      "community": 68,
+      "norm_label": ".computequeuehash()",
+      "id": "staticatlasescache_staticatlascache_staticatlascache_computequeuehash"
+    },
+    {
+      "label": ".TryLoadFromCache()",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
+      "source_location": "L107",
+      "community": 68,
+      "norm_label": ".tryloadfromcache()",
+      "id": "staticatlasescache_staticatlascache_staticatlascache_tryloadfromcache"
+    },
+    {
+      "label": ".DestroyAtlases()",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
+      "source_location": "L244",
+      "community": 68,
+      "norm_label": ".destroyatlases()",
+      "id": "staticatlasescache_staticatlascache_staticatlascache_destroyatlases"
+    },
+    {
+      "label": ".DestroyAtlasTextures()",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
+      "source_location": "L254",
+      "community": 68,
+      "norm_label": ".destroyatlastextures()",
+      "id": "staticatlasescache_staticatlascache_staticatlascache_destroyatlastextures"
+    },
+    {
+      "label": ".SaveToCacheCoroutine()",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
+      "source_location": "L272",
+      "community": 68,
+      "norm_label": ".savetocachecoroutine()",
+      "id": "staticatlasescache_staticatlascache_staticatlascache_savetocachecoroutine"
+    },
+    {
+      "label": ".AlignToBlockSize()",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
+      "source_location": "L434",
+      "community": 68,
+      "norm_label": ".aligntoblocksize()",
+      "id": "staticatlasescache_staticatlascache_staticatlascache_aligntoblocksize"
+    },
+    {
+      "label": ".GetRawBytesSafe()",
+      "file_type": "code",
+      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
+      "source_location": "L444",
+      "community": 68,
+      "norm_label": ".getrawbytessafe()",
+      "id": "staticatlasescache_staticatlascache_staticatlascache_getrawbytessafe"
+    },
+    {
+      "label": "Graphic_Mat_Patch.cs",
+      "file_type": "code",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L1",
+      "community": 111,
+      "norm_label": "graphic_mat_patch.cs",
+      "id": "source_xmlloadingcache_graphic_mat_patch_cs"
+    },
+    {
+      "label": "FasterGameLoading",
+      "file_type": "code",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L5",
+      "community": 111,
+      "norm_label": "fastergameloading",
+      "id": "xmlloadingcache_graphic_mat_patch_fastergameloading"
+    },
+    {
+      "label": "Graphic_Mat_Patch",
+      "file_type": "code",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L11",
+      "community": 111,
+      "norm_label": "graphic_mat_patch",
+      "id": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch"
+    },
+    {
+      "label": ".Draw_Prefix()",
+      "file_type": "code",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L14",
+      "community": 111,
+      "norm_label": ".draw_prefix()",
+      "id": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_draw_prefix"
+    },
+    {
+      "label": ".DrawWorker_Prefix()",
+      "file_type": "code",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L24",
+      "community": 111,
+      "norm_label": ".drawworker_prefix()",
+      "id": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_drawworker_prefix"
+    },
+    {
+      "label": ".TriggerLazyLoadForGraphic()",
+      "file_type": "code",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L37",
+      "community": 111,
+      "norm_label": ".triggerlazyloadforgraphic()",
+      "id": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_triggerlazyloadforgraphic"
+    },
+    {
+      "label": ".TriggerLazyLoad()",
+      "file_type": "code",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L84",
+      "community": 111,
+      "norm_label": ".triggerlazyload()",
+      "id": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_triggerlazyload"
+    },
+    {
+      "label": "2. \u555f\u7528\u591a\u57f7\u884c\u7dd2\u9810\u8f09\u5165 / \u591a\u57f7\u884c\u7dd2\u4e26\u884c XML \u8f09\u5165\u8207\u89e3\u6790 (Enable multi-threaded preloading)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L77",
+      "community": 42,
+      "norm_label": "2. \u555f\u7528\u591a\u57f7\u884c\u7dd2\u9810\u8f09\u5165 / \u591a\u57f7\u884c\u7dd2\u4e26\u884c xml \u8f09\u5165\u8207\u89e3\u6790 (enable multi-threaded preloading)",
+      "id": "fastergameloading_continued_readme_2_\u555f\u7528\u591a\u57f7\u884c\u7dd2\u9810\u8f09\u5165_\u591a\u57f7\u884c\u7dd2\u4e26\u884c_xml_\u8f09\u5165\u8207\u89e3\u6790_enable_multi_threaded_preloading"
     },
     {
       "label": "Queue",
@@ -11101,15 +11677,6 @@
       "id": "xml_loading_cache_xmlnode_selectsinglenodes_patch_xmlnode_selectsinglenode_patch_postfix"
     },
     {
-      "label": "TextureCacheManager",
-      "file_type": "code",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L23",
-      "community": 2,
-      "norm_label": "texturecachemanager",
-      "id": "texturecachemanager"
-    },
-    {
       "label": "version",
       "file_type": "code",
       "source_file": "Source/obj/project.assets.json",
@@ -12320,7 +12887,7 @@
       "file_type": "code",
       "source_file": "Source/obj/project.assets.json",
       "source_location": "L354",
-      "community": 81,
+      "community": 119,
       "norm_label": "project",
       "id": "obj_project_assets_project"
     },
@@ -12329,7 +12896,7 @@
       "file_type": "code",
       "source_file": "Source/obj/project.assets.json",
       "source_location": "L355",
-      "community": 81,
+      "community": 119,
       "norm_label": "version",
       "id": "obj_project_assets_project_version"
     },
@@ -12446,7 +13013,7 @@
       "file_type": "code",
       "source_file": "Source/obj/project.assets.json",
       "source_location": "L374",
-      "community": 81,
+      "community": 119,
       "norm_label": "frameworks",
       "id": "obj_project_assets_restore_frameworks"
     },
@@ -12455,7 +13022,7 @@
       "file_type": "code",
       "source_file": "Source/obj/project.assets.json",
       "source_location": "L375",
-      "community": 81,
+      "community": 119,
       "norm_label": "net472",
       "id": "obj_project_assets_frameworks_net472"
     },
@@ -12464,7 +13031,7 @@
       "file_type": "code",
       "source_file": "Source/obj/project.assets.json",
       "source_location": "L376",
-      "community": 81,
+      "community": 119,
       "norm_label": "framework",
       "id": "obj_project_assets_net472_framework"
     },
@@ -12473,7 +13040,7 @@
       "file_type": "code",
       "source_file": "Source/obj/project.assets.json",
       "source_location": "L377",
-      "community": 81,
+      "community": 119,
       "norm_label": "targetalias",
       "id": "obj_project_assets_net472_targetalias"
     },
@@ -12482,7 +13049,7 @@
       "file_type": "code",
       "source_file": "Source/obj/project.assets.json",
       "source_location": "L378",
-      "community": 81,
+      "community": 119,
       "norm_label": "projectreferences",
       "id": "obj_project_assets_net472_projectreferences"
     },
@@ -12554,7 +13121,7 @@
       "file_type": "code",
       "source_file": "Source/obj/project.assets.json",
       "source_location": "L393",
-      "community": 81,
+      "community": 119,
       "norm_label": "frameworks",
       "id": "obj_project_assets_project_frameworks"
     },
@@ -12590,7 +13157,7 @@
       "file_type": "code",
       "source_file": "Source/obj/project.assets.json",
       "source_location": "L414",
-      "community": 81,
+      "community": 119,
       "norm_label": "runtimeidentifiergraphpath",
       "id": "obj_project_assets_net472_runtimeidentifiergraphpath"
     },
@@ -13949,12 +14516,12 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "Source/Compatibility/FGLProgressReporter.cs",
-      "source_location": "L29",
+      "source_location": "L30",
       "weight": 1.0,
       "context": "field",
       "confidence_score": 1.0,
       "source": "compatibility_fglprogressreporter_fglprogressreporter",
-      "target": "fieldinfo"
+      "target": "func"
     },
     {
       "relation": "method",
@@ -13985,6 +14552,17 @@
       "confidence_score": 1.0,
       "source": "compatibility_fglprogressreporter_fglprogressreporter",
       "target": "compatibility_fglprogressreporter_fglprogressreporter_postfix"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Compatibility/FGLProgressReporter.cs",
+      "source_location": "L29",
+      "weight": 1.0,
+      "context": "field",
+      "confidence_score": 1.0,
+      "source": "compatibility_fglprogressreporter_fglprogressreporter",
+      "target": "fieldinfo"
     },
     {
       "relation": "contains",
@@ -14325,6 +14903,16 @@
       "target": "core_startup_startup_postfix"
     },
     {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Core/Startup.cs",
+      "source_location": "L110",
+      "weight": 1.0,
+      "source": "core_startup_startup",
+      "target": "core_startup_startup_addpatchassemblies",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Core/Startup.cs",
@@ -14333,6 +14921,17 @@
       "confidence_score": 1.0,
       "source": "core_startup_cs",
       "target": "core_startup_startup"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Core/Startup.cs",
+      "source_location": "L71",
+      "weight": 1.0,
+      "source": "core_startup_startup_postfix",
+      "target": "core_startup_startup_addpatchassemblies",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -14931,6 +15530,99 @@
       "confidence_score": 1.0,
       "source": "delaygraphicandiconloading_graphicdata_init_patch_graphicdata_init_patch_issameasymmetriclink",
       "target": "delaygraphicandiconloading_graphicdata_init_patch_graphicdata_init_patch_issameborderdata"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/DelayGraphicAndIconLoading/Graphic_Mat_Patch.cs",
+      "source_location": "L5",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "source_delaygraphicandiconloading_graphic_mat_patch_cs",
+      "target": "delaygraphicandiconloading_graphic_mat_patch_fastergameloading"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/DelayGraphicAndIconLoading/Graphic_Mat_Patch.cs",
+      "source_location": "L11",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "source_delaygraphicandiconloading_graphic_mat_patch_cs",
+      "target": "delaygraphicandiconloading_graphic_mat_patch_graphic_mat_patch"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/DelayGraphicAndIconLoading/Graphic_Mat_Patch.cs",
+      "source_location": "L14",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "delaygraphicandiconloading_graphic_mat_patch_graphic_mat_patch",
+      "target": "delaygraphicandiconloading_graphic_mat_patch_graphic_mat_patch_draw_prefix"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/DelayGraphicAndIconLoading/Graphic_Mat_Patch.cs",
+      "source_location": "L24",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "delaygraphicandiconloading_graphic_mat_patch_graphic_mat_patch",
+      "target": "delaygraphicandiconloading_graphic_mat_patch_graphic_mat_patch_drawworker_prefix"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/DelayGraphicAndIconLoading/Graphic_Mat_Patch.cs",
+      "source_location": "L37",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "delaygraphicandiconloading_graphic_mat_patch_graphic_mat_patch",
+      "target": "delaygraphicandiconloading_graphic_mat_patch_graphic_mat_patch_triggerlazyloadforgraphic"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/DelayGraphicAndIconLoading/Graphic_Mat_Patch.cs",
+      "source_location": "L84",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "delaygraphicandiconloading_graphic_mat_patch_graphic_mat_patch",
+      "target": "delaygraphicandiconloading_graphic_mat_patch_graphic_mat_patch_triggerlazyload"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/DelayGraphicAndIconLoading/Graphic_Mat_Patch.cs",
+      "source_location": "L20",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "delaygraphicandiconloading_graphic_mat_patch_graphic_mat_patch_draw_prefix",
+      "target": "delaygraphicandiconloading_graphic_mat_patch_graphic_mat_patch_triggerlazyloadforgraphic"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/DelayGraphicAndIconLoading/Graphic_Mat_Patch.cs",
+      "source_location": "L30",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "delaygraphicandiconloading_graphic_mat_patch_graphic_mat_patch_drawworker_prefix",
+      "target": "delaygraphicandiconloading_graphic_mat_patch_graphic_mat_patch_triggerlazyloadforgraphic"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/DelayGraphicAndIconLoading/Graphic_Mat_Patch.cs",
+      "source_location": "L44",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "delaygraphicandiconloading_graphic_mat_patch_graphic_mat_patch_triggerlazyloadforgraphic",
+      "target": "delaygraphicandiconloading_graphic_mat_patch_graphic_mat_patch_triggerlazyload"
     },
     {
       "relation": "contains",
@@ -15742,9 +16434,9 @@
       "source_file": "Source/FasterGameLoading.Tests/HarmonyPatchTests.cs",
       "source_location": "L169",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "fastergameloading_tests_harmonypatchtests_harmonypatchtests",
-      "target": "fastergameloading_tests_harmonypatchtests_harmonypatchtests_testxmlnode_selectsinglenode_patch_bypasseswhenxmlextensionsactive",
-      "confidence_score": 1.0
+      "target": "fastergameloading_tests_harmonypatchtests_harmonypatchtests_testxmlnode_selectsinglenode_patch_bypasseswhenxmlextensionsactive"
     },
     {
       "relation": "method",
@@ -15856,7 +16548,7 @@
       "context": "field",
       "confidence_score": 1.0,
       "source": "fastergameloading_tests_texturecachemanagertests_texturecachemanagertests",
-      "target": "source_fastergameloading_tests_texturecachemanagertests_cs_texturecachemanager"
+      "target": "texturecachemanager"
     },
     {
       "relation": "method",
@@ -15927,6 +16619,38 @@
       "confidence_score": 1.0,
       "source": "fastergameloading_tests_texturecachemanagertests_texturecachemanagertests",
       "target": "fastergameloading_tests_texturecachemanagertests_texturecachemanagertests_testclearcache_deletesdirectoryandclearsdictionary"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/FasterGameLoading.Tests/TextureCacheManagerTests.cs",
+      "source_location": "L135",
+      "weight": 1.0,
+      "source": "fastergameloading_tests_texturecachemanagertests_texturecachemanagertests",
+      "target": "fastergameloading_tests_texturecachemanagertests_texturecachemanagertests_testcleanupobsoletecachefiles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/FasterGameLoading.Tests/TextureCacheManagerTests.cs",
+      "source_location": "L11",
+      "weight": 1.0,
+      "context": "field",
+      "confidence_score": 1.0,
+      "source": "fastergameloading_tests_texturecachemanagertests_texturecachemanagertests",
+      "target": "source_fastergameloading_tests_texturecachemanagertests_cs_texturecachemanager"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Texture downscaler/TextureResize.cs",
+      "source_location": "L23",
+      "weight": 1.0,
+      "context": "field",
+      "confidence_score": 1.0,
+      "source": "texture_downscaler_textureresize_textureresize",
+      "target": "texturecachemanager"
     },
     {
       "relation": "contains",
@@ -22498,6 +23222,360 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheReader.cs",
+      "source_location": "L8",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "source_staticatlasescache_atlascachereader_cs",
+      "target": "staticatlasescache_atlascachereader_fastergameloading"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheReader.cs",
+      "source_location": "L13",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "source_staticatlasescache_atlascachereader_cs",
+      "target": "staticatlasescache_atlascachereader_atlascachereader"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheReader.cs",
+      "source_location": "L18",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_atlascachereader_atlascachereader",
+      "target": "staticatlasescache_atlascachereader_atlascachereader_tryloadfromcache"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheReader.cs",
+      "source_location": "L66",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_atlascachereader_atlascachereader",
+      "target": "staticatlasescache_atlascachereader_atlascachereader_validatemanifest"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheReader.cs",
+      "source_location": "L75",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_atlascachereader_atlascachereader",
+      "target": "staticatlasescache_atlascachereader_atlascachereader_rebuildatlas"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheReader.cs",
+      "source_location": "L122",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_atlascachereader_atlascachereader",
+      "target": "staticatlasescache_atlascachereader_atlascachereader_loadcolorandmasktextures"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheReader.cs",
+      "source_location": "L174",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_atlascachereader_atlascachereader",
+      "target": "staticatlasescache_atlascachereader_atlascachereader_commitatlasestomanager"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheReader.cs",
+      "source_location": "L155",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_atlascachereader_atlascachereader",
+      "target": "staticatlasescache_atlascachereader_atlascachereader_destroyatlases"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheReader.cs",
+      "source_location": "L165",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_atlascachereader_atlascachereader",
+      "target": "staticatlasescache_atlascachereader_atlascachereader_destroyatlastextures"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheReader.cs",
+      "source_location": "L30",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_atlascachereader_atlascachereader_tryloadfromcache",
+      "target": "staticatlasescache_atlascachereader_atlascachereader_validatemanifest"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheReader.cs",
+      "source_location": "L39",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_atlascachereader_atlascachereader_tryloadfromcache",
+      "target": "staticatlasescache_atlascachereader_atlascachereader_rebuildatlas"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheReader.cs",
+      "source_location": "L41",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_atlascachereader_atlascachereader_tryloadfromcache",
+      "target": "staticatlasescache_atlascachereader_atlascachereader_destroyatlases"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheReader.cs",
+      "source_location": "L46",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_atlascachereader_atlascachereader_tryloadfromcache",
+      "target": "staticatlasescache_atlascachereader_atlascachereader_commitatlasestomanager"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheReader.cs",
+      "source_location": "L91",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_atlascachereader_atlascachereader_tryloadfromcache",
+      "target": "staticatlasescache_atlascachereader_atlascachereader_destroyatlastextures"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheReader.cs",
+      "source_location": "L103",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_atlascachereader_atlascachereader_rebuildatlas",
+      "target": "staticatlasescache_atlascachereader_atlascachereader_loadcolorandmasktextures"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheReader.cs",
+      "source_location": "L117",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_atlascachereader_atlascachereader_rebuildatlas",
+      "target": "staticatlasescache_atlascachereader_atlascachereader_destroyatlastextures"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheReader.cs",
+      "source_location": "L150",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_atlascachereader_atlascachereader_loadcolorandmasktextures",
+      "target": "staticatlasescache_atlascachereader_atlascachereader_destroyatlastextures"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheReader.cs",
+      "source_location": "L159",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_atlascachereader_atlascachereader_destroyatlases",
+      "target": "staticatlasescache_atlascachereader_atlascachereader_destroyatlastextures"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheWriter.cs",
+      "source_location": "L9",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "source_staticatlasescache_atlascachewriter_cs",
+      "target": "staticatlasescache_atlascachewriter_fastergameloading"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheWriter.cs",
+      "source_location": "L14",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "source_staticatlasescache_atlascachewriter_cs",
+      "target": "staticatlasescache_atlascachewriter_atlascachewriter"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheWriter.cs",
+      "source_location": "L20",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_atlascachewriter_atlascachewriter",
+      "target": "staticatlasescache_atlascachewriter_atlascachewriter_savetocachecoroutine"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheWriter.cs",
+      "source_location": "L81",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_atlascachewriter_atlascachewriter",
+      "target": "staticatlasescache_atlascachewriter_atlascachewriter_savesingleatlas"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheWriter.cs",
+      "source_location": "L196",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_atlascachewriter_atlascachewriter",
+      "target": "staticatlasescache_atlascachewriter_atlascachewriter_releaseatlastextures"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheWriter.cs",
+      "source_location": "L182",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_atlascachewriter_atlascachewriter",
+      "target": "staticatlasescache_atlascachewriter_atlascachewriter_aligntoblocksize"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheWriter.cs",
+      "source_location": "L192",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_atlascachewriter_atlascachewriter",
+      "target": "staticatlasescache_atlascachewriter_atlascachewriter_getrawbytessafe"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheWriter.cs",
+      "source_location": "L45",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_atlascachewriter_atlascachewriter_savetocachecoroutine",
+      "target": "staticatlasescache_atlascachewriter_atlascachewriter_savesingleatlas"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheWriter.cs",
+      "source_location": "L78",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_atlascachewriter_atlascachewriter_savetocachecoroutine",
+      "target": "staticatlasescache_atlascachewriter_atlascachewriter_releaseatlastextures"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheWriter.cs",
+      "source_location": "L81",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_atlascachewriter_atlascachewriter_savetocachecoroutine",
+      "target": "staticatlasescache_atlascachewriter_atlascachewriter_getrawbytessafe"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheWriter.cs",
+      "source_location": "L119",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_atlascachewriter_atlascachewriter_savesingleatlas",
+      "target": "staticatlasescache_atlascachewriter_atlascachewriter_getrawbytessafe"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasCacheWriter.cs",
+      "source_location": "L218",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_atlascachewriter_atlascachewriter_getrawbytessafe",
+      "target": "staticatlasescache_atlascachewriter_atlascachewriter_aligntoblocksize"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasHashCalculator.cs",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "source_staticatlasescache_atlashashcalculator_cs",
+      "target": "staticatlasescache_atlashashcalculator_fastergameloading"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasHashCalculator.cs",
+      "source_location": "L12",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "source_staticatlasescache_atlashashcalculator_cs",
+      "target": "staticatlasescache_atlashashcalculator_atlashashcalculator"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasHashCalculator.cs",
+      "source_location": "L17",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_atlashashcalculator_atlashashcalculator",
+      "target": "staticatlasescache_atlashashcalculator_atlashashcalculator_computemodshash"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/AtlasHashCalculator.cs",
+      "source_location": "L28",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_atlashashcalculator_atlashashcalculator",
+      "target": "staticatlasescache_atlashashcalculator_atlashashcalculator_computequeuehash"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
       "source_location": "L12",
       "weight": 1.0,
@@ -22536,6 +23614,16 @@
       "target": "staticatlasescache_staticatlascache_atlasinfo"
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
+      "source_location": "L80",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "source_staticatlasescache_staticatlascache_cs",
+      "target": "staticatlasescache_staticatlascache_atlascachemanagerimpl"
+    },
+    {
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
@@ -22544,6 +23632,16 @@
       "confidence_score": 1.0,
       "source": "staticatlasescache_staticatlascache_staticatlascache",
       "target": "staticatlasescache_staticatlascache_staticatlascache_clearcache"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
+      "source_location": "L60",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_staticatlascache_staticatlascache",
+      "target": "staticatlasescache_staticatlascache_staticatlascache_clearcacheinternal"
     },
     {
       "relation": "method",
@@ -22707,6 +23805,17 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
+      "source_location": "L54",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_staticatlascache_staticatlascache_clearcache",
+      "target": "staticatlasescache_staticatlascache_atlascachemanagerimpl_clearcache"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
       "source_location": "L403",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -22718,88 +23827,31 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
-      "source_location": "L118",
+      "source_location": "L87",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "staticatlasescache_staticatlascache_staticatlascache_tryloadfromcache",
-      "target": "staticatlasescache_staticatlascache_staticatlascache_computemodshash"
+      "source": "staticatlasescache_staticatlascache_atlascachemanagerimpl_clearcache",
+      "target": "staticatlasescache_staticatlascache_staticatlascache_clearcacheinternal"
     },
     {
-      "relation": "calls",
-      "context": "call",
+      "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
-      "source_location": "L289",
+      "source_location": "L80",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "staticatlasescache_staticatlascache_staticatlascache_savetocachecoroutine",
-      "target": "staticatlasescache_staticatlascache_staticatlascache_computemodshash"
+      "source": "staticatlasescache_staticatlascache_atlascachemanagerimpl",
+      "target": "utilities_iatlascachemanager_iatlascachemanager"
     },
     {
-      "relation": "calls",
-      "context": "call",
+      "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
-      "source_location": "L119",
+      "source_location": "L85",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "staticatlasescache_staticatlascache_staticatlascache_tryloadfromcache",
-      "target": "staticatlasescache_staticatlascache_staticatlascache_computequeuehash"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
-      "source_location": "L130",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "staticatlasescache_staticatlascache_staticatlascache_tryloadfromcache",
-      "target": "staticatlasescache_staticatlascache_staticatlascache_destroyatlases"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
-      "source_location": "L180",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "staticatlasescache_staticatlascache_staticatlascache_tryloadfromcache",
-      "target": "staticatlasescache_staticatlascache_staticatlascache_destroyatlastextures"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
-      "source_location": "L248",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "staticatlasescache_staticatlascache_staticatlascache_destroyatlases",
-      "target": "staticatlasescache_staticatlascache_staticatlascache_destroyatlastextures"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
-      "source_location": "L333",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "staticatlasescache_staticatlascache_staticatlascache_savetocachecoroutine",
-      "target": "staticatlasescache_staticatlascache_staticatlascache_getrawbytessafe"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
-      "source_location": "L439",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "staticatlasescache_staticatlascache_staticatlascache_getrawbytessafe",
-      "target": "staticatlasescache_staticatlascache_staticatlascache_aligntoblocksize"
+      "source": "staticatlasescache_staticatlascache_atlascachemanagerimpl",
+      "target": "staticatlasescache_staticatlascache_atlascachemanagerimpl_clearcache"
     },
     {
       "relation": "contains",
@@ -23081,6 +24133,16 @@
       "target": "texturedownscaler_texturecachemanager_texturecachemanager"
     },
     {
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/TextureDownscaler/TextureCacheManager.cs",
+      "source_location": "L14",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "texturedownscaler_texturecachemanager_texturecachemanager",
+      "target": "itexturecachemanager"
+    },
+    {
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "Source/TextureDownscaler/TextureCacheManager.cs",
@@ -23235,6 +24297,16 @@
       "target": "texturedownscaler_texturecachemanager_texturecachemanager_setcacheentry"
     },
     {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/TextureDownscaler/TextureCacheManager.cs",
+      "source_location": "L301",
+      "weight": 1.0,
+      "source": "texturedownscaler_texturecachemanager_texturecachemanager",
+      "target": "texturedownscaler_texturecachemanager_texturecachemanager_cleanupobsoletecachefiles",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
@@ -23285,7 +24357,7 @@
       "context": "field",
       "confidence_score": 1.0,
       "source": "texturedownscaler_textureresize_textureresize",
-      "target": "source_texturedownscaler_textureresize_cs_texturecachemanager"
+      "target": "source_texturedownscaler_textureresize_cs_itexturecachemanager"
     },
     {
       "relation": "references",
@@ -23408,6 +24480,17 @@
       "confidence_score": 1.0,
       "source": "texturedownscaler_textureresize_textureresize",
       "target": "texturedownscaler_textureresize_textureresize_clearcache"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/TextureDownscaler/TextureResize.cs",
+      "source_location": "L23",
+      "weight": 1.0,
+      "context": "field",
+      "confidence_score": 1.0,
+      "source": "texturedownscaler_textureresize_textureresize",
+      "target": "source_texturedownscaler_textureresize_cs_texturecachemanager"
     },
     {
       "relation": "references",
@@ -24041,6 +25124,17 @@
       "target": "source_utilities_fglconsts_cs_string"
     },
     {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Utilities/FGLConsts.cs",
+      "source_location": "L12",
+      "weight": 1.0,
+      "context": "field",
+      "confidence_score": 1.0,
+      "source": "utilities_fglconsts_fglconsts",
+      "target": "source_utilities_fglconsts_cs_int"
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Source/Utilities/FGLLog.cs",
@@ -24100,6 +25194,196 @@
       "confidence_score": 1.0,
       "source": "utilities_fgllog_fgllog",
       "target": "utilities_fgllog_fgllog_error"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Utilities/IAtlasCacheManager.cs",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "source_utilities_iatlascachemanager_cs",
+      "target": "utilities_iatlascachemanager_fastergameloading"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Utilities/IAtlasCacheManager.cs",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "source_utilities_iatlascachemanager_cs",
+      "target": "utilities_iatlascachemanager_iatlascachemanager"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Utilities/IAtlasCacheManager.cs",
+      "source_location": "L15",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "utilities_iatlascachemanager_iatlascachemanager",
+      "target": "utilities_iatlascachemanager_iatlascachemanager_clearcache"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Utilities/IORetryHelper.cs",
+      "source_location": "L5",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "source_utilities_ioretryhelper_cs",
+      "target": "utilities_ioretryhelper_fastergameloading"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Utilities/IORetryHelper.cs",
+      "source_location": "L11",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "source_utilities_ioretryhelper_cs",
+      "target": "utilities_ioretryhelper_ioretryhelper"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Utilities/IORetryHelper.cs",
+      "source_location": "L16",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "utilities_ioretryhelper_ioretryhelper",
+      "target": "utilities_ioretryhelper_ioretryhelper_writeallbyteswithretry"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Utilities/IORetryHelper.cs",
+      "source_location": "L41",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "utilities_ioretryhelper_ioretryhelper",
+      "target": "utilities_ioretryhelper_ioretryhelper_writealltextwithretry"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Utilities/ITextureCacheManager.cs",
+      "source_location": "L3",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "source_utilities_itexturecachemanager_cs",
+      "target": "utilities_itexturecachemanager_fastergameloading"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Utilities/ITextureCacheManager.cs",
+      "source_location": "L8",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "source_utilities_itexturecachemanager_cs",
+      "target": "utilities_itexturecachemanager_itexturecachemanager"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Utilities/ITextureCacheManager.cs",
+      "source_location": "L20",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "utilities_itexturecachemanager_itexturecachemanager",
+      "target": "utilities_itexturecachemanager_itexturecachemanager_buildcachedirectory"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Utilities/ITextureCacheManager.cs",
+      "source_location": "L23",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "utilities_itexturecachemanager_itexturecachemanager",
+      "target": "utilities_itexturecachemanager_itexturecachemanager_getcachepath"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Utilities/ITextureCacheManager.cs",
+      "source_location": "L26",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "utilities_itexturecachemanager_itexturecachemanager",
+      "target": "utilities_itexturecachemanager_itexturecachemanager_trygetcachedtexturepath"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Utilities/ITextureCacheManager.cs",
+      "source_location": "L29",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "utilities_itexturecachemanager_itexturecachemanager",
+      "target": "utilities_itexturecachemanager_itexturecachemanager_removecachedtexturepath"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Utilities/ITextureCacheManager.cs",
+      "source_location": "L32",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "utilities_itexturecachemanager_itexturecachemanager",
+      "target": "utilities_itexturecachemanager_itexturecachemanager_clearcache"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Utilities/ITextureCacheManager.cs",
+      "source_location": "L35",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "utilities_itexturecachemanager_itexturecachemanager",
+      "target": "utilities_itexturecachemanager_itexturecachemanager_setupresizestagingdirectory"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Utilities/ITextureCacheManager.cs",
+      "source_location": "L38",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "utilities_itexturecachemanager_itexturecachemanager",
+      "target": "utilities_itexturecachemanager_itexturecachemanager_replacetexturecachedirectory"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Utilities/ITextureCacheManager.cs",
+      "source_location": "L41",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "utilities_itexturecachemanager_itexturecachemanager",
+      "target": "utilities_itexturecachemanager_itexturecachemanager_restorepreviouscachestate"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Utilities/ITextureCacheManager.cs",
+      "source_location": "L47",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "utilities_itexturecachemanager_itexturecachemanager",
+      "target": "utilities_itexturecachemanager_itexturecachemanager_setcacheentry"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/Utilities/ITextureCacheManager.cs",
+      "source_location": "L50",
+      "weight": 1.0,
+      "source": "utilities_itexturecachemanager_itexturecachemanager",
+      "target": "utilities_itexturecachemanager_itexturecachemanager_cleanupobsoletecachefiles",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -24210,99 +25494,6 @@
       "confidence_score": 1.0,
       "source": "xmlloadingcache_directxmlloader_xmlassetsinmodfolder_patch_directxmlloader_xmlassetsinmodfolder_patch",
       "target": "xmlloadingcache_directxmlloader_xmlassetsinmodfolder_patch_directxmlloader_xmlassetsinmodfolder_patch_prefix"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
-      "source_location": "L5",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "source_xmlloadingcache_graphic_mat_patch_cs",
-      "target": "xmlloadingcache_graphic_mat_patch_fastergameloading"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
-      "source_location": "L11",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "source_xmlloadingcache_graphic_mat_patch_cs",
-      "target": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch"
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
-      "source_location": "L14",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch",
-      "target": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_draw_prefix"
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
-      "source_location": "L24",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch",
-      "target": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_drawworker_prefix"
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
-      "source_location": "L37",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch",
-      "target": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_triggerlazyloadforgraphic"
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
-      "source_location": "L84",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch",
-      "target": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_triggerlazyload"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
-      "source_location": "L20",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_draw_prefix",
-      "target": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_triggerlazyloadforgraphic"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
-      "source_location": "L30",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_drawworker_prefix",
-      "target": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_triggerlazyloadforgraphic"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
-      "source_location": "L44",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_triggerlazyloadforgraphic",
-      "target": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_triggerlazyload"
     },
     {
       "relation": "contains",
@@ -24657,7 +25848,7 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "fastergameloading_continued_readme_\u985e\u5225_a_xml_\u8207_\u8cc7\u6599\u8f09\u5165\u512a\u5316",
-      "target": "fastergameloading_continued_readme_2_\u555f\u7528\u591a\u57f7\u884c\u7dd2\u9810\u8f09\u5165_\u591a\u57f7\u884c\u7dd2\u4e26\u884c_xml_\u8f09\u5165\u8207\u89e3\u6790_enable_multi_threaded_preloading"
+      "target": "fastergameloading_continued_readme_2_\u591a\u57f7\u884c\u7dd2\u9810\u8f09\u5165_\u591a\u57f7\u884c\u7dd2\u4e26\u884c_xml_\u8f09\u5165\u8207\u89e3\u6790_enable_multi_threaded_preloading"
     },
     {
       "relation": "contains",
@@ -24668,6 +25859,16 @@
       "confidence_score": 1.0,
       "source": "fastergameloading_continued_readme_\u985e\u5225_a_xml_\u8207_\u8cc7\u6599\u8f09\u5165\u512a\u5316",
       "target": "fastergameloading_continued_readme_3_xpath_\u5feb\u53d6\u8207\u80cc\u666f\u8b8a\u66f4\u5075\u6e2c_xpath_caching"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L77",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "fastergameloading_continued_readme_\u985e\u5225_a_xml_\u8207_\u8cc7\u6599\u8f09\u5165\u512a\u5316",
+      "target": "fastergameloading_continued_readme_2_\u555f\u7528\u591a\u57f7\u884c\u7dd2\u9810\u8f09\u5165_\u591a\u57f7\u884c\u7dd2\u4e26\u884c_xml_\u8f09\u5165\u8207\u89e3\u6790_enable_multi_threaded_preloading"
     },
     {
       "relation": "contains",
@@ -24728,6 +25929,187 @@
       "confidence_score": 1.0,
       "source": "fastergameloading_continued_readme_\u985e\u5225_c_\u4ee3\u78bc\u8207\u57f7\u884c\u671f\u5b89\u5168\u6027\u512a\u5316",
       "target": "fastergameloading_continued_readme_9_delayedactions_\u7684_unity_\u7269\u4ef6\u7a7a\u503c\u5b89\u5168\u6027_null_safety_in_delayedactions"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
+      "source_location": "L118",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_staticatlascache_staticatlascache_tryloadfromcache",
+      "target": "staticatlasescache_staticatlascache_staticatlascache_computemodshash"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
+      "source_location": "L289",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_staticatlascache_staticatlascache_savetocachecoroutine",
+      "target": "staticatlasescache_staticatlascache_staticatlascache_computemodshash"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
+      "source_location": "L119",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_staticatlascache_staticatlascache_tryloadfromcache",
+      "target": "staticatlasescache_staticatlascache_staticatlascache_computequeuehash"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
+      "source_location": "L130",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_staticatlascache_staticatlascache_tryloadfromcache",
+      "target": "staticatlasescache_staticatlascache_staticatlascache_destroyatlases"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
+      "source_location": "L180",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_staticatlascache_staticatlascache_tryloadfromcache",
+      "target": "staticatlasescache_staticatlascache_staticatlascache_destroyatlastextures"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
+      "source_location": "L248",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_staticatlascache_staticatlascache_destroyatlases",
+      "target": "staticatlasescache_staticatlascache_staticatlascache_destroyatlastextures"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
+      "source_location": "L333",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_staticatlascache_staticatlascache_savetocachecoroutine",
+      "target": "staticatlasescache_staticatlascache_staticatlascache_getrawbytessafe"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/StaticAtlasesCache/StaticAtlasCache.cs",
+      "source_location": "L439",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "staticatlasescache_staticatlascache_staticatlascache_getrawbytessafe",
+      "target": "staticatlasescache_staticatlascache_staticatlascache_aligntoblocksize"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L5",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "source_xmlloadingcache_graphic_mat_patch_cs",
+      "target": "xmlloadingcache_graphic_mat_patch_fastergameloading"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L11",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "source_xmlloadingcache_graphic_mat_patch_cs",
+      "target": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L14",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch",
+      "target": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_draw_prefix"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L24",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch",
+      "target": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_drawworker_prefix"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L37",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch",
+      "target": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_triggerlazyloadforgraphic"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L84",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch",
+      "target": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_triggerlazyload"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L20",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_draw_prefix",
+      "target": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_triggerlazyloadforgraphic"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L30",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_drawworker_prefix",
+      "target": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_triggerlazyloadforgraphic"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Source/XMLLoadingCache/Graphic_Mat_Patch.cs",
+      "source_location": "L44",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_triggerlazyloadforgraphic",
+      "target": "xmlloadingcache_graphic_mat_patch_graphic_mat_patch_triggerlazyload"
     },
     {
       "relation": "references",
@@ -27457,17 +28839,6 @@
       "confidence_score": 1.0,
       "source": "texture_downscaler_textureresize_textureresize",
       "target": "texture_downscaler_textureresize_textureresize_clearcache"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "Source/Texture downscaler/TextureResize.cs",
-      "source_location": "L23",
-      "weight": 1.0,
-      "context": "field",
-      "confidence_score": 1.0,
-      "source": "texture_downscaler_textureresize_textureresize",
-      "target": "texturecachemanager"
     },
     {
       "relation": "references",
@@ -30830,5 +32201,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "68538cea620f4b3b4ef45cfd6ca6e85d131a888a"
+  "built_at_commit": "9c0f20afbc6926a0d2b11f30af9a11732c9fc544"
 }

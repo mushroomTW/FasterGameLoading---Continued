@@ -13,6 +13,9 @@ namespace FasterGameLoading
     [HarmonyPatch(typeof(AccessTools), "TypeByName")]
     public static class AccessTools_TypeByName_Patch
     {
+        /// <summary>
+        /// 前置處理：優先使用已快取的類型解析名稱並查找緩存。
+        /// </summary>
         public static bool Prefix(ref Type __result, out (bool isCached, string originalName) __state, ref string name)
         {
             var oldName = name;
@@ -33,6 +36,9 @@ namespace FasterGameLoading
             }
         }
 
+        /// <summary>
+        /// 後置處理：若為非快取路徑，將解析出的結果寫入執行期和跨 session 快取。
+        /// </summary>
         public static void Postfix(Type __result, string name, (bool isCached, string originalName) __state)
         {
             if (__state.isCached is false)

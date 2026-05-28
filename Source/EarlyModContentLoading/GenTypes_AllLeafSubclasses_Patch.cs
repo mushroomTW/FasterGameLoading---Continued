@@ -25,6 +25,9 @@ namespace FasterGameLoading
             keyValuePairs.Clear();
         }
 
+        /// <summary>
+        /// 前置處理：若已經有快取結果則直接回傳，否則運算出該基底型別的所有葉子子類別並加入快取。
+        /// </summary>
         public static bool Prefix(ref IEnumerable<Type> __result, Type baseType)
         {
             if (!keyValuePairs.TryGetValue(baseType, out var final))

@@ -20,7 +20,7 @@ namespace FasterGameLoading
             None, Building, Pawn, Weapon, Apparel, Item, Plant, Tree, Terrain, Mote, Filth, Projectile, UI, Other
         }
 
-        private readonly TextureCacheManager cacheManager;
+        private readonly ITextureCacheManager cacheManager;
         private readonly TextureScanner scanner;
 
         private long lastOriginalPixelCount;
@@ -36,7 +36,7 @@ namespace FasterGameLoading
             public int originalHeight;
         }
 
-        public TextureResize(TextureCacheManager cacheManager)
+        public TextureResize(ITextureCacheManager cacheManager)
         {
             this.cacheManager = cacheManager;
             this.scanner = new TextureScanner();
@@ -53,7 +53,7 @@ namespace FasterGameLoading
         /// </summary>
         public void DoTextureResizing()
         {
-            var previousCacheMap = new Dictionary<string, string>(cacheManager.resizedTextureCache);
+            var previousCacheMap = new Dictionary<string, string>(cacheManager.ResizedTextureCache);
             var previousCacheDirectory = cacheManager.CacheDirectory;
             var stagingDirectory = cacheManager.BuildCacheDirectory(FGLConsts.TextureCacheStagingDir);
             lastOriginalPixelCount = 0;
@@ -144,7 +144,7 @@ namespace FasterGameLoading
                 lastOriginalPixelCount += (long)sourceWidth * sourceHeight;
                 lastDownscaledPixelCount += (long)newWidth * newHeight;
                 var cachePath = cacheManager.GetCachePath(candidate.path);
-                File.WriteAllBytes(cachePath, TextureResizer.ResizeTextureToPng(resizeSource, newWidth, newHeight));
+                IORetryHelper.WriteAllBytesWithRetry(cachePath, TextureResizer.ResizeTextureToPng(resizeSource, newWidth, newHeight));
                 cacheManager.SetCacheEntry(candidate.path, cachePath);
             }
             catch (IOException ex)
@@ -174,7 +174,7 @@ namespace FasterGameLoading
             {
                 if (!File.Exists(path)) return false;
                 var data = File.ReadAllBytes(path);
-                texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+                texture = new Texture2D(FGLConsts.PlaceholderTextureSize, FGLConsts.PlaceholderTextureSize, TextureFormat.RGBA32, false);
                 if (texture.LoadImage(data) && texture.width > 0 && texture.height > 0)
                 {
                     texture.name = Path.GetFileNameWithoutExtension(path);

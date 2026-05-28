@@ -11,10 +11,13 @@ namespace FasterGameLoading
     /// <summary>
     /// 管理降質紋理快取的生命週期與對照表。
     /// </summary>
-    public class TextureCacheManager
+    public class TextureCacheManager : ITextureCacheManager
     {
         /// <summary>原始路徑 → 降質快取路徑的對照表（會透過 Scribe 持久化）。</summary>
         internal Dictionary<string, string> resizedTextureCache = new Dictionary<string, string>();
+
+        /// <summary>原始路徑 → 降質快取路徑的對照表（實作介面屬性）。</summary>
+        public Dictionary<string, string> ResizedTextureCache => resizedTextureCache;
         private readonly object cacheLock = new object();
         private readonly ConcurrentDictionary<string, string> md5HashCache = new ConcurrentDictionary<string, string>();
         private readonly string baseCacheDir;
@@ -22,7 +25,7 @@ namespace FasterGameLoading
         /// <summary>紋理快取的根目錄。</summary>
         public string CacheDirectory => baseCacheDir ?? Path.Combine(GenFilePaths.SaveDataFolderPath, FGLConsts.ModName, FGLConsts.TextureCacheDir);
         
-        internal string BuildCacheDirectory(string suffix)
+        public string BuildCacheDirectory(string suffix)
         {
             if (baseCacheDir != null)
             {
@@ -197,7 +200,7 @@ namespace FasterGameLoading
         }
 
         /// <summary>初始化縮放工作暫存目錄與快取對照表。</summary>
-        internal void SetupResizeStagingDirectory(string stagingDirectory)
+        public void SetupResizeStagingDirectory(string stagingDirectory)
         {
             md5HashCache.Clear();
             activeCacheDirectory = stagingDirectory;
@@ -220,7 +223,7 @@ namespace FasterGameLoading
         }
 
         /// <summary>還原快取狀態到上一次的快取對照表與目錄配置。</summary>
-        internal void RestorePreviousCacheState(
+        public void RestorePreviousCacheState(
             Dictionary<string, string> previousCacheMap,
             string previousCacheDirectory,
             string stagingDirectory)
@@ -242,7 +245,7 @@ namespace FasterGameLoading
         }
 
         /// <summary>將暫存目錄替換為正式快取目錄，並重建相對路徑對照表。</summary>
-        internal void ReplaceTextureCacheDirectory(string stagingDirectory)
+        public void ReplaceTextureCacheDirectory(string stagingDirectory)
         {
             bool moved = false;
             try
@@ -284,11 +287,127 @@ namespace FasterGameLoading
         }
 
         /// <summary>提供向內部字典新增項目的執行緒安全介面。</summary>
-        internal void SetCacheEntry(string originalPath, string cachePath)
+        public void SetCacheEntry(string originalPath, string cachePath)
         {
             lock (cacheLock)
             {
                 resizedTextureCache[originalPath] = cachePath;
+            }
+        }
+
+        /// <summary>
+        /// 清理過期與無效的快取檔案及對照項目。
+        /// </summary>
+        public void CleanupObsoleteCacheFiles()
+        {
+            try
+            {
+                string activeDir = CacheDirectory;
+                if (!Directory.Exists(activeDir))
+                {
+                    return;
+                }
+
+                string[] files = Directory.GetFiles(activeDir, "*.png");
+                List<KeyValuePair<string, string>> cacheEntries;
+                lock (cacheLock)
+                {
+                    cacheEntries = new List<KeyValuePair<string, string>>(resizedTextureCache);
+                }
+
+                var keysToRemove = new List<string>();
+                var validCacheFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                int deletedObsoleteFiles = 0;
+
+                foreach (var entry in cacheEntries)
+                {
+                    bool originalExists = false;
+                    try
+                    {
+                        originalExists = File.Exists(entry.Key);
+                    }
+                    catch { }
+
+                    if (!originalExists)
+                    {
+                        keysToRemove.Add(entry.Key);
+                        try
+                        {
+                            if (File.Exists(entry.Value))
+                            {
+                                File.Delete(entry.Value);
+                                deletedObsoleteFiles++;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            FGLLog.Warning("Failed to delete obsolete cache file " + entry.Value + ": " + ex.Message);
+                        }
+                    }
+                    else
+                    {
+                        bool cacheExists = false;
+                        try
+                        {
+                            cacheExists = File.Exists(entry.Value);
+                        }
+                        catch { }
+
+                        if (!cacheExists)
+                        {
+                            keysToRemove.Add(entry.Key);
+                        }
+                        else
+                        {
+                            try
+                            {
+                                validCacheFiles.Add(Path.GetFullPath(entry.Value));
+                            }
+                            catch
+                            {
+                                validCacheFiles.Add(entry.Value);
+                            }
+                        }
+                    }
+                }
+
+                if (keysToRemove.Count > 0)
+                {
+                    lock (cacheLock)
+                    {
+                        foreach (var key in keysToRemove)
+                        {
+                            resizedTextureCache.Remove(key);
+                        }
+                    }
+                }
+
+                int deletedUnreferencedFiles = 0;
+                foreach (var file in files)
+                {
+                    try
+                    {
+                        string fullPath = Path.GetFullPath(file);
+                        if (!validCacheFiles.Contains(fullPath))
+                        {
+                            File.Delete(file);
+                            deletedUnreferencedFiles++;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        FGLLog.Warning("Failed to delete unreferenced cache file " + file + ": " + ex.Message);
+                    }
+                }
+
+                if (keysToRemove.Count > 0 || deletedObsoleteFiles > 0 || deletedUnreferencedFiles > 0)
+                {
+                    FGLLog.Message($"Cache cleanup completed. Removed {keysToRemove.Count} obsolete cache map entries, deleted {deletedObsoleteFiles} obsolete files and {deletedUnreferencedFiles} unreferenced files.");
+                }
+            }
+            catch (Exception ex)
+            {
+                FGLLog.Error("Error during obsolete cache files cleanup: " + ex.Message, ex);
             }
         }
     }

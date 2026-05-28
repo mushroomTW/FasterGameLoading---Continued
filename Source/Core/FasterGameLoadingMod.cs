@@ -15,7 +15,8 @@ namespace FasterGameLoading
         public static FasterGameLoadingSettings settings;
         public static DelayedActions delayedActions;
 
-        public TextureCacheManager CacheManager { get; private set; }
+        public ITextureCacheManager CacheManager { get; private set; }
+        public IAtlasCacheManager AtlasCache => StaticAtlasCache.Instance;
         public TextureResize Resizer { get; private set; }
 
         public FasterGameLoadingMod(ModContentPack pack) : base(pack)
@@ -29,12 +30,12 @@ namespace FasterGameLoading
             delayedActions = gameObject.AddComponent<DelayedActions>();
             settings = this.GetSettings<FasterGameLoadingSettings>();
             
-            // Background preload cached textures
+            // 背景預載入已快取的紋理
             ModContentLoaderTexture2D_LoadTexture_Patch.StartPreloadCachedTextures();
 
             harmony = new Harmony("FasterGameLoadingMod");
 
-            // Background preload all types to speed up subsequent AccessTools.AllTypes() calls
+            // 背景預載入所有類型，以加速後續的 AccessTools.AllTypes() 呼叫
             AccessTools_AllTypes_Patch.Preload();
             harmony.PatchAll();
 
@@ -54,7 +55,7 @@ namespace FasterGameLoading
                 }
                 catch (System.InvalidOperationException)
                 {
-                    // Patch category "SoundStarter" hasn't been registered yet or was already unpatched — skip silently
+                    // 補丁類別 "SoundStarter" 尚未被註冊或已經被解除補丁 — 靜默跳過
                 }
             });
 

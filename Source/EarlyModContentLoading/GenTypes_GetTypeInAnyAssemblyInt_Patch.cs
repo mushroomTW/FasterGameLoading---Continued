@@ -33,6 +33,9 @@ namespace FasterGameLoading
             loadedTypesThisSession.Clear();
         }
 
+        /// <summary>
+        /// 前置處理：優先使用執行期型別快取或跨 session 快取比對，命中時返回並跳過原方法。
+        /// </summary>
         public static bool Prefix(ref Type __result, out (string originalTypeName, bool isCached) __state, ref string typeName)
         {
             if (cachedResults.TryGetValue(typeName, out var result))
@@ -52,6 +55,9 @@ namespace FasterGameLoading
             }
         }
 
+        /// <summary>
+        /// 後置處理：若為非快取查詢，將結果寫入執行期和 session 的名稱映射快取。
+        /// </summary>
         public static void Postfix(Type __result, (string originalTypeName, bool isCached) __state)
         {
             if (__result != null)

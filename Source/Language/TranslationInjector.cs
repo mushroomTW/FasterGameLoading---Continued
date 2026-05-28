@@ -8,16 +8,14 @@ namespace FasterGameLoading
     internal static class TranslationInjector
     {
         /// <summary>
-        /// Manually injects translation keys from LanguageData/ folder.
+        /// 手動注入來自 LanguageData/ 資料夾的翻譯 Key。
         /// 
-        /// Because this mod loads before Core (loadBefore: Ludeon.RimWorld),
-        /// RimWorld's language system would process our Languages/ folder before
-        /// Core's WordInfo/grammar/capitalization rules are loaded, corrupting
-        /// the title-casing system and causing all generated phrases to lose
-        /// proper capitalization (e.g. "Alex danvers" instead of "Alex Danvers").
+        /// 因為此模組載入時間早於 Core（loadBefore: Ludeon.RimWorld），
+        /// RimWorld 的語言系統會在載入 Core 的 WordInfo/grammar/capitalization 規則之前處理我們的 Languages/ 資料夾，
+        /// 這會損壞標題大小寫系統（title-casing system），導致所有生成的短語失去正確的大寫（例如變成 "Alex danvers" 而不是 "Alex Danvers"）。
         /// 
-        /// To avoid this, we renamed Languages/ to LanguageData/ (which RimWorld
-        /// won't auto-load) and inject translations here, after Core is fully loaded.
+        /// 為了避免這個問題，我們將 Languages/ 重新命名為 LanguageData/（RimWorld 不會自動載入此資料夾），
+        /// 並在此處（在 Core 完全載入後）注入翻譯。
         /// </summary>
         internal static void InjectTranslations()
         {

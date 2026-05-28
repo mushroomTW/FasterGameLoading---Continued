@@ -1,8 +1,8 @@
 .vscode
-.opencode
-.sisyphus
-SteamWorkshop
-graphify-out
+.opencode/
+.sisyphus/
+SteamWorkshop/
+graphify-out/
 
 AGENTS.md
 _PublisherPlus.xml

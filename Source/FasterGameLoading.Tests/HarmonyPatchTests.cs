@@ -132,6 +132,21 @@ namespace FasterGameLoading.Tests
         }
 
         [Test]
+        public void TestAccessTools_TypeByName_Patch_DoesNotCacheNullResult()
+        {
+            string missingTypeName = "DefinitelyMissingTypeForFGLTest";
+
+            AccessTools_TypeByName_Patch.Postfix(
+                null,
+                missingTypeName,
+                (isCached: false, originalName: missingTypeName));
+
+            Assert.IsFalse(
+                GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults.ContainsKey(missingTypeName),
+                "A transient miss must not be cached as null because later-loaded assemblies may define the type.");
+        }
+
+        [Test]
         public void TestAccessTools_AllTypes_Patch_BypassesWithCache()
         {
             // 1. 透過反射向 allTypesCached 欄位注入測試用的 mock 清單
@@ -391,5 +406,4 @@ namespace FasterGameLoading.Tests
         }
     }
 }
-
 

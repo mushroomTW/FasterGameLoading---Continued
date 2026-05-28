@@ -41,10 +41,10 @@ namespace FasterGameLoading
         /// </summary>
         public static void Postfix(Type __result, string name, (bool isCached, string originalName) __state)
         {
-            if (__state.isCached is false)
+            if (__state.isCached is false && __result != null)
             {
                 GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults[__state.originalName] = __result;
-                if (__result != null && __result.FullName != __state.originalName)
+                if (__result.FullName != __state.originalName)
                 {
                     SessionCache.loadedTypesByFullNameSinceLastSession[__state.originalName] = __result.FullName;
                     GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults[__result.FullName] = __result;

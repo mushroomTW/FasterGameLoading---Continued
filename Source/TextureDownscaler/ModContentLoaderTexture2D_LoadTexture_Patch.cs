@@ -23,8 +23,10 @@ namespace FasterGameLoading
         public static readonly ConcurrentDictionary<string, byte[]> preloadedCacheBytes = new ConcurrentDictionary<string, byte[]>();
         /// <summary>以 WeakReference 快取已載入的 Texture2D，鍵為完整檔案路徑。</summary>
         public static ConcurrentDictionary<string, System.WeakReference<Texture2D>> savedTextures = new ConcurrentDictionary<string, System.WeakReference<Texture2D>>();
-        /// <summary>Bionic Icons 的紋理快取，用於 O(1) 快速查詢。</summary>
-        public static ConcurrentDictionary<Texture2D, bool> bionicIconTextures = new ConcurrentDictionary<Texture2D, bool>();
+        /// <summary>排除烘焙的目標 Mod 紋理快取，用於 O(1) 快速查詢。</summary>
+        public static ConcurrentDictionary<Texture2D, bool> skippedBakingTextures = new ConcurrentDictionary<Texture2D, bool>();
+        /// <summary>排除烘焙的目標 Mod 紋理名稱快取，用於處理克隆實體時的反向比對。</summary>
+        public static System.Collections.Generic.HashSet<string> skippedBakingTextureNames = new System.Collections.Generic.HashSet<string>(StringComparer.OrdinalIgnoreCase);
         /// <summary>紋理快取命中次數。</summary>
         public static int cacheLoadHits;
         /// <summary>紋理快取失敗次數。</summary>
@@ -36,7 +38,8 @@ namespace FasterGameLoading
             {
                 savedTextures.Clear();
                 loadedTexturesThisSession.Clear();
-                bionicIconTextures.Clear();
+                skippedBakingTextures.Clear();
+                skippedBakingTextureNames.Clear();
                 preloadedCacheBytes.Clear();
             });
 
@@ -107,11 +110,16 @@ namespace FasterGameLoading
             });
         }
 
-        public static void RegisterBionicIconIfApplicable(string path, Texture2D tex)
+        public static void RegisterSkippedBakingTextureIfApplicable(string path, Texture2D tex)
         {
-            if (tex != null && path.IndexOf(FGLConsts.BionicIconsModId, StringComparison.OrdinalIgnoreCase) >= 0)
+            if (tex != null && SmartBakingSkipList.ShouldSkipBaking(path))
             {
-                bionicIconTextures[tex] = true;
+                skippedBakingTextures[tex] = true;
+                string filename = Path.GetFileNameWithoutExtension(path);
+                if (!string.IsNullOrEmpty(filename))
+                {
+                    skippedBakingTextureNames.Add(filename);
+                }
             }
         }
 
@@ -128,7 +136,7 @@ namespace FasterGameLoading
             // 優先檢查 WeakReference 快取中是否已有此紋理
             if (savedTextures.TryGetValue(fullPath, out var weakRef) && weakRef.TryGetTarget(out __result))
             {
-                RegisterBionicIconIfApplicable(fullPath, __result);
+                RegisterSkippedBakingTextureIfApplicable(fullPath, __result);
                 __state = false;
                 return false;
             }
@@ -144,7 +152,7 @@ namespace FasterGameLoading
 
                 LazyTextureLoader.RegisterLazyTexture(tex, lazyCachePath ?? fullPath);
                 savedTextures[fullPath] = new System.WeakReference<Texture2D>(tex);
-                RegisterBionicIconIfApplicable(fullPath, tex);
+                RegisterSkippedBakingTextureIfApplicable(fullPath, tex);
 
                 __result = tex;
                 __state = false;
@@ -174,7 +182,7 @@ namespace FasterGameLoading
                             tex.Compress(true);
                             tex.Apply(true, true);
                             savedTextures[fullPath] = new System.WeakReference<Texture2D>(tex);
-                            RegisterBionicIconIfApplicable(fullPath, tex);
+                            RegisterSkippedBakingTextureIfApplicable(fullPath, tex);
                             Interlocked.Increment(ref cacheLoadHits);
                             __result = tex;
                             __state = false;
@@ -224,7 +232,7 @@ namespace FasterGameLoading
             if (__state && __result != null)
             {
                 savedTextures[file.FullPath] = new System.WeakReference<Texture2D>(__result);
-                RegisterBionicIconIfApplicable(file.FullPath, __result);
+                RegisterSkippedBakingTextureIfApplicable(file.FullPath, __result);
             }
         }
     }

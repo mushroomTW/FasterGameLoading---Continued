@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using Verse;
 
@@ -19,19 +20,62 @@ namespace FasterGameLoading
 
         /// <summary>排除延遲加載的材質路徑關鍵字清單。</summary>
         public static readonly HashSet<string> ExcludePaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        /// <summary>所有依賴於 Humanoid Alien Races 的外星人 Mod 的根目錄排除清單。</summary>
+        public static readonly HashSet<string> AlienRaceModRootDirs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         static LazyTextureLoader()
         {
             // 載入預設排除路徑
             ExcludePaths.Add("UI/");
             ExcludePaths.Add("Icon");
-            ExcludePaths.Add("bionicicons");
+
+            // 檢測並收集所有依賴於 Humanoid Alien Races 的 Mod 根目錄
+            InitializeAlienRaceMods();
 
             CacheResetter.Register(() =>
             {
                 pendingLazyTextures.Clear();
                 hasPendingTextures = false;
             });
+        }
+
+        private static void InitializeAlienRaceMods()
+        {
+            try
+            {
+                var alienAssembly = AppDomain.CurrentDomain.GetAssemblies()
+                    .FirstOrDefault(a => a.GetName().Name == FGLConsts.AlienRaceAssemblyName);
+                if (alienAssembly == null) return;
+
+                foreach (var mod in LoadedModManager.RunningMods)
+                {
+                    var rootDir = mod.RootDir;
+                    if (string.IsNullOrEmpty(rootDir)) continue;
+
+                    var aboutPath = Path.Combine(rootDir, "About", "About.xml");
+                    if (!File.Exists(aboutPath)) continue;
+
+                    try
+                    {
+                        string content = File.ReadAllText(aboutPath);
+                        if (content.IndexOf("erdelf.humanoidalienraces", StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            var normalizedRoot = rootDir.Replace('\\', '/');
+                            if (!normalizedRoot.EndsWith("/"))
+                            {
+                                normalizedRoot += "/";
+                            }
+                            AlienRaceModRootDirs.Add(normalizedRoot);
+                            FGLLog.Message($"Detected Alien Race Mod (excluding from lazy loading): {mod.Name} ({normalizedRoot})");
+                        }
+                    }
+                    catch { }
+                }
+            }
+            catch (Exception ex)
+            {
+                FGLLog.Warning("Failed to scan Alien Race mods: ", ex);
+            }
         }
 
         /// <summary>
@@ -106,7 +150,16 @@ namespace FasterGameLoading
 
             var normalized = path.Replace('\\', '/');
 
-            // 遍歷排除清單，比對是否包含排除的關鍵字
+            // 1. 優先排除所有外星人 Mod 的貼圖
+            foreach (var rootDir in AlienRaceModRootDirs)
+            {
+                if (normalized.StartsWith(rootDir, StringComparison.OrdinalIgnoreCase))
+                {
+                    return false;
+                }
+            }
+
+            // 2. 遍歷排除清單，比對是否包含排除的關鍵字
             foreach (var exclude in ExcludePaths)
             {
                 if (normalized.IndexOf(exclude, StringComparison.OrdinalIgnoreCase) >= 0)
@@ -115,7 +168,7 @@ namespace FasterGameLoading
                 }
             }
 
-            // 僅對遊戲世界中的 Def 物件貼圖進行延遲加載
+            // 3. 僅對遊戲世界中的 Def 物件貼圖進行延遲加載
             if (normalized.IndexOf("/Things/", StringComparison.OrdinalIgnoreCase) >= 0 ||
                 normalized.IndexOf("/Pawn/", StringComparison.OrdinalIgnoreCase) >= 0 ||
                 normalized.IndexOf("/Apparel/", StringComparison.OrdinalIgnoreCase) >= 0 ||
@@ -131,4 +184,3 @@ namespace FasterGameLoading
         }
     }
 }
-

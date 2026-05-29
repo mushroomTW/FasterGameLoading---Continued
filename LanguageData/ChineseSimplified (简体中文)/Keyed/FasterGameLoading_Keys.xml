@@ -4,16 +4,16 @@
 
     <!-- Settings -->
     <FGL_EarlyModContentLoading>提早载入模组内容</FGL_EarlyModContentLoading>
-    <FGL_DelayGraphicLoading>延迟图形和图示载入（需要重新启动）</FGL_DelayGraphicLoading>
-    <FGL_StaticAtlasesBaking>更聪明的图集烘焙（需要重新启动）</FGL_StaticAtlasesBaking>
-    <FGL_AtlasCaching>静态图集缓存（需要重新启动）</FGL_AtlasCaching>
-    <FGL_MultiThreading>多线程预载入（需要重新启动）</FGL_MultiThreading>
-    <FGL_XPathCaching>XPath 缓存（需要重新启动）</FGL_XPathCaching>
-    <FGL_LazyTextureLoading>按需延迟加载材质（游戏游玩中首次看见时才加载贴图数据，大幅提速启动）</FGL_LazyTextureLoading>
+    <FGL_DelayGraphicLoading>延迟图形和图示载入</FGL_DelayGraphicLoading>
+    <FGL_StaticAtlasesBaking>更聪明的图集烘焙</FGL_StaticAtlasesBaking>
+    <FGL_AtlasCaching>静态图集缓存</FGL_AtlasCaching>
+    <FGL_MultiThreading>多线程预载入</FGL_MultiThreading>
+    <FGL_XPathCaching>XPath 缓存</FGL_XPathCaching>
+    <FGL_LazyTextureLoading>按需延迟加载材质</FGL_LazyTextureLoading>
     <FGL_ClearAtlasCache>清除图集缓存</FGL_ClearAtlasCache>
     <FGL_ClearAtlasCacheConfirmation>是否清除已缓存的静态图集？</FGL_ClearAtlasCacheConfirmation>
-    <FGL_VerboseLogging>启用详细日志（输出调试信息至控制台）</FGL_VerboseLogging>
-    <FGL_JITPrecompilation>背景线程 JIT 预编译（需要重新启动）</FGL_JITPrecompilation>
+    <FGL_VerboseLogging>启用详细日志</FGL_VerboseLogging>
+    <FGL_JITPrecompilation>背景线程 JIT 预编译</FGL_JITPrecompilation>
 
     <!-- Texture Resizing -->
     <FGL_TextureResizingExplanation>某些模组可能包含大量高分辨率纹理，载入需很长时间。使用此功能缩小高分辨率纹理。原始文件不会被修改；缩小后的版本会储存在独立的缓存目录中，并在下次启动时自动载入。

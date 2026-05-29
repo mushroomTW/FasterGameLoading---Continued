@@ -15,13 +15,14 @@ namespace FasterGameLoading
     public static class AlienRacesCompat
     {
         private static bool rescanDone = false;
+        private static bool isScheduled = false;
 
         /// <summary>
         /// 在所有 Mod 完成 ReloadContentInt 後呼叫，安排在載入完成後重新掃描。
         /// </summary>
         public static void ScheduleRescan()
         {
-            if (rescanDone) return;
+            if (rescanDone || isScheduled) return;
 
             try
             {
@@ -31,18 +32,21 @@ namespace FasterGameLoading
 
                 FGLLog.Message("Alien Races detected, scheduling extended graphics rescan after loading");
 
+                isScheduled = true;
                 // 使用 LongEventHandler 在載入完成後執行
                 // 此時所有 Def 已解析完畢，貼圖資料庫完整
                 LongEventHandler.ExecuteWhenFinished(() => PerformRescan(alienAssembly));
             }
             catch (Exception ex)
             {
+                isScheduled = false;
                 FGLLog.Warning("Alien Races detection failed: ", ex);
             }
         }
 
         private static void PerformRescan(Assembly alienAssembly)
         {
+            isScheduled = false;
             if (rescanDone) return;
 
             try
@@ -58,23 +62,7 @@ namespace FasterGameLoading
                 var queue = graphicsQueueField.GetValue(null);
                 if (queue == null) return;
 
-                var countProp = AccessTools.Property(queue.GetType(), FGLConsts.CountPropertyName);
-                if (countProp == null)
-                {
-                    FGLLog.Warning("Alien Races graphicsQueue type has no Count property");
-                    return;
-                }
-                var count = (int)countProp.GetValue(queue);
-
-                // 如果 queue 還有內容，表示 Hook 尚未執行，不需我們手動觸發
-                if (count > 0)
-                {
-                    FGLLog.Message("Alien Races graphics queue not yet processed, skipping manual rescan");
-                    rescanDone = true;
-                    return;
-                }
-
-                // queue 為空 → Hook 已執行過（可能跑太早），需重新填充並觸發
+                // 不再根據 count 提前跳過，直接將所有種族的 AlienPartGenerator 加入 queue 中
                 var thingDefAlienRaceType = AccessTools.TypeByName(FGLConsts.ThingDefAlienRaceTypeName);
                 if (thingDefAlienRaceType == null) return;
 
@@ -94,10 +82,12 @@ namespace FasterGameLoading
                                     AccessTools.Property(defType, FGLConsts.AlienRaceFieldName)?.GetValue(def);
                     if (alienRace == null) continue;
 
-                    var gs = AccessTools.Property(alienRace.GetType(), FGLConsts.GeneralSettingsPropertyName)?.GetValue(alienRace);
+                    var gs = AccessTools.Field(alienRace.GetType(), FGLConsts.GeneralSettingsPropertyName)?.GetValue(alienRace) ??
+                             AccessTools.Property(alienRace.GetType(), FGLConsts.GeneralSettingsPropertyName)?.GetValue(alienRace);
                     if (gs == null) continue;
 
-                    var apg = AccessTools.Property(gs.GetType(), FGLConsts.AlienPartGeneratorPropertyName)?.GetValue(gs);
+                    var apg = AccessTools.Field(gs.GetType(), FGLConsts.AlienPartGeneratorPropertyName)?.GetValue(gs) ??
+                              AccessTools.Property(gs.GetType(), FGLConsts.AlienPartGeneratorPropertyName)?.GetValue(gs);
                     if (apg == null) continue;
 
                     addMethod.Invoke(queue, new object[] { apg });

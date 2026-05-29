@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FasterGameLoading.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+67fd95f024dd9dc6aced9835dcc0bbc7cc06b938")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+74047737720f36a00ddd0469e20706a93ced9c96")]
 [assembly: System.Reflection.AssemblyProductAttribute("FasterGameLoading.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FasterGameLoading.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

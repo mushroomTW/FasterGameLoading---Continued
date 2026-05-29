@@ -12,35 +12,8 @@ namespace FasterGameLoading
         // ── 排除提早載入的 Mod 名單 ──
         private static readonly HashSet<string> skippedMods = new(StringComparer.OrdinalIgnoreCase)
         {
-            "automatic.bionicicons", // Bionic Icons — 避免因提早載入而產生重複載入衝突
-            "zorba.prepatcher",      // Prepatcher — 避免 ASM 重寫與提早載入順序衝突
-            "krafs.xmlextensions",   // XML Extensions — 避免其動態 XML 解析受干擾
-            "unlimitedhugs.hugslib"  // HugsLib — 底層庫，改由 vanilla 主執行緒安全初始化
+            // 目前沒有
         };
-
-        private static bool? isBionicIconsActive;
-
-        /// <summary>
-        /// 取得 Bionic Icons Mod 是否為啟用狀態（快取判定結果以維護啟動時期的效能）。
-        /// </summary>
-        public static bool IsBionicIconsActive
-        {
-            get
-            {
-                if (!isBionicIconsActive.HasValue)
-                {
-                    try
-                    {
-                        isBionicIconsActive = ModsConfig.IsActive("automatic.bionicicons");
-                    }
-                    catch
-                    {
-                        isBionicIconsActive = false;
-                    }
-                }
-                return isBionicIconsActive.Value;
-            }
-        }
 
         /// <summary>
         /// 判斷指定的 Mod 是否應該跳過提早載入流程，改走原生同步載入。

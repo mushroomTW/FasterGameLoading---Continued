@@ -99,6 +99,13 @@ namespace FasterGameLoading
         /// <summary>
         /// 預先填充 GenTypes.GetTypeInAnyAssemblyInt 的快取，消除主執行緒首次反射查詢的開銷。
         /// </summary>
+        /// <remarks>
+        /// 注意：此處僅能預熱 FullName（全名）。
+        /// 過去在此處亦將 type.Name（短名稱）寫入快取，但由於不同 Mod 間極易存在同名但不同命名空間的類別，
+        /// 預熱時不分順序直接寫入 type.Name 會導致「型態短名稱污染」，使 YetAnotherOptimizer 或核心在載入/反射欄位時拿到錯誤的 Type。
+        /// 這會進一步在翻譯注入（InjectIntoDefs）時，因欄位反射型別錯誤，於 MakeGenericType 拋出 Invalid generic arguments 崩潰。
+        /// 對於短名稱的快取，應交由執行期解析成功後再於 Postfix 中動態寫入。
+        /// </remarks>
         private static void WarmupTypeCache(List<Type> types)
         {
             if (types == null) return;
@@ -111,11 +118,6 @@ namespace FasterGameLoading
                     if (!string.IsNullOrEmpty(fullName))
                     {
                         GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults.TryAdd(fullName, type);
-                    }
-                    var name = type.Name;
-                    if (!string.IsNullOrEmpty(name))
-                    {
-                        GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults.TryAdd(name, type);
                     }
                 }
                 catch

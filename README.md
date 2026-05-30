@@ -33,7 +33,7 @@ graph TD
 * **原生行為**：遊戲順序加載核心與所有第三方 Mod 的 `.dll` 動態連結庫，並進行反射掃描與準備。這會引發嚴重的單核 CPU 佔用。
 * **本模組優化**：
   * **提早載入模組內容 (Early Mod Content Loading)**：在主執行緒空閒或等待的間隙，提前觸發 Assemblies 的反射解析。
-  * **背景執行緒 JIT 預編譯 (Background JIT Pre-compilation)**：利用背景執行緒對所有第三方 Mod 中的 C# 方法與建構子進行 `RuntimeHelpers.PrepareMethod` CLR 預編譯，將機器碼生成移出主執行緒，解決進入選單前的 Harmony Patch 與靜態構造卡頓。
+  * **背景執行緒 JIT 預編譯 (Background JIT Pre-compilation)**：利用節流的背景執行緒，對已載入 Mod Assembly 中的 C# 方法與建構子進行 `RuntimeHelpers.PrepareMethod` CLR 預熱，降低進入選單前後 Harmony Patch 與靜態建構子首次觸發 JIT 時的微卡頓。
 
 ### 2. XML/Defs 讀取與 XPath 查詢階段
 
@@ -120,10 +120,11 @@ graph TD
 
 #### 8. 背景執行緒 JIT 預編譯 (Background JIT Pre-compilation)
 
-* **概念**：載入條快跑完時，大量的 Harmony 補丁載入和 static constructor 執行會引發 CLR 頻繁進行 JIT（Just-In-Time）即時編譯，造成主執行緒嚴重微卡頓。
+* **概念**：載入條快跑完時，大量的 Harmony 補丁載入和 static constructor 執行可能引發 CLR 頻繁進行 JIT（Just-In-Time）即時編譯，造成主執行緒微卡頓。
 * **技術細節**：
-  * **背景預熱**：模組在初始化時，在背景異步掃描所有第三方 Mod Assemblies，對裡面的每個類型與方法調用 `RuntimeHelpers.PrepareMethod`，提前強行進行機器碼預編譯。
-  * **多核分攤**：這將 JIT 編譯的開銷轉嫁給多核心 CPU 的背景執行緒，使主執行緒在執行 Harmony 補丁時無需再等待 JIT 編譯，顯著提升進入主選單的速度。
+  * **節流背景預熱**：模組在初始化後短暫延遲，再於背景執行緒掃描已載入且未被忽略的 Mod Assemblies，對可處理的類型、方法與建構子調用 `RuntimeHelpers.PrepareMethod`，提前暖機常見的首次 JIT 成本。
+  * **防重入與讓出 CPU**：同一時間只允許一個 JIT 預熱工作；處理固定批次後會讓出 CPU，降低與 RimWorld 主載入流程競爭資源的機率。
+  * **優先順序**：上次 Session 中含 Harmony Patch 的 Assembly 會優先處理，其次是名稱包含 `Patch` 的 Assembly，讓預熱更集中在容易造成載入卡頓的程式碼。
 
 #### 9. `delayedActions` 的 Unity 物件空值安全性 (Null Safety in DelayedActions)
 

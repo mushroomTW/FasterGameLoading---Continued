@@ -11,7 +11,6 @@
     <FGL_XPathCaching>XPath 快取</FGL_XPathCaching>
     <FGL_LazyTextureLoading>依需求延遲加載材質</FGL_LazyTextureLoading>
     <FGL_ClearAtlasCache>清除圖集快取</FGL_ClearAtlasCache>
-
     <FGL_ClearAtlasCacheConfirmation>是否清除已快取的靜態圖集？</FGL_ClearAtlasCacheConfirmation>
     <FGL_VerboseLogging>啟用詳細日誌</FGL_VerboseLogging>
     <FGL_JITPrecompilation>背景執行緒 JIT 預編譯</FGL_JITPrecompilation>

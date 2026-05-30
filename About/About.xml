@@ -23,7 +23,7 @@ Sick of staring at the loading screen every time you start RimWorld? This mod cu
 - Smarter atlas baking: Automatically adjusts batch sizes based on your GPU speed to reduce loading hitches. (enabled by default)
 - Static atlases cache: Caches the result of static atlas baking to reduce calculation time. Currently recommended to use this feature only when not using DDS-related mods. (disabled by default)
 - Verbose logging: Outputs debug messages to the console. (disabled by default)
-- Background JIT pre-compilation: Compiles C# methods and constructors of mods in background threads, eliminating frame hitches and micro-stutters when loading main menu and patches. (enabled by default)
+- Background JIT pre-compilation: Warms C# methods and constructors of already-loaded mod assemblies on a throttled background thread to reduce first-use JIT hitches near main menu and patch loading. (enabled by default)
 - Texture downscaler: Reduces the file size of high-resolution textures to save VRAM and speed up loading. Your original mod files are never touched, downscaled copies are stored in a separate folder, and you can delete them anytime to go back to full quality. (disabled by default)
 
 --- Things to know ---
@@ -57,7 +57,7 @@ Original mod by Taranchuk. This is a maintained fork with bug fixes and improvem
 - 更聰明的圖集烘焙：根據你的 GPU 速度自動調整每批次處理量，減少載入卡頓。（預設開啟）
 - 靜態圖集緩存：緩存靜態圖集烘焙的結果，減少計算時間，目前建議只有沒有使用dds相關的模組時使用此功能。（預設關閉）
 - 啟用詳細日誌：輸出偵錯訊息至控制台以利排查問題。（預設關閉）
-- 背景執行緒 JIT 預編譯：在背景執行緒中預先編譯第三方 Mod 的 C# 方法與建構子，減少進入主選單前的 Harmony Patch 與靜態建構子所引發的微卡頓。（預設開啟）
+- 背景執行緒 JIT 預編譯：以節流背景執行緒預熱已載入 Mod Assembly 的 C# 方法與建構子，降低進入主選單前後首次 JIT 造成的微卡頓。（預設開啟）
 - 縮小紋理工具：可縮小高畫質貼圖來節省顯示記憶體與載入時間。（預設關閉）
 
 --- 注意事項 ---

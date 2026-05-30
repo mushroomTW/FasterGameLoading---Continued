@@ -5,6 +5,7 @@ using System.Xml;
 using HarmonyLib;
 using NUnit.Framework;
 using System.Linq;
+using System.Threading;
 using Verse;
 using UnityEngine;
 
@@ -325,7 +326,53 @@ namespace FasterGameLoading.Tests
         public void TestJITPrecompiler_RunsWithoutExceptions()
         {
             // 驗證 JITPrecompiler.StartPrecompilation 能否順利啟動背景編譯且不拋出任何異常
-            Assert.DoesNotThrow(() => JITPrecompiler.StartPrecompilation());
+            JITPrecompiler.ResetStateForTests();
+            Assert.DoesNotThrow(() => JITPrecompiler.StartPrecompilation(() => default, 0));
+            Assert.IsTrue(SpinWait.SpinUntil(() => !JITPrecompiler.IsPrecompilationRunning, TimeSpan.FromSeconds(5)));
+        }
+
+        [Test]
+        public void TestJITPrecompiler_RejectsConcurrentRuns()
+        {
+            JITPrecompiler.ResetStateForTests();
+            using (var gate = new ManualResetEventSlim(false))
+            {
+                Assert.IsTrue(JITPrecompiler.StartPrecompilation(() =>
+                {
+                    gate.Wait(TimeSpan.FromSeconds(5));
+                    return default;
+                }, 0));
+
+                Assert.IsFalse(JITPrecompiler.StartPrecompilation(() => default, 0));
+
+                gate.Set();
+                Assert.IsTrue(SpinWait.SpinUntil(() => !JITPrecompiler.IsPrecompilationRunning, TimeSpan.FromSeconds(5)));
+            }
+        }
+
+        [Test]
+        public void TestJITPrecompiler_PrioritizesPreviouslyPatchedAssemblies()
+        {
+            var patchedAssemblies = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "SomeGameplayMod"
+            };
+
+            Assert.Greater(
+                JITPrecompiler.GetAssemblyPriority("SomeGameplayMod", patchedAssemblies),
+                JITPrecompiler.GetAssemblyPriority("OtherPatchHelpers", patchedAssemblies));
+            Assert.Greater(
+                JITPrecompiler.GetAssemblyPriority("OtherPatchHelpers", patchedAssemblies),
+                JITPrecompiler.GetAssemblyPriority("PlainGameplayMod", patchedAssemblies));
+        }
+
+        [Test]
+        public void TestJITPrecompiler_IgnoresCoreAndKnownUnsafeAssemblies()
+        {
+            Assert.IsTrue(JITPrecompiler.ShouldIgnoreAssembly("System.Core"));
+            Assert.IsTrue(JITPrecompiler.ShouldIgnoreAssembly("Assembly-CSharp"));
+            Assert.IsTrue(JITPrecompiler.ShouldIgnoreAssembly("FasterGameLoading"));
+            Assert.IsFalse(JITPrecompiler.ShouldIgnoreAssembly("SomeGameplayMod"));
         }
 
         [Test]
@@ -341,4 +388,3 @@ namespace FasterGameLoading.Tests
 
     }
 }
-

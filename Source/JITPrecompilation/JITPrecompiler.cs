@@ -4,195 +4,186 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Verse;
 
 namespace FasterGameLoading
 {
     /// <summary>
-    /// 背景執行緒 JIT 預編譯器。
-    /// 在背景執行緒中預先編譯所有第三方 Mod Assemblies 的方法與建構子，
-    /// 減少遊戲啟動後半段執行 Harmony Patch 與靜態建構子時的 JIT 卡頓。
+    /// 在背景執行緒上預熱已載入的模組組件，以減少首次使用時的 JIT 停頓。
     /// </summary>
     public static class JITPrecompiler
     {
-        /// <summary>
-        /// 異步啟動背景預編譯。
-        /// </summary>
-        public static void StartPrecompilation()
+        private const int DefaultInitialDelayMs = 250;
+        private const int YieldEveryTypes = 32;
+
+        private static int isPrecompilationRunning;
+
+        internal static bool IsPrecompilationRunning => Volatile.Read(ref isPrecompilationRunning) == 1;
+
+        internal struct JITPrecompilationStats
         {
+            public int CompiledTypesCount;
+            public int CompiledMethodsCount;
+        }
+
+        /// <summary>
+        /// 啟動一個背景 JIT 預熱工作。如果已有其他工作在執行中，則返回 false。
+        /// </summary>
+        public static bool StartPrecompilation()
+        {
+            return StartPrecompilation(CompileLoadedAssemblies, DefaultInitialDelayMs);
+        }
+
+        internal static bool StartPrecompilation(Func<JITPrecompilationStats> compileAction, int initialDelayMs)
+        {
+            if (Interlocked.CompareExchange(ref isPrecompilationRunning, 1, 0) != 0)
+            {
+                FGLLog.Message("Background JIT pre-compilation is already running; skipping duplicate request.");
+                return false;
+            }
+
             Task.Run(() =>
             {
                 try
                 {
                     var stopwatch = Stopwatch.StartNew();
-                    int compiledMethodsCount = 0;
-                    int compiledTypesCount = 0;
-
-                    var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-
-                    // 智慧優先級排序：上次被 Harmony Patch 的組件優先級最高，名稱含 "Patch" 的組件次之，其餘置後
-                    List<string> patchedCopy = null;
-                    lock (SessionCache.patchedAssembliesLock)
+                    if (initialDelayMs > 0)
                     {
-                        if (SessionCache.patchedAssembliesLastSession != null)
-                        {
-                            patchedCopy = new List<string>(SessionCache.patchedAssembliesLastSession);
-                        }
+                        Thread.Sleep(initialDelayMs);
                     }
 
-                    var orderedAssemblies = assemblies.OrderByDescending(a =>
-                    {
-                        if (a == null) return -1;
-                        try
-                        {
-                            var name = a.GetName().Name;
-                            if (patchedCopy != null && patchedCopy.Contains(name))
-                            {
-                                return 100;
-                            }
-                            if (name.IndexOf("Patch", StringComparison.OrdinalIgnoreCase) >= 0)
-                            {
-                                return 50;
-                            }
-                        }
-                        catch
-                        {
-                            // 忽略個別動態組件可能拋出的異常
-                        }
-                        return 0;
-                    }).ToList();
-
-                    foreach (var assembly in orderedAssemblies)
-                    {
-                        if (assembly == null) continue;
-
-                        try
-                        {
-                            if (assembly.IsDynamic)
-                            {
-                                continue;
-                            }
-
-                            string location;
-                            try
-                            {
-                                location = assembly.Location;
-                            }
-                            catch (NotSupportedException)
-                            {
-                                continue;
-                            }
-
-                            if (string.IsNullOrEmpty(location))
-                            {
-                                continue;
-                            }
-
-                            var name = assembly.GetName().Name;
-                            if (ShouldIgnoreAssembly(name))
-                            {
-                                continue;
-                            }
-
-                            Type[] types;
-                            try
-                            {
-                                types = assembly.GetTypes();
-                            }
-                            catch (ReflectionTypeLoadException ex)
-                            {
-                                types = ex.Types;
-                            }
-                            catch
-                            {
-                                continue;
-                            }
-
-                            if (types == null) continue;
-
-                            foreach (var type in types)
-                            {
-                                if (type == null) continue;
-
-                                try
-                                {
-                                    // 遍歷編譯型別中所有宣告的方法
-                                    var methods = type.GetMethods(BindingFlags.DeclaredOnly | 
-                                                                  BindingFlags.Public | 
-                                                                  BindingFlags.NonPublic | 
-                                                                  BindingFlags.Instance | 
-                                                                  BindingFlags.Static);
-                                    foreach (var method in methods)
-                                    {
-                                        if (method == null || method.IsAbstract)
-                                        {
-                                            continue;
-                                        }
-
-                                        try
-                                        {
-                                            RuntimeHelpers.PrepareMethod(method.MethodHandle);
-                                            compiledMethodsCount++;
-                                        }
-                                        catch
-                                        {
-                                            // 忽略無法預編譯的特定泛型或 DynamicMethod
-                                        }
-                                    }
-
-                                    // 遍歷編譯所有宣告的建構子
-                                    var constructors = type.GetConstructors(BindingFlags.DeclaredOnly | 
-                                                                            BindingFlags.Public | 
-                                                                            BindingFlags.NonPublic | 
-                                                                            BindingFlags.Instance | 
-                                                                            BindingFlags.Static);
-                                    foreach (var ctor in constructors)
-                                    {
-                                        if (ctor == null)
-                                        {
-                                            continue;
-                                        }
-
-                                        try
-                                        {
-                                            RuntimeHelpers.PrepareMethod(ctor.MethodHandle);
-                                            compiledMethodsCount++;
-                                        }
-                                        catch
-                                        {
-                                            // 忽略無法編譯的泛型建構子
-                                        }
-                                    }
-
-                                    compiledTypesCount++;
-                                }
-                                catch
-                                {
-                                    // 忽略單一類型反射錯誤，確保遍歷不中斷
-                                }
-                            }
-                        }
-                        catch
-                        {
-                            // 忽略個別 Assembly 反射錯誤
-                        }
-                    }
-
+                    var stats = compileAction();
                     stopwatch.Stop();
-                    FGLLog.Message($"Background JIT pre-compilation complete in {stopwatch.ElapsedMilliseconds} ms. Compiled {compiledTypesCount} types, {compiledMethodsCount} methods.");
+
+                    FGLLog.Message($"Background JIT pre-compilation complete in {stopwatch.ElapsedMilliseconds} ms. Compiled {stats.CompiledTypesCount} types, {stats.CompiledMethodsCount} methods.");
                 }
                 catch (Exception ex)
                 {
                     FGLLog.Warning("Error during background JIT pre-compilation: " + ex.Message);
                 }
+                finally
+                {
+                    Volatile.Write(ref isPrecompilationRunning, 0);
+                }
             });
+
+            return true;
         }
 
-        /// <summary>
-        /// 判斷是否應該忽略此 Assembly 的 JIT 預編譯。
-        /// </summary>
-        private static bool ShouldIgnoreAssembly(string name)
+        private static JITPrecompilationStats CompileLoadedAssemblies()
+        {
+            var stats = new JITPrecompilationStats();
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var patchedAssemblies = GetPatchedAssembliesSnapshot();
+            var orderedAssemblies = assemblies
+                .Where(IsPrecompilationCandidate)
+                .OrderByDescending(a => GetAssemblyPrioritySafe(a, patchedAssemblies))
+                .ToList();
+
+            int processedTypesSinceYield = 0;
+            foreach (var assembly in orderedAssemblies)
+            {
+                try
+                {
+                    var types = GetLoadableTypes(assembly);
+                    if (types == null) continue;
+
+                    foreach (var type in types)
+                    {
+                        if (type == null) continue;
+
+                        try
+                        {
+                            stats.CompiledMethodsCount += PrepareMethods(type);
+                            stats.CompiledMethodsCount += PrepareConstructors(type);
+                            stats.CompiledTypesCount++;
+
+                            processedTypesSinceYield++;
+                            if (processedTypesSinceYield >= YieldEveryTypes)
+                            {
+                                processedTypesSinceYield = 0;
+                                Thread.Yield();
+                            }
+                        }
+                        catch
+                        {
+                            // 某些模組類型在反射成員時會拋出異常；跳過它們並繼續預熱其餘部分。
+                        }
+                    }
+                }
+                catch
+                {
+                    // 防止單個有問題的組件使整個背景預熱失效。
+                }
+            }
+
+            return stats;
+        }
+
+        private static HashSet<string> GetPatchedAssembliesSnapshot()
+        {
+            lock (SessionCache.patchedAssembliesLock)
+            {
+                if (SessionCache.patchedAssembliesLastSession == null)
+                {
+                    return null;
+                }
+
+                return new HashSet<string>(SessionCache.patchedAssembliesLastSession, StringComparer.OrdinalIgnoreCase);
+            }
+        }
+
+        private static Type[] GetLoadableTypes(Assembly assembly)
+        {
+            try
+            {
+                return assembly.GetTypes();
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+                return ex.Types;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static bool IsPrecompilationCandidate(Assembly assembly)
+        {
+            if (assembly == null || assembly.IsDynamic)
+            {
+                return false;
+            }
+
+            string location;
+            try
+            {
+                location = assembly.Location;
+            }
+            catch (NotSupportedException)
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(location))
+            {
+                return false;
+            }
+
+            try
+            {
+                return !ShouldIgnoreAssembly(assembly.GetName().Name);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        internal static bool ShouldIgnoreAssembly(string name)
         {
             if (string.IsNullOrEmpty(name)) return true;
 
@@ -210,6 +201,104 @@ namespace FasterGameLoading
             }
 
             return false;
+        }
+
+        internal static int GetAssemblyPriority(string name, ISet<string> patchedAssemblies)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return -1;
+            }
+
+            if (patchedAssemblies != null && patchedAssemblies.Contains(name))
+            {
+                return 100;
+            }
+
+            if (name.IndexOf("Patch", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                return 50;
+            }
+
+            return 0;
+        }
+
+        private static int GetAssemblyPrioritySafe(Assembly assembly, ISet<string> patchedAssemblies)
+        {
+            try
+            {
+                return GetAssemblyPriority(assembly.GetName().Name, patchedAssemblies);
+            }
+            catch
+            {
+                return -1;
+            }
+        }
+
+        private static int PrepareMethods(Type type)
+        {
+            int compiledMethodsCount = 0;
+            var methods = type.GetMethods(BindingFlags.DeclaredOnly |
+                                          BindingFlags.Public |
+                                          BindingFlags.NonPublic |
+                                          BindingFlags.Instance |
+                                          BindingFlags.Static);
+            foreach (var method in methods)
+            {
+                if (method == null || method.IsAbstract || method.ContainsGenericParameters)
+                {
+                    continue;
+                }
+
+                if (TryPrepareMethod(method))
+                {
+                    compiledMethodsCount++;
+                }
+            }
+
+            return compiledMethodsCount;
+        }
+
+        private static int PrepareConstructors(Type type)
+        {
+            int compiledMethodsCount = 0;
+            var constructors = type.GetConstructors(BindingFlags.DeclaredOnly |
+                                                    BindingFlags.Public |
+                                                    BindingFlags.NonPublic |
+                                                    BindingFlags.Instance |
+                                                    BindingFlags.Static);
+            foreach (var ctor in constructors)
+            {
+                if (ctor == null || ctor.ContainsGenericParameters)
+                {
+                    continue;
+                }
+
+                if (TryPrepareMethod(ctor))
+                {
+                    compiledMethodsCount++;
+                }
+            }
+
+            return compiledMethodsCount;
+        }
+
+        private static bool TryPrepareMethod(MethodBase method)
+        {
+            try
+            {
+                RuntimeHelpers.PrepareMethod(method.MethodHandle);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        internal static void ResetStateForTests()
+        {
+            Volatile.Write(ref isPrecompilationRunning, 0);
         }
     }
 }

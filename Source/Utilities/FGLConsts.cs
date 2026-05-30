@@ -64,6 +64,8 @@ namespace FasterGameLoading
         {
             "mscorlib",
             "Assembly-CSharp",
+            "FasterGameLoading",
+            "FasterGameLoading.Tests",
             "0Harmony",
             "Mono.Cecil",
             "Anonymously Hosted DynamicMethods Assembly",

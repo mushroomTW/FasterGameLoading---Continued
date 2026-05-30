@@ -19,10 +19,9 @@ graph TD
     D -->|查詢快取| F(XPath 查詢結果快取)
     F -->|檔案異步監測| G(背景 XML 檔案變更偵測)
     D --> H[材質貼圖載入]
-    H -->|僅回傳 2x2 佔位| I(依需求延遲加載材質)
-    I -->|首次渲染| J(渲染時動態像素補加載)
     H -->|VRAM 優化| K(紋理縮小工具)
-    J --> L[圖集烘焙與快取]
+    H --> L[圖集烘焙與快取]
+    K --> L
     L -->|批次最佳化| M(更聰明的圖集烘焙)
     L -->|硬碟快取| N(靜態圖集快取)
     M --> O[進入遊戲主選單]
@@ -48,7 +47,6 @@ graph TD
 
 * **原生行為**：讀取所有 Mod 下的圖像檔案（如 PNG），將其加載為 Unity 的 `Texture2D`。大量高解析度材質會耗費數十秒甚至數分鐘，並耗盡顯示記憶體（VRAM）。
 * **本模組優化**：
-  * **依需求延遲加載材質 (Lazy Load Textures on Demand)**：啟動時對特定的遊戲世界物體貼圖（Things, Pawn, Terrain 等）僅返回 2x2 佔位貼圖，跳過 I/O。當物件即將在畫面渲染（`Graphic.Draw`）時，才在原 Texture2D 實例上呼叫 `LoadImage` 動態補加載真實像素。這使啟動時間縮短 30%~50%，並大幅節省主選單階段的記憶體開銷。
   * **紋理縮小工具 (Texture Downscaler)**：將超高解析度材質安全地縮小至目標大小並快取，在不改變原 Mod 檔案的情況下減少載入負荷。
 
 ### 4. 圖集烘焙與快取階段
@@ -92,14 +90,6 @@ graph TD
 ---
 
 ### 🎨 類別 B：材質貼圖與圖集優化
-
-#### 4. 依需求延遲加載材質 (Lazy Load Textures on Demand)
-
-* **概念**：大量 Mod 的貼圖體積巨大，啟動時讀取時間長，且許多貼圖在主選單或前幾個小時的遊戲中根本不會被看見。
-* **技術細節**：
-  * **路徑啟發式攔截**：使用 `Harmony` 攔截 `ModContentLoader<Texture2D>.LoadTexture`。當 `LazyTextureLoading` 開啟時，會使用路徑檢測（`ShouldLazyLoad`），排除 `UI/`、`Icon` 以及醫療元件等介面關鍵路徑，僅對 `/Things/`、`/Pawn/`、`/Terrain/` 等路徑的貼圖進行攔截。
-  * **2x2 佔位實例**：攔截後，不讀取實體檔案，直接 `new Texture2D(2, 2)` 回傳佔位材質，並將此 `Texture2D` 與真實圖片路徑記錄於 `ConcurrentDictionary` 中。
-  * **0引用像素覆蓋**：攔截 `Graphic.Draw` 和 `Graphic.DrawWorker`。當遊戲實體被呼叫 Draw 時，遞迴檢查 `Graphic.MatSingle` 及其所有的子材質（如多方向 `mats`），若在註冊表中，則在主執行緒中以 `File.ReadAllBytes` 讀取並調用 `Texture2D.LoadImage(data)` 覆蓋像素。此技術直接在原 `Texture2D` 實例上載入數據，**無需替換 Material 的引用**，保證了 Unity 物件的參考一致性。
 
 #### 5. 縮小紋理工具 (Downscale textures)
 
@@ -148,7 +138,7 @@ graph TD
 * **[Loading Progress](https://github.com/ilyvion/loading-progress/)**：完美相容，本模組會將載入進度精準輸出給 Loading Progress 顯示。
 * **[Missile Girl](https://github.com/ViralReaction/MissileGirl)**：完美相容。作為 RocketMan 針對 RimWorld 1.6 版本的現代更新分支，除了優化遊戲內的運行 Tick 外，還提供加載速度提升、警報節流以及大規模數據與屬性快取，與本模組對「啟動階段」的優化相輔相成，是極力推薦的全方位性能組合。
 * **[DefLoadCache](https://github.com/FluxxField/rimworld-defload-cache)**：完美相容。當其快取失效重新建置時，本模組會大幅加速其 XML 載入過程。
-* **[Image Opt](https://steamcommunity.com/sharedfiles/filedetails/?id=3543873568)**：完美相容。當檢測到其啟用時，本模組會自動停用紋理縮小工具（Texture Downscaler）與延遲材質載入（Lazy Texture Loading），以防止兩者衝突，將貼圖處理安全地交由 Image Opt 處理。
+* **[Image Opt](https://steamcommunity.com/sharedfiles/filedetails/?id=3543873568)**：完美相容。當檢測到其啟用時，本模組會自動停用紋理縮小工具（Texture Downscaler），以防止兩者衝突，將貼圖處理安全地交由 Image Opt 處理。
 
 ---
 

@@ -66,7 +66,10 @@ namespace FasterGameLoading
             "Assembly-CSharp",
             "0Harmony",
             "Mono.Cecil",
-            "Anonymously Hosted DynamicMethods Assembly"
+            "Anonymously Hosted DynamicMethods Assembly",
+            "AlteredCarbon",
+            "AlteredCarbonExtra",
+            "0ModSettingsFramework"
         };
 
         // ── 背景延遲時間常數 ──

@@ -338,72 +338,7 @@ namespace FasterGameLoading.Tests
             Assert.IsNull(result, "Result should remain null when fallback is triggered");
         }
 
-        [Test]
-        public void TestLazyTextureLoader_ShouldLazyLoad_Heuristics()
-        {
-            // 驗證路徑過濾規則是否正確
-            Assert.IsTrue(LazyTextureLoader.ShouldLazyLoad("C:/RimWorld/Mods/MyMod/Textures/Things/Building/Table.png"));
-            Assert.IsTrue(LazyTextureLoader.ShouldLazyLoad("C:/RimWorld/Mods/MyMod/Textures/Pawn/Human/Skin.png"));
-            
-            // 排除 UI 與 Icon
-            Assert.IsFalse(LazyTextureLoader.ShouldLazyLoad("C:/RimWorld/Mods/MyMod/Textures/UI/Widgets/Button.png"));
-            Assert.IsFalse(LazyTextureLoader.ShouldLazyLoad("C:/RimWorld/Mods/MyMod/Textures/Things/Building/Table_Icon.png"));
-            Assert.IsFalse(LazyTextureLoader.ShouldLazyLoad("C:/RimWorld/Mods/MyMod/Textures/icon_weapon.png"));
-            
-            // 排除 Bionic Icons
-            Assert.IsFalse(LazyTextureLoader.ShouldLazyLoad("C:/RimWorld/Mods/BionicIcons/Textures/UI/bionicicons.png"));
-        }
 
-        [Test]
-        [Ignore("無法在非 Unity 單元測試環境下執行，因為建立 Texture2D 會引發 ECall 異常。")]
-        public void TestLazyTextureLoader_TriggerLazyLoad_OnDemand()
-        {
-            // 1. 建立一個臨時圖片檔案
-            string tempImageFile = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "FGL_Test_Image_" + Guid.NewGuid() + ".png");
-            
-            // 建立一個 8x8 的真實紅色貼圖並輸出為 PNG 檔案
-            var sourceTex = new Texture2D(8, 8, TextureFormat.RGBA32, false);
-            for (int x = 0; x < 8; x++)
-            {
-                for (int y = 0; y < 8; y++)
-                {
-                    sourceTex.SetPixel(x, y, Color.red);
-                }
-            }
-            sourceTex.Apply();
-            byte[] pngBytes = sourceTex.EncodeToPNG();
-            System.IO.File.WriteAllBytes(tempImageFile, pngBytes);
-            UnityEngine.Object.DestroyImmediate(sourceTex);
-
-            try
-            {
-                // 2. 實例化一個 2x2 的佔位貼圖，並註冊為延遲加載
-                var placeholderTex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-                Assert.AreEqual(2, placeholderTex.width);
-                Assert.AreEqual(2, placeholderTex.height);
-
-                LazyTextureLoader.RegisterLazyTexture(placeholderTex, tempImageFile);
-                Assert.IsTrue(LazyTextureLoader.pendingLazyTextures.ContainsKey(placeholderTex));
-
-                // 3. 觸發補加載
-                LazyTextureLoader.TriggerLazyLoadIfPending(placeholderTex);
-
-                // 4. 斷言佔位貼圖寬高已被動態更新為真實的 8x8，且 map 已清理
-                Assert.AreEqual(8, placeholderTex.width);
-                Assert.AreEqual(8, placeholderTex.height);
-                Assert.IsFalse(LazyTextureLoader.pendingLazyTextures.ContainsKey(placeholderTex));
-
-                UnityEngine.Object.DestroyImmediate(placeholderTex);
-            }
-            finally
-            {
-                // 清理臨時檔案
-                if (System.IO.File.Exists(tempImageFile))
-                {
-                    System.IO.File.Delete(tempImageFile);
-                }
-            }
-        }
     }
 }
 

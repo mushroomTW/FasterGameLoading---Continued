@@ -58,7 +58,6 @@ namespace FasterGameLoading
             ls.CheckboxLabeled("FGL_EarlyModContentLoading".Translate(), ref earlyModContentLoading);
             ls.CheckboxLabeled("FGL_MultiThreading".Translate(), ref EnableMultiThreading);
             ls.CheckboxLabeled("FGL_XPathCaching".Translate(), ref XPathCaching);
-            ls.CheckboxLabeled("FGL_LazyTextureLoading".Translate(), ref LazyTextureLoading);
             ls.CheckboxLabeled("FGL_DelayGraphicLoading".Translate(), ref DelayGraphicLoading);
 
             ls.CheckboxLabeled("FGL_StaticAtlasesBaking".Translate(), ref StaticAtlasesBaking);
@@ -127,6 +126,7 @@ namespace FasterGameLoading
             Scribe_Values.Look(ref EnableMultiThreading, "enableMultiThreading", true);
             Scribe_Values.Look(ref XPathCaching, "XPathCaching", true);
             Scribe_Values.Look(ref LazyTextureLoading, "lazyTextureLoading", false);
+            LazyTextureLoading = false; // 強制將其重置為 false，徹底拔除此功能
             Scribe_Values.Look(ref VerboseLogging, "verboseLogging", false);
             Scribe_Values.Look(ref JITPrecompilation, "JITPrecompilation", true);
 

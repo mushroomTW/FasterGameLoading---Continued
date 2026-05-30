@@ -69,6 +69,26 @@ namespace FasterGameLoading
 
                         try
                         {
+                            if (assembly.IsDynamic)
+                            {
+                                continue;
+                            }
+
+                            string location;
+                            try
+                            {
+                                location = assembly.Location;
+                            }
+                            catch (NotSupportedException)
+                            {
+                                continue;
+                            }
+
+                            if (string.IsNullOrEmpty(location))
+                            {
+                                continue;
+                            }
+
                             var name = assembly.GetName().Name;
                             if (ShouldIgnoreAssembly(name))
                             {
@@ -105,7 +125,7 @@ namespace FasterGameLoading
                                                                   BindingFlags.Static);
                                     foreach (var method in methods)
                                     {
-                                        if (method == null || method.IsAbstract || method.ContainsGenericParameters)
+                                        if (method == null || method.IsAbstract)
                                         {
                                             continue;
                                         }
@@ -129,7 +149,7 @@ namespace FasterGameLoading
                                                                             BindingFlags.Static);
                                     foreach (var ctor in constructors)
                                     {
-                                        if (ctor == null || ctor.ContainsGenericParameters)
+                                        if (ctor == null)
                                         {
                                             continue;
                                         }

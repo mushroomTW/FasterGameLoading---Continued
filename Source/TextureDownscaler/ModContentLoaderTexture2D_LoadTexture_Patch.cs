@@ -141,24 +141,6 @@ namespace FasterGameLoading
                 return false;
             }
 
-            // 檢查是否應該執行依需求延遲加載材質
-            if (FasterGameLoadingSettings.LazyTextureLoading && LazyTextureLoader.ShouldLazyLoad(fullPath))
-            {
-                // 檢查是否有降質快取可用
-                FasterGameLoadingMod.Instance.CacheManager.TryGetCachedTexturePath(fullPath, out var lazyCachePath);
-
-                var tex = new Texture2D(FGLConsts.PlaceholderTextureSize, FGLConsts.PlaceholderTextureSize, TextureFormat.RGBA32, false);
-                tex.name = Path.GetFileNameWithoutExtension(fullPath);
-
-                LazyTextureLoader.RegisterLazyTexture(tex, lazyCachePath ?? fullPath);
-                savedTextures[fullPath] = new System.WeakReference<Texture2D>(tex);
-                RegisterSkippedBakingTextureIfApplicable(fullPath, tex);
-
-                __result = tex;
-                __state = false;
-                return false; // 跳過實際讀取硬碟圖片
-            }
-
 
             // 檢查是否有降質快取版本的紋理可用
             if (FasterGameLoadingMod.Instance.CacheManager.TryGetCachedTexturePath(fullPath, out var cachePath))

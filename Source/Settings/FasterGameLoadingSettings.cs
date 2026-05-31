@@ -14,8 +14,6 @@ namespace FasterGameLoading
         /// <summary>詳細日誌記錄開關（預設關閉）</summary>
         public static bool VerboseLogging = false;
 
-        /// <summary>背景 JIT 預編譯（預設開啟）</summary>
-        public static bool JITPrecompilation = true;
 
         /// <summary>延遲非必要圖形/圖示載入（預設關閉）</summary>
         public static bool DelayGraphicLoading = false;
@@ -63,7 +61,6 @@ namespace FasterGameLoading
             ls.CheckboxLabeled("FGL_StaticAtlasesBaking".Translate(), ref StaticAtlasesBaking);
             ls.CheckboxLabeled("FGL_AtlasCaching".Translate(), ref AtlasCaching);
             ls.CheckboxLabeled("FGL_VerboseLogging".Translate(), ref VerboseLogging);
-            ls.CheckboxLabeled("FGL_JITPrecompilation".Translate(), ref JITPrecompilation);
             ls.Gap(12f);
 
             // Texture resize explanation
@@ -128,7 +125,6 @@ namespace FasterGameLoading
             Scribe_Values.Look(ref LazyTextureLoading, "lazyTextureLoading", false);
             LazyTextureLoading = false; // 強制將其重置為 false，徹底拔除此功能
             Scribe_Values.Look(ref VerboseLogging, "verboseLogging", false);
-            Scribe_Values.Look(ref JITPrecompilation, "JITPrecompilation", true);
 
 
             // 紋理快取

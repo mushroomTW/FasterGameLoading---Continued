@@ -52,27 +52,6 @@ namespace FasterGameLoading
         public const string UIDirSlash = "/UI/";
         public const string TexturesDirSlash = "Textures/";
 
-        // ── JIT 排除 Assembly 常數 ──
-        public static readonly string[] IgnoredAssemblyPrefixes = new[]
-        {
-            "System",
-            "Microsoft",
-            "Unity"
-        };
-
-        public static readonly System.Collections.Generic.HashSet<string> IgnoredAssemblyExactNames = new System.Collections.Generic.HashSet<string>(System.StringComparer.OrdinalIgnoreCase)
-        {
-            "mscorlib",
-            "Assembly-CSharp",
-            "FasterGameLoading",
-            "FasterGameLoading.Tests",
-            "0Harmony",
-            "Mono.Cecil",
-            "Anonymously Hosted DynamicMethods Assembly",
-            "AlteredCarbon",
-            "AlteredCarbonExtra",
-            "0ModSettingsFramework"
-        };
 
         // ── 背景延遲時間常數 ──
         public const int AccessToolsPreloadDelayMs = 50;

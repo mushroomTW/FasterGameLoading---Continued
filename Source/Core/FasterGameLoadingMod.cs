@@ -79,18 +79,6 @@ namespace FasterGameLoading
                 XmlNode_SelectSingleNode_Patch.isXmlScanComplete = true;
             }
 
-            // 啟動背景執行緒 JIT 預編譯，預熱所有第三方 Mod Assemblies 方法
-            try
-            {
-                if (FasterGameLoadingSettings.JITPrecompilation)
-                {
-                    JITPrecompiler.StartPrecompilation();
-                }
-            }
-            catch (System.Exception ex)
-            {
-                FGLLog.Warning("Failed to start background JIT pre-compilation: " + ex.Message);
-            }
         }
 
 

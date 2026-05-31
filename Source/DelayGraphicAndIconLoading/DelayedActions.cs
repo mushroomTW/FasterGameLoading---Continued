@@ -171,11 +171,6 @@ namespace FasterGameLoading
         public void LateUpdate()
         {
             earlyModContentLoader.Update(this);
-            // 驅動 JIT 預編譯的反射收集
-            if (FasterGameLoadingSettings.JITPrecompilation)
-            {
-                JITPrecompiler.UpdateReflectionCollection();
-            }
         }
 
         /// <summary>

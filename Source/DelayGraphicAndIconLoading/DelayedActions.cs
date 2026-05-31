@@ -137,12 +137,15 @@ namespace FasterGameLoading
         public static bool AllDeferredVisualsLoaded = false;
         /// <summary>自適應靜態圖集烘焙是否失敗（fallback 到原始流程）。</summary>
         public static bool AdaptiveStaticAtlasBakeFailed = false;
+        /// <summary>所有 Mod 的 class 是否已經建立完畢。</summary>
+        public static bool allModClassesCreated = false;
 
         /// <summary>靜態建構子：註冊快取重置時的回呼。</summary>
         static DelayedActions()
         {
             CacheResetter.Register(() =>
             {
+                allModClassesCreated = false;
                 AllDeferredVisualsLoaded = false;
                 AdaptiveStaticAtlasBakeFailed = false;
             });
@@ -168,6 +171,11 @@ namespace FasterGameLoading
         public void LateUpdate()
         {
             earlyModContentLoader.Update(this);
+            // 驅動 JIT 預編譯的反射收集
+            if (FasterGameLoadingSettings.JITPrecompilation)
+            {
+                JITPrecompiler.UpdateReflectionCollection();
+            }
         }
 
         /// <summary>
@@ -176,6 +184,7 @@ namespace FasterGameLoading
         public void ResetEarlyLoading()
         {
             earlyModContentLoader.Reset();
+            allModClassesCreated = false;
             AllDeferredVisualsLoaded = false;
             AdaptiveStaticAtlasBakeFailed = false;
         }

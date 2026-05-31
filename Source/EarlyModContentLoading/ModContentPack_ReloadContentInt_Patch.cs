@@ -23,6 +23,7 @@ namespace FasterGameLoading
         /// </summary>
         public static bool Prefix(ModContentPack __instance)
         {
+            DelayedActions.allModClassesCreated = true;
             if (loadedMods.Contains(__instance)) return false;
             return true;
         }

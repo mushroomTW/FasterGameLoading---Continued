@@ -28,7 +28,7 @@ namespace FasterGameLoading
         /// <param name="delayedActions">延遲動作管理器的實例，用於確認時間預算。</param>
         public void Update(DelayedActions delayedActions)
         {
-            if (XmlChangeDetector.needWriteSettings)
+            if (XmlChangeDetector.needWriteSettings && DelayedActions.allModClassesCreated)
             {
                 XmlChangeDetector.needWriteSettings = false;
                 try

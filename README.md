@@ -97,7 +97,7 @@ graph TD
 
 ## 🛠️ 各優化功能技術細節與概念
 
-本模組的所有優化可歸納為四大核心類別：
+本模組的所有優化可歸納為三大核心類別：
 
 ### 📁 類別 A：XML 與資料載入優化
 
@@ -167,23 +167,6 @@ graph TD
   * **Transpiler 攔截 `SubSoundDef.ResolveReferences`**：將音效解析動作排入延遲佇列，之後由 `DelayedActions` 的協程批次處理。
   * **啟動期間靜音保護**：在音效尚未解析完畢前，攔截 `SoundStarter.PlayOneShotOnCamera`、`PlayOneShot`、`TrySpawnSustainer` 以及 `SubSoundDef.TryPlay`，避免提早播放導致 `NullReferenceException`。
   * **世界初始化後恢復**：`World.FinalizeInit` Postfix 觸發所有累積的音效解析，完成後自動 Unpatch 恢復正常聲音播放。
-
----
-
-### 💻 類別 D：代碼與執行期安全性優化
-
-#### 8. `delayedActions` 的 Unity 物件空值安全性 (Null Safety in DelayedActions)
-
-* **技術細節**：
-  * 優化 `FasterGameLoadingMod` 中 `delayedActions` 的生命週期檢查。
-  * 將原本的 `if (delayedActions != null)` 修改為 `if (delayedActions)`。這是利用 Unity 引擎中 `MonoBehaviour` 隱式布林轉型的機制，不僅檢查 C# 對象是否為 null，還能安全地在 C++ 底層對象已被銷毀時返回 `false`，防範了隨機出現的 `MissingReferenceException`。
-
-#### 9. 背景執行緒貼圖載入安全重定向 (Thread-Safe Background Texture Loading Redirect)
-
-* **技術細節**：
-  * 當其他 Mod（如 `ArchitectIcons`）在背景執行緒中呼叫 `ContentFinder<Texture2D>.Get` 且快取未命中時，會觸發本模組的 `ModContentLoader<Texture2D>.LoadTexture` 補丁。
-  * 由於 Unity 的 Graphics 相關 API 限制在主執行緒執行，直接在背景執行緒中加載會導致執行緒警告或原生崩潰。
-  * 本模組增加了主執行緒重定向機制，將背景執行緒的貼圖加載請求重定向回主執行緒安全執行，並在背景執行緒中進行安全等待與超時防護，徹底消除執行緒安全崩潰。
 
 ---
 

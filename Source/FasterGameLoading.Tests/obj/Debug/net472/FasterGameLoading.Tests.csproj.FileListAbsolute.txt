@@ -6,6 +6,7 @@ C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---
 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Source\FasterGameLoading.Tests\bin\Debug\net472\testcentric.engine.metadata.dll
 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Source\FasterGameLoading.Tests\bin\Debug\net472\FasterGameLoading.Tests.dll
 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Source\FasterGameLoading.Tests\bin\Debug\net472\FasterGameLoading.Tests.pdb
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Source\FasterGameLoading.Tests\bin\Debug\net472\0Harmony.dll
 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Source\FasterGameLoading.Tests\bin\Debug\net472\Microsoft.VisualStudio.CodeCoverage.Shim.dll
 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Source\FasterGameLoading.Tests\bin\Debug\net472\nunit.framework.dll
 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Source\FasterGameLoading.Tests\bin\Debug\net472\FasterGameLoading.dll
@@ -18,4 +19,3 @@ C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---
 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Source\FasterGameLoading.Tests\obj\Debug\net472\FasterGa.57984063.Up2Date
 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Source\FasterGameLoading.Tests\obj\Debug\net472\FasterGameLoading.Tests.dll
 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Source\FasterGameLoading.Tests\obj\Debug\net472\FasterGameLoading.Tests.pdb
-C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Source\FasterGameLoading.Tests\bin\Debug\net472\0Harmony.dll

@@ -168,6 +168,11 @@ namespace FasterGameLoading
         //  提早載入 Mod 內容（LateUpdate 時間預算排程）
         // ════════════════════════════════════════════════════════════════
 
+        public void Update()
+        {
+            ModContentLoaderTexture2D_LoadTexture_Patch.ProcessPendingMainThreadRequests();
+        }
+
         public void LateUpdate()
         {
             earlyModContentLoader.Update(this);

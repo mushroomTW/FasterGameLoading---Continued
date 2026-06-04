@@ -17,6 +17,36 @@ namespace FasterGameLoading
     [HarmonyPatch(typeof(ModContentLoader<Texture2D>), "LoadTexture")]
     public static class ModContentLoaderTexture2D_LoadTexture_Patch
     {
+        private static readonly ConcurrentQueue<LoadRequest> mainThreadLoadRequests = new ConcurrentQueue<LoadRequest>();
+
+        private class LoadRequest
+        {
+            public VirtualFile File;
+            public Texture2D Result;
+            public Exception Exception;
+            public ManualResetEventSlim CompletedEvent = new ManualResetEventSlim(false);
+        }
+
+        public static void ProcessPendingMainThreadRequests()
+        {
+            while (mainThreadLoadRequests.TryDequeue(out var request))
+            {
+                try
+                {
+                    var result = ModContentLoader<Texture2D>.LoadTexture(request.File);
+                    request.Result = result;
+                }
+                catch (Exception ex)
+                {
+                    request.Exception = ex;
+                }
+                finally
+                {
+                    request.CompletedEvent.Set();
+                }
+            }
+        }
+
         /// <summary>本次 session 中所有已載入的紋理路徑映射。</summary>
         public static ConcurrentDictionary<string, string> loadedTexturesThisSession = new ConcurrentDictionary<string, string>();
         /// <summary>已非同步預載入至記憶體的降質快取紋理位元組數據。</summary>
@@ -128,6 +158,38 @@ namespace FasterGameLoading
             if (ImageOptCompat.IsImageOptActive)
             {
                 __state = false;
+                return true;
+            }
+
+            if (!UnityData.IsInMainThread)
+            {
+                // 當前非主線程，我們無法安全地呼叫 Unity 的資源載入 API。
+                // 將任務派送至主線程執行，並在此處阻塞等待。
+                var request = new LoadRequest { File = file };
+                mainThreadLoadRequests.Enqueue(request);
+
+                // 等待最多 5 秒，防止潛在的死鎖或載入超時
+                if (request.CompletedEvent.Wait(5000))
+                {
+                    if (request.Exception != null)
+                    {
+                        FGLLog.Warning("Error loading texture on main thread redirect: " + request.Exception.Message);
+                        __state = true;
+                        return true;
+                    }
+                    if (request.Result != null)
+                    {
+                        __result = request.Result;
+                        __state = false;
+                        return false;
+                    }
+                }
+                else
+                {
+                    FGLLog.Warning("Timeout waiting for texture loading on main thread: " + file.FullPath);
+                }
+
+                __state = true;
                 return true;
             }
 

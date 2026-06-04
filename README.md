@@ -151,6 +151,13 @@ graph TD
   * 優化 `FasterGameLoadingMod` 中 `delayedActions` 的生命週期檢查。
   * 將原本的 `if (delayedActions != null)` 修改為 `if (delayedActions)`。這是利用 Unity 引擎中 `MonoBehaviour` 隱式布林轉型的機制，不僅檢查 C# 對象是否為 null，還能安全地在 C++ 底層對象已被銷毀時返回 `false`，防範了隨機出現的 `MissingReferenceException`。
 
+#### 9. 背景執行緒貼圖載入安全重定向 (Thread-Safe Background Texture Loading Redirect)
+
+* **技術細節**：
+  * 當其他 Mod（如 `ArchitectIcons`）在背景執行緒中呼叫 `ContentFinder<Texture2D>.Get` 且快取未命中時，會觸發本模組的 `ModContentLoader<Texture2D>.LoadTexture` 補丁。
+  * 由於 Unity 的 Graphics 相關 API 限制在主執行緒執行，直接在背景執行緒中加載會導致執行緒警告或原生崩潰。
+  * 本模組增加了主執行緒重定向機制，將背景執行緒的貼圖加載請求重定向回主執行緒安全執行，並在背景執行緒中進行安全等待與超時防護，徹底消除執行緒安全崩潰。
+
 ---
 
 ## ⚙️ 推薦搭配與相容性

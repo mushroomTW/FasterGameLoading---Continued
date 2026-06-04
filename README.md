@@ -6,6 +6,33 @@
 
 ---
 
+## 📁 Structure / 專案結構
+
+此模組的源碼與目錄結構如下：
+
+```text
+FasterGameLoading/ (專案根目錄)
+├── About/                # 模組基本資訊與 Steam 工作坊說明頁配置
+├── Assemblies/           # 編譯後的 DLL 輸出目錄
+├── LanguageData/         # 模組本機化翻譯資料 (XML)
+├── SteamDescriptions/    # Steam 商店頁面說明配置
+└── Source/               # 模組 C# 源碼目錄
+    ├── Core/             # 模組入口點與初始化 (Mod 進入點、Startup 收尾、翻譯注入註冊)
+    ├── Settings/         # 模組設定與跨會話 (Session) 載入歷史快取管理
+    ├── XMLLoadingCache/  # XML 與資料載入優化 (多執行緒並行 XML 載入與 XPath 缺失快取)
+    ├── EarlyModContentLoading/ # 提早載入與型別反射快取 (AccessTools、GenTypes 反射查詢快取)
+    ├── TextureDownscaler/# 貼圖降質工具 (自動掃描、GPU 雙線性降採樣、WeakReference 快取、相容 Image Opt)
+    ├── SmarterAtlasBaking/ # 自適應圖集烘焙 (協程分幀拼合、基於 GPU 效能的自適應批次調整演算法)
+    ├── StaticAtlasesCache/ # 靜態圖集硬碟快取 (Raw DXT 載入與寫入、雙重雜湊校驗)
+    ├── DelayGraphicAndIconLoading/ # 延遲圖形與圖示載入 (ThingDef.PostLoad 攔截、時間預算協程、BadTex 圖示修正)
+    ├── DelaySoundLoading/  # 延遲音效載入 (SubSoundDef 解析延遲、啟動期靜音保護、世界初始化後 Unpatch)
+    ├── Compatibility/    # 第三方模組相容性處理 (Image Opt、HugsLib、Humanoid Alien Races 等退避或延遲邏輯)
+    ├── Utilities/        # 共用工具類別 (I/O 重試、全域常數、快取重置廣播器、日誌等)
+    └── FasterGameLoading.Tests/ # 模組單元測試 (路徑雜湊失效、快取清理等 NUnit 測試)
+```
+
+---
+
 ## 🎮 RimWorld 遊戲啟動流程與本模組優化切入點
 
 RimWorld 的啟動是一個高度複雜的初始化過程，本模組在多個關鍵階段介入，將原生的單核、同步行為重構為多執行緒並行與智慧快取：

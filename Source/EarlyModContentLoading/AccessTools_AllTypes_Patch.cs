@@ -18,6 +18,7 @@ namespace FasterGameLoading
         /// <summary>快取的全型別列表。使用 volatile + lock 確保執行緒安全。</summary>
         private static volatile List<Type> allTypesCached;
         private static readonly object typesLock = new();
+        private static volatile int cachedAssembliesCount = 0;
 
         /// <summary>
         /// 在背景執行緒中預先載入所有型別。
@@ -27,6 +28,7 @@ namespace FasterGameLoading
         {
             // 在主執行緒先取得 Assemblies 快照，防止列舉時集合發生 Race Condition
             var assembliesSnapshot = Enumerable.ToArray(AppDomain.CurrentDomain.GetAssemblies());
+            int snapshotCount = assembliesSnapshot.Length;
 
             if (!FasterGameLoadingSettings.EnableMultiThreading)
             {
@@ -40,6 +42,7 @@ namespace FasterGameLoading
                 lock (typesLock)
                 {
                     allTypesCached = types;
+                    cachedAssembliesCount = snapshotCount;
                     WarmupTypeCache(types);
                 }
                 return;
@@ -59,19 +62,24 @@ namespace FasterGameLoading
                 lock (typesLock)
                 {
                     allTypesCached = types;
+                    cachedAssembliesCount = snapshotCount;
                     WarmupTypeCache(types);
                 }
             });
         }
 
         /// <summary>
-        /// 前置攔截：如果已經有全類型快取，則直接回傳快取結果並跳過原方法。
+        /// 前置攔截：如果已經有全類型快取且組件數量一致，則直接回傳快取結果並跳過原方法。
+        /// 若組件數量改變（例如在加載期新加載了其他 Mod 的 DLL），則判定快取失效並重新載入。
         /// </summary>
         public static bool Prefix(ref IEnumerable<Type> __result)
         {
-            // double-checked locking：先讀取 volatile，再 lock 檢查
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            int currentCount = assemblies.Length;
+
+            // double-checked locking
             var cached = allTypesCached;
-            if (cached != null)
+            if (cached != null && cachedAssembliesCount == currentCount)
             {
                 __result = cached;
                 return false;
@@ -79,17 +87,18 @@ namespace FasterGameLoading
             lock (typesLock)
             {
                 cached = allTypesCached;
-                if (cached != null)
+                if (cached != null && cachedAssembliesCount == currentCount)
                 {
                     __result = cached;
                     return false;
                 }
-                allTypesCached = AppDomain.CurrentDomain.GetAssemblies()
+                allTypesCached = assemblies
                     .SelectMany(assembly =>
                     {
                         try { return AccessTools.GetTypesFromAssembly(assembly); }
                         catch { return Array.Empty<Type>(); }
                     }).ToList();
+                cachedAssembliesCount = currentCount;
                 WarmupTypeCache(allTypesCached);
                 __result = allTypesCached;
                 return false;

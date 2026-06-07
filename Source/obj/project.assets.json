@@ -354,11 +354,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.csproj",
+      "projectUniqueName": "D:\\資料暫存\\FasterGameLoading---Continued\\Source\\FasterGameLoading.csproj",
       "projectName": "FasterGameLoading",
-      "projectPath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.csproj",
+      "projectPath": "D:\\資料暫存\\FasterGameLoading---Continued\\Source\\FasterGameLoading.csproj",
       "packagesPath": "C:\\Users\\mushroomMaster\\.nuget\\packages\\",
-      "outputPath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\obj\\",
+      "outputPath": "D:\\資料暫存\\FasterGameLoading---Continued\\Source\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\mushroomMaster\\AppData\\Roaming\\NuGet\\NuGet.Config",

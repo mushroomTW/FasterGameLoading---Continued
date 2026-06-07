@@ -536,11 +536,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.Tests\\FasterGameLoading.Tests.csproj",
+      "projectUniqueName": "D:\\資料暫存\\FasterGameLoading---Continued\\Source\\FasterGameLoading.Tests\\FasterGameLoading.Tests.csproj",
       "projectName": "FasterGameLoading.Tests",
-      "projectPath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.Tests\\FasterGameLoading.Tests.csproj",
+      "projectPath": "D:\\資料暫存\\FasterGameLoading---Continued\\Source\\FasterGameLoading.Tests\\FasterGameLoading.Tests.csproj",
       "packagesPath": "C:\\Users\\mushroomMaster\\.nuget\\packages\\",
-      "outputPath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.Tests\\obj\\",
+      "outputPath": "D:\\資料暫存\\FasterGameLoading---Continued\\Source\\FasterGameLoading.Tests\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\mushroomMaster\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -558,8 +558,8 @@
           "framework": "net472",
           "targetAlias": "net472",
           "projectReferences": {
-            "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.csproj": {
-              "projectPath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.csproj"
+            "D:\\資料暫存\\FasterGameLoading---Continued\\Source\\FasterGameLoading.csproj": {
+              "projectPath": "D:\\資料暫存\\FasterGameLoading---Continued\\Source\\FasterGameLoading.csproj"
             }
           }
         }

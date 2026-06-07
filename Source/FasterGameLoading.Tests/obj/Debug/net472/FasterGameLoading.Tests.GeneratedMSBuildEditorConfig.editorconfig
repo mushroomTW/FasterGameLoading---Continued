@@ -1,6 +1,6 @@
 is_global = true
 build_property.RootNamespace = FasterGameLoading.Tests
-build_property.ProjectDir = C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Source\FasterGameLoading.Tests\
+build_property.ProjectDir = D:\資料暫存\FasterGameLoading---Continued\Source\FasterGameLoading.Tests\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.CsWinRTUseWindowsUIXamlProjections = false

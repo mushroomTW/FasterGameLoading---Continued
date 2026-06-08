@@ -21,6 +21,18 @@ namespace FasterGameLoading
                 return true; // 參數無效時直接放行，讓 vanilla 處理（或拋出對應異常）
             }
 
+            // 若設定中停用了多執行緒預載入，則直接回歸原生單執行緒載入
+            if (!FasterGameLoadingSettings.EnableMultiThreading)
+            {
+                return true;
+            }
+
+            // 如果該 Mod 屬於跳過清單，則放行回原生的單執行緒 XML 加載方法，避免多執行緒加載造成的 Patch 覆蓋與執行緒安全衝突
+            if (EarlyLoadSkipList.ShouldSkip(mod.PackageIdPlayerFacing))
+            {
+                return true;
+            }
+
             try
             {
                 // 1. 獲取該 Mod 該目錄下的所有 XML 虛擬檔案（List<Tuple<string, FileInfo>>）
@@ -63,11 +75,8 @@ namespace FasterGameLoading
                     }
                     catch (Exception ex)
                     {
-                        // 忽略個別 XML 檔案解析錯誤，讓並行遍歷順利完成，防止單一髒檔案卡死整個 Mod 載入
-                        if (FasterGameLoadingSettings.VerboseLogging)
-                        {
-                            FGLLog.Warning($"Failed to load XML asset in parallel for Mod {mod.Name}: {ex.Message}");
-                        }
+                        // 一律輸出錯誤日誌，以利排查多執行緒載入問題
+                        FGLLog.Error($"Failed to load XML asset in parallel for Mod {mod.Name} (File: {files[i]?.Item2?.FullName}): {ex.Message}", ex);
                     }
                 });
 

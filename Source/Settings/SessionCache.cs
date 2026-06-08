@@ -123,8 +123,16 @@ namespace FasterGameLoading
                     xmlPathsSinceLastSession.Clear();
                     foreach (var kvp in tempXmlPaths)
                     {
-                        if (!kvp.Value)
+                        if (!kvp.Value && XmlNode_SelectSingleNode_Patch.IsCacheableXpath(kvp.Key))
                         {
+                            // 排除之前因 Bug 錯誤快取的 Ayameduki/WRelicK 相關補丁 XPath，或是包含定位符的 XPath
+                            if (kvp.Key.Contains("AT_Tag_") || 
+                                kvp.Key.Contains("KeyedSettings") || 
+                                kvp.Key.Contains("FactionDef") ||
+                                kvp.Key.Contains("[@"))
+                            {
+                                continue;
+                            }
                             xmlPathsSinceLastSession.TryAdd(kvp.Key, 0);
                         }
                     }

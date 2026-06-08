@@ -16,9 +16,9 @@ namespace FasterGameLoading
         /// </summary>
         public static volatile bool needWriteSettings = false;
 
-        public static void ScanXmlFiles(List<string> modPaths)
+        public static void ScanXmlFiles(List<string> modPaths, string configPath = null)
         {
-            if (modPaths == null || modPaths.Count == 0)
+            if ((modPaths == null || modPaths.Count == 0) && string.IsNullOrEmpty(configPath))
             {
                 XmlNode_SelectSingleNode_Patch.isXmlScanComplete = true;
                 return;
@@ -29,24 +29,33 @@ namespace FasterGameLoading
                 long combinedHash = 0;
                 int xmlCount = 0;
 
-                foreach (var modPath in modPaths)
+                if (modPaths != null)
                 {
-                    if (string.IsNullOrEmpty(modPath) || !Directory.Exists(modPath))
-                        continue;
-
-                    // 掃描 Defs 目錄
-                    var defsPath = Path.Combine(modPath, FGLConsts.DefsDirName);
-                    if (Directory.Exists(defsPath))
+                    foreach (var modPath in modPaths)
                     {
-                        ScanDirectory(defsPath, ref combinedHash, ref xmlCount);
-                    }
+                        if (string.IsNullOrEmpty(modPath) || !Directory.Exists(modPath))
+                            continue;
 
-                    // 掃描 Patches 目錄
-                    var patchesPath = Path.Combine(modPath, FGLConsts.PatchesDirName);
-                    if (Directory.Exists(patchesPath))
-                    {
-                        ScanDirectory(patchesPath, ref combinedHash, ref xmlCount);
+                        // 掃描 Defs 目錄
+                        var defsPath = Path.Combine(modPath, FGLConsts.DefsDirName);
+                        if (Directory.Exists(defsPath))
+                        {
+                            ScanDirectory(defsPath, ref combinedHash, ref xmlCount);
+                        }
+
+                        // 掃描 Patches 目錄
+                        var patchesPath = Path.Combine(modPath, FGLConsts.PatchesDirName);
+                        if (Directory.Exists(patchesPath))
+                        {
+                            ScanDirectory(patchesPath, ref combinedHash, ref xmlCount);
+                        }
                     }
+                }
+
+                // 掃描 Config 目錄
+                if (!string.IsNullOrEmpty(configPath) && Directory.Exists(configPath))
+                {
+                    ScanDirectory(configPath, ref combinedHash, ref xmlCount);
                 }
 
                 if (FasterGameLoadingSettings.VerboseLogging)

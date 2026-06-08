@@ -6,34 +6,93 @@ namespace FasterGameLoading
     /// <summary>
     /// 攔截 GlobalTextureAtlasManager.BakeStaticAtlases，根據模組設定決定烘焙策略：
     /// - 如果延遲視覺效果尚未載入完成：跳過（稍後由 DelayedActions 處理）
+    /// - 如果沒有啟用延遲載入（DelayGraphicLoading = false）：同步執行自適應烘焙與快取讀寫，不進行推遲，避免非同步競爭造成頭像渲染除以零異常。
     /// - 如果自適應烘焙關閉：放行原始流程
-    /// - 如果自適應烘焙失敗：放行原始流程作為 fallback
     /// </summary>
     [HarmonyPatch(typeof(GlobalTextureAtlasManager), "BakeStaticAtlases")]
     public static class GlobalTextureAtlasManager_BakeStaticAtlases_Patch
     {
+        private static bool isBaking = false;
+
         public static bool Prefix()
         {
-            // 沒有啟用延遲圖形載入時，不需要阻擋烘焙流程
-            if (!FasterGameLoadingSettings.DelayGraphicLoading)
-            {
-                // 但仍可啟用自適應烘焙
-                if (!FasterGameLoadingSettings.StaticAtlasesBaking)
-                    return true;
-                return DelayedActions.AdaptiveStaticAtlasBakeFailed;
-            }
-
-            if (!DelayedActions.AllDeferredVisualsLoaded)
-            {
-                return false;
-            }
-
-            if (!FasterGameLoadingSettings.StaticAtlasesBaking)
+            if (isBaking)
             {
                 return true;
             }
 
+            // 沒有啟用延遲圖形載入時，在啟動階段同步完成所有烘焙，避免非同步競爭
+            if (!FasterGameLoadingSettings.DelayGraphicLoading)
+            {
+                if (!FasterGameLoadingSettings.StaticAtlasesBaking)
+                {
+                    return true; // 放行 vanilla 同步烘焙
+                }
+
+                PerformSynchronousBake();
+                return false; // 已同步烘焙完成，跳過 vanilla 原生烘焙
+            }
+
+            // 啟用了延遲圖形載入
+            if (!DelayedActions.AllDeferredVisualsLoaded)
+            {
+                return false; // 還沒載入完，跳過
+            }
+
+            if (!FasterGameLoadingSettings.StaticAtlasesBaking)
+            {
+                return true; // 放行 vanilla 烘焙
+            }
+
             return DelayedActions.AdaptiveStaticAtlasBakeFailed;
+        }
+
+        private static void PerformSynchronousBake()
+        {
+            isBaking = true;
+            try
+            {
+                DelayedActions.AdaptiveStaticAtlasBakeFailed = false;
+                DelayedActions.AllDeferredVisualsLoaded = true;
+
+                if (FasterGameLoadingSettings.AtlasCaching && AtlasCacheReader.TryLoadFromCache())
+                {
+                    FGLLog.Message("Static atlases loaded from cache (Raw DXT bytes) - Synchronous");
+                    return;
+                }
+
+                string queueHash = null;
+                if (FasterGameLoadingSettings.AtlasCaching)
+                {
+                    queueHash = AtlasHashCalculator.ComputeQueueHash();
+                }
+
+                // 同步執行自適應烘焙協程
+                var adaptiveBake = AdaptiveAtlasBaker.PerformAdaptiveStaticAtlasBake(null);
+                while (adaptiveBake.MoveNext()) { }
+
+                if (DelayedActions.AdaptiveStaticAtlasBakeFailed)
+                {
+                    FGLLog.Message("Adaptive bake failed, falling back to vanilla static atlas baking - Synchronous");
+                    GlobalTextureAtlasManager.BakeStaticAtlases();
+                }
+                else if (FasterGameLoadingSettings.AtlasCaching && queueHash != null)
+                {
+                    var saveCache = AtlasCacheWriter.SaveToCacheCoroutine(
+                        GlobalTextureAtlasManager.staticTextureAtlases, queueHash);
+                    while (saveCache.MoveNext()) { }
+                }
+            }
+            catch (System.Exception ex)
+            {
+                FGLLog.Error("Error during synchronous static atlas baking: " + ex);
+                DelayedActions.AdaptiveStaticAtlasBakeFailed = true;
+                GlobalTextureAtlasManager.BakeStaticAtlases();
+            }
+            finally
+            {
+                isBaking = false;
+            }
         }
     }
 }

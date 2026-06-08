@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using HarmonyLib;
 using UnityEngine;
@@ -16,7 +17,9 @@ namespace FasterGameLoading
         // ── 針對的 Mod 名單 ──
         private static readonly HashSet<string> targetMods = new(StringComparer.OrdinalIgnoreCase)
         {
-            "automatic.bionicicons"
+            "automatic.bionicicons",
+            "Ancot.AncotLibrary",
+            "Ancot.KiiroRace"
         };
 
         private static readonly HashSet<string> targetModRoots = new(StringComparer.OrdinalIgnoreCase);
@@ -33,24 +36,80 @@ namespace FasterGameLoading
                 if (!isAnyTargetModActive.HasValue)
                 {
                     isAnyTargetModActive = false;
-                    foreach (var modId in targetMods)
+
+                    // 1. 若啟用外星人種族核心，則判定為 active 以利動態排除
+                    try
                     {
-                        try
+                        if (ModsConfig.IsActive("erdelf.HumanoidAlienRaces"))
                         {
-                            if (ModsConfig.IsActive(modId))
-                            {
-                                isAnyTargetModActive = true;
-                                break;
-                            }
+                            isAnyTargetModActive = true;
                         }
-                        catch
+                    }
+                    catch
+                    {
+                        // 忽略初始化時期的錯誤
+                    }
+
+                    // 2. 檢查特定的名單
+                    if (!isAnyTargetModActive.Value)
+                    {
+                        foreach (var modId in targetMods)
                         {
-                            // 忽略載入順序或初始化時期的錯誤
+                            try
+                            {
+                                if (ModsConfig.IsActive(modId))
+                                {
+                                    isAnyTargetModActive = true;
+                                    break;
+                                }
+                            }
+                            catch
+                            {
+                                // 忽略載入順序或初始化時期的錯誤
+                            }
                         }
                     }
                 }
                 return isAnyTargetModActive.Value;
             }
+        }
+
+        /// <summary>
+        /// 動態判定一個 Mod 是否依賴於指定的 PackageId。
+        /// 採用反射以維護跨 RimWorld 版本的相容性，防止直接欄位取用出錯。
+        /// </summary>
+        private static bool DependsOnMod(ModContentPack mod, string targetPackageId)
+        {
+            if (mod == null) return false;
+            var metaData = mod.ModMetaData;
+            if (metaData == null) return false;
+
+            var depsField = AccessTools.Field(metaData.GetType(), "dependencies") 
+                         ?? AccessTools.Field(metaData.GetType(), "Dependencies");
+            if (depsField == null) return false;
+
+            var depsList = depsField.GetValue(metaData) as System.Collections.IEnumerable;
+            if (depsList == null) return false;
+
+            foreach (var dep in depsList)
+            {
+                if (dep == null) continue;
+                var packageIdField = AccessTools.Field(dep.GetType(), "packageId")
+                                  ?? AccessTools.Field(dep.GetType(), "PackageId");
+                if (packageIdField == null) continue;
+
+                var packageId = packageIdField.GetValue(dep) as string;
+                if (packageId != null && packageId.Equals(targetPackageId, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private static bool IsAlienRaceMod(ModContentPack mod)
+        {
+            return DependsOnMod(mod, "erdelf.HumanoidAlienRaces");
         }
 
         private static void InitializeModRoots()
@@ -78,7 +137,21 @@ namespace FasterGameLoading
                         cleanId = cleanId.Substring(0, cleanId.Length - 6);
                     }
 
+                    bool shouldExclude = false;
                     if (cleanId != null && targetMods.Contains(cleanId))
+                    {
+                        shouldExclude = true;
+                    }
+                    else if (IsAlienRaceMod(mod))
+                    {
+                        shouldExclude = true;
+                    }
+                    else if (DependsOnMod(mod, "Ancot.AncotLibrary"))
+                    {
+                        shouldExclude = true;
+                    }
+
+                    if (shouldExclude)
                     {
                         string root = mod.RootDir.Replace('\\', '/').TrimEnd('/');
                         targetModRoots.Add(root);

@@ -150,12 +150,15 @@ namespace FasterGameLoading.Tests
         [Test]
         public void TestAccessTools_AllTypes_Patch_BypassesWithCache()
         {
-            // 1. 透過反射向 allTypesCached 欄位注入測試用的 mock 清單
-            var field = typeof(AccessTools_AllTypes_Patch).GetField("allTypesCached", BindingFlags.NonPublic | BindingFlags.Static);
-            Assert.IsNotNull(field);
+            // 1. 透過反射向 allTypesCached 與 cachedAssembliesCount 欄位注入測試用的 mock 清單
+            var fieldCached = typeof(AccessTools_AllTypes_Patch).GetField("allTypesCached", BindingFlags.NonPublic | BindingFlags.Static);
+            var fieldCount = typeof(AccessTools_AllTypes_Patch).GetField("cachedAssembliesCount", BindingFlags.NonPublic | BindingFlags.Static);
+            Assert.IsNotNull(fieldCached);
+            Assert.IsNotNull(fieldCount);
             
             var mockList = new List<Type> { typeof(string), typeof(int), typeof(double) };
-            field.SetValue(null, mockList);
+            fieldCached.SetValue(null, mockList);
+            fieldCount.SetValue(null, AppDomain.CurrentDomain.GetAssemblies().Length);
 
             // 2. 呼叫 AccessTools.AllTypes()
             var result = AccessTools.AllTypes();

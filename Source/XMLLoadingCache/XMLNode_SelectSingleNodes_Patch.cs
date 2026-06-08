@@ -1,7 +1,10 @@
 using HarmonyLib;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Reflection;
 using System.Xml;
+using Verse;
 
 namespace FasterGameLoading
 {
@@ -23,6 +26,12 @@ namespace FasterGameLoading
         /// 背景 XML 檔案掃描與雜湊比對是否已完成。
         /// </summary>
         public static volatile bool isXmlScanComplete = false;
+
+        /// <summary>
+        /// 標記當前執行緒是否處於補丁套用（PatchOperation.Apply）流程中。
+        /// </summary>
+        [ThreadStatic]
+        public static bool isInPatchOperation;
 
         static XmlNode_SelectSingleNode_Patch()
         {
@@ -74,9 +83,28 @@ namespace FasterGameLoading
             }
         }
 
+        internal static bool IsCacheableXpath(string xpath)
+        {
+            if (string.IsNullOrEmpty(xpath)) return false;
+            // 含有屬性篩選的 XPath (如 [@...) 屬於補丁或特定定位，不安全，不應進行快取
+            if (xpath.Contains("[@")) return false;
+
+            // 只有包含 '/'，或者以 'Defs'、'/'、'[' 開頭的 XPath 查詢才被認為是定位用的 XPath，可以安全地進行快取。
+            // 避免誤快取像是 'settingsKey', 'match', 'nomatch', 'value', 'xpath' 這樣的局部子節點欄位名稱。
+            return xpath.Contains("/") || 
+                   xpath.StartsWith("Defs", StringComparison.OrdinalIgnoreCase) || 
+                   xpath.StartsWith("/") || 
+                   xpath.StartsWith("[");
+        }
+
         public static bool Prefix(string xpath, ref XmlNode __result)
         {
-            if (!isXmlScanComplete || !patchEnabled || !FasterGameLoadingSettings.XPathCaching || IsXmlExtensionsActive)
+            if (isInPatchOperation || !isXmlScanComplete || !patchEnabled || !FasterGameLoadingSettings.XPathCaching || IsXmlExtensionsActive)
+            {
+                return true;
+            }
+
+            if (!IsCacheableXpath(xpath))
             {
                 return true;
             }
@@ -94,11 +122,35 @@ namespace FasterGameLoading
 
         public static void Postfix(string xpath, XmlNode __result, bool __runOriginal)
         {
-            if (!__runOriginal || !patchEnabled || !FasterGameLoadingSettings.XPathCaching || IsXmlExtensionsActive)
+            if (isInPatchOperation || !__runOriginal || !patchEnabled || !FasterGameLoadingSettings.XPathCaching || IsXmlExtensionsActive)
             {
                 return;
             }
+
+            if (!IsCacheableXpath(xpath))
+            {
+                return;
+            }
+
             xmlPathsThisSession[xpath] = __result is not null;
+        }
+    }
+
+    /// <summary>
+    /// 攔截 ModContentPack.LoadPatches，在補丁套用期間標記 isInPatchOperation，
+    /// 以免 XPath 查詢被錯誤地全域快取為 null，導致補丁失效。
+    /// </summary>
+    [HarmonyPatch(typeof(ModContentPack), nameof(ModContentPack.LoadPatches))]
+    public static class ModContentPack_LoadPatches_Patch
+    {
+        public static void Prefix()
+        {
+            XmlNode_SelectSingleNode_Patch.isInPatchOperation = true;
+        }
+
+        public static void Postfix()
+        {
+            XmlNode_SelectSingleNode_Patch.isInPatchOperation = false;
         }
     }
 }

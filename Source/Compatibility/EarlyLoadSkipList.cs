@@ -23,6 +23,8 @@ namespace FasterGameLoading
         public static bool ShouldSkip(string packageId)
         {
             if (string.IsNullOrEmpty(packageId)) return false;
+            if (packageId.StartsWith("Ayameduki.", StringComparison.OrdinalIgnoreCase)) return true;
+            if (packageId.StartsWith("WRK.", StringComparison.OrdinalIgnoreCase)) return true;
             return skippedMods.Contains(packageId);
         }
     }

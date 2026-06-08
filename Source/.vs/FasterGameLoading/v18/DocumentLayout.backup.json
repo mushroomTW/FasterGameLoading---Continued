@@ -38,7 +38,7 @@
               "RelativeToolTip": "Compatibility\\BakingSkipList.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAjAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-29T08:34:25.132Z"
+              "WhenOpened": "2026-06-08T12:36:48.605Z"
             },
             {
               "$type": "Document",
@@ -50,7 +50,7 @@
               "RelativeToolTip": "DelayGraphicAndIconLoading\\DelayedActions.cs",
               "ViewState": "AgIAAC0AAAAAAAAAAAAYwB8AAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-27T16:29:03.723Z",
+              "WhenOpened": "2026-06-08T12:36:48.625Z",
               "EditorCaption": ""
             },
             {
@@ -63,7 +63,7 @@
               "RelativeToolTip": "XMLLoadingCache\\DirectXmlLoader_XmlAssetsInModFolder_Patch.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-27T16:28:50.651Z"
+              "WhenOpened": "2026-06-08T12:36:48.633Z"
             }
           ]
         }

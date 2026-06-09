@@ -2,12 +2,11 @@
   "version": 4,
   "targets": {
     "net472": {
-      "Krafs.Rimworld.Ref/1.6.4633": {
+      "Krafs.Rimworld.Ref/1.6.4850": {
         "type": "package",
         "compile": {
           "ref/net472/Assembly-CSharp-firstpass.dll": {},
           "ref/net472/Assembly-CSharp.dll": {},
-          "ref/net472/Assembly-CSharp_publicised.dll": {},
           "ref/net472/ISharpZipLib.dll": {},
           "ref/net472/Mono.Security.dll": {},
           "ref/net472/NAudio.dll": {},
@@ -52,7 +51,6 @@
           "ref/net472/UnityEngine.ClusterRendererModule.dll": {},
           "ref/net472/UnityEngine.ContentLoadModule.dll": {},
           "ref/net472/UnityEngine.CoreModule.dll": {},
-          "ref/net472/UnityEngine.CoreModule_publicised.dll": {},
           "ref/net472/UnityEngine.CrashReportingModule.dll": {},
           "ref/net472/UnityEngine.DSPGraphModule.dll": {},
           "ref/net472/UnityEngine.DirectorModule.dll": {},
@@ -109,9 +107,7 @@
           "ref/net472/UnityEngine.VirtualTexturingModule.dll": {},
           "ref/net472/UnityEngine.WindModule.dll": {},
           "ref/net472/UnityEngine.XRModule.dll": {},
-          "ref/net472/UnityEngine.dll": {
-            "related": ".CoreModule_hash.hash"
-          },
+          "ref/net472/UnityEngine.dll": {},
           "ref/net472/com.rlabrecque.steamworks.net.dll": {},
           "ref/net472/mscorlib.dll": {},
           "ref/net472/netstandard.dll": {}
@@ -188,7 +184,7 @@
         "type": "project",
         "framework": ".NETFramework,Version=v4.7.2",
         "dependencies": {
-          "Krafs.Rimworld.Ref": "1.6.4633",
+          "Krafs.Rimworld.Ref": "1.6.4850",
           "Lib.Harmony": "2.0.0"
         },
         "compile": {
@@ -201,22 +197,20 @@
     }
   },
   "libraries": {
-    "Krafs.Rimworld.Ref/1.6.4633": {
-      "sha512": "wbUZCLBFHnNJ9IT4ighta1wrsBI9i/gRrfixPNfsMLlPvd/lksz+yv8H3Os7EIpT3O3wOkXgN3LGt8UHncWpzQ==",
+    "Krafs.Rimworld.Ref/1.6.4850": {
+      "sha512": "QcKiaIW76BsywnW32EegthVFtQIKT8x2TCj5vQV2kuGJdu1+T2/kZzV/xfdyCZMvezMKM103auJAhBDdQB2xSw==",
       "type": "package",
-      "path": "krafs.rimworld.ref/1.6.4633",
+      "path": "krafs.rimworld.ref/1.6.4850",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "LICENSE.md",
         "README.md",
         "icon.png",
-        "krafs.rimworld.ref.1.6.4633.nupkg.sha512",
+        "krafs.rimworld.ref.1.6.4850.nupkg.sha512",
         "krafs.rimworld.ref.nuspec",
         "ref/net472/Assembly-CSharp-firstpass.dll",
         "ref/net472/Assembly-CSharp.dll",
-        "ref/net472/Assembly-CSharp_hash.hash",
-        "ref/net472/Assembly-CSharp_publicised.dll",
         "ref/net472/ISharpZipLib.dll",
         "ref/net472/Mono.Security.dll",
         "ref/net472/NAudio.dll",
@@ -261,8 +255,6 @@
         "ref/net472/UnityEngine.ClusterRendererModule.dll",
         "ref/net472/UnityEngine.ContentLoadModule.dll",
         "ref/net472/UnityEngine.CoreModule.dll",
-        "ref/net472/UnityEngine.CoreModule_hash.hash",
-        "ref/net472/UnityEngine.CoreModule_publicised.dll",
         "ref/net472/UnityEngine.CrashReportingModule.dll",
         "ref/net472/UnityEngine.DSPGraphModule.dll",
         "ref/net472/UnityEngine.DirectorModule.dll",

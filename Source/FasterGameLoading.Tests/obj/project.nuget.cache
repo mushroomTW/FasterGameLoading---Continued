@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "mky/4DohgM8=",
+  "dgSpecHash": "9f/yInvVv8M=",
   "success": true,
   "projectFilePath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.Tests\\FasterGameLoading.Tests.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\mushroomMaster\\.nuget\\packages\\krafs.rimworld.ref\\1.6.4633\\krafs.rimworld.ref.1.6.4633.nupkg.sha512",
+    "C:\\Users\\mushroomMaster\\.nuget\\packages\\krafs.rimworld.ref\\1.6.4850\\krafs.rimworld.ref.1.6.4850.nupkg.sha512",
     "C:\\Users\\mushroomMaster\\.nuget\\packages\\lib.harmony\\2.4.2\\lib.harmony.2.4.2.nupkg.sha512",
     "C:\\Users\\mushroomMaster\\.nuget\\packages\\microsoft.codecoverage\\17.5.0\\microsoft.codecoverage.17.5.0.nupkg.sha512",
     "C:\\Users\\mushroomMaster\\.nuget\\packages\\microsoft.net.test.sdk\\17.5.0\\microsoft.net.test.sdk.17.5.0.nupkg.sha512",

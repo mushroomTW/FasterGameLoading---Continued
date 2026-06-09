@@ -3,14 +3,6 @@
   "WorkspaceRootPath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{97FA1308-3ED7-41D8-827D-0CC3A3291EE8}|FasterGameLoading.csproj|c:\\program files (x86)\\steam\\steamapps\\common\\rimworld\\mods\\fastergameloading---continued\\source\\delaygraphicandiconloading\\delayedactions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{97FA1308-3ED7-41D8-827D-0CC3A3291EE8}|FasterGameLoading.csproj|solutionrelative:delaygraphicandiconloading\\delayedactions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{97FA1308-3ED7-41D8-827D-0CC3A3291EE8}|FasterGameLoading.csproj|c:\\program files (x86)\\steam\\steamapps\\common\\rimworld\\mods\\fastergameloading---continued\\source\\xmlloadingcache\\directxmlloader_xmlassetsinmodfolder_patch.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{97FA1308-3ED7-41D8-827D-0CC3A3291EE8}|FasterGameLoading.csproj|solutionrelative:xmlloadingcache\\directxmlloader_xmlassetsinmodfolder_patch.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{97FA1308-3ED7-41D8-827D-0CC3A3291EE8}|FasterGameLoading.csproj|c:\\program files (x86)\\steam\\steamapps\\common\\rimworld\\mods\\fastergameloading---continued\\source\\compatibility\\bakingskiplist.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{97FA1308-3ED7-41D8-827D-0CC3A3291EE8}|FasterGameLoading.csproj|solutionrelative:compatibility\\bakingskiplist.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
@@ -22,7 +14,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Bookmark",
@@ -30,40 +22,16 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "BakingSkipList.cs",
               "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\Compatibility\\BakingSkipList.cs",
               "RelativeDocumentMoniker": "Compatibility\\BakingSkipList.cs",
               "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\Compatibility\\BakingSkipList.cs",
               "RelativeToolTip": "Compatibility\\BakingSkipList.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAjAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAKAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-08T12:36:48.605Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "DelayedActions.cs",
-              "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\DelayGraphicAndIconLoading\\DelayedActions.cs",
-              "RelativeDocumentMoniker": "DelayGraphicAndIconLoading\\DelayedActions.cs",
-              "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\DelayGraphicAndIconLoading\\DelayedActions.cs",
-              "RelativeToolTip": "DelayGraphicAndIconLoading\\DelayedActions.cs",
-              "ViewState": "AgIAAC0AAAAAAAAAAAAYwDsAAABDAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-08T12:36:48.625Z",
+              "WhenOpened": "2026-06-08T12:36:48.605Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "DirectXmlLoader_XmlAssetsInModFolder_Patch.cs",
-              "DocumentMoniker": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\XMLLoadingCache\\DirectXmlLoader_XmlAssetsInModFolder_Patch.cs",
-              "RelativeDocumentMoniker": "XMLLoadingCache\\DirectXmlLoader_XmlAssetsInModFolder_Patch.cs",
-              "ToolTip": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\XMLLoadingCache\\DirectXmlLoader_XmlAssetsInModFolder_Patch.cs",
-              "RelativeToolTip": "XMLLoadingCache\\DirectXmlLoader_XmlAssetsInModFolder_Patch.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-08T12:36:48.633Z"
             }
           ]
         }

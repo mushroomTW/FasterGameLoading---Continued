@@ -27,8 +27,8 @@ namespace FasterGameLoading
         /// </remarks>
         public static bool earlyModContentLoading = true;
 
-        /// <summary>自適應靜態圖集烘焙（預設開啟）</summary>
-        public static bool StaticAtlasesBaking = true;
+        /// <summary>自適應靜態圖集烘焙（預設關閉）</summary>
+        public static bool StaticAtlasesBaking = false;
 
         /// <summary>圖集快取（預設關閉）</summary>
         public static bool AtlasCaching = false;
@@ -116,7 +116,7 @@ namespace FasterGameLoading
             base.ExposeData();
 
             // 使用者設定
-            Scribe_Values.Look(ref StaticAtlasesBaking, "StaticAtlasesBaking", true);
+            Scribe_Values.Look(ref StaticAtlasesBaking, "StaticAtlasesBaking", false);
             Scribe_Values.Look(ref AtlasCaching, "atlasCaching", false);
             Scribe_Values.Look(ref DelayGraphicLoading, "delayGraphicLoading", false);
             Scribe_Values.Look(ref earlyModContentLoading, "earlyModContentLoading", true);

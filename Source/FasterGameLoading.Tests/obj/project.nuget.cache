@@ -1,5 +1,17 @@
 {
   "version": 2,
+<<<<<<< HEAD
+  "dgSpecHash": "IFE4tLLZgdA=",
+  "success": true,
+  "projectFilePath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.Tests\\FasterGameLoading.Tests.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\user\\.nuget\\packages\\krafs.rimworld.ref\\1.6.4850\\krafs.rimworld.ref.1.6.4850.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\lib.harmony\\2.4.2\\lib.harmony.2.4.2.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\microsoft.codecoverage\\17.5.0\\microsoft.codecoverage.17.5.0.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\microsoft.net.test.sdk\\17.5.0\\microsoft.net.test.sdk.17.5.0.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\nunit\\3.13.3\\nunit.3.13.3.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\nunit3testadapter\\4.4.2\\nunit3testadapter.4.4.2.nupkg.sha512"
+=======
   "dgSpecHash": "9f/yInvVv8M=",
   "success": true,
   "projectFilePath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.Tests\\FasterGameLoading.Tests.csproj",
@@ -10,6 +22,7 @@
     "C:\\Users\\mushroomMaster\\.nuget\\packages\\microsoft.net.test.sdk\\17.5.0\\microsoft.net.test.sdk.17.5.0.nupkg.sha512",
     "C:\\Users\\mushroomMaster\\.nuget\\packages\\nunit\\3.13.3\\nunit.3.13.3.nupkg.sha512",
     "C:\\Users\\mushroomMaster\\.nuget\\packages\\nunit3testadapter\\4.4.2\\nunit3testadapter.4.4.2.nupkg.sha512"
+>>>>>>> 5b16b2884efddcb25f36ad4f49b780335aa7c75a
   ],
   "logs": []
 }

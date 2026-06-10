@@ -239,14 +239,10 @@ namespace FasterGameLoading
 
             if (texture != null)
             {
-                foreach (var kvp in ModContentLoaderTexture2D_LoadTexture_Patch.savedTextures)
+                if (ModContentLoaderTexture2D_LoadTexture_Patch.TryGetSavedTexturePath(texture, out fullPath))
                 {
-                    if (kvp.Value.TryGetTarget(out var savedTexture) && ReferenceEquals(savedTexture, texture))
-                    {
-                        fullPath = kvp.Key;
-                        texturesByPaths[texture] = fullPath;
-                        return true;
-                    }
+                    texturesByPaths[texture] = fullPath;
+                    return true;
                 }
             }
 

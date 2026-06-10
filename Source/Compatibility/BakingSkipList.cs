@@ -26,6 +26,16 @@ namespace FasterGameLoading
         private static bool rootsInitialized = false;
         private static bool? isAnyTargetModActive;
 
+        static SmartBakingSkipList()
+        {
+            CacheResetter.Register(() =>
+            {
+                targetModRoots.Clear();
+                rootsInitialized = false;
+                isAnyTargetModActive = null;
+            });
+        }
+
         /// <summary>
         /// 取得目標 Mod 是否為啟用狀態（快取判定結果以維護啟動時期的效能）。
         /// </summary>
@@ -35,14 +45,14 @@ namespace FasterGameLoading
             {
                 if (!isAnyTargetModActive.HasValue)
                 {
-                    isAnyTargetModActive = false;
+                    var active = false;
 
                     // 1. 若啟用外星人種族核心，則判定為 active 以利動態排除
                     try
                     {
                         if (ModsConfig.IsActive("erdelf.HumanoidAlienRaces"))
                         {
-                            isAnyTargetModActive = true;
+                            active = true;
                         }
                     }
                     catch
@@ -51,7 +61,7 @@ namespace FasterGameLoading
                     }
 
                     // 2. 檢查特定的名單
-                    if (!isAnyTargetModActive.Value)
+                    if (!active)
                     {
                         foreach (var modId in targetMods)
                         {
@@ -59,7 +69,7 @@ namespace FasterGameLoading
                             {
                                 if (ModsConfig.IsActive(modId))
                                 {
-                                    isAnyTargetModActive = true;
+                                    active = true;
                                     break;
                                 }
                             }
@@ -69,9 +79,53 @@ namespace FasterGameLoading
                             }
                         }
                     }
+
+                    var hasRunningMods = false;
+                    if (!active && TryDetectActiveTargetModFromRunningMods(out hasRunningMods))
+                    {
+                        active = true;
+                    }
+
+                    if (active || hasRunningMods)
+                    {
+                        isAnyTargetModActive = active;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
                 return isAnyTargetModActive.Value;
             }
+        }
+
+        private static bool TryDetectActiveTargetModFromRunningMods(out bool hasRunningMods)
+        {
+            hasRunningMods = false;
+            var mods = LoadedModManager.RunningMods;
+            if (mods == null) return false;
+
+            foreach (var mod in mods)
+            {
+                hasRunningMods = true;
+                string cleanId = mod.PackageId;
+                if (cleanId != null && cleanId.EndsWith("_steam", StringComparison.OrdinalIgnoreCase))
+                {
+                    cleanId = cleanId.Substring(0, cleanId.Length - 6);
+                }
+
+                if (cleanId != null && targetMods.Contains(cleanId))
+                {
+                    return true;
+                }
+
+                if (IsAlienRaceMod(mod) || DependsOnMod(mod, "Ancot.AncotLibrary"))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>

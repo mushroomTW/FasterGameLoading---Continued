@@ -86,6 +86,7 @@ namespace FasterGameLoading
             var atlasTextures = atlas.textures;
 
             var texNames = atlasTextures.Select(t => t.name).ToList();
+            var texKeys = atlasTextures.Select(AtlasHashCalculator.GetTextureKey).ToList();
 
             foreach (var tex in atlasTextures)
             {
@@ -107,6 +108,7 @@ namespace FasterGameLoading
                 height = atlas.colorTexture.height,
                 format = (int)atlas.colorTexture.format,
                 textureNames = texNames,
+                textureKeys = texKeys,
                 uvRects = uvRects,
                 colorFile = $"atlas_{index}_color.raw",
                 maskFile = ""

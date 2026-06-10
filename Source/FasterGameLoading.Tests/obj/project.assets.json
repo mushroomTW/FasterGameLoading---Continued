@@ -1,7 +1,11 @@
 {
   "version": 3,
   "targets": {
+<<<<<<< HEAD
     ".NETFramework,Version=v4.7.2": {
+=======
+    "net472": {
+>>>>>>> 5b16b2884efddcb25f36ad4f49b780335aa7c75a
       "Krafs.Rimworld.Ref/1.6.4850": {
         "type": "package",
         "compile": {

@@ -1,5 +1,6 @@
 {
   "version": 2,
+<<<<<<< HEAD
   "dgSpecHash": "AeM/OVccYSw=",
   "success": true,
   "projectFilePath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.csproj",
@@ -7,6 +8,15 @@
     "C:\\Users\\user\\.nuget\\packages\\krafs.publicizer\\2.3.0\\krafs.publicizer.2.3.0.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\krafs.rimworld.ref\\1.6.4850\\krafs.rimworld.ref.1.6.4850.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\lib.harmony\\2.4.2\\lib.harmony.2.4.2.nupkg.sha512"
+=======
+  "dgSpecHash": "N0x7phqNowg=",
+  "success": true,
+  "projectFilePath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\mushroomMaster\\.nuget\\packages\\krafs.publicizer\\2.3.0\\krafs.publicizer.2.3.0.nupkg.sha512",
+    "C:\\Users\\mushroomMaster\\.nuget\\packages\\krafs.rimworld.ref\\1.6.4850\\krafs.rimworld.ref.1.6.4850.nupkg.sha512",
+    "C:\\Users\\mushroomMaster\\.nuget\\packages\\lib.harmony\\2.4.2\\lib.harmony.2.4.2.nupkg.sha512"
+>>>>>>> 5b16b2884efddcb25f36ad4f49b780335aa7c75a
   ],
   "logs": []
 }

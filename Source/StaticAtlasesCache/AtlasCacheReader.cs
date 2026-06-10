@@ -66,7 +66,7 @@ namespace FasterGameLoading
         private static bool ValidateManifest(StaticAtlasCache.Manifest manifest)
         {
             if (manifest == null) return false;
-            if (manifest.version != 2) return false;
+            if (manifest.version != 3) return false;
             if (manifest.modsHash != AtlasHashCalculator.ComputeModsHash()) return false;
             if (manifest.queueHash != AtlasHashCalculator.ComputeQueueHash()) return false;
             return true;
@@ -84,17 +84,22 @@ namespace FasterGameLoading
 
             var queueTextures = GlobalTextureAtlasManager.buildQueue[key].Item1;
             var queueMasks = GlobalTextureAtlasManager.buildQueueMasks;
-            var texDict = queueTextures.GroupBy(t => t.name).ToDictionary(g => g.Key, g => g.First());
+            var texDict = queueTextures
+                .GroupBy(AtlasHashCalculator.GetTextureKey)
+                .ToDictionary(g => g.Key, g => g.First());
 
-            foreach (var texName in info.textureNames)
+            var textureKeys = info.textureKeys ?? new List<string>();
+            for (var i = 0; i < textureKeys.Count; i++)
             {
-                if (texDict.TryGetValue(texName, out var tex))
+                var texKey = textureKeys[i];
+                if (texDict.TryGetValue(texKey, out var tex))
                 {
                     var mask = key.hasMask && queueMasks.TryGetValue(tex, out var m) ? m : null;
                     atlas.Insert(tex, mask);
                 }
                 else
                 {
+                    var texName = i < info.textureNames.Count ? info.textureNames[i] : texKey;
                     FGLLog.Warning("Texture missing from queue during cache load: " + texName);
                     return false;
                 }

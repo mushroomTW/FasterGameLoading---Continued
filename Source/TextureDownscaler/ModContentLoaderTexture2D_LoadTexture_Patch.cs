@@ -153,6 +153,24 @@ namespace FasterGameLoading
             }
         }
 
+        public static bool TryGetSavedTexturePath(Texture texture, out string fullPath)
+        {
+            if (texture != null)
+            {
+                foreach (var kvp in savedTextures)
+                {
+                    if (kvp.Value.TryGetTarget(out var savedTexture) && ReferenceEquals(savedTexture, texture))
+                    {
+                        fullPath = kvp.Key;
+                        return true;
+                    }
+                }
+            }
+
+            fullPath = null;
+            return false;
+        }
+
         public static bool Prefix(VirtualFile file, out bool __state, ref Texture2D __result)
         {
             if (ImageOptCompat.IsImageOptActive)

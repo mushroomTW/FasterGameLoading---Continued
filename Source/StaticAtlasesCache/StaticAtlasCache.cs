@@ -24,7 +24,7 @@ namespace FasterGameLoading
         [Serializable]
         public class Manifest
         {
-            public int version = 2;
+            public int version = 3;
             /// <summary>目前載入的 mod 組合 hash。</summary>
             public string modsHash;
             /// <summary>buildQueue 內容 hash。</summary>
@@ -45,6 +45,7 @@ namespace FasterGameLoading
             public string colorFile;
             public string maskFile;
             public List<string> textureNames = new List<string>();
+            public List<string> textureKeys = new List<string>();
             public List<Rect> uvRects = new List<Rect>();
         }
 

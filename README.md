@@ -84,8 +84,8 @@ graph TD
 
 * **原生行為**：遊戲開始拼合靜態圖集（Static Atlases）。
 * **本模組優化**：
-  * **更聰明的圖集烘焙 (Smarter Atlas Baking)**：動態感應 GPU 效能，調整單次烘焙批次大小，減少啟動過程中的微卡頓。
-  * **靜態圖集快取 (Static Atlases Caching)**：將烘焙好的圖集數據快取至磁碟，下次啟動直接載入，縮減計算時間。
+  * **更聰明的圖集烘焙 (Smarter Atlas Baking)**：動態感應 GPU 效能，調整單次烘焙批次大小，減少啟動過程中的微卡頓；若遇到 HAR、Ancot 等多遮罩或自訂渲染框架，會將相關貼圖排除在靜態圖集之外。
+  * **靜態圖集快取 (Static Atlases Caching)**：將烘焙好的圖集數據快取至磁碟，下次啟動直接載入，並以來源路徑為貼圖識別鍵，避免不同 Mod 的同名貼圖錯誤復用。
 
 ### 5. 圖形與音效解析階段
 
@@ -143,8 +143,9 @@ graph TD
 * **概念**：RimWorld 啟動時會把碎圖拼合成靜態圖集（Static Atlases）。原生拼合是一次性、寫死大小的同步處理，會造成畫面微凍結甚至顯示驅動重設（TDR 逾時）。
 * **技術細節**：
   * 攔截 `GlobalTextureAtlasManager.BakeStaticAtlases` 或圖集烘焙迴圈。
-  * **動態批次最佳化**：根據玩家當前顯示卡（GPU）的烘焙效能與硬體規格，自適應地調整單次烘焙的紋理批次大小（Batch Size），減緩主執行緒被大量 I/O 與紋理上傳操作（TexImage2D）卡死的現象，顯著減少加載過程中的微卡頓。
-  * **圖集烘焙排除名單**：自動偵測特定 Mod（如 Bionic Icons、Ancot Library 框架及其種族如 Kiiro Race、Ayameduki 等外星人種族）的紋理，將其排除在靜態圖集拼合之外，避免多遮罩（multi-mask）造成的圖案衝突與載入不全。本模組會動態檢測所有依賴 Humanoid Alien Races (HAR) 的種族 Mod 並將其自動加入排除名單。
+  * **動態批次最佳化**：根據玩家當前顯示卡（GPU）的烘焙效能與硬體規格，自適應地調整單次烘焙的紋理批次大小（Batch Size），減緩主執行緒被大量 I/O 與紋理上傳操作（TexImage2D）卡死的現象，顯著減少加載過程中的微卡頓。時間切片下限與圖集尺寸分離，避免慢速 GPU 被過大的最小批次拖出長幀。
+  * **圖集烘焙排除名單**：自動偵測特定 Mod（如 Bionic Icons、Ancot Library 框架及其種族如 Kiiro Race、Ayameduki 等外星人種族）的紋理，將其排除在靜態圖集拼合之外，避免多遮罩（multi-mask）造成的圖案衝突與載入不全。本模組會動態檢測所有依賴 Humanoid Alien Races (HAR) 或 `Ancot.AncotLibrary` 的種族 Mod 並將其自動加入排除名單。
+  * **載入時機安全性**：排除名單除了使用 `ModsConfig.IsActive`，也會掃描 `LoadedModManager.RunningMods` 作為備援，避免在啟動早期因 Mod 啟用狀態尚未完全穩定而錯過 Ancot/HAR 相關 Mod。
 
 #### 6. 靜態圖集快取 (Static Atlases Caching) `預設關閉`
 
@@ -152,6 +153,7 @@ graph TD
 * **技術細節**：
   * 攔截圖集烘焙結果，將烘焙好的圖集貼圖與座標映射數據直接以二進位快取（Binary Cache）形式持久化存檔。
   * 下次啟動遊戲時，如果檢測到 Mod 列表與順序沒有變更，直接讀取快取中的圖集，跳過整個複雜的靜態圖集重新拼合與計算過程。
+  * **快取版本 v3**：快取 manifest 會記錄每張貼圖的來源路徑 key，並將 mask 貼圖納入佇列雜湊，避免不同 Mod 的同名貼圖、同尺寸貼圖或遮罩變更造成錯誤快取命中。舊版圖集快取會自動失效並重建。
 
 ---
 
@@ -180,7 +182,7 @@ graph TD
 * **[Alien Races (Humanoid Alien Races)](https://github.com/erdelf/AlienRaces)**：嘗試相容。在所有 Mod 完成載入後，本模組會自動重新觸發 Alien Races 的 extended graphics variant 掃描，確保外星種族的圖形正確載入。**同時，本模組會自動偵測並動態排除所有依賴 Humanoid Alien Races 的種族模組貼圖進入靜態圖集，從而徹底解決外星人種族的頭髮、耳朵等 bodyAddon 消失問題。**
 * **[XmlExtensions](https://github.com/15adhami/XmlExtensions)**：完美相容。當檢測到其啟用時，XPath 快取功能會自動停用，避免與 XmlExtensions 的自訂 XML 處理邏輯衝突。
 * **[AyaTweaks 2.0 (Ayameduki Tweaks)](https://gitlab.com/wrelick-rimworld/ayatweaks2.0)**：嘗試相容。本模組會自動偵測並將所有 Ayameduki 相關 Mod (`Ayameduki.*`) 以及 WRelicK 的翻譯與補丁 (`WRK.*`) 排除在「提早載入」與「多執行緒 XML 載入」之外，以確保其複雜的 Patch 載入順序與執行緒安全完全正常，防止爆紅。
-* **[Ancot Library（Ancot's Races Framework）](https://steamcommunity.com/sharedfiles/filedetails/?id=2988801276)**：完美相容。本模組會自動偵測所有在 `About.xml` 中聲明依賴 `Ancot.AncotLibrary` 的種族模組（如 Kiiro Race、Tsukin Race 等），並**動態**將其根目錄下的所有外觀貼圖排除在靜態圖集烘焙之外，徹底避免 Ancot 旗下種族因自訂多重遮罩（Multi-mask）渲染節點造成的貼圖黑化或 bodyAddon 消失問題。
+* **[Ancot Library（Ancot's Races Framework）](https://steamcommunity.com/sharedfiles/filedetails/?id=2988801276)**：完美相容。本模組會偵測 `Ancot.AncotLibrary` 本體與所有在 `About.xml` 中聲明依賴它的種族模組（如 Kiiro Race、Tsukin Race 等），並**動態**將其根目錄下的外觀貼圖排除在靜態圖集烘焙之外。偵測流程同時使用 `ModsConfig.IsActive` 與 `LoadedModManager.RunningMods`，避免載入早期狀態尚未穩定時漏判，徹底避免 Ancot 旗下種族因自訂多重遮罩（Multi-mask）渲染節點造成的貼圖黑化或 bodyAddon 消失問題。
 
 ---
 

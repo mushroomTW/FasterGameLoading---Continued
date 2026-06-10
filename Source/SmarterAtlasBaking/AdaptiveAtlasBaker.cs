@@ -25,10 +25,9 @@ namespace FasterGameLoading
 
             const float TARGET_BAKE_TIME_SECONDS = 0.008f;
             const float ADAPTATION_FACTOR = 0.2f;
-            // 初始保守估計：1024×1024 像素
-            const int INITIAL_PIXELS_PER_SLICE = 1024 * 1024;
-            // 圖集小於 1024×1024 對渲染最佳化沒有意義
-            const int MIN_PIXELS_PER_SLICE = 1024 * 1024;
+            // 初始保守估計：256×256 像素。這是時間切片大小，不是圖集最終尺寸。
+            const int INITIAL_PIXELS_PER_SLICE = 256 * 256;
+            const int MIN_PIXELS_PER_SLICE = 64 * 64;
             // 高效能 GPU 的上限
             const int MAX_PIXELS_PER_SLICE = 4096 * 4096;
             // 0.7–0.9 可減少圖集中的空白區域
@@ -88,6 +87,8 @@ namespace FasterGameLoading
                                 TARGET_BAKE_TIME_SECONDS, ADAPTATION_FACTOR,
                                 MIN_PIXELS_PER_SLICE, MAX_PIXELS_PER_SLICE, PACK_DENSITY))
                         {
+                            DestroyAtlases(atlasesToCommit);
+                            DestroyAtlases(bakedAtlasesForGroup);
                             DelayedActions.AdaptiveStaticAtlasBakeFailed = true;
                             yield break;
                         }
@@ -107,6 +108,8 @@ namespace FasterGameLoading
                             TARGET_BAKE_TIME_SECONDS, ADAPTATION_FACTOR,
                             MIN_PIXELS_PER_SLICE, MAX_PIXELS_PER_SLICE, PACK_DENSITY))
                     {
+                        DestroyAtlases(atlasesToCommit);
+                        DestroyAtlases(bakedAtlasesForGroup);
                         DelayedActions.AdaptiveStaticAtlasBakeFailed = true;
                         yield break;
                     }
@@ -200,6 +203,32 @@ namespace FasterGameLoading
             {
                 FGLLog.Warning("Error baking atlas batch: ", ex);
                 return false;
+            }
+        }
+
+        private static void DestroyAtlases(List<StaticTextureAtlas> atlases)
+        {
+            foreach (var atlas in atlases)
+            {
+                DestroyAtlasTextures(atlas);
+            }
+            atlases.Clear();
+        }
+
+        private static void DestroyAtlasTextures(StaticTextureAtlas atlas)
+        {
+            if (atlas == null) return;
+
+            if (atlas.colorTexture != null && !atlas.textures.Contains(atlas.colorTexture))
+            {
+                UnityEngine.Object.Destroy(atlas.colorTexture);
+                atlas.colorTexture = null;
+            }
+
+            if (atlas.maskTexture != null && !atlas.textures.Contains(atlas.maskTexture))
+            {
+                UnityEngine.Object.Destroy(atlas.maskTexture);
+                atlas.maskTexture = null;
             }
         }
     }

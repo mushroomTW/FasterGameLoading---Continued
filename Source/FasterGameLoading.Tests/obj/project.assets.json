@@ -1,13 +1,12 @@
 {
-  "version": 4,
+  "version": 3,
   "targets": {
-    "net472": {
-      "Krafs.Rimworld.Ref/1.6.4633": {
+    ".NETFramework,Version=v4.7.2": {
+      "Krafs.Rimworld.Ref/1.6.4850": {
         "type": "package",
         "compile": {
           "ref/net472/Assembly-CSharp-firstpass.dll": {},
           "ref/net472/Assembly-CSharp.dll": {},
-          "ref/net472/Assembly-CSharp_publicised.dll": {},
           "ref/net472/ISharpZipLib.dll": {},
           "ref/net472/Mono.Security.dll": {},
           "ref/net472/NAudio.dll": {},
@@ -52,7 +51,6 @@
           "ref/net472/UnityEngine.ClusterRendererModule.dll": {},
           "ref/net472/UnityEngine.ContentLoadModule.dll": {},
           "ref/net472/UnityEngine.CoreModule.dll": {},
-          "ref/net472/UnityEngine.CoreModule_publicised.dll": {},
           "ref/net472/UnityEngine.CrashReportingModule.dll": {},
           "ref/net472/UnityEngine.DSPGraphModule.dll": {},
           "ref/net472/UnityEngine.DirectorModule.dll": {},
@@ -109,9 +107,7 @@
           "ref/net472/UnityEngine.VirtualTexturingModule.dll": {},
           "ref/net472/UnityEngine.WindModule.dll": {},
           "ref/net472/UnityEngine.XRModule.dll": {},
-          "ref/net472/UnityEngine.dll": {
-            "related": ".CoreModule_hash.hash"
-          },
+          "ref/net472/UnityEngine.dll": {},
           "ref/net472/com.rlabrecque.steamworks.net.dll": {},
           "ref/net472/mscorlib.dll": {},
           "ref/net472/netstandard.dll": {}
@@ -188,7 +184,7 @@
         "type": "project",
         "framework": ".NETFramework,Version=v4.7.2",
         "dependencies": {
-          "Krafs.Rimworld.Ref": "1.6.4633",
+          "Krafs.Rimworld.Ref": "1.6.4850",
           "Lib.Harmony": "2.0.0"
         },
         "compile": {
@@ -201,22 +197,20 @@
     }
   },
   "libraries": {
-    "Krafs.Rimworld.Ref/1.6.4633": {
-      "sha512": "wbUZCLBFHnNJ9IT4ighta1wrsBI9i/gRrfixPNfsMLlPvd/lksz+yv8H3Os7EIpT3O3wOkXgN3LGt8UHncWpzQ==",
+    "Krafs.Rimworld.Ref/1.6.4850": {
+      "sha512": "QcKiaIW76BsywnW32EegthVFtQIKT8x2TCj5vQV2kuGJdu1+T2/kZzV/xfdyCZMvezMKM103auJAhBDdQB2xSw==",
       "type": "package",
-      "path": "krafs.rimworld.ref/1.6.4633",
+      "path": "krafs.rimworld.ref/1.6.4850",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "LICENSE.md",
         "README.md",
         "icon.png",
-        "krafs.rimworld.ref.1.6.4633.nupkg.sha512",
+        "krafs.rimworld.ref.1.6.4850.nupkg.sha512",
         "krafs.rimworld.ref.nuspec",
         "ref/net472/Assembly-CSharp-firstpass.dll",
         "ref/net472/Assembly-CSharp.dll",
-        "ref/net472/Assembly-CSharp_hash.hash",
-        "ref/net472/Assembly-CSharp_publicised.dll",
         "ref/net472/ISharpZipLib.dll",
         "ref/net472/Mono.Security.dll",
         "ref/net472/NAudio.dll",
@@ -261,8 +255,6 @@
         "ref/net472/UnityEngine.ClusterRendererModule.dll",
         "ref/net472/UnityEngine.ContentLoadModule.dll",
         "ref/net472/UnityEngine.CoreModule.dll",
-        "ref/net472/UnityEngine.CoreModule_hash.hash",
-        "ref/net472/UnityEngine.CoreModule_publicised.dll",
         "ref/net472/UnityEngine.CrashReportingModule.dll",
         "ref/net472/UnityEngine.DSPGraphModule.dll",
         "ref/net472/UnityEngine.DirectorModule.dll",
@@ -522,7 +514,7 @@
     }
   },
   "projectFileDependencyGroups": {
-    "net472": [
+    ".NETFramework,Version=v4.7.2": [
       "FasterGameLoading >= 1.0.0",
       "Lib.Harmony >= 2.*",
       "Microsoft.NET.Test.Sdk >= 17.5.0",
@@ -531,7 +523,7 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\mushroomMaster\\.nuget\\packages\\": {}
+    "C:\\Users\\user\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
@@ -539,11 +531,11 @@
       "projectUniqueName": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.Tests\\FasterGameLoading.Tests.csproj",
       "projectName": "FasterGameLoading.Tests",
       "projectPath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.Tests\\FasterGameLoading.Tests.csproj",
-      "packagesPath": "C:\\Users\\mushroomMaster\\.nuget\\packages\\",
+      "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
       "outputPath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.Tests\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\mushroomMaster\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -555,7 +547,6 @@
       },
       "frameworks": {
         "net472": {
-          "framework": "net472",
           "targetAlias": "net472",
           "projectReferences": {
             "C:\\Program Files (x86)\\Steam\\steamapps\\common\\RimWorld\\Mods\\FasterGameLoading---Continued\\Source\\FasterGameLoading.csproj": {
@@ -574,11 +565,10 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "10.0.300"
+      "SdkAnalysisLevel": "10.0.200"
     },
     "frameworks": {
       "net472": {
-        "framework": "net472",
         "targetAlias": "net472",
         "dependencies": {
           "Lib.Harmony": {
@@ -598,7 +588,7 @@
             "version": "[4.4.2, )"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.202\\RuntimeIdentifierGraph.json"
       }
     }
   }

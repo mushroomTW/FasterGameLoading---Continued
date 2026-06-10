@@ -32,14 +32,30 @@ namespace FasterGameLoading
             foreach (var key in orderedKeys)
             {
                 sb.Append((int)key.group).Append('|').Append(key.hasMask).Append('|');
-                var texList = GlobalTextureAtlasManager.buildQueue[key].Item1.OrderBy(t => t.name).ToList();
+                var texList = GlobalTextureAtlasManager.buildQueue[key].Item1
+                    .OrderBy(GetTextureKey)
+                    .ToList();
                 foreach (var tex in texList)
                 {
-                    sb.Append(tex.name).Append('|').Append(tex.width).Append('|').Append(tex.height).Append('|');
+                    sb.Append(GetTextureKey(tex)).Append('|').Append(tex.width).Append('|').Append(tex.height).Append('|');
+                    if (key.hasMask && GlobalTextureAtlasManager.buildQueueMasks.TryGetValue(tex, out var mask))
+                    {
+                        sb.Append(GetTextureKey(mask)).Append('|').Append(mask.width).Append('|').Append(mask.height).Append('|');
+                    }
                 }
             }
             using var md5 = MD5.Create();
             return string.Concat(md5.ComputeHash(Encoding.UTF8.GetBytes(sb.ToString())).Select(b => b.ToString("x2")));
+        }
+
+        public static string GetTextureKey(UnityEngine.Texture texture)
+        {
+            if (ModContentLoaderTexture2D_LoadTexture_Patch.TryGetSavedTexturePath(texture, out var path))
+            {
+                return path.Replace('\\', '/');
+            }
+
+            return (texture?.name ?? "<null>") + "#" + texture?.GetInstanceID();
         }
     }
 }

@@ -46,6 +46,9 @@ namespace FasterGameLoading
         /// <summary>提供向內部字典新增項目的執行緒安全介面。</summary>
         void SetCacheEntry(string originalPath, string cachePath);
 
+        /// <summary>以執行緒安全方式回傳快取對照表的快照副本。</summary>
+        System.Collections.Generic.Dictionary<string, string> GetResizedTextureCacheCopy();
+
         /// <summary>清理過期與無效的快取檔案及對照項目。</summary>
         void CleanupObsoleteCacheFiles();
     }

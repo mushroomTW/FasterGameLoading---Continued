@@ -170,7 +170,8 @@ namespace FasterGameLoading
                 {
                     for (int i = 0; i < modsInLastSession.Count; i++)
                     {
-                        if (currentActiveMods[i].packageIdLowerCase != modsInLastSession[i])
+                        // currentActiveMods[i] 可能為 null（Mod 載入異常時），跳過避免 NRE
+                        if (currentActiveMods[i] == null || currentActiveMods[i].packageIdLowerCase != modsInLastSession[i])
                         {
                             modsChanged = true;
                             break;
@@ -192,7 +193,7 @@ namespace FasterGameLoading
                     {
                         patchedAssembliesLastSession.Clear();
                     }
-                    FasterGameLoadingMod.Instance.CacheManager.ClearCache();
+                    FasterGameLoadingMod.Instance?.CacheManager?.ClearCache();
                     StaticAtlasCache.ClearCache();
                 }
             }

@@ -107,6 +107,8 @@ namespace FasterGameLoading
                 width = atlas.colorTexture.width,
                 height = atlas.colorTexture.height,
                 format = (int)atlas.colorTexture.format,
+                // 記錄 mip 層數：原版 colorTexture 帶 mip chain，還原時須保持等價
+                mipCount = atlas.colorTexture.mipmapCount,
                 textureNames = texNames,
                 textureKeys = texKeys,
                 uvRects = uvRects,
@@ -118,8 +120,11 @@ namespace FasterGameLoading
             bool colorLoadFailed = false;
             try
             {
-                colorBytes = GetRawBytesSafe(atlas.colorTexture, out var newFormat);
+                colorBytes = GetRawBytesSafe(atlas.colorTexture, out var newFormat, out var colorActualW, out var colorActualH);
                 info.format = (int)newFormat;
+                // fallback 路徑可能對齊尺寸，確保 manifest 與實際位元組數一致
+                info.width = colorActualW;
+                info.height = colorActualH;
             }
             catch (Exception e)
             {
@@ -158,8 +163,12 @@ namespace FasterGameLoading
                 bool maskLoadFailed = false;
                 try
                 {
-                    maskBytes = GetRawBytesSafe(atlas.maskTexture, out var newFormatMask);
+                    maskBytes = GetRawBytesSafe(atlas.maskTexture, out var newFormatMask, out var maskActualW, out var maskActualH);
                     info.maskFormat = (int)newFormatMask;
+                    // fallback 路徑因 4 對齊，遮罩尺寸可能與彩色紋理不同，需分開記錄。
+                    // maskWidth/maskHeight 為 0 時 reader 回退使用 color 尺寸（向後相容）。
+                    info.maskWidth = maskActualW;
+                    info.maskHeight = maskActualH;
                 }
                 catch (Exception e)
                 {
@@ -197,10 +206,13 @@ namespace FasterGameLoading
 
         private static void ReleaseAtlasTextures(List<StaticTextureAtlas> atlases)
         {
-            // 快取儲存結束後釋放 CPU 端的紋理資料以節省記憶體
+            // 快取儲存結束後釋放 CPU 端的紋理資料以節省記憶體。
+            // 注意：單一紋理批次路徑（AdaptiveAtlasBaker）會直接將 atlas.colorTexture 指向原始遊戲紋理，
+            // 此時不可呼叫 Apply(true,true)，以免使原始紋理失去可讀性。
+            // 參考 DestroyAtlasTextures 中的相同保護邏輯（atlas.textures.Contains）。
             foreach (var atlas in atlases)
             {
-                if (atlas.colorTexture != null)
+                if (atlas.colorTexture != null && !atlas.textures.Contains(atlas.colorTexture))
                 {
                     try
                     {
@@ -211,7 +223,7 @@ namespace FasterGameLoading
                         FGLLog.Warning("Failed to make color atlas texture non-readable: " + ex.Message);
                     }
                 }
-                if (atlas.maskTexture != null)
+                if (atlas.maskTexture != null && !atlas.textures.Contains(atlas.maskTexture))
                 {
                     try
                     {
@@ -234,10 +246,13 @@ namespace FasterGameLoading
         /// <summary>
         /// 安全地從 Texture2D 取得原始位元組。
         /// 優先使用 GetRawTextureData，若無法直接讀取則透過 RenderTexture 進行 GPU→CPU 複製。
+        /// actualWidth/actualHeight 回傳實際寫入資料所對應的尺寸（fallback 路徑可能因對齊而與原始尺寸不同）。
         /// </summary>
-        private static byte[] GetRawBytesSafe(Texture2D tex, out TextureFormat format)
+        private static byte[] GetRawBytesSafe(Texture2D tex, out TextureFormat format, out int actualWidth, out int actualHeight)
         {
             format = tex.format;
+            actualWidth = tex.width;
+            actualHeight = tex.height;
             try
             {
                 var bytes = tex.GetRawTextureData();
@@ -255,7 +270,9 @@ namespace FasterGameLoading
                 }
             }
 
-            // 無法直接取得 RawTextureData，改用 RenderTexture 進行 GPU→CPU 複製
+            // 無法直接取得 RawTextureData，改用 RenderTexture 進行 GPU→CPU 複製。
+            // fallback 路徑將尺寸對齊至 4 的倍數，actualWidth/actualHeight 需反映此變更，
+            // 以確保 manifest 記錄的尺寸與實際寫入的位元組數一致，避免讀取時 LoadRawTextureData 失敗。
             RenderTexture rt = null;
             Texture2D readable = null;
             var previous = RenderTexture.active;
@@ -274,6 +291,8 @@ namespace FasterGameLoading
                 readable.Apply(false, false);
 
                 format = fallbackFormat;
+                actualWidth = targetWidth;
+                actualHeight = targetHeight;
                 return readable.GetRawTextureData();
             }
             finally

@@ -53,7 +53,8 @@ namespace FasterGameLoading
         /// </summary>
         public void DoTextureResizing()
         {
-            var previousCacheMap = new Dictionary<string, string>(cacheManager.ResizedTextureCache);
+            // 透過執行緒安全介面取得快照，避免與 TextureCacheManager 內部的 cacheLock 競爭
+            var previousCacheMap = cacheManager.GetResizedTextureCacheCopy();
             var previousCacheDirectory = cacheManager.CacheDirectory;
             var stagingDirectory = cacheManager.BuildCacheDirectory(FGLConsts.TextureCacheStagingDir);
             lastOriginalPixelCount = 0;

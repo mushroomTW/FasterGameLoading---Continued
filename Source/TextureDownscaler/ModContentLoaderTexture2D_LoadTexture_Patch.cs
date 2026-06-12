@@ -53,10 +53,12 @@ namespace FasterGameLoading
         public static readonly ConcurrentDictionary<string, byte[]> preloadedCacheBytes = new ConcurrentDictionary<string, byte[]>();
         /// <summary>以 WeakReference 快取已載入的 Texture2D，鍵為完整檔案路徑。</summary>
         public static ConcurrentDictionary<string, System.WeakReference<Texture2D>> savedTextures = new ConcurrentDictionary<string, System.WeakReference<Texture2D>>();
+        /// <summary>反向對照表：Texture2D 實體 → 完整檔案路徑，供 TryGetSavedTexturePath O(1) 查詢使用。</summary>
+        private static readonly ConcurrentDictionary<System.WeakReference<Texture2D>, string> savedTexturesReverse = new ConcurrentDictionary<System.WeakReference<Texture2D>, string>();
         /// <summary>排除烘焙的目標 Mod 紋理快取，用於 O(1) 快速查詢。</summary>
         public static ConcurrentDictionary<Texture2D, bool> skippedBakingTextures = new ConcurrentDictionary<Texture2D, bool>();
-        /// <summary>排除烘焙的目標 Mod 紋理名稱快取，用於處理克隆實體時的反向比對。</summary>
-        public static System.Collections.Generic.HashSet<string> skippedBakingTextureNames = new System.Collections.Generic.HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        /// <summary>排除烘焙的目標 Mod 紋理名稱快取，用於處理克隆實體時的反向比對。以 ConcurrentDictionary 實作執行緒安全。</summary>
+        public static ConcurrentDictionary<string, byte> skippedBakingTextureNames = new ConcurrentDictionary<string, byte>(StringComparer.OrdinalIgnoreCase);
         /// <summary>紋理快取命中次數。</summary>
         public static int cacheLoadHits;
         /// <summary>紋理快取失敗次數。</summary>
@@ -67,9 +69,10 @@ namespace FasterGameLoading
             CacheResetter.Register(() =>
             {
                 savedTextures.Clear();
+                savedTexturesReverse.Clear();
                 loadedTexturesThisSession.Clear();
                 skippedBakingTextures.Clear();
-                skippedBakingTextureNames.Clear();
+                skippedBakingTextureNames.Clear(); // ConcurrentDictionary.Clear() 為執行緒安全
                 preloadedCacheBytes.Clear();
             });
 
@@ -96,11 +99,8 @@ namespace FasterGameLoading
             var cacheManager = FasterGameLoadingMod.Instance?.CacheManager;
             if (cacheManager == null) return;
 
-            System.Collections.Generic.Dictionary<string, string> cacheCopy;
-            lock (cacheManager.ResizedTextureCache)
-            {
-                cacheCopy = new System.Collections.Generic.Dictionary<string, string>(cacheManager.ResizedTextureCache);
-            }
+            // 透過執行緒安全介面取得快照，避免與 TextureCacheManager 內部的 cacheLock 競爭
+            var cacheCopy = cacheManager.GetResizedTextureCacheCopy();
 
             if (cacheCopy.Count == 0) return;
 
@@ -148,20 +148,21 @@ namespace FasterGameLoading
                 string filename = Path.GetFileNameWithoutExtension(path);
                 if (!string.IsNullOrEmpty(filename))
                 {
-                    skippedBakingTextureNames.Add(filename);
+                    skippedBakingTextureNames.TryAdd(filename, 0);
                 }
             }
         }
 
         public static bool TryGetSavedTexturePath(Texture texture, out string fullPath)
         {
+            // 反向對照表支援 O(1) 查詢，避免每次呼叫對 savedTextures 進行 O(n) 線性掃描
             if (texture != null)
             {
-                foreach (var kvp in savedTextures)
+                foreach (var kvp in savedTexturesReverse)
                 {
-                    if (kvp.Value.TryGetTarget(out var savedTexture) && ReferenceEquals(savedTexture, texture))
+                    if (kvp.Key.TryGetTarget(out var savedTexture) && ReferenceEquals(savedTexture, texture))
                     {
-                        fullPath = kvp.Key;
+                        fullPath = kvp.Value;
                         return true;
                     }
                 }
@@ -186,7 +187,10 @@ namespace FasterGameLoading
                 var request = new LoadRequest { File = file };
                 mainThreadLoadRequests.Enqueue(request);
 
-                // 等待最多 5 秒，防止潛在的死鎖或載入超時
+                // 等待最多 5 秒，防止潛在的死鎖或載入超時。
+                // 泵送合約：DelayedActions（MonoBehaviour）的 Update() 每幀在主執行緒呼叫
+                // ProcessPendingMainThreadRequests()，確保此請求在下一幀內被處理。
+                // 參見 Source\DelayGraphicAndIconLoading\DelayedActions.cs:Update()。
                 if (request.CompletedEvent.Wait(5000))
                 {
                     if (request.Exception != null)
@@ -243,7 +247,14 @@ namespace FasterGameLoading
                             tex.name = Path.GetFileNameWithoutExtension(fullPath);
                             tex.Compress(true);
                             tex.Apply(true, true);
-                            savedTextures[fullPath] = new System.WeakReference<Texture2D>(tex);
+                            var weakRefCache = new System.WeakReference<Texture2D>(tex);
+                            // 覆寫前先移除舊的反向對照，避免反向表累積孤兒項目
+                            if (savedTextures.TryGetValue(fullPath, out var oldRefCache))
+                            {
+                                savedTexturesReverse.TryRemove(oldRefCache, out _);
+                            }
+                            savedTextures[fullPath] = weakRefCache;
+                            savedTexturesReverse[weakRefCache] = fullPath;
                             RegisterSkippedBakingTextureIfApplicable(fullPath, tex);
                             Interlocked.Increment(ref cacheLoadHits);
                             __result = tex;
@@ -293,7 +304,14 @@ namespace FasterGameLoading
         {
             if (__state && __result != null)
             {
-                savedTextures[file.FullPath] = new System.WeakReference<Texture2D>(__result);
+                var weakRefPost = new System.WeakReference<Texture2D>(__result);
+                // 覆寫前先移除舊的反向對照，避免反向表累積孤兒項目
+                if (savedTextures.TryGetValue(file.FullPath, out var oldRefPost))
+                {
+                    savedTexturesReverse.TryRemove(oldRefPost, out _);
+                }
+                savedTextures[file.FullPath] = weakRefPost;
+                savedTexturesReverse[weakRefPost] = file.FullPath;
                 RegisterSkippedBakingTextureIfApplicable(file.FullPath, __result);
             }
         }

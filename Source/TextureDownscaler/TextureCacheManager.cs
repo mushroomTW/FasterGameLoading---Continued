@@ -112,19 +112,39 @@ namespace FasterGameLoading
         /// <summary>
         /// 嘗試取得指定原始路徑對應的快取紋理路徑。
         /// 自動檢查快取是否過期（原始檔案比快取檔案新時視為失效）。
+        /// 磁碟 I/O（包括 SetLastWriteTimeUtc）在鎖定範圍外執行，避免阻塞並發紋理載入。
         /// </summary>
         public bool TryGetCachedTexturePath(string originalPath, out string cachePath)
         {
+            // 第一步：在鎖內讀取對照表，取得候選快取路徑
+            string candidatePath;
+            bool hadEntry;
             lock (cacheLock)
             {
-                if (resizedTextureCache.TryGetValue(originalPath, out cachePath)
-                    && File.Exists(cachePath)
-                    && IsCacheFresh(originalPath, cachePath))
-                {
-                    return true;
-                }
+                hadEntry = resizedTextureCache.TryGetValue(originalPath, out candidatePath);
+            }
 
-                if (cachePath != null)
+            if (!hadEntry || candidatePath == null)
+            {
+                cachePath = null;
+                return false;
+            }
+
+            // 第二步：在鎖外執行磁碟 I/O（存在性檢查 + 時間更新）
+            bool fresh = File.Exists(candidatePath) && IsCacheFresh(originalPath, candidatePath);
+
+            if (fresh)
+            {
+                cachePath = candidatePath;
+                return true;
+            }
+
+            // 快取失效：移除對照表項目
+            lock (cacheLock)
+            {
+                // 再次確認項目仍指向同一路徑，避免在鎖外期間已被更新
+                if (resizedTextureCache.TryGetValue(originalPath, out var currentPath)
+                    && string.Equals(currentPath, candidatePath, StringComparison.OrdinalIgnoreCase))
                 {
                     resizedTextureCache.Remove(originalPath);
                 }
@@ -136,6 +156,7 @@ namespace FasterGameLoading
 
         /// <summary>
         /// 檢查快取是否比原始檔案更新。若無法讀取檔案時間則視為失效。
+        /// 此方法在 cacheLock 鎖定範圍外呼叫，可安全執行阻塞式磁碟 I/O。
         /// </summary>
         private bool IsCacheFresh(string originalPath, string cachePath)
         {
@@ -145,15 +166,15 @@ namespace FasterGameLoading
                 {
                     return true;
                 }
-                
+
                 var originalTime = File.GetLastWriteTimeUtc(originalPath);
                 var cacheTime = File.GetLastWriteTimeUtc(cachePath);
-                
+
                 if (cacheTime >= originalTime)
                 {
                     return true;
                 }
-                
+
                 // 原始檔案的修改時間比快取新。若快取路徑的檔名雜湊（基於目前檔案長度）與已儲存的快取路徑一致，
                 // 代表檔案長度並未改變（實質內容未變），此時只需將快取檔案的時間更新為原始檔案時間即可。
                 var currentExpectedPath = GetCachePath(originalPath);
@@ -162,7 +183,7 @@ namespace FasterGameLoading
                     File.SetLastWriteTimeUtc(cachePath, originalTime);
                     return true;
                 }
-                
+
                 return false;
             }
             catch (IOException ex)
@@ -310,6 +331,15 @@ namespace FasterGameLoading
             lock (cacheLock)
             {
                 resizedTextureCache[originalPath] = cachePath;
+            }
+        }
+
+        /// <summary>以執行緒安全方式回傳快取對照表的快照副本。</summary>
+        public Dictionary<string, string> GetResizedTextureCacheCopy()
+        {
+            lock (cacheLock)
+            {
+                return new Dictionary<string, string>(resizedTextureCache);
             }
         }
 

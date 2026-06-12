@@ -37,7 +37,8 @@ namespace FasterGameLoading
 
         public static void Error(string message, Exception ex)
         {
-            Log.Error(Prefix + message + " - Exception: " + ex + "\n" + new StackTrace());
+            // ex.ToString() 已包含完整的例外訊息與呼叫堆疊，不需再附加 new StackTrace()
+            Log.Error(Prefix + message + " - Exception: " + ex);
         }
     }
 }

@@ -24,7 +24,9 @@ namespace FasterGameLoading
         [Serializable]
         public class Manifest
         {
-            public int version = 3;
+            // version 4：ComputeModsHash 新增 BakingSkipList 根目錄、Unity/遊戲版本、壓縮設定折入，
+            //            AtlasInfo 新增 mipCount、maskWidth、maskHeight 欄位。
+            public int version = 4;
             /// <summary>目前載入的 mod 組合 hash。</summary>
             public string modsHash;
             /// <summary>buildQueue 內容 hash。</summary>
@@ -47,6 +49,21 @@ namespace FasterGameLoading
             public List<string> textureNames = new List<string>();
             public List<string> textureKeys = new List<string>();
             public List<Rect> uvRects = new List<Rect>();
+            /// <summary>
+            /// 彩色紋理的 mip 層數（0 或 1 均視為無 mip，向後相容舊 manifest）。
+            /// 原版 CalcRectsForAtlasNew 會產生帶 mip chain 的 colorTexture，
+            /// 快取還原時須使用相同 mipCount 以保留遠距離渲染品質。
+            /// </summary>
+            public int mipCount;
+            /// <summary>
+            /// 遮罩紋理的實際寬度（0 表示與 colorTexture 相同，向後相容）。
+            /// fallback 路徑因 4 對齊可能與彩色紋理尺寸不同，需分開記錄。
+            /// </summary>
+            public int maskWidth;
+            /// <summary>
+            /// 遮罩紋理的實際高度（0 表示與 colorTexture 相同，向後相容）。
+            /// </summary>
+            public int maskHeight;
         }
 
         /// <summary>清除所有圖集快取（目錄 + 檔案）。</summary>

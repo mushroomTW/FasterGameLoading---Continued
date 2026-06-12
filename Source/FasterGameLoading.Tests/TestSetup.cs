@@ -20,8 +20,10 @@ namespace FasterGameLoading.Tests
             {
                 var assemblyName = new AssemblyName(args.Name).Name;
                 
-                // 本地 RimWorld Managed 檔案夾路徑
-                var managedDir = @"c:\Program Files (x86)\Steam\steamapps\common\RimWorld\RimWorldWin64_Data\Managed";
+                // 本地 RimWorld Managed 檔案夾路徑；可透過環境變數 RIMWORLD_MANAGED_DIR 覆寫，
+                // 方便在不同機器或 CI 環境中執行測試而不需修改程式碼。
+                var managedDir = Environment.GetEnvironmentVariable("RIMWORLD_MANAGED_DIR")
+                    ?? @"c:\Program Files (x86)\Steam\steamapps\common\RimWorld\RimWorldWin64_Data\Managed";
                 var path = Path.Combine(managedDir, assemblyName + ".dll");
                 
                 if (File.Exists(path))

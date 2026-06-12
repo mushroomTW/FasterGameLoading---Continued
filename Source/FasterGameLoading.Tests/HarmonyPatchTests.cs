@@ -327,13 +327,16 @@ namespace FasterGameLoading.Tests
 
 
         [Test]
-        public void TestDirectXmlLoader_XmlAssetsInModFolder_Patch_FallbackSafety()
+        public void TestDirectXmlLoader_XmlAssetsInModFolder_Patch_NullModGuard()
         {
-            // 驗證當傳入無效或 null 參數時，並行 XML 加載補丁能否順利捕捉 Exception並 Fallback 放行（Prefix 回傳 true）
+            // 驗證當 mod 參數為 null 時，Prefix 會直接回傳 true 讓 vanilla 處理，
+            // 而非嘗試執行並行載入（這是 null 防禦提前返回路徑，不是例外 fallback 路徑）。
+            // 注意：若要測試例外 fallback（try/catch 區塊），需要真實的 ModContentPack 實例，
+            // 但 ModContentPack 的建構依賴完整的 RimWorld 執行環境，在單元測試中不可行。
             LoadableXmlAsset[] result = null;
             bool shouldRunOriginal = DirectXmlLoader_XmlAssetsInModFolder_Patch.Prefix(ref result, null, null, null);
-            Assert.IsTrue(shouldRunOriginal, "Patch Prefix should return true to fallback to vanilla loader when parameters are null");
-            Assert.IsNull(result, "Result should remain null when fallback is triggered");
+            Assert.IsTrue(shouldRunOriginal, "mod 為 null 時，Prefix 應回傳 true 交由 vanilla 處理");
+            Assert.IsNull(result, "mod 為 null 時，result 應保持 null 不變");
         }
 
 

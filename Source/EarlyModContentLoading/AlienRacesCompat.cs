@@ -14,11 +14,16 @@ namespace FasterGameLoading
     /// </summary>
     public static class AlienRacesCompat
     {
+        // 以下兩個旗標僅在主執行緒上讀寫：
+        //   ScheduleRescan 由 ModContentPack_ReloadContentInt_Patch.Postfix 呼叫（RimWorld 主執行緒）
+        //   PerformRescan  由 LongEventHandler.ExecuteWhenFinished 的委派執行（同為主執行緒）
+        // 因此不需要額外的執行緒同步機制。
         private static bool rescanDone = false;
         private static bool isScheduled = false;
 
         /// <summary>
         /// 在所有 Mod 完成 ReloadContentInt 後呼叫，安排在載入完成後重新掃描。
+        /// 僅在主執行緒呼叫，見上方旗標說明。
         /// </summary>
         public static void ScheduleRescan()
         {

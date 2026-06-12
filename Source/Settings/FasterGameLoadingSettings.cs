@@ -75,13 +75,14 @@ namespace FasterGameLoading
             {
                 Find.WindowStack.Add(new Dialog_MessageBox("FGL_DownscaleTexturesConfirmation".Translate(), "Confirm".Translate(), delegate
                 {
-                    FasterGameLoadingMod.Instance.Resizer.DoTextureResizing();
+                    // 防止 Mod 初始化失敗時 Instance 或 Resizer 為 null 導致 NRE
+                    FasterGameLoadingMod.Instance?.Resizer?.DoTextureResizing();
                 }, "GoBack".Translate()));
             }
 
             // Reset texture button (clear cache) + status display
             ls.Gap(4f);
-            var cacheCount = FasterGameLoadingMod.Instance.Resizer.CacheCount;
+            var cacheCount = FasterGameLoadingMod.Instance?.Resizer?.CacheCount ?? 0;
             var cacheStatusText = cacheCount > 0
                 ? "FGL_TextureCacheStatus_Active".Translate(cacheCount)
                 : "FGL_TextureCacheStatus_Empty".Translate();
@@ -91,7 +92,8 @@ namespace FasterGameLoading
             {
                 Find.WindowStack.Add(new Dialog_MessageBox("FGL_ClearTextureCacheConfirmation".Translate(), "Confirm".Translate(), delegate
                 {
-                    FasterGameLoadingMod.Instance.Resizer.ClearCache();
+                    // 防止 Mod 初始化失敗時 Instance 或 Resizer 為 null 導致 NRE
+                    FasterGameLoadingMod.Instance?.Resizer?.ClearCache();
                     LoadedModManager.GetMod<FasterGameLoadingMod>().WriteSettings();
                 }, "GoBack".Translate()));
             }

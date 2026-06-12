@@ -180,7 +180,6 @@ namespace FasterGameLoading
             }
             if (!hasAny) return; // 載入列表尚未初始化完畢，下次再來
 
-            rootsInitialized = true;
             try
             {
                 foreach (var mod in mods)
@@ -211,11 +210,28 @@ namespace FasterGameLoading
                         targetModRoots.Add(root);
                     }
                 }
+                // 迴圈順利完成後才標記初始化，避免例外導致半初始化狀態被永久鎖定
+                rootsInitialized = true;
             }
             catch (Exception ex)
             {
                 FGLLog.Error("Error initializing target mod roots: " + ex);
             }
+        }
+
+        /// <summary>
+        /// 回傳本次啟動已解析完畢的排除 Mod 根目錄集合（排序後），
+        /// 供 AtlasHashCalculator 折入快取失效雜湊，確保 BakingSkipList
+        /// 結果改變時能正確使舊快取失效。
+        /// 若根目錄尚未初始化（RunningMods 尚未就緒），回傳 null 表示不確定。
+        /// </summary>
+        public static IReadOnlyCollection<string> GetResolvedSkipRootsForHash()
+        {
+            if (!rootsInitialized) return null;
+            // 回傳排序後的快照，確保雜湊結果與插入順序無關
+            var sorted = new List<string>(targetModRoots);
+            sorted.Sort(StringComparer.OrdinalIgnoreCase);
+            return sorted;
         }
 
         /// <summary>
@@ -272,7 +288,7 @@ namespace FasterGameLoading
             }
 
             // 2. 實體不同時比對檔名
-            if (!string.IsNullOrEmpty(texture.name) && ModContentLoaderTexture2D_LoadTexture_Patch.skippedBakingTextureNames.Contains(texture.name))
+            if (!string.IsNullOrEmpty(texture.name) && ModContentLoaderTexture2D_LoadTexture_Patch.skippedBakingTextureNames.ContainsKey(texture.name))
             {
                 return true;
             }

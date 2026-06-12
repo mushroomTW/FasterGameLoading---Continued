@@ -28,6 +28,12 @@ namespace FasterGameLoading
         public static bool Prefix(GraphicData __instance, out bool __state)
         {
             __state = false;
+            // 若為 GraphicData 的子類別，可能含有額外欄位，
+            // IsSameGraphicData 無法比對這些欄位，跳過快取以避免回傳錯誤的 Graphic。
+            if (__instance.GetType() != typeof(GraphicData))
+            {
+                return true;
+            }
             if (__instance.texPath.NullOrEmpty() is false)
             {
                 var graphicDatas = savedGraphics.GetOrAdd(__instance.texPath, _ => new List<GraphicData>());

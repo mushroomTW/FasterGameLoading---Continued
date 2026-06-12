@@ -110,21 +110,6 @@ namespace FasterGameLoading
             return false;
         }
 
-        [Obsolete("Use TryDequeueSubSound(out SubSoundDef, out Action) instead")]
-        public bool TryDequeueSubSound(out (SubSoundDef def, Action action) item)
-        {
-            lock (subSoundDefToResolve)
-            {
-                if (subSoundDefToResolve.Count > 0)
-                {
-                    item = subSoundDefToResolve.Dequeue();
-                    return true;
-                }
-            }
-            item = default;
-            return false;
-        }
-
         public void ClearQueues()
         {
             lock (graphicsToLoad) graphicsToLoad.Clear();

@@ -32,7 +32,9 @@ namespace FasterGameLoading
 
             width = ReadBigEndianInt32(header, 16);
             height = ReadBigEndianInt32(header, 20);
-            return width > 0 && height > 0;
+            // 拒絕超出合理範圍的尺寸，防止損毀標頭傳播異常巨大的數值
+            const int MaxSafeDimension = 16384;
+            return width > 0 && height > 0 && width <= MaxSafeDimension && height <= MaxSafeDimension;
         }
 
         private static int ReadBigEndianInt32(byte[] bytes, int offset)

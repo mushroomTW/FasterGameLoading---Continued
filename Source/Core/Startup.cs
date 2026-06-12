@@ -93,18 +93,32 @@ namespace FasterGameLoading
                 }
             });
 
-            // 注入翻譯
-            TranslationInjector.InjectTranslations();
+            // 注入翻譯（包在 try/catch 內，避免例外中斷 StaticConstructorOnStartupUtility.CallAll）
+            try
+            {
+                TranslationInjector.InjectTranslations();
+            }
+            catch (Exception ex)
+            {
+                FGLLog.Error("TranslationInjector.InjectTranslations 執行失敗", ex);
+            }
 
             // 透過 LongEventHandler 排程設定寫入與延遲動作，以避免阻塞啟動流程
-            LongEventHandler.toExecuteWhenFinished.Add(delegate
+            try
             {
-                LoadedModManager.GetMod<FasterGameLoadingMod>().WriteSettings();
-            });
-            LongEventHandler.toExecuteWhenFinished.Add(delegate
+                LongEventHandler.toExecuteWhenFinished.Add(delegate
+                {
+                    LoadedModManager.GetMod<FasterGameLoadingMod>().WriteSettings();
+                });
+                LongEventHandler.toExecuteWhenFinished.Add(delegate
+                {
+                    FasterGameLoadingMod.delayedActions.StartCoroutine(FasterGameLoadingMod.delayedActions.PerformActions());
+                });
+            }
+            catch (Exception ex)
             {
-                FasterGameLoadingMod.delayedActions.StartCoroutine(FasterGameLoadingMod.delayedActions.PerformActions());
-            });
+                FGLLog.Error("LongEventHandler 排程啟動收尾動作時發生錯誤", ex);
+            }
         }
 
         private static void AddPatchAssemblies(IEnumerable<Patch> patches, HashSet<string> patchedAssemblies)

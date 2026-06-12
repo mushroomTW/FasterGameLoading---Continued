@@ -72,7 +72,16 @@ namespace FasterGameLoading
         internal static void LoadKeyedTranslationsFromFile(string filePath, LoadedLanguage language)
         {
             var doc = new XmlDocument();
-            doc.Load(filePath);
+            // 個別捕捉 XmlException，避免單一損毀的翻譯檔案中斷整批注入
+            try
+            {
+                doc.Load(filePath);
+            }
+            catch (Exception ex)
+            {
+                FGLLog.Warning($"無法載入翻譯檔案（已略過）：{filePath}\n{ex.Message}");
+                return;
+            }
             var root = doc.DocumentElement;
             if (root == null)
                 return;

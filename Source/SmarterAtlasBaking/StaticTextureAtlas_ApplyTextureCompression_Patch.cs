@@ -18,16 +18,25 @@ namespace FasterGameLoading
             var applyMethod = AccessTools.Method(typeof(Texture2D), "Apply", new[] { typeof(bool), typeof(bool) });
             var customApplyMethod = AccessTools.Method(typeof(StaticTextureAtlas_ApplyTextureCompression_Patch), nameof(CustomApply));
 
+            int substitutions = 0;
             foreach (var inst in instructions)
             {
                 if (inst.Calls(applyMethod))
                 {
+                    substitutions++;
                     yield return new CodeInstruction(OpCodes.Call, customApplyMethod);
                 }
                 else
                 {
                     yield return inst;
                 }
+            }
+
+            // 若未找到任何 Apply(bool,bool) 呼叫，代表遊戲更新後方法簽章已改變，
+            // 圖集快取在儲存後可能無法讀取紋理資料，需立即警告開發者。
+            if (substitutions == 0)
+            {
+                FGLLog.Warning("StaticTextureAtlas_ApplyTextureCompression_Patch: Transpiler found no Apply(bool,bool) call to replace. The patch may be broken due to a game update — atlas cache write-back may fail.");
             }
         }
 

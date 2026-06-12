@@ -12,6 +12,7 @@ namespace FasterGameLoading
     [HarmonyPatch(typeof(ModContentPack), "ReloadContentInt")]
     public static class ModContentPack_ReloadContentInt_Patch
     {
+        // loadedMods 僅在主執行緒上存取（Harmony Prefix/Postfix 由 RimWorld 主執行緒觸發）
         internal static readonly HashSet<ModContentPack> loadedMods = new HashSet<ModContentPack>();
 
         static ModContentPack_ReloadContentInt_Patch()
@@ -35,8 +36,11 @@ namespace FasterGameLoading
         {
             loadedMods.Add(__instance);
 
-            // 所有 Mod 皆已完成 ReloadContentInt 後，安排 Alien Races 重新掃描
-            if (LoadedModManager.RunningMods.All(m => loadedMods.Contains(m)))
+            // 先以數量比對短路，避免每次都對所有 Mod 執行 O(n) Contains 查詢（整體 O(n²)）
+            // 數量相符後才執行完整的 All() 確認，確保沒有遺漏
+            var runningMods = LoadedModManager.RunningMods;
+            if (loadedMods.Count >= runningMods.Count()
+                && runningMods.All(m => loadedMods.Contains(m)))
             {
                 AlienRacesCompat.ScheduleRescan();
             }

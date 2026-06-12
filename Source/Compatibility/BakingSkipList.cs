@@ -180,7 +180,6 @@ namespace FasterGameLoading
             }
             if (!hasAny) return; // 載入列表尚未初始化完畢，下次再來
 
-            rootsInitialized = true;
             try
             {
                 foreach (var mod in mods)
@@ -211,6 +210,8 @@ namespace FasterGameLoading
                         targetModRoots.Add(root);
                     }
                 }
+                // 迴圈順利完成後才標記初始化，避免例外導致半初始化狀態被永久鎖定
+                rootsInitialized = true;
             }
             catch (Exception ex)
             {
@@ -272,7 +273,7 @@ namespace FasterGameLoading
             }
 
             // 2. 實體不同時比對檔名
-            if (!string.IsNullOrEmpty(texture.name) && ModContentLoaderTexture2D_LoadTexture_Patch.skippedBakingTextureNames.Contains(texture.name))
+            if (!string.IsNullOrEmpty(texture.name) && ModContentLoaderTexture2D_LoadTexture_Patch.skippedBakingTextureNames.ContainsKey(texture.name))
             {
                 return true;
             }

@@ -72,6 +72,11 @@ namespace FasterGameLoading
         /// 前置攔截：如果已經有全類型快取且組件數量一致，則直接回傳快取結果並跳過原方法。
         /// 若組件數量改變（例如在加載期新加載了其他 Mod 的 DLL），則判定快取失效並重新載入。
         /// </summary>
+        /// <remarks>
+        /// 快取失效策略假設：RimWorld 啟動期間 AppDomain 的組件集合只會增加（不會移除），
+        /// 因此「數量相同 ≡ 集合相同」的等價關係成立。
+        /// 若未來版本的 .NET 或 RimWorld 允許動態卸載組件，此假設需要重新評估。
+        /// </remarks>
         public static bool Prefix(ref IEnumerable<Type> __result)
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();

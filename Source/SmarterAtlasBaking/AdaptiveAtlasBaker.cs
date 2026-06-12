@@ -64,7 +64,7 @@ namespace FasterGameLoading
                 var key = kvp.Key;
                 var allTexturesForThisGroup = kvp.Value.Item1.ToList();
 
-                int pixelsInCurrentSlice = 0;
+                long pixelsInCurrentSlice = 0;
                 var batchForNextBake = new List<(Texture2D main, Texture2D mask)>();
                 var bakedAtlasesForGroup = new List<StaticTextureAtlas>();
 
@@ -77,7 +77,8 @@ namespace FasterGameLoading
                         ? m : null;
 
                     batchForNextBake.Add((texture, mask));
-                    pixelsInCurrentSlice += texture.width * texture.height;
+                    // 使用 long 乘積避免大尺寸紋理造成 int 溢位
+                    pixelsInCurrentSlice += (long)texture.width * texture.height;
 
                     if (pixelsInCurrentSlice >= adaptivePixelsPerSlice)
                     {
@@ -147,7 +148,7 @@ namespace FasterGameLoading
             List<(Texture2D main, Texture2D mask)> batch,
             List<StaticTextureAtlas> bakedAtlases,
             Stopwatch bakeStopwatch,
-            int pixelsInThisSlice,
+            long pixelsInThisSlice,
             ref float measuredBakeSpeed,
             ref int adaptivePixelsPerSlice,
             float targetBakeTime,

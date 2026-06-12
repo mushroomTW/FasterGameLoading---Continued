@@ -133,8 +133,14 @@ namespace FasterGameLoading
                 SessionCache.xmlMetadataHashByMod = nextMetadataHashes;
                 SessionCache.xmlContentHashByMod = nextContentHashes;
 
-                // 維護與現有單元測試及全域雜湊的相容性 (Sum 所有 contentHash)
-                long newCombinedHash = nextContentHashes.Values.Sum();
+                // 以確定性排序後進行順序敏感折疊（polynomial rolling hash），
+                // 避免不同檔案的變更互相抵消導致雜湊碰撞。
+                // 注意：此變更會使現有快取在下次啟動時失效一次，屬預期行為。
+                long newCombinedHash = 0;
+                foreach (var key in nextContentHashes.Keys.OrderBy(k => k, StringComparer.Ordinal))
+                {
+                    newCombinedHash = unchecked(newCombinedHash * 31 + nextContentHashes[key]);
+                }
                 
                 if (FasterGameLoadingSettings.VerboseLogging)
                 {
@@ -164,7 +170,10 @@ namespace FasterGameLoading
         {
             try
             {
-                foreach (var file in Directory.EnumerateFiles(dirPath, "*.xml", SearchOption.AllDirectories))
+                // 排序後再折疊，確保跨平台與跨次執行的確定性
+                var files = Directory.EnumerateFiles(dirPath, "*.xml", SearchOption.AllDirectories)
+                                     .OrderBy(f => f, StringComparer.Ordinal);
+                foreach (var file in files)
                 {
                     try
                     {
@@ -174,7 +183,7 @@ namespace FasterGameLoading
                             long fileHash = 17;
                             fileHash = fileHash * 31 + info.LastWriteTimeUtc.Ticks;
                             fileHash = fileHash * 31 + info.Length;
-                            combinedHash += fileHash;
+                            combinedHash = unchecked(combinedHash * 31 + fileHash);
                             xmlCount++;
                         }
                     }
@@ -194,7 +203,10 @@ namespace FasterGameLoading
         {
             try
             {
-                foreach (var file in Directory.EnumerateFiles(dirPath, "*.xml", SearchOption.AllDirectories))
+                // 排序後再折疊，確保跨平台與跨次執行的確定性
+                var files = Directory.EnumerateFiles(dirPath, "*.xml", SearchOption.AllDirectories)
+                                     .OrderBy(f => f, StringComparer.Ordinal);
+                foreach (var file in files)
                 {
                     try
                     {
@@ -204,7 +216,7 @@ namespace FasterGameLoading
                             long fileHash = 17;
                             fileHash = fileHash * 31 + info.Length;
                             fileHash = fileHash * 31 + GetFileContentHash(file);
-                            combinedHash += fileHash;
+                            combinedHash = unchecked(combinedHash * 31 + fileHash);
                         }
                     }
                     catch

@@ -55,7 +55,8 @@ namespace FasterGameLoading
                 return path.Replace('\\', '/');
             }
 
-            return (texture?.name ?? "<null>") + "#" + texture?.GetInstanceID();
+            // GetInstanceID() 每次啟動都不同，改用名稱+尺寸組成穩定備用鍵，避免持久化雜湊每次失效
+            return (texture?.name ?? "<null>") + "#" + texture?.width + "x" + texture?.height;
         }
     }
 }

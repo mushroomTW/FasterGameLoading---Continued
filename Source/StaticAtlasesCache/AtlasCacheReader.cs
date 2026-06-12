@@ -99,7 +99,8 @@ namespace FasterGameLoading
                 }
                 else
                 {
-                    var texName = i < info.textureNames.Count ? info.textureNames[i] : texKey;
+                    // 5b：textureNames 可能為 null（舊版快取或序列化遺失）
+                    var texName = (info.textureNames != null && i < info.textureNames.Count) ? info.textureNames[i] : texKey;
                     FGLLog.Warning("Texture missing from queue during cache load: " + texName);
                     return false;
                 }
@@ -124,6 +125,26 @@ namespace FasterGameLoading
             }
         }
 
+        /// <summary>計算指定格式與尺寸的 Texture2D 原始位元組預期大小，用於載入前驗證。</summary>
+        private static int GetExpectedRawSize(int width, int height, TextureFormat format)
+        {
+            // 常見的非壓縮格式：每像素位元組數固定
+            switch (format)
+            {
+                case TextureFormat.RGBA32: return width * height * 4;
+                case TextureFormat.RGB24:  return width * height * 3;
+                case TextureFormat.Alpha8: return width * height;
+                case TextureFormat.R8:     return width * height;
+                case TextureFormat.RG16:   return width * height * 2;
+                case TextureFormat.RGBA64: return width * height * 8;
+                // DXT1/BC1：每 4×4 區塊 8 bytes
+                case TextureFormat.DXT1:   return Mathf.Max(1, (width + 3) / 4) * Mathf.Max(1, (height + 3) / 4) * 8;
+                // DXT5/BC3：每 4×4 區塊 16 bytes
+                case TextureFormat.DXT5:   return Mathf.Max(1, (width + 3) / 4) * Mathf.Max(1, (height + 3) / 4) * 16;
+                default:                   return -1; // 未知格式，跳過大小驗證
+            }
+        }
+
         private static bool LoadColorAndMaskTextures(StaticAtlasCache.AtlasInfo info, StaticTextureAtlas atlas, TextureAtlasGroupKey key)
         {
             var colorPath = Path.Combine(StaticAtlasCache.CacheDirectory, info.colorFile);
@@ -133,6 +154,16 @@ namespace FasterGameLoading
             }
 
             var colorBytes = File.ReadAllBytes(colorPath);
+
+            // 5a：載入前驗證位元組數，防止截斷檔案導致 LoadRawTextureData 崩潰
+            var colorExpected = GetExpectedRawSize(info.width, info.height, (TextureFormat)info.format);
+            // 僅檢查「不足」:來源紋理若帶有 mip chain,位元組數會多於基底層,屬合法情況
+            if (colorExpected > 0 && colorBytes.Length < colorExpected)
+            {
+                FGLLog.Warning($"Atlas cache file truncated for {info.colorFile}: expected at least {colorExpected} bytes, got {colorBytes.Length}. Skipping cache entry.");
+                return false;
+            }
+
             var colorTex = new Texture2D(info.width, info.height, (TextureFormat)info.format, false);
             try
             {
@@ -160,6 +191,18 @@ namespace FasterGameLoading
                 try
                 {
                     var maskBytes = File.ReadAllBytes(maskPath);
+
+                    // 5a：遮罩位元組數驗證
+                    var maskExpected = GetExpectedRawSize(info.width, info.height, (TextureFormat)maskFormat);
+                    // 僅檢查「不足」,容許 mip chain 額外位元組
+                    if (maskExpected > 0 && maskBytes.Length < maskExpected)
+                    {
+                        FGLLog.Warning($"Atlas cache file truncated for {info.maskFile}: expected at least {maskExpected} bytes, got {maskBytes.Length}. Skipping cache entry.");
+                        UnityEngine.Object.Destroy(maskTex);
+                        DestroyAtlasTextures(atlas);
+                        return false;
+                    }
+
                     maskTex.LoadRawTextureData(maskBytes);
                     maskTex.Apply(true, true);
                     maskTex.name = "StaticAtlasMask_" + info.group;

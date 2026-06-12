@@ -25,7 +25,16 @@ namespace FasterGameLoading
         {
             LongEventHandler.ExecuteWhenFinished(delegate
             {
-                OnDefsLoaded(__instance);
+                // 防禦性包覆：若 HugsLib 版本異動導致 ReversePatch stub 未能綁定，
+                // 會在此處拋出 NotImplementedException，須捕捉以免中斷主執行緒載入流程
+                try
+                {
+                    OnDefsLoaded(__instance);
+                }
+                catch (Exception ex)
+                {
+                    FGLLog.Error("HugsLib OnDefsLoaded 重新導向執行失敗（HugsLib 版本可能不相容）：", ex);
+                }
             });
             return false;
         }

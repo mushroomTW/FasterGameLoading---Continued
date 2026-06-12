@@ -20,13 +20,16 @@ namespace FasterGameLoading
         /// <param name="loadedDefs">存放已載入的 ThingDef 清單，供後續更新地圖網格使用。</param>
         public static IEnumerator LoadDeferredGraphicsCoroutine(DelayedActions delayedActions, List<ThingDef> loadedDefs)
         {
-            delayedActions.StartStopwatch();
+            delayedActions.RestartStopwatch();
             FGLLog.Message("Starting deferred graphics: " + delayedActions.GraphicsToLoadCount);
             while (delayedActions.GraphicsToLoadCount > 0)
             {
+                // 協程只在主執行緒被恢復執行，此檢查僅為防禦性保護。
+                // 若非主執行緒，讓出執行權後由外層 while 重新檢查，不落穿到 Unity 工作。
                 if (UnityData.IsInMainThread is false)
                 {
                     yield return 0;
+                    continue;
                 }
                 while (delayedActions.GraphicsToLoadCount > 0 && !delayedActions.IsOverBudget)
                 {
@@ -35,10 +38,12 @@ namespace FasterGameLoading
                     if (!delayedActions.TryDequeueGraphic(out def, out action))
                         break;
 
+                    bool graphicActionSucceeded = false;
                     try
                     {
                         action();
                         loadedDefs.Add(def);
+                        graphicActionSucceeded = true;
 
                         // 圖形剛載入完成，重新解析 UI 圖示。
                         // BuildableDef.PostLoad 的圖示回呼在 ExecuteWhenFinished 階段以正常時機執行，
@@ -69,7 +74,11 @@ namespace FasterGameLoading
                     {
                         FGLLog.Warning("Error loading graphic for " + def + ": ", ex);
                     }
-                    def.plant?.PostLoadSpecial(def);
+                    // 僅在圖形動作成功後才呼叫 PostLoadSpecial，避免傳入損壞的圖形資料
+                    if (graphicActionSucceeded)
+                    {
+                        def.plant?.PostLoadSpecial(def);
+                    }
                 }
 
                 if (delayedActions.GraphicsToLoadCount > 0)
@@ -157,7 +166,8 @@ namespace FasterGameLoading
 
         /// <summary>
         /// 在時間預算內批次解析延遲的 SubSoundDef。
-        /// 完成後由 World_FinalizeInit_Patch 負責解除 SoundStarter 攔截。
+        /// 此協程僅負責消耗佇列；取消 SoundStarter 攔截的職責由
+        /// World_FinalizeInit_Patch.Postfix 在確認佇列清空後統一執行。
         /// </summary>
         /// <param name="delayedActions">延遲動作管理器實例。</param>
         public static IEnumerator ResolveSubSoundDefsCoroutine(DelayedActions delayedActions)
@@ -189,7 +199,9 @@ namespace FasterGameLoading
                     delayedActions.RestartStopwatch();
                 }
             }
-            SoundStarter_Patch.Unpatch();
+            // 注意：不在此處呼叫 Unpatch()。
+            // World_FinalizeInit_Patch.ExecuteWhenFinished 負責排空佇列並呼叫 Unpatch()，
+            // 確保在佇列確實清空後才取消攔截，且 SoundStarter_Patch.Unpatch() 內部有防重入保護。
             FGLLog.Message("SubSoundDef resolution complete");
         }
     }

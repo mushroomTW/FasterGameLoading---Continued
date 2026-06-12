@@ -18,6 +18,7 @@ FasterGameLoading/ (專案根目錄)
 ├── SteamDescriptions/    # Steam 商店頁面說明配置
 └── Source/               # 模組 C# 源碼目錄
     ├── Core/             # 模組入口點與初始化 (Mod 進入點、Startup 收尾、翻譯注入註冊)
+    ├── Language/         # 翻譯注入器 (TranslationInjector、執行期注入模組翻譯鍵值)
     ├── Settings/         # 模組設定與跨會話 (Session) 載入歷史快取管理
     ├── XMLLoadingCache/  # XML 與資料載入優化 (多執行緒並行 XML 載入與 XPath 缺失快取)
     ├── EarlyModContentLoading/ # 提早載入與型別反射快取 (AccessTools、GenTypes 反射查詢快取)
@@ -153,7 +154,8 @@ graph TD
 * **技術細節**：
   * 攔截圖集烘焙結果，將烘焙好的圖集貼圖與座標映射數據直接以二進位快取（Binary Cache）形式持久化存檔。
   * 下次啟動遊戲時，如果檢測到 Mod 列表與順序沒有變更，直接讀取快取中的圖集，跳過整個複雜的靜態圖集重新拼合與計算過程。
-  * **快取版本 v3**：快取 manifest 會記錄每張貼圖的來源路徑 key，並將 mask 貼圖納入佇列雜湊，避免不同 Mod 的同名貼圖、同尺寸貼圖或遮罩變更造成錯誤快取命中。舊版圖集快取會自動失效並重建。
+  * **快取版本 v4**：快取 manifest 會記錄每張貼圖的來源路徑 key，並將 mask 貼圖納入佇列雜湊，避免不同 Mod 的同名貼圖、同尺寸貼圖或遮罩變更造成錯誤快取命中。模組組合雜湊額外折入圖集排除名單（BakingSkipList）解析結果、Unity 與遊戲版本字串、以及貼圖壓縮設定，確保任何影響烘焙輸出的因子變更時舊快取都能正確失效。manifest 同時記錄彩色貼圖的 mip 層數與遮罩貼圖的實際尺寸，快取還原時可完整重現原版烘焙的遠距離渲染品質。舊版圖集快取會自動失效並重建。
+  * **載入前完整性驗證**：讀取快取時會依貼圖格式（RGBA32、DXT1/DXT5 等）預先計算期望位元組數，若快取檔案遭截斷或損毀則跳過該快取項目並回退至正常烘焙，防止 `LoadRawTextureData` 崩潰。
 
 ---
 

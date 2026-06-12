@@ -199,9 +199,9 @@ namespace FasterGameLoading
                     delayedActions.RestartStopwatch();
                 }
             }
-            // 注意：不在此處呼叫 Unpatch()。
-            // World_FinalizeInit_Patch.ExecuteWhenFinished 負責排空佇列並呼叫 Unpatch()，
-            // 確保在佇列確實清空後才取消攔截，且 SoundStarter_Patch.Unpatch() 內部有防重入保護。
+            // 協程已執行完畢，所有延遲的 SubSoundDef 已解析完成，在此時安全取消攔截，
+            // 確保若玩家留在主選單也能正常播放按鈕與背景聲音。
+            SoundStarter_Patch.Unpatch();
             FGLLog.Message("SubSoundDef resolution complete");
         }
     }

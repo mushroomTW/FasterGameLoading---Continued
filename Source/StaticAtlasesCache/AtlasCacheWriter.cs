@@ -107,6 +107,8 @@ namespace FasterGameLoading
                 width = atlas.colorTexture.width,
                 height = atlas.colorTexture.height,
                 format = (int)atlas.colorTexture.format,
+                // 記錄 mip 層數：原版 colorTexture 帶 mip chain，還原時須保持等價
+                mipCount = atlas.colorTexture.mipmapCount,
                 textureNames = texNames,
                 textureKeys = texKeys,
                 uvRects = uvRects,
@@ -161,9 +163,12 @@ namespace FasterGameLoading
                 bool maskLoadFailed = false;
                 try
                 {
-                    maskBytes = GetRawBytesSafe(atlas.maskTexture, out var newFormatMask, out _, out _);
+                    maskBytes = GetRawBytesSafe(atlas.maskTexture, out var newFormatMask, out var maskActualW, out var maskActualH);
                     info.maskFormat = (int)newFormatMask;
-                    // 遮罩紋理與彩色紋理共用相同尺寸，尺寸已於彩色步驟更新，此處不重複寫入
+                    // fallback 路徑因 4 對齊，遮罩尺寸可能與彩色紋理不同，需分開記錄。
+                    // maskWidth/maskHeight 為 0 時 reader 回退使用 color 尺寸（向後相容）。
+                    info.maskWidth = maskActualW;
+                    info.maskHeight = maskActualH;
                 }
                 catch (Exception e)
                 {

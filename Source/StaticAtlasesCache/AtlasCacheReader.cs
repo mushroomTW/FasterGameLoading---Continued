@@ -66,12 +66,21 @@ namespace FasterGameLoading
         private static bool ValidateManifest(StaticAtlasCache.Manifest manifest)
         {
             if (manifest == null) return false;
-            if (manifest.version != 3) return false;
+            if (manifest.version != 4) return false;
             if (manifest.modsHash != AtlasHashCalculator.ComputeModsHash()) return false;
             if (manifest.queueHash != AtlasHashCalculator.ComputeQueueHash()) return false;
             return true;
         }
 
+        /// <summary>
+        /// 從快取 manifest 還原單一圖集並插入 cachedAtlases。
+        ///
+        /// 時序契約：此方法必須在 PerformAdaptiveStaticAtlasBake 清空 buildQueue 之前執行，
+        /// 即 TryLoadFromCache() 必須在烘焙協程啟動前完成。
+        /// RebuildAtlas 依賴 buildQueue 中紋理的「位置配對」還原 uvRects：
+        /// textures[i] 對應 uvRects[i]，順序由 Insert 呼叫順序決定，
+        /// 與 StaticTextureAtlas.Insert（只做 textures.Add）保持一致。
+        /// </summary>
         private static bool RebuildAtlas(StaticAtlasCache.AtlasInfo info, List<StaticTextureAtlas> cachedAtlases)
         {
             var key = new TextureAtlasGroupKey { group = (TextureAtlasGroup)info.group, hasMask = info.hasMask };
@@ -79,6 +88,8 @@ namespace FasterGameLoading
 
             if (!GlobalTextureAtlasManager.buildQueue.ContainsKey(key))
             {
+                // textureKey 不在 buildQueue：可能是 BakingSkipList 或佇列尚未填入
+                FGLLog.Warning($"Atlas cache: buildQueue does not contain key (group={info.group}, hasMask={info.hasMask}). Cache entry skipped.");
                 return false;
             }
 
@@ -99,11 +110,21 @@ namespace FasterGameLoading
                 }
                 else
                 {
-                    // 5b：textureNames 可能為 null（舊版快取或序列化遺失）
+                    // textureKey 不在 buildQueue：可能是 BakingSkipList 在本次啟動攔截了該紋理，
+                    // 或 mod 組合改變導致紋理缺失；應放棄此快取條目。
                     var texName = (info.textureNames != null && i < info.textureNames.Count) ? info.textureNames[i] : texKey;
-                    FGLLog.Warning("Texture missing from queue during cache load: " + texName);
+                    FGLLog.Warning($"Atlas cache: texture missing from buildQueue during cache load (key={texKey}, name={texName}). Cache entry skipped.");
                     return false;
                 }
+            }
+
+            // UV 配對防護：Insert 完成後驗證插入的紋理數與 uvRects 數量一致。
+            // StaticTextureAtlas.Insert 只做 textures.Add，故 atlas.textures.Count == 插入次數。
+            // BuildMeshesForUvs 逐索引配對 textures[i] ↔ uvRects[i]，數量不符會造成越界或錯誤配對。
+            if (atlas.textures.Count != info.uvRects.Count)
+            {
+                FGLLog.Warning($"Atlas cache: texture count ({atlas.textures.Count}) != uvRects count ({info.uvRects.Count}) for group={info.group}. Cache entry skipped.");
+                return false;
             }
 
             if (!LoadColorAndMaskTextures(info, atlas, key))
@@ -120,6 +141,10 @@ namespace FasterGameLoading
             catch (Exception ex)
             {
                 FGLLog.Warning($"Failed to build meshes for atlas group {info.group}: {ex.Message}");
+                // 項目7：BuildMeshesForUvs 可能已部分建立 tiles 中的 mesh，
+                // 呼叫 atlas.Destroy() 確保所有 mesh 被銷毀，再清理紋理。
+                // Unity Object.Destroy 對已銷毀的物件是安全的，重複呼叫不會崩潰。
+                try { atlas.Destroy(); } catch { /* 忽略 Destroy 例外，下方仍清理紋理 */ }
                 DestroyAtlasTextures(atlas);
                 return false;
             }
@@ -164,7 +189,10 @@ namespace FasterGameLoading
                 return false;
             }
 
-            var colorTex = new Texture2D(info.width, info.height, (TextureFormat)info.format, false);
+            // 項目2：原版 colorTexture 帶 mip chain（mipCount > 1），還原時須保持等價以維持遠距離渲染品質。
+            // mipCount <= 1 或欄位缺失（舊版 manifest，值為 0）時，以 false 建構（無 mip），向後相容。
+            bool colorHasMips = info.mipCount > 1;
+            var colorTex = new Texture2D(info.width, info.height, (TextureFormat)info.format, colorHasMips);
             try
             {
                 colorTex.LoadRawTextureData(colorBytes);
@@ -187,13 +215,17 @@ namespace FasterGameLoading
                     return false;
                 }
                 var maskFormat = info.maskFormat != 0 ? info.maskFormat : info.format;
-                var maskTex = new Texture2D(info.width, info.height, (TextureFormat)maskFormat, false);
+                // 項目3：mask fallback 路徑因 4 對齊可能與 color 尺寸不同，
+                // maskWidth/maskHeight 為 0 時（舊版 manifest 或尺寸相同）回退使用 color 尺寸，向後相容。
+                var maskW = info.maskWidth > 0 ? info.maskWidth : info.width;
+                var maskH = info.maskHeight > 0 ? info.maskHeight : info.height;
+                var maskTex = new Texture2D(maskW, maskH, (TextureFormat)maskFormat, false);
                 try
                 {
                     var maskBytes = File.ReadAllBytes(maskPath);
 
-                    // 5a：遮罩位元組數驗證
-                    var maskExpected = GetExpectedRawSize(info.width, info.height, (TextureFormat)maskFormat);
+                    // 5a：遮罩位元組數驗證，使用 mask 實際尺寸
+                    var maskExpected = GetExpectedRawSize(maskW, maskH, (TextureFormat)maskFormat);
                     // 僅檢查「不足」,容許 mip chain 額外位元組
                     if (maskExpected > 0 && maskBytes.Length < maskExpected)
                     {

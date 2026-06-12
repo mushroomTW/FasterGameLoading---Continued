@@ -220,6 +220,21 @@ namespace FasterGameLoading
         }
 
         /// <summary>
+        /// 回傳本次啟動已解析完畢的排除 Mod 根目錄集合（排序後），
+        /// 供 AtlasHashCalculator 折入快取失效雜湊，確保 BakingSkipList
+        /// 結果改變時能正確使舊快取失效。
+        /// 若根目錄尚未初始化（RunningMods 尚未就緒），回傳 null 表示不確定。
+        /// </summary>
+        public static IReadOnlyCollection<string> GetResolvedSkipRootsForHash()
+        {
+            if (!rootsInitialized) return null;
+            // 回傳排序後的快照，確保雜湊結果與插入順序無關
+            var sorted = new List<string>(targetModRoots);
+            sorted.Sort(StringComparer.OrdinalIgnoreCase);
+            return sorted;
+        }
+
+        /// <summary>
         /// 判斷指定紋理路徑是否屬於需要排除烘焙的目標 Mod。
         /// </summary>
         public static bool ShouldSkipBaking(string path)

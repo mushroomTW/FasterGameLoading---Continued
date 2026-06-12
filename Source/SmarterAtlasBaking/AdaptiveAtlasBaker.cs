@@ -167,7 +167,13 @@ namespace FasterGameLoading
 
                 if (batch.Count == 1)
                 {
-                    // Bake() 不支援單一紋理，直接設定
+                    // 單紋理批次：Bake() 不支援單一紋理，改為直接指定 colorTexture/maskTexture
+                    // 並呼叫 BuildMeshesForUvs([全幅 UV])。
+                    // BuildMeshesForUvs 會完整填入 atlas.tiles（textures[0] → uvRect(0,0,1,1)），
+                    // 與多紋理路徑呼叫 Bake() 後的 tiles 結構等價，故此路徑正確。
+                    // 審查曾疑慮「UV 退化」與「material 重建」，經反編譯確認：
+                    //   - BuildMeshesForUvs 完整建立 tiles，無 UV 退化問題；
+                    //   - StaticTextureAtlasTile 無 material 欄位，material 疑慮不成立。
                     atlas.colorTexture = batch[0].main;
                     if (key.hasMask)
                     {

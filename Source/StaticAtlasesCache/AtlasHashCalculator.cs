@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using UnityEngine;
 using Verse;
 
 namespace FasterGameLoading
@@ -13,13 +14,40 @@ namespace FasterGameLoading
     {
         /// <summary>
         /// 計算目前載入 mod 組合的 MD5 hash，用於驗證快取是否過期。
+        /// 除了 mod 清單之外，還折入以下影響烘焙輸出的因子：
+        /// (a) BakingSkipList 已解析的排除根目錄（若已初始化），確保跨啟動非確定性
+        ///     的 IsAlienRaceMod 偵測結果改變時能使舊快取失效；
+        /// (b) Unity / 遊戲版本字串，避免引擎升級後舊格式快取被誤命中；
+        /// (c) 會影響烘焙輸出的模組設定（目前為壓縮開關）。
         /// </summary>
         public static string ComputeModsHash()
         {
             var activeMods = ModsConfig.ActiveModsInLoadOrder.Select(x => x.packageIdLowerCase).ToList();
-            var str = string.Join(",", activeMods);
+            var sb = new StringBuilder();
+            sb.Append(string.Join(",", activeMods));
+
+            // (a) BakingSkipList 排除根目錄（已排序，跨啟動穩定）
+            //     若尚未初始化（RunningMods 還沒就緒）則略過，
+            //     此時 queueHash 的紋理鍵會涵蓋差異，可接受。
+            var skipRoots = SmartBakingSkipList.GetResolvedSkipRootsForHash();
+            if (skipRoots != null)
+            {
+                sb.Append("|skip:");
+                foreach (var root in skipRoots)
+                {
+                    sb.Append(root).Append(';');
+                }
+            }
+
+            // (b) Unity 版本與遊戲版本，引擎升級後格式可能改變
+            sb.Append("|unity:").Append(Application.unityVersion);
+            sb.Append("|game:").Append(RimWorld.VersionControl.CurrentVersionString);
+
+            // (c) 影響烘焙輸出的設定：壓縮開關決定是否走 DXT5 壓縮路徑
+            sb.Append("|prefs.tc:").Append(Prefs.TextureCompression ? 1 : 0);
+
             using var md5 = MD5.Create();
-            return string.Concat(md5.ComputeHash(Encoding.UTF8.GetBytes(str)).Select(b => b.ToString("x2")));
+            return string.Concat(md5.ComputeHash(Encoding.UTF8.GetBytes(sb.ToString())).Select(b => b.ToString("x2")));
         }
 
         /// <summary>

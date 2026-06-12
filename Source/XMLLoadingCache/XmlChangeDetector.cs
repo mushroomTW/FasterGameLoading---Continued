@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
 using Verse;
 
 namespace FasterGameLoading
@@ -8,6 +10,7 @@ namespace FasterGameLoading
     /// <summary>
     /// 在背景執行緒中異步掃描所有啟用中第三方 Mod 的 XML 檔案，
     /// 計算累積雜湊值以偵測檔案內容異動，並動態決定是否失效快取。
+    /// 採用雙層雜湊檢測，避免因 Steam 同步更新導致修改時間變更，但內容未變時，錯誤重置 XPath 快取。
     /// </summary>
     public static class XmlChangeDetector
     {
@@ -26,9 +29,12 @@ namespace FasterGameLoading
 
             try
             {
-                long combinedHash = 0;
-                int xmlCount = 0;
+                bool anyContentChanged = false;
+                
+                var nextMetadataHashes = new Dictionary<string, long>();
+                var nextContentHashes = new Dictionary<string, long>();
 
+                // 1. 掃描所有 Mod
                 if (modPaths != null)
                 {
                     foreach (var modPath in modPaths)
@@ -36,41 +42,110 @@ namespace FasterGameLoading
                         if (string.IsNullOrEmpty(modPath) || !Directory.Exists(modPath))
                             continue;
 
+                        var key = modPath.ToLowerInvariant();
+                        long metadataHash = 0;
+                        int xmlCount = 0;
+
                         // 掃描 Defs 目錄
                         var defsPath = Path.Combine(modPath, FGLConsts.DefsDirName);
                         if (Directory.Exists(defsPath))
                         {
-                            ScanDirectory(defsPath, ref combinedHash, ref xmlCount);
+                            ScanDirectoryMetadata(defsPath, ref metadataHash, ref xmlCount);
                         }
 
                         // 掃描 Patches 目錄
                         var patchesPath = Path.Combine(modPath, FGLConsts.PatchesDirName);
                         if (Directory.Exists(patchesPath))
                         {
-                            ScanDirectory(patchesPath, ref combinedHash, ref xmlCount);
+                            ScanDirectoryMetadata(patchesPath, ref metadataHash, ref xmlCount);
+                        }
+
+                        nextMetadataHashes[key] = metadataHash;
+
+                        // 檢查 metadata 雜湊
+                        long lastMetadataHash = 0;
+                        SessionCache.xmlMetadataHashByMod.TryGetValue(key, out lastMetadataHash);
+
+                        long contentHash = 0;
+                        if (metadataHash == lastMetadataHash && SessionCache.xmlContentHashByMod.TryGetValue(key, out contentHash))
+                        {
+                            // Metadata 完全沒變，代表檔案沒變，直接沿用上次的實質內容雜湊
+                            nextContentHashes[key] = contentHash;
+                        }
+                        else
+                        {
+                            // Metadata 改變了（例如 Steam 下載更新、玩家手動修改等）
+                            // 深入讀取 XML 檔案內容並計算實質的 MD5 contentHash
+                            contentHash = 0;
+                            if (Directory.Exists(defsPath))
+                            {
+                                ScanDirectoryContent(defsPath, ref contentHash);
+                            }
+                            if (Directory.Exists(patchesPath))
+                            {
+                                ScanDirectoryContent(patchesPath, ref contentHash);
+                            }
+                            nextContentHashes[key] = contentHash;
+
+                            long lastContentHash = 0;
+                            SessionCache.xmlContentHashByMod.TryGetValue(key, out lastContentHash);
+                            if (contentHash != lastContentHash)
+                            {
+                                anyContentChanged = true;
+                            }
                         }
                     }
                 }
 
-                // 掃描 Config 目錄
+                // 2. 掃描 Config 目錄
                 if (!string.IsNullOrEmpty(configPath) && Directory.Exists(configPath))
                 {
-                    ScanDirectory(configPath, ref combinedHash, ref xmlCount);
+                    var key = configPath.ToLowerInvariant();
+                    long metadataHash = 0;
+                    int xmlCount = 0;
+                    ScanDirectoryMetadata(configPath, ref metadataHash, ref xmlCount);
+                    nextMetadataHashes[key] = metadataHash;
+
+                    long lastMetadataHash = 0;
+                    SessionCache.xmlMetadataHashByMod.TryGetValue(key, out lastMetadataHash);
+
+                    long contentHash = 0;
+                    if (metadataHash == lastMetadataHash && SessionCache.xmlContentHashByMod.TryGetValue(key, out contentHash))
+                    {
+                        nextContentHashes[key] = contentHash;
+                    }
+                    else
+                    {
+                        contentHash = 0;
+                        ScanDirectoryContent(configPath, ref contentHash);
+                        nextContentHashes[key] = contentHash;
+
+                        long lastContentHash = 0;
+                        SessionCache.xmlContentHashByMod.TryGetValue(key, out lastContentHash);
+                        if (contentHash != lastContentHash)
+                        {
+                            anyContentChanged = true;
+                        }
+                    }
                 }
 
+                // 3. 更新快取字典
+                SessionCache.xmlMetadataHashByMod = nextMetadataHashes;
+                SessionCache.xmlContentHashByMod = nextContentHashes;
+
+                // 維護與現有單元測試及全域雜湊的相容性 (Sum 所有 contentHash)
+                long newCombinedHash = nextContentHashes.Values.Sum();
+                
                 if (FasterGameLoadingSettings.VerboseLogging)
                 {
-                    FGLLog.Message($"XML scan complete. Found {xmlCount} XML files. Calculated hash: {combinedHash}, last saved hash: {SessionCache.xmlCombinedHashSinceLastSession}");
+                    FGLLog.Message($"XML scan complete. Combined content hash: {newCombinedHash}, last saved hash: {SessionCache.xmlCombinedHashSinceLastSession}");
                 }
 
-                // 比對雜湊值
-                if (SessionCache.xmlCombinedHashSinceLastSession != combinedHash)
+                if (SessionCache.xmlCombinedHashSinceLastSession != newCombinedHash || anyContentChanged)
                 {
-                    // 雜湊不一致，說明玩家修改了 XML，失效 XPath 查詢快取
+                    // 內容實質改變，失效 XPath 查詢快取
                     SessionCache.xmlPathsSinceLastSession.Clear();
-                    SessionCache.xmlCombinedHashSinceLastSession = combinedHash;
-
-                    // 設置旗標，通知主執行緒在 LateUpdate 中儲存更新後的雜湊值
+                    SessionCache.xmlCombinedHashSinceLastSession = newCombinedHash;
                     needWriteSettings = true;
                 }
             }
@@ -85,11 +160,10 @@ namespace FasterGameLoading
             }
         }
 
-        private static void ScanDirectory(string dirPath, ref long combinedHash, ref int xmlCount)
+        private static void ScanDirectoryMetadata(string dirPath, ref long combinedHash, ref int xmlCount)
         {
             try
             {
-                // EnumerateFiles 效能比 GetFiles 佳，在背景異步執行能避免記憶體瞬間大量配發
                 foreach (var file in Directory.EnumerateFiles(dirPath, "*.xml", SearchOption.AllDirectories))
                 {
                     try
@@ -97,7 +171,6 @@ namespace FasterGameLoading
                         var info = new FileInfo(file);
                         if (info.Exists)
                         {
-                            // 改用 Order-Independent 的混合加法雜湊，避免 XOR 雜湊碰撞相互抵消，同時確保檔案遍歷順序不一致時結果仍相同
                             long fileHash = 17;
                             fileHash = fileHash * 31 + info.LastWriteTimeUtc.Ticks;
                             fileHash = fileHash * 31 + info.Length;
@@ -114,6 +187,54 @@ namespace FasterGameLoading
             catch
             {
                 // 忽略整個目錄權限異常
+            }
+        }
+
+        private static void ScanDirectoryContent(string dirPath, ref long combinedHash)
+        {
+            try
+            {
+                foreach (var file in Directory.EnumerateFiles(dirPath, "*.xml", SearchOption.AllDirectories))
+                {
+                    try
+                    {
+                        var info = new FileInfo(file);
+                        if (info.Exists)
+                        {
+                            long fileHash = 17;
+                            fileHash = fileHash * 31 + info.Length;
+                            fileHash = fileHash * 31 + GetFileContentHash(file);
+                            combinedHash += fileHash;
+                        }
+                    }
+                    catch
+                    {
+                        // 忽略個別檔案讀取權限異常
+                    }
+                }
+            }
+            catch
+            {
+                // 忽略整個目錄權限異常
+            }
+        }
+
+        private static long GetFileContentHash(string filePath)
+        {
+            try
+            {
+                using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    using (var md5 = MD5.Create())
+                    {
+                        var hashBytes = md5.ComputeHash(fs);
+                        return BitConverter.ToInt64(hashBytes, 0);
+                    }
+                }
+            }
+            catch
+            {
+                return 0;
             }
         }
     }

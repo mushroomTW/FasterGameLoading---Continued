@@ -48,6 +48,16 @@ namespace FasterGameLoading
         /// </summary>
         internal static long xmlCombinedHashSinceLastSession = 0;
 
+        /// <summary>
+        /// 上一次 session 中每個 Mod 所有 XML 檔案的 metadata 累積雜湊值。
+        /// </summary>
+        internal static Dictionary<string, long> xmlMetadataHashByMod = new();
+
+        /// <summary>
+        /// 上一次 session 中每個 Mod 所有 XML 檔案的實質內容累積雜湊值。
+        /// </summary>
+        internal static Dictionary<string, long> xmlContentHashByMod = new();
+
 
         /// <summary>
         /// 歷次靜態圖集烘焙速度記錄（用於自適應批次調整）。
@@ -102,6 +112,8 @@ namespace FasterGameLoading
             Scribe_Collections.Look(ref tempXmlPaths, FGLConsts.XmlPathsKey, LookMode.Value, LookMode.Value);
 
             Scribe_Values.Look(ref xmlCombinedHashSinceLastSession, "FGL_XmlCombinedHash", 0L);
+            Scribe_Collections.Look(ref xmlMetadataHashByMod, "FGL_XmlMetadataHashByMod", LookMode.Value, LookMode.Value);
+            Scribe_Collections.Look(ref xmlContentHashByMod, "FGL_XmlContentHashByMod", LookMode.Value, LookMode.Value);
             Scribe_Collections.Look(ref modsInLastSession, FGLConsts.ModsInLastSessionKey, LookMode.Value);
             Scribe_Collections.Look(ref historicalBakeSpeeds, FGLConsts.HistoricalBakeSpeedsKey, LookMode.Value);
             Scribe_Collections.Look(ref patchedAssembliesLastSession, "patchedAssembliesLastSession", LookMode.Value);
@@ -139,6 +151,8 @@ namespace FasterGameLoading
                 }
                 
                 modsInLastSession ??= new List<string>();
+                xmlMetadataHashByMod ??= new Dictionary<string, long>();
+                xmlContentHashByMod ??= new Dictionary<string, long>();
                 historicalBakeSpeeds ??= new List<float>();
                 lock (patchedAssembliesLock)
                 {
@@ -172,6 +186,8 @@ namespace FasterGameLoading
                     }
                     loadedTypesByFullNameSinceLastSession.Clear();
                     xmlPathsSinceLastSession.Clear();
+                    xmlMetadataHashByMod.Clear();
+                    xmlContentHashByMod.Clear();
                     lock (patchedAssembliesLock)
                     {
                         patchedAssembliesLastSession.Clear();

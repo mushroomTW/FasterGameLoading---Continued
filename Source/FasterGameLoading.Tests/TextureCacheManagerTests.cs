@@ -67,10 +67,10 @@ namespace FasterGameLoading.Tests
             File.SetLastWriteTimeUtc(originalPath, DateTime.UtcNow.AddMinutes(-3));
             string path4 = manager.GetCachePath(originalPath);
 
-            // 驗證當檔案狀態變更時，產生的快取路徑（MD5）皆不相同，從而實現自動失效
+            // 驗證當檔案長度或存在狀態變更時，產生的快取路徑（MD5）不相同；但若僅修改時間改變，路徑應保持相同以支援 Touch 機制。
             Assert.AreNotEqual(path1, path2);
             Assert.AreNotEqual(path2, path3);
-            Assert.AreNotEqual(path3, path4);
+            Assert.AreEqual(path3, path4);
         }
 
         [Test]

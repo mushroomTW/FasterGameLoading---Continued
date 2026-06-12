@@ -75,7 +75,7 @@ namespace FasterGameLoading
                 var file = new FileInfo(originalPath);
                 if (file.Exists)
                 {
-                    return originalPath + "|" + file.Length + "|" + file.LastWriteTimeUtc.Ticks;
+                    return originalPath + "|" + file.Length;
                 }
             }
             catch (IOException ex)
@@ -145,7 +145,25 @@ namespace FasterGameLoading
                 {
                     return true;
                 }
-                return File.GetLastWriteTimeUtc(cachePath) >= File.GetLastWriteTimeUtc(originalPath);
+                
+                var originalTime = File.GetLastWriteTimeUtc(originalPath);
+                var cacheTime = File.GetLastWriteTimeUtc(cachePath);
+                
+                if (cacheTime >= originalTime)
+                {
+                    return true;
+                }
+                
+                // 原始檔案的修改時間比快取新。若快取路徑的檔名雜湊（基於目前檔案長度）與已儲存的快取路徑一致，
+                // 代表檔案長度並未改變（實質內容未變），此時只需將快取檔案的時間更新為原始檔案時間即可。
+                var currentExpectedPath = GetCachePath(originalPath);
+                if (string.Equals(currentExpectedPath, cachePath, StringComparison.OrdinalIgnoreCase))
+                {
+                    File.SetLastWriteTimeUtc(cachePath, originalTime);
+                    return true;
+                }
+                
+                return false;
             }
             catch (IOException ex)
             {

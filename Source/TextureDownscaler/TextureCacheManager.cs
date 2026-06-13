@@ -83,7 +83,7 @@ namespace FasterGameLoading
                 // 無法讀取檔案資訊（路徑過長、權限不足等），改用純路徑作為快取鍵
                 if (FasterGameLoadingSettings.VerboseLogging)
                 {
-                    FGLLog.Warning("IOException when getting cache key for: " + originalPath, ex);
+                    FGLLog.Warning("FGL_Log_IOExceptionCacheKeyForPath".TranslateWithFallback("IOException when getting cache key for: {0}", originalPath), ex);
                 }
             }
             catch (UnauthorizedAccessException ex)
@@ -91,7 +91,7 @@ namespace FasterGameLoading
                 // 權限不足，改用純路徑作為快取鍵
                 if (FasterGameLoadingSettings.VerboseLogging)
                 {
-                    FGLLog.Warning("UnauthorizedAccessException when getting cache key for: " + originalPath, ex);
+                    FGLLog.Warning("FGL_Log_UnauthorizedAccessExceptionCacheKeyForPath".TranslateWithFallback("UnauthorizedAccessException when getting cache key for: {0}", originalPath), ex);
                 }
             }
             return originalPath;
@@ -190,7 +190,7 @@ namespace FasterGameLoading
             {
                 if (FasterGameLoadingSettings.VerboseLogging)
                 {
-                    FGLLog.Warning("IOException checking cache freshness for: " + originalPath + " and " + cachePath, ex);
+                    FGLLog.Warning("FGL_Log_IOExceptionCheckFreshness".TranslateWithFallback("IOException checking cache freshness for: {0} and {1}", originalPath, cachePath), ex);
                 }
                 return false;
             }
@@ -198,7 +198,7 @@ namespace FasterGameLoading
             {
                 if (FasterGameLoadingSettings.VerboseLogging)
                 {
-                    FGLLog.Warning("UnauthorizedAccessException checking cache freshness for: " + originalPath + " and " + cachePath, ex);
+                    FGLLog.Warning("FGL_Log_UnauthorizedAccessExceptionCheckFreshness".TranslateWithFallback("UnauthorizedAccessException checking cache freshness for: {0} and {1}", originalPath, cachePath), ex);
                 }
                 return false;
             }
@@ -226,15 +226,15 @@ namespace FasterGameLoading
                 {
                     resizedTextureCache.Clear();
                 }
-                FGLLog.Message("Texture cache cleared.");
+                FGLLog.Message("FGL_Log_TextureCacheCleared".TranslateWithFallback("Texture cache cleared."));
             }
             catch (IOException ex)
             {
-                FGLLog.Error("Failed to clear texture cache: ", ex);
+                FGLLog.Error("FGL_Log_FailedToClearTextureCache".TranslateWithFallback("Failed to clear texture cache:"), ex);
             }
             catch (UnauthorizedAccessException ex)
             {
-                FGLLog.Error("Failed to clear texture cache: ", ex);
+                FGLLog.Error("FGL_Log_FailedToClearTextureCache".TranslateWithFallback("Failed to clear texture cache:"), ex);
             }
         }
 
@@ -253,7 +253,7 @@ namespace FasterGameLoading
             }
             catch (Exception ex)
             {
-                FGLLog.Error("Failed to setup staging directory: " + stagingDirectory, ex);
+                FGLLog.Error("FGL_Log_FailedSetupStagingDir".TranslateWithFallback("Failed to setup staging directory: {0}", stagingDirectory), ex);
             }
             lock (cacheLock)
             {
@@ -279,7 +279,7 @@ namespace FasterGameLoading
             }
             catch (Exception ex)
             {
-                FGLLog.Warning("Failed to clean up staging directory: " + stagingDirectory + " error: " + ex.Message);
+                FGLLog.Warning("FGL_Log_FailedCleanStagingDir".TranslateWithFallback("Failed to clean up staging directory: {0} error: {1}", stagingDirectory, ex.Message));
             }
         }
 
@@ -301,7 +301,7 @@ namespace FasterGameLoading
             }
             catch (Exception ex)
             {
-                FGLLog.Error("Failed to replace texture cache directory. Falling back.", ex);
+                FGLLog.Error("FGL_Log_FailedReplaceTextureCacheDirFallback".TranslateWithFallback("Failed to replace texture cache directory. Falling back."), ex);
             }
 
             if (moved)
@@ -389,7 +389,7 @@ namespace FasterGameLoading
                         }
                         catch (Exception ex)
                         {
-                            FGLLog.Warning("Failed to delete obsolete cache file " + entry.Value + ": " + ex.Message);
+                            FGLLog.Warning("FGL_Log_FailedDeleteObsoleteCacheFile".TranslateWithFallback("Failed to delete obsolete cache file {0}: {1}", entry.Value, ex.Message));
                         }
                     }
                     else
@@ -444,18 +444,18 @@ namespace FasterGameLoading
                     }
                     catch (Exception ex)
                     {
-                        FGLLog.Warning("Failed to delete unreferenced cache file " + file + ": " + ex.Message);
+                        FGLLog.Warning("FGL_Log_FailedDeleteUnreferencedCacheFile".TranslateWithFallback("Failed to delete unreferenced cache file {0}: {1}", file, ex.Message));
                     }
                 }
 
                 if (keysToRemove.Count > 0 || deletedObsoleteFiles > 0 || deletedUnreferencedFiles > 0)
                 {
-                    FGLLog.Message($"Cache cleanup completed. Removed {keysToRemove.Count} obsolete cache map entries, deleted {deletedObsoleteFiles} obsolete files and {deletedUnreferencedFiles} unreferenced files.");
+                    FGLLog.Message("FGL_Log_CacheCleanupSummary".TranslateWithFallback("Cache cleanup completed. Removed {0} obsolete cache map entries, deleted {1} obsolete files and {2} unreferenced files.", keysToRemove.Count, deletedObsoleteFiles, deletedUnreferencedFiles));
                 }
             }
             catch (Exception ex)
             {
-                FGLLog.Error("Error during obsolete cache files cleanup: " + ex.Message, ex);
+                FGLLog.Error("FGL_Log_ErrorObsoleteCacheCleanupGeneral".TranslateWithFallback("Error during obsolete cache files cleanup: {0}", ex.Message), ex);
             }
         }
     }

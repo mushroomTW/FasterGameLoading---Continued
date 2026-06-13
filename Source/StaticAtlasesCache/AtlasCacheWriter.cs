@@ -28,7 +28,7 @@ namespace FasterGameLoading
             }
             catch (Exception e)
             {
-                FGLLog.Error("Error creating atlas cache directory: " + e);
+                FGLLog.Error("FGL_Log_ErrorCreatingAtlasCacheDir".TranslateWithFallback("Error creating atlas cache directory: {0}", e));
                 yield break;
             }
 
@@ -61,11 +61,11 @@ namespace FasterGameLoading
                 try
                 {
                     IORetryHelper.WriteAllTextWithRetry(StaticAtlasCache.ManifestPath, JsonUtility.ToJson(manifest, true));
-                    FGLLog.Message("Static atlas cache saved.");
+                    FGLLog.Message("FGL_Log_StaticAtlasCacheSaved".TranslateWithFallback("Static atlas cache saved."));
                 }
                 catch (Exception e)
                 {
-                    FGLLog.Error("Error saving atlas manifest: " + e);
+                    FGLLog.Error("FGL_Log_ErrorSavingAtlasManifest".TranslateWithFallback("Error saving atlas manifest: {0}", e));
                     success = false;
                 }
             }
@@ -128,7 +128,7 @@ namespace FasterGameLoading
             }
             catch (Exception e)
             {
-                FGLLog.Error("Error getting raw bytes for color atlas: " + e);
+                FGLLog.Error("FGL_Log_ErrorGettingRawBytesColor".TranslateWithFallback("Error getting raw bytes for color atlas: {0}", e));
                 colorLoadFailed = true;
             }
 
@@ -145,7 +145,7 @@ namespace FasterGameLoading
             }
             catch (Exception e)
             {
-                FGLLog.Error("Error saving atlas color bytes: " + e);
+                FGLLog.Error("FGL_Log_ErrorSavingAtlasColorBytes".TranslateWithFallback("Error saving atlas color bytes: {0}", e));
                 colorSaveFailed = true;
             }
 
@@ -172,7 +172,7 @@ namespace FasterGameLoading
                 }
                 catch (Exception e)
                 {
-                    FGLLog.Error("Error getting raw bytes for mask atlas: " + e);
+                    FGLLog.Error("FGL_Log_ErrorGettingRawBytesMask".TranslateWithFallback("Error getting raw bytes for mask atlas: {0}", e));
                     maskLoadFailed = true;
                 }
 
@@ -189,7 +189,7 @@ namespace FasterGameLoading
                 }
                 catch (Exception e)
                 {
-                    FGLLog.Error("Error saving atlas mask bytes: " + e);
+                    FGLLog.Error("FGL_Log_ErrorSavingAtlasMaskBytes".TranslateWithFallback("Error saving atlas mask bytes: {0}", e));
                     maskSaveFailed = true;
                 }
 
@@ -220,7 +220,7 @@ namespace FasterGameLoading
                     }
                     catch (Exception ex)
                     {
-                        FGLLog.Warning("Failed to make color atlas texture non-readable: " + ex.Message);
+                        FGLLog.Warning("FGL_Log_FailedToMakeColorAtlasTextureNonReadable".TranslateWithFallback("Failed to make color atlas texture non-readable: {0}", ex.Message));
                     }
                 }
                 if (atlas.maskTexture != null && !atlas.textures.Contains(atlas.maskTexture))
@@ -231,7 +231,7 @@ namespace FasterGameLoading
                     }
                     catch (Exception ex)
                     {
-                        FGLLog.Warning("Failed to make mask atlas texture non-readable: " + ex.Message);
+                        FGLLog.Warning("FGL_Log_FailedToMakeMaskAtlasTextureNonReadable".TranslateWithFallback("Failed to make mask atlas texture non-readable: {0}", ex.Message));
                     }
                 }
             }
@@ -266,7 +266,7 @@ namespace FasterGameLoading
                 // 無法直接讀取紋理資料，改用 RenderTexture fallback
                 if (FasterGameLoadingSettings.VerboseLogging)
                 {
-                    FGLLog.Warning("Cannot read raw texture data directly, falling back to RenderTexture for: " + tex.name, ex);
+                    FGLLog.Warning("FGL_Log_FallbackToRenderTextureForTex".TranslateWithFallback("Cannot read raw texture data directly, falling back to RenderTexture for: {0}", tex.name), ex);
                 }
             }
 

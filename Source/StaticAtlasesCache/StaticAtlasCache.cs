@@ -82,16 +82,16 @@ namespace FasterGameLoading
                 if (Directory.Exists(CacheDirectory))
                 {
                     Directory.Delete(CacheDirectory, true);
-                    FGLLog.Message("Atlas cache cleared.");
+                    FGLLog.Message("FGL_Log_AtlasCacheCleared".TranslateWithFallback("Atlas cache cleared."));
                 }
             }
             catch (IOException ex)
             {
-                FGLLog.Warning("Failed to clear atlas cache: " + ex.Message);
+                FGLLog.Warning("FGL_Log_FailedToClearAtlasCache".TranslateWithFallback("Failed to clear atlas cache: {0}", ex.Message));
             }
             catch (UnauthorizedAccessException ex)
             {
-                FGLLog.Warning("Failed to clear atlas cache: " + ex.Message);
+                FGLLog.Warning("FGL_Log_FailedToClearAtlasCache".TranslateWithFallback("Failed to clear atlas cache: {0}", ex.Message));
             }
         }
 

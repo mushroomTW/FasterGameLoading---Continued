@@ -35,7 +35,7 @@ namespace FasterGameLoading
                     .FirstOrDefault(a => a.GetName().Name == FGLConsts.AlienRaceAssemblyName);
                 if (alienAssembly == null) return;
 
-                FGLLog.Message("Alien Races detected, scheduling extended graphics rescan after loading");
+                FGLLog.Message("FGL_Log_AlienRacesDetectedRescanScheduled".TranslateWithFallback("Alien Races detected, scheduling extended graphics rescan after loading"));
 
                 isScheduled = true;
                 // 使用 LongEventHandler 在載入完成後執行
@@ -45,7 +45,7 @@ namespace FasterGameLoading
             catch (Exception ex)
             {
                 isScheduled = false;
-                FGLLog.Warning("Alien Races detection failed: ", ex);
+                FGLLog.Warning("FGL_Log_AlienRacesDetectionFailed".TranslateWithFallback("Alien Races detection failed:"), ex);
             }
         }
 
@@ -105,11 +105,11 @@ namespace FasterGameLoading
                     if (loadGraphicsHook != null)
                     {
                         loadGraphicsHook.Invoke(null, null);
-                        FGLLog.Message("Alien Races extended graphics rescan complete");
+                        FGLLog.Message("FGL_Log_AlienRacesRescanComplete".TranslateWithFallback("Alien Races extended graphics rescan complete"));
                     }
                     else
                     {
-                        FGLLog.Warning("AlienPartGenerator.LoadGraphicsHook method not found");
+                        FGLLog.Warning("FGL_Log_AlienLoadGraphicsHookNotFound".TranslateWithFallback("AlienPartGenerator.LoadGraphicsHook method not found"));
                     }
                 }
 
@@ -117,7 +117,7 @@ namespace FasterGameLoading
             }
             catch (Exception ex)
             {
-                FGLLog.Warning("Alien Races rescan failed: ", ex);
+                FGLLog.Warning("FGL_Log_AlienRacesRescanFailed".TranslateWithFallback("Alien Races rescan failed:"), ex);
             }
         }
     }

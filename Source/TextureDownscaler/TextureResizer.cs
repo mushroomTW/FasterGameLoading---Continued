@@ -59,7 +59,7 @@ namespace FasterGameLoading
             {
                 if (FasterGameLoadingSettings.VerboseLogging)
                 {
-                    FGLLog.Warning("DestroyImmediate failed, falling back to Destroy: " + ex.Message);
+                    FGLLog.Warning("FGL_Log_DestroyImmediateFailedFallback".TranslateWithFallback("DestroyImmediate failed, falling back to Destroy: {0}", ex.Message));
                 }
                 try 
                 { 

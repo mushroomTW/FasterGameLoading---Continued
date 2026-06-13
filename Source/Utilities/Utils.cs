@@ -101,6 +101,34 @@ namespace FasterGameLoading
 
             return false;
         }
+
+        /// <summary>
+        /// 提供多國語言翻譯擴充方法，若語言系統尚未就緒或查無 Key 則回退至預設字串。
+        /// </summary>
+        public static string TranslateWithFallback(this string key, string fallback, params object[] args)
+        {
+            try
+            {
+                var activeLanguage = LanguageDatabase.activeLanguage;
+                if (activeLanguage == null || !activeLanguage.keyedReplacements.TryGetValue(key, out var replacement))
+                {
+                    return args == null || args.Length == 0 ? fallback : string.Format(fallback, args);
+                }
+                return args == null || args.Length == 0 ? replacement.value : string.Format(replacement.value, args);
+            }
+            catch
+            {
+                try
+                {
+                    return args == null || args.Length == 0 ? fallback : string.Format(fallback, args);
+                }
+                catch
+                {
+                    return fallback;
+                }
+            }
+        }
     }
 }
+
 

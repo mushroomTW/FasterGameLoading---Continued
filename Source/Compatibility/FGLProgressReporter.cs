@@ -52,7 +52,7 @@ namespace FasterGameLoading
                     }
                     catch (Exception ex)
                     {
-                        FGLLog.Warning("Failed to compile fast delegate for FGLProgressReporter pause field: " + ex.Message);
+                        FGLLog.Warning("FGL_Log_FailedCompileFGLProgressReporterPauseFieldDelegate".TranslateWithFallback("Failed to compile fast delegate for FGLProgressReporter pause field: {0}", ex.Message));
                     }
                 }
             }

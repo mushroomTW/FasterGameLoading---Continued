@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using System;
 using System.Reflection;
 using Verse;
@@ -33,7 +33,7 @@ namespace FasterGameLoading
                 }
                 catch (Exception ex)
                 {
-                    FGLLog.Error("HugsLib OnDefsLoaded 重新導向執行失敗（HugsLib 版本可能不相容）：", ex);
+                    FGLLog.Error("FGL_Log_RedirectHugslibFailed".TranslateWithFallback("Failed to redirect HugsLib OnDefsLoaded execution (HugsLib version might be incompatible):"), ex);
                 }
             });
             return false;

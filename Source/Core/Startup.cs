@@ -52,7 +52,7 @@ namespace FasterGameLoading
                 }
                 catch (Exception ex)
                 {
-                    FGLLog.Error("Error executing startup-completed callback: " + ex.Message, ex);
+                    FGLLog.Error("FGL_Log_ErrorExecutingStartupCallback".TranslateWithFallback("Error executing startup-completed callback: {0}", ex.Message), ex);
                 }
             }
             onStartupCompleted.Clear();
@@ -80,7 +80,7 @@ namespace FasterGameLoading
                     }
                     catch (Exception ex)
                     {
-                        FGLLog.Warning("Error collecting patched assemblies: " + ex.Message);
+                        FGLLog.Warning("FGL_Log_ErrorCollectingPatchedAssemblies".TranslateWithFallback("Error collecting patched assemblies: {0}", ex.Message));
                     }
                     lock (SessionCache.patchedAssembliesLock)
                     {
@@ -94,12 +94,12 @@ namespace FasterGameLoading
                     }
                     catch (Exception ex)
                     {
-                        FGLLog.Warning("Error executing obsolete cache cleanup: " + ex.Message);
+                        FGLLog.Warning("FGL_Log_ErrorObsoleteCacheCleanup".TranslateWithFallback("Error executing obsolete cache cleanup: {0}", ex.Message));
                     }
                 }
                 catch (Exception ex)
                 {
-                    FGLLog.Error("背景啟動收尾工作發生未預期例外", ex);
+                    FGLLog.Error("FGL_Log_BackgroundStartupUnexpectedException".TranslateWithFallback("Unexpected exception in background startup completion task"), ex);
                 }
             });
 
@@ -110,7 +110,7 @@ namespace FasterGameLoading
             }
             catch (Exception ex)
             {
-                FGLLog.Error("TranslationInjector.InjectTranslations 執行失敗", ex);
+                FGLLog.Error("FGL_Log_TranslationInjectorFailed".TranslateWithFallback("TranslationInjector.InjectTranslations execution failed"), ex);
             }
 
             // 透過 LongEventHandler 排程設定寫入與延遲動作，以避免阻塞啟動流程
@@ -127,7 +127,7 @@ namespace FasterGameLoading
             }
             catch (Exception ex)
             {
-                FGLLog.Error("LongEventHandler 排程啟動收尾動作時發生錯誤", ex);
+                FGLLog.Error("FGL_Log_LongEventHandlerScheduleFailed".TranslateWithFallback("Error scheduling startup completion actions in LongEventHandler"), ex);
             }
         }
 

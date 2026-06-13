@@ -21,7 +21,7 @@ namespace FasterGameLoading
         public static IEnumerator LoadDeferredGraphicsCoroutine(DelayedActions delayedActions, List<ThingDef> loadedDefs)
         {
             delayedActions.RestartStopwatch();
-            FGLLog.Message("Starting deferred graphics: " + delayedActions.GraphicsToLoadCount);
+            FGLLog.Message("FGL_Log_StartingDeferredGraphicsCount".TranslateWithFallback("Starting deferred graphics: {0}", delayedActions.GraphicsToLoadCount));
             while (delayedActions.GraphicsToLoadCount > 0)
             {
                 // 協程只在主執行緒被恢復執行，此檢查僅為防禦性保護。
@@ -72,7 +72,7 @@ namespace FasterGameLoading
                     }
                     catch (Exception ex)
                     {
-                        FGLLog.Warning("Error loading graphic for " + def + ": ", ex);
+                        FGLLog.Warning("FGL_Log_ErrorLoadingGraphicForDef".TranslateWithFallback("Error loading graphic for {0}:", def), ex);
                     }
                     // 僅在圖形動作成功後才呼叫 PostLoadSpecial，避免傳入損壞的圖形資料
                     if (graphicActionSucceeded)
@@ -87,7 +87,7 @@ namespace FasterGameLoading
                     delayedActions.RestartStopwatch();
                 }
             }
-            FGLLog.Message("Deferred graphics loaded");
+            FGLLog.Message("FGL_Log_DeferredGraphicsLoaded".TranslateWithFallback("Deferred graphics loaded"));
         }
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace FasterGameLoading
             }
             catch (Exception ex)
             {
-                FGLLog.Warning("Error updating map mesh: ", ex);
+                FGLLog.Warning("FGL_Log_ErrorUpdatingMapMesh".TranslateWithFallback("Error updating map mesh:"), ex);
             }
             yield break;
         }
@@ -128,7 +128,7 @@ namespace FasterGameLoading
         public static IEnumerator LoadDeferredIconsCoroutine(DelayedActions delayedActions)
         {
             delayedActions.RestartStopwatch();
-            FGLLog.Message("Starting deferred icons: " + delayedActions.IconsToLoadCount);
+            FGLLog.Message("FGL_Log_StartingDeferredIconsCount".TranslateWithFallback("Starting deferred icons: {0}", delayedActions.IconsToLoadCount));
             while (delayedActions.IconsToLoadCount > 0)
             {
                 if (UnityData.IsInMainThread is false)
@@ -150,7 +150,7 @@ namespace FasterGameLoading
                         }
                         catch (Exception ex)
                         {
-                            FGLLog.Warning("Error loading icon for " + def + ": ", ex);
+                            FGLLog.Warning("FGL_Log_ErrorLoadingIconForDef".TranslateWithFallback("Error loading icon for {0}:", def), ex);
                         }
                     }
                 }
@@ -161,7 +161,7 @@ namespace FasterGameLoading
                     delayedActions.RestartStopwatch();
                 }
             }
-            FGLLog.Message("Deferred icons loaded");
+            FGLLog.Message("FGL_Log_DeferredIconsLoaded".TranslateWithFallback("Deferred icons loaded"));
         }
 
         /// <summary>
@@ -173,7 +173,7 @@ namespace FasterGameLoading
         public static IEnumerator ResolveSubSoundDefsCoroutine(DelayedActions delayedActions)
         {
             delayedActions.RestartStopwatch();
-            FGLLog.Message("Starting SubSoundDef resolution: " + delayedActions.SubSoundDefToResolveCount);
+            FGLLog.Message("FGL_Log_StartingSubSoundDefResolutionCount".TranslateWithFallback("Starting SubSoundDef resolution: {0}", delayedActions.SubSoundDefToResolveCount));
             while (delayedActions.SubSoundDefToResolveCount > 0)
             {
                 while (delayedActions.SubSoundDefToResolveCount > 0 && !delayedActions.IsOverBudget)
@@ -189,7 +189,7 @@ namespace FasterGameLoading
                     }
                     catch (Exception ex)
                     {
-                        FGLLog.Warning("Error resolving AudioGrain for " + def + ": ", ex);
+                        FGLLog.Warning("FGL_Log_ErrorResolvingAudioGrainForDef".TranslateWithFallback("Error resolving AudioGrain for {0}:", def), ex);
                     }
                 }
 
@@ -202,7 +202,7 @@ namespace FasterGameLoading
             // 協程已執行完畢，所有延遲的 SubSoundDef 已解析完成，在此時安全取消攔截，
             // 確保若玩家留在主選單也能正常播放按鈕與背景聲音。
             SoundStarter_Patch.Unpatch();
-            FGLLog.Message("SubSoundDef resolution complete");
+            FGLLog.Message("FGL_Log_SubSoundDefResolutionComplete".TranslateWithFallback("SubSoundDef resolution complete"));
         }
     }
 }

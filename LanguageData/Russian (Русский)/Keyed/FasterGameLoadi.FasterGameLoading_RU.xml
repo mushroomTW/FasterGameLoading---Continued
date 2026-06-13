@@ -30,4 +30,101 @@
     <FGL_ClearTextureCacheConfirmation>Удалить все сжатые копии текстур? При следующем запуске будут использоваться оригиналы.</FGL_ClearTextureCacheConfirmation>
     <FGL_TextureCacheStatus_Active>Кэш активен: {0} текстур.</FGL_TextureCacheStatus_Active>
     <FGL_TextureCacheStatus_Empty>Кэш пуст. Текстуры не сжимались.</FGL_TextureCacheStatus_Empty>
+
+    <!-- Logs -->
+    <FGL_Log_RedirectHugslibFailed>Не удалось перенаправить выполнение HugsLib OnDefsLoaded (возможно, версия HugsLib несовместима):</FGL_Log_RedirectHugslibFailed>
+    <FGL_Log_BackgroundStartupUnexpectedException>Неожиданное исключение в фоновой задаче завершения запуска</FGL_Log_BackgroundStartupUnexpectedException>
+    <FGL_Log_TranslationInjectorFailed>Сбой выполнения TranslationInjector.InjectTranslations</FGL_Log_TranslationInjectorFailed>
+    <FGL_Log_LongEventHandlerScheduleFailed>Ошибка планирования действий завершения запуска в LongEventHandler</FGL_Log_LongEventHandlerScheduleFailed>
+    <FGL_Log_PreloadAllTypesUnexpectedException>Неожиданное исключение при фоновой предварительной загрузке кэша всех типов: {0}</FGL_Log_PreloadAllTypesUnexpectedException>
+    <FGL_Log_FailedToLoadTranslationFile>Не удалось загрузить файл перевода (пропущено): {0}&#10;{1}</FGL_Log_FailedToLoadTranslationFile>
+    <FGL_Log_ErrorInitializingTargetModRoots>Ошибка инициализации корневых папок целевых модов: {0}</FGL_Log_ErrorInitializingTargetModRoots>
+    <FGL_Log_FailedCompileFGLProgressReporterPauseFieldDelegate>Не удалось скомпилировать быстрый делегат для поля паузы FGLProgressReporter: {0}</FGL_Log_FailedCompileFGLProgressReporterPauseFieldDelegate>
+    <FGL_Log_FailedToStartAsyncXMLScan>Не удалось запустить асинхронное сканирование XML-файлов: {0}</FGL_Log_FailedToStartAsyncXMLScan>
+    <FGL_Log_ErrorExecutingStartupCallback>Ошибка выполнения обратного вызова завершения запуска: {0}</FGL_Log_ErrorExecutingStartupCallback>
+    <FGL_Log_ErrorCollectingPatchedAssemblies>Ошибка сбора пропатченных сборок: {0}</FGL_Log_ErrorCollectingPatchedAssemblies>
+    <FGL_Log_ErrorObsoleteCacheCleanup>Ошибка очистки устаревшего кэша: {0}</FGL_Log_ErrorObsoleteCacheCleanup>
+    <FGL_Log_StartingDeferredGraphicsCount>Запуск отложенной графики: {0}</FGL_Log_StartingDeferredGraphicsCount>
+    <FGL_Log_ErrorLoadingGraphicForDef>Ошибка загрузки графики для {0}:</FGL_Log_ErrorLoadingGraphicForDef>
+    <FGL_Log_DeferredGraphicsLoaded>Отложенная графика загружена</FGL_Log_DeferredGraphicsLoaded>
+    <FGL_Log_ErrorUpdatingMapMesh>Ошибка обновления сетки карты:</FGL_Log_ErrorUpdatingMapMesh>
+    <FGL_Log_StartingDeferredIconsCount>Запуск отложенных иконок: {0}</FGL_Log_StartingDeferredIconsCount>
+    <FGL_Log_ErrorLoadingIconForDef>Ошибка загрузки иконки для {0}:</FGL_Log_ErrorLoadingIconForDef>
+    <FGL_Log_DeferredIconsLoaded>Отложенные иконки загружены</FGL_Log_DeferredIconsLoaded>
+    <FGL_Log_StartingSubSoundDefResolutionCount>Запуск разрешения SubSoundDef: {0}</FGL_Log_StartingSubSoundDefResolutionCount>
+    <FGL_Log_ErrorResolvingAudioGrainForDef>Ошибка разрешения AudioGrain для {0}:</FGL_Log_ErrorResolvingAudioGrainForDef>
+    <FGL_Log_SubSoundDefResolutionComplete>Разрешение SubSoundDef завершено</FGL_Log_SubSoundDefResolutionComplete>
+    <FGL_Log_StaticAtlasesLoadedFromCache>Статические атласы загружены из кэша (сырые байты DXT)</FGL_Log_StaticAtlasesLoadedFromCache>
+    <FGL_Log_AdaptiveBakeFailedFallback>Адаптивное запекание не удалось, возврат к оригинальному запеканию статических атласов</FGL_Log_AdaptiveBakeFailedFallback>
+    <FGL_Log_VanillaStaticAtlasBakingComplete>Оригинальное запекание статических атласов завершено</FGL_Log_VanillaStaticAtlasBakingComplete>
+    <FGL_Log_StartingDeferredVanillaStaticAtlasBaking>Запуск отложенного оригинального запекания статических атласов</FGL_Log_StartingDeferredVanillaStaticAtlasBaking>
+    <FGL_Log_DeferredVanillaStaticAtlasBakingComplete>Отложенное оригинальное запекание статических атласов завершено</FGL_Log_DeferredVanillaStaticAtlasBakingComplete>
+    <FGL_Log_ErrorResolvingAudioGrainForDefNoColon>Ошибка разрешения AudioGrain для {0}</FGL_Log_ErrorResolvingAudioGrainForDefNoColon>
+    <FGL_Log_AlienRacesDetectedRescanScheduled>Обнаружен Alien Races, планирование повторного сканирования расширенной графики после загрузки</FGL_Log_AlienRacesDetectedRescanScheduled>
+    <FGL_Log_AlienRacesDetectionFailed>Ошибка обнаружения Alien Races:</FGL_Log_AlienRacesDetectionFailed>
+    <FGL_Log_AlienRacesRescanComplete>Повторное сканирование расширенной графики Alien Races завершено</FGL_Log_AlienRacesRescanComplete>
+    <FGL_Log_AlienLoadGraphicsHookNotFound>Метод AlienPartGenerator.LoadGraphicsHook не найден</FGL_Log_AlienLoadGraphicsHookNotFound>
+    <FGL_Log_AlienRacesRescanFailed>Сбой повторного сканирования Alien Races:</FGL_Log_AlienRacesRescanFailed>
+    <FGL_Log_XmlCacheInvalidatedNewHashSaved>Кэш XML недействителен, новый хэш сохранен в настройках в основном потоке.</FGL_Log_XmlCacheInvalidatedNewHashSaved>
+    <FGL_Log_FailedToSaveXmlHash>Не удалось сохранить обновленный объединенный хэш XML: {0}</FGL_Log_FailedToSaveXmlHash>
+    <FGL_Log_EarlyLoadingFailedWillRetry>Ранняя загрузка не удалась для {0}, повторная попытка в обычном режиме:</FGL_Log_EarlyLoadingFailedWillRetry>
+    <FGL_Log_ErrorInjectingTranslations>Ошибка инъекции переводов:</FGL_Log_ErrorInjectingTranslations>
+    <FGL_Log_WeightsLengthMustMatchHistorySize>Длина WEIGHTS должна соответствовать HISTORY_SIZE!</FGL_Log_WeightsLengthMustMatchHistorySize>
+    <FGL_Log_StartingAdaptiveStaticAtlasBake>Запуск адаптивного запекания статических атласов</FGL_Log_StartingAdaptiveStaticAtlasBake>
+    <FGL_Log_AdaptiveStaticAtlasBakeComplete>Адаптивное запекание статических атласов завершено</FGL_Log_AdaptiveStaticAtlasBakeComplete>
+    <FGL_Log_ErrorBakingAtlasBatch>Ошибка запекания пакета атласов:</FGL_Log_ErrorBakingAtlasBatch>
+    <FGL_Log_StaticAtlasesLoadedFromCacheSync>Статические атласы загружены из кэша (сырые байты DXT) — Синхронно</FGL_Log_StaticAtlasesLoadedFromCacheSync>
+    <FGL_Log_AdaptiveBakeFailedFallbackSync>Адаптивное запекание не удалось, возврат к оригинальному запеканию статических атласов — Синхронно</FGL_Log_AdaptiveBakeFailedFallbackSync>
+    <FGL_Log_ErrorSyncStaticAtlasBaking>Ошибка при синхронном запекании статических атласов: {0}</FGL_Log_ErrorSyncStaticAtlasBaking>
+    <FGL_Log_TranspilerNoApplyCallFound>StaticTextureAtlas_ApplyTextureCompression_Patch: Транспилятор не нашел вызова Apply(bool,bool) для замены. Патч может быть сломан из-за обновления игры — запись кэша атласов может завершиться ошибкой.</FGL_Log_TranspilerNoApplyCallFound>
+    <FGL_Log_CacheLoadIOError>Ошибка ввода-вывода при загрузке кэша: {0}</FGL_Log_CacheLoadIOError>
+    <FGL_Log_CacheLoadAuthError>Ошибка авторизации при загрузке кэша: {0}</FGL_Log_CacheLoadAuthError>
+    <FGL_Log_CacheLoadErrorFallback>Ошибка загрузки кэша, возврат к оригинальному запеканию атласов: {0}</FGL_Log_CacheLoadErrorFallback>
+    <FGL_Log_AtlasCacheBuildQueueMissingKey>Кэш атласов: buildQueue не содержит ключ (group={0}, hasMask={1}). Запись кэша пропущена.</FGL_Log_AtlasCacheBuildQueueMissingKey>
+    <FGL_Log_AtlasCacheTextureMissingFromBuildQueue>Кэш атласов: текстура отсутствует в buildQueue во время загрузки кэша (key={0}, name={1}). Запись кэша пропущена.</FGL_Log_AtlasCacheTextureMissingFromBuildQueue>
+    <FGL_Log_AtlasCacheTextureCountMismatch>Кэш атласов: количество текстур ({0}) != количеству uvRects ({1}) для group={2}. Запись кэша пропущен.</FGL_Log_AtlasCacheTextureCountMismatch>
+    <FGL_Log_FailedToBuildMeshesForAtlasGroup>Не удалось построить сетки для группы атласов {0}: {1}</FGL_Log_FailedToBuildMeshesForAtlasGroup>
+    <FGL_Log_AtlasCacheFileTruncatedColor>Файл кэша атласов усечен для {0}: ожидалось не менее {1} байт, получено {2}. Запись кэша пропущена.</FGL_Log_AtlasCacheFileTruncatedColor>
+    <FGL_Log_AtlasCacheFileTruncatedMask>Файл кэша атласов усечен для {0}: ожидалось не менее {1} байт, получено {2}. Запись кэша пропущена.</FGL_Log_AtlasCacheFileTruncatedMask>
+    <FGL_Log_ErrorCreatingAtlasCacheDir>Ошибка создания директории кэша атласов: {0}</FGL_Log_ErrorCreatingAtlasCacheDir>
+    <FGL_Log_StaticAtlasCacheSaved>Кэш статических атласов сохранен.</FGL_Log_StaticAtlasCacheSaved>
+    <FGL_Log_ErrorSavingAtlasManifest>Ошибка сохранения манифеста атласов: {0}</FGL_Log_ErrorSavingAtlasManifest>
+    <FGL_Log_ErrorGettingRawBytesColor>Ошибка получения сырых байт для цветного атласа: {0}</FGL_Log_ErrorGettingRawBytesColor>
+    <FGL_Log_ErrorSavingAtlasColorBytes>Ошибка сохранения цветовых байт атласа: {0}</FGL_Log_ErrorSavingAtlasColorBytes>
+    <FGL_Log_ErrorGettingRawBytesMask>Ошибка получения сырых байт для атласа маски: {0}</FGL_Log_ErrorGettingRawBytesMask>
+    <FGL_Log_ErrorSavingAtlasMaskBytes>Ошибка сохранения байт маски атласа: {0}</FGL_Log_ErrorSavingAtlasMaskBytes>
+    <FGL_Log_FailedToMakeColorAtlasTextureNonReadable>Не удалось сделать текстуру цветного атласа нечитаемой: {0}</FGL_Log_FailedToMakeColorAtlasTextureNonReadable>
+    <FGL_Log_FailedToMakeMaskAtlasTextureNonReadable>Не удалось сделать текстуру атласа маски нечитаемой: {0}</FGL_Log_FailedToMakeMaskAtlasTextureNonReadable>
+    <FGL_Log_FallbackToRenderTextureForTex>Не удается прочитать сырые данные текстуры напрямую, возврат к RenderTexture для: {0}</FGL_Log_FallbackToRenderTextureForTex>
+    <FGL_Log_AtlasCacheCleared>Кэш атласов очищен.</FGL_Log_AtlasCacheCleared>
+    <FGL_Log_FailedToClearAtlasCache>Не удалось очистить кэш атласов: {0}</FGL_Log_FailedToClearAtlasCache>
+    <FGL_Log_TextureDownscaleCacheHits>Попадания в кэш сжатия текстур: {0}, ошибок: {1}, настроенных записей: {2}</FGL_Log_TextureDownscaleCacheHits>
+    <FGL_Log_ErrorPreloadingCachedTextures>Ошибка предварительной загрузки кэшированных текстур: {0}</FGL_Log_ErrorPreloadingCachedTextures>
+    <FGL_Log_ErrorLoadingTextureMainThreadRedirect>Ошибка загрузки текстуры при перенаправлении в основной поток: {0}</FGL_Log_ErrorLoadingTextureMainThreadRedirect>
+    <FGL_Log_TimeoutWaitingTextureLoadMainThread>Время ожидания загрузки текстуры в основном потоке истекло: {0}</FGL_Log_TimeoutWaitingTextureLoadMainThread>
+    <FGL_Log_ExceptionLoadingCachedTextureForPath>Исключение при загрузке кэшированной текстуры для: {0}</FGL_Log_ExceptionLoadingCachedTextureForPath>
+    <FGL_Log_IOExceptionCacheKeyForPath>IOException при получении ключа кэша для: {0}</FGL_Log_IOExceptionCacheKeyForPath>
+    <FGL_Log_UnauthorizedAccessExceptionCacheKeyForPath>UnauthorizedAccessException при получении ключа кэша для: {0}</FGL_Log_UnauthorizedAccessExceptionCacheKeyForPath>
+    <FGL_Log_IOExceptionCheckFreshness>IOException при проверке свежести кэша для: {0} и {1}</FGL_Log_IOExceptionCheckFreshness>
+    <FGL_Log_UnauthorizedAccessExceptionCheckFreshness>UnauthorizedAccessException при проверке свежести кэша для: {0} и {1}</FGL_Log_UnauthorizedAccessExceptionCheckFreshness>
+    <FGL_Log_TextureCacheCleared>Кэш текстур очищен.</FGL_Log_TextureCacheCleared>
+    <FGL_Log_FailedToClearTextureCache>Не удалось очистить кэш текстур:</FGL_Log_FailedToClearTextureCache>
+    <FGL_Log_FailedSetupStagingDir>Не удалось настроить промежуточную директорию: {0}</FGL_Log_FailedSetupStagingDir>
+    <FGL_Log_FailedCleanStagingDir>Не удалось очистить промежуточную директорию: {0} ошибка: {1}</FGL_Log_FailedCleanStagingDir>
+    <FGL_Log_FailedReplaceTextureCacheDirFallback>Не удалось заменить директорию кэша текстур. Возврат к предыдущему состоянию.</FGL_Log_FailedReplaceTextureCacheDirFallback>
+    <FGL_Log_FailedDeleteObsoleteCacheFile>Не удалось удалить устаревший файл кэша {0}: {1}</FGL_Log_FailedDeleteObsoleteCacheFile>
+    <FGL_Log_FailedDeleteUnreferencedCacheFile>Не удалось удалить несвязанный файл кэша {0}: {1}</FGL_Log_FailedDeleteUnreferencedCacheFile>
+    <FGL_Log_CacheCleanupSummary>Очистка кэша завершена. Удалено {0} устаревших записей карты кэша, {1} устаревших файлов и {2} несвязанных файлов.</FGL_Log_CacheCleanupSummary>
+    <FGL_Log_ErrorObsoleteCacheCleanupGeneral>Ошибка во время очистки устаревших файлов кэша: {0}</FGL_Log_ErrorObsoleteCacheCleanupGeneral>
+    <FGL_Log_DownscaledTexturesCount>Сжато {0} текстур (кэшировано, оригиналы не затронуты)</FGL_Log_DownscaledTexturesCount>
+    <FGL_Log_TextureDownscaleFailedKeepingCache>Сжатие текстур не удалось, сохранение предыдущего кэша:</FGL_Log_TextureDownscaleFailedKeepingCache>
+    <FGL_Log_FailedDownscaleTexturePath>Не удалось сжать текстуру {0}:</FGL_Log_FailedDownscaleTexturePath>
+    <FGL_Log_CannotLoadOriginalTextureFromDiskInMemory>Не удается загрузить оригинальную текстуру с диска, использование копии из памяти:</FGL_Log_CannotLoadOriginalTextureFromDiskInMemory>
+    <FGL_Log_TextureDownscaleSummary>Сводка сжатия текстур: сжато={0}, исходных пикселей={1}, сжатых пикселей={2}, ориентировочно сэкономлено={3}</FGL_Log_TextureDownscaleSummary>
+    <FGL_Log_DestroyImmediateFailedFallback>Сбой DestroyImmediate, возврат к Destroy: {0}</FGL_Log_DestroyImmediateFailedFallback>
+    <FGL_Log_CacheResetterErrorCleanup>Ошибка CacheResetter во время очистки:</FGL_Log_CacheResetterErrorCleanup>
+    <FGL_Log_ParallelLoadXmlAssetFailedForMod>Не удалось параллельно загрузить XML-ресурс для мода {0} (Файл: {1}): {2}</FGL_Log_ParallelLoadXmlAssetFailedForMod>
+    <FGL_Log_ParallelXmlLoadingFailedFallback>Сбой параллельной загрузки XML для мода {0}, возврат к оригинальному загрузчику: {1}</FGL_Log_ParallelXmlLoadingFailedFallback>
+    <FGL_Log_XmlScanCompleteHashes>Сканирование XML завершено. Объединенный хэш контента: {0}, последний сохраненный хэш: {1}</FGL_Log_XmlScanCompleteHashes>
+    <FGL_Log_ErrorBackgroundXmlScan>Ошибка при фоновом сканировании XML-файлов: {0}</FGL_Log_ErrorBackgroundXmlScan>
 </LanguageData>

@@ -61,11 +61,11 @@ namespace FasterGameLoading
             }
             catch (IOException ex)
             {
-                FGLLog.Error("Error injecting translations: ", ex);
+                FGLLog.Error("FGL_Log_ErrorInjectingTranslations".TranslateWithFallback("Error injecting translations:"), ex);
             }
             catch (UnauthorizedAccessException ex)
             {
-                FGLLog.Error("Error injecting translations: ", ex);
+                FGLLog.Error("FGL_Log_ErrorInjectingTranslations".TranslateWithFallback("Error injecting translations:"), ex);
             }
         }
 
@@ -79,7 +79,7 @@ namespace FasterGameLoading
             }
             catch (Exception ex)
             {
-                FGLLog.Warning($"無法載入翻譯檔案（已略過）：{filePath}\n{ex.Message}");
+                FGLLog.Warning("FGL_Log_FailedToLoadTranslationFile".TranslateWithFallback("Failed to load translation file (skipped): {0}\n{1}", filePath, ex.Message));
                 return;
             }
             var root = doc.DocumentElement;

@@ -211,7 +211,7 @@ namespace FasterGameLoading
             {
                 if (FasterGameLoadingSettings.AtlasCaching && AtlasCacheReader.TryLoadFromCache())
                 {
-                    FGLLog.Message("Static atlases loaded from cache (Raw DXT bytes)");
+                    FGLLog.Message("FGL_Log_StaticAtlasesLoadedFromCache".TranslateWithFallback("Static atlases loaded from cache (Raw DXT bytes)"));
                 }
                 else
                 {
@@ -229,9 +229,9 @@ namespace FasterGameLoading
 
                     if (AdaptiveStaticAtlasBakeFailed)
                     {
-                        FGLLog.Message("Adaptive bake failed, falling back to vanilla static atlas baking");
+                        FGLLog.Message("FGL_Log_AdaptiveBakeFailedFallback".TranslateWithFallback("Adaptive bake failed, falling back to vanilla static atlas baking"));
                         GlobalTextureAtlasManager.BakeStaticAtlases();
-                        FGLLog.Message("Vanilla static atlas baking complete");
+                        FGLLog.Message("FGL_Log_VanillaStaticAtlasBakingComplete".TranslateWithFallback("Vanilla static atlas baking complete"));
                     }
 
                     if (FasterGameLoadingSettings.AtlasCaching && !AdaptiveStaticAtlasBakeFailed && queueHash != null)
@@ -247,9 +247,9 @@ namespace FasterGameLoading
             }
             else
             {
-                FGLLog.Message("Starting deferred vanilla static atlas baking");
+                FGLLog.Message("FGL_Log_StartingDeferredVanillaStaticAtlasBaking".TranslateWithFallback("Starting deferred vanilla static atlas baking"));
                 GlobalTextureAtlasManager.BakeStaticAtlases();
-                FGLLog.Message("Deferred vanilla static atlas baking complete");
+                FGLLog.Message("FGL_Log_DeferredVanillaStaticAtlasBakingComplete".TranslateWithFallback("Deferred vanilla static atlas baking complete"));
             }
         }
 

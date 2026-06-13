@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using HarmonyLib;
@@ -215,7 +215,7 @@ namespace FasterGameLoading
             }
             catch (Exception ex)
             {
-                FGLLog.Error("Error initializing target mod roots: " + ex);
+                FGLLog.Error("FGL_Log_ErrorInitializingTargetModRoots".TranslateWithFallback("Error initializing target mod roots: {0}", ex));
             }
         }
 

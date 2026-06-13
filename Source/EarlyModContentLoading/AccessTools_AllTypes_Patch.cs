@@ -72,7 +72,7 @@ namespace FasterGameLoading
                 }
                 catch (Exception ex)
                 {
-                    FGLLog.Warning("背景預載全類型快取時發生未預期例外: " + ex.Message);
+                    FGLLog.Warning("FGL_Log_PreloadAllTypesUnexpectedException".TranslateWithFallback("Unexpected exception preloading all types cache in background: {0}", ex.Message));
                 }
             });
         }

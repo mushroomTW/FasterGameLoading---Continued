@@ -60,7 +60,7 @@ namespace FasterGameLoading
                 // PerformAdaptiveStaticAtlasBake 結束時會清空 buildQueue，若順序顛倒則快取還原失敗。
                 if (FasterGameLoadingSettings.AtlasCaching && AtlasCacheReader.TryLoadFromCache())
                 {
-                    FGLLog.Message("Static atlases loaded from cache (Raw DXT bytes) - Synchronous");
+                    FGLLog.Message("FGL_Log_StaticAtlasesLoadedFromCacheSync".TranslateWithFallback("Static atlases loaded from cache (Raw DXT bytes) - Synchronous"));
                     // 快取命中：buildQueue 已由 CommitAtlasesToManager 清空，不需烘焙也不需寫快取。
                     return;
                 }
@@ -87,7 +87,7 @@ namespace FasterGameLoading
                 {
                     // 烘焙失敗：重設旗標，放行 vanilla 烘焙（不寫快取）
                     StaticTextureAtlas_ApplyTextureCompression_Patch.KeepTexturesReadable = false;
-                    FGLLog.Message("Adaptive bake failed, falling back to vanilla static atlas baking - Synchronous");
+                    FGLLog.Message("FGL_Log_AdaptiveBakeFailedFallbackSync".TranslateWithFallback("Adaptive bake failed, falling back to vanilla static atlas baking - Synchronous"));
                     GlobalTextureAtlasManager.BakeStaticAtlases();
                 }
                 else if (FasterGameLoadingSettings.AtlasCaching && queueHash != null)
@@ -103,7 +103,7 @@ namespace FasterGameLoading
             }
             catch (System.Exception ex)
             {
-                FGLLog.Error("Error during synchronous static atlas baking: " + ex);
+                FGLLog.Error("FGL_Log_ErrorSyncStaticAtlasBaking".TranslateWithFallback("Error during synchronous static atlas baking: {0}", ex));
                 DelayedActions.AdaptiveStaticAtlasBakeFailed = true;
                 GlobalTextureAtlasManager.BakeStaticAtlases();
             }

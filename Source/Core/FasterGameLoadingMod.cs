@@ -75,7 +75,7 @@ namespace FasterGameLoading
             }
             catch (System.Exception ex)
             {
-                FGLLog.Warning("Failed to start asynchronous XML file scan: " + ex.Message);
+                FGLLog.Warning("FGL_Log_FailedToStartAsyncXMLScan".TranslateWithFallback("Failed to start asynchronous XML file scan: {0}", ex.Message));
                 // 萬一出錯，確保快取攔截功能不會被永久關閉
                 XmlNode_SelectSingleNode_Patch.isXmlScanComplete = true;
             }

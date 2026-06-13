@@ -30,5 +30,102 @@
     <FGL_ClearTextureCache>Clear texture cache</FGL_ClearTextureCache>
     <FGL_ClearTextureCacheConfirmation>Clear all cached downscaled textures? Original textures will be used on next startup.</FGL_ClearTextureCacheConfirmation>
     <FGL_TextureCacheStatus_Active>Texture cache active: {0} textures cached.</FGL_TextureCacheStatus_Active>
-    <FGL_TextureCacheStatus_Empty>Texture cache is empty. No textures have been downscaled.</FGL_TextureCacheStatus_Empty>  
+    <FGL_TextureCacheStatus_Empty>Texture cache is empty. No textures have been downscaled.</FGL_TextureCacheStatus_Empty>
+
+    <!-- Logs -->
+    <FGL_Log_RedirectHugslibFailed>Failed to redirect HugsLib OnDefsLoaded execution (HugsLib version might be incompatible):</FGL_Log_RedirectHugslibFailed>
+    <FGL_Log_BackgroundStartupUnexpectedException>Unexpected exception in background startup completion task</FGL_Log_BackgroundStartupUnexpectedException>
+    <FGL_Log_TranslationInjectorFailed>TranslationInjector.InjectTranslations execution failed</FGL_Log_TranslationInjectorFailed>
+    <FGL_Log_LongEventHandlerScheduleFailed>Error scheduling startup completion actions in LongEventHandler</FGL_Log_LongEventHandlerScheduleFailed>
+    <FGL_Log_PreloadAllTypesUnexpectedException>Unexpected exception preloading all types cache in background: {0}</FGL_Log_PreloadAllTypesUnexpectedException>
+    <FGL_Log_FailedToLoadTranslationFile>Failed to load translation file (skipped): {0}&#10;{1}</FGL_Log_FailedToLoadTranslationFile>
+    <FGL_Log_ErrorInitializingTargetModRoots>Error initializing target mod roots: {0}</FGL_Log_ErrorInitializingTargetModRoots>
+    <FGL_Log_FailedCompileFGLProgressReporterPauseFieldDelegate>Failed to compile fast delegate for FGLProgressReporter pause field: {0}</FGL_Log_FailedCompileFGLProgressReporterPauseFieldDelegate>
+    <FGL_Log_FailedToStartAsyncXMLScan>Failed to start asynchronous XML file scan: {0}</FGL_Log_FailedToStartAsyncXMLScan>
+    <FGL_Log_ErrorExecutingStartupCallback>Error executing startup-completed callback: {0}</FGL_Log_ErrorExecutingStartupCallback>
+    <FGL_Log_ErrorCollectingPatchedAssemblies>Error collecting patched assemblies: {0}</FGL_Log_ErrorCollectingPatchedAssemblies>
+    <FGL_Log_ErrorObsoleteCacheCleanup>Error executing obsolete cache cleanup: {0}</FGL_Log_ErrorObsoleteCacheCleanup>
+    <FGL_Log_StartingDeferredGraphicsCount>Starting deferred graphics: {0}</FGL_Log_StartingDeferredGraphicsCount>
+    <FGL_Log_ErrorLoadingGraphicForDef>Error loading graphic for {0}:</FGL_Log_ErrorLoadingGraphicForDef>
+    <FGL_Log_DeferredGraphicsLoaded>Deferred graphics loaded</FGL_Log_DeferredGraphicsLoaded>
+    <FGL_Log_ErrorUpdatingMapMesh>Error updating map mesh:</FGL_Log_ErrorUpdatingMapMesh>
+    <FGL_Log_StartingDeferredIconsCount>Starting deferred icons: {0}</FGL_Log_StartingDeferredIconsCount>
+    <FGL_Log_ErrorLoadingIconForDef>Error loading icon for {0}:</FGL_Log_ErrorLoadingIconForDef>
+    <FGL_Log_DeferredIconsLoaded>Deferred icons loaded</FGL_Log_DeferredIconsLoaded>
+    <FGL_Log_StartingSubSoundDefResolutionCount>Starting SubSoundDef resolution: {0}</FGL_Log_StartingSubSoundDefResolutionCount>
+    <FGL_Log_ErrorResolvingAudioGrainForDef>Error resolving AudioGrain for {0}:</FGL_Log_ErrorResolvingAudioGrainForDef>
+    <FGL_Log_SubSoundDefResolutionComplete>SubSoundDef resolution complete</FGL_Log_SubSoundDefResolutionComplete>
+    <FGL_Log_StaticAtlasesLoadedFromCache>Static atlases loaded from cache (Raw DXT bytes)</FGL_Log_StaticAtlasesLoadedFromCache>
+    <FGL_Log_AdaptiveBakeFailedFallback>Adaptive bake failed, falling back to vanilla static atlas baking</FGL_Log_AdaptiveBakeFailedFallback>
+    <FGL_Log_VanillaStaticAtlasBakingComplete>Vanilla static atlas baking complete</FGL_Log_VanillaStaticAtlasBakingComplete>
+    <FGL_Log_StartingDeferredVanillaStaticAtlasBaking>Starting deferred vanilla static atlas baking</FGL_Log_StartingDeferredVanillaStaticAtlasBaking>
+    <FGL_Log_DeferredVanillaStaticAtlasBakingComplete>Deferred vanilla static atlas baking complete</FGL_Log_DeferredVanillaStaticAtlasBakingComplete>
+    <FGL_Log_ErrorResolvingAudioGrainForDefNoColon>Error resolving AudioGrain for {0}</FGL_Log_ErrorResolvingAudioGrainForDefNoColon>
+    <FGL_Log_AlienRacesDetectedRescanScheduled>Alien Races detected, scheduling extended graphics rescan after loading</FGL_Log_AlienRacesDetectedRescanScheduled>
+    <FGL_Log_AlienRacesDetectionFailed>Alien Races detection failed:</FGL_Log_AlienRacesDetectionFailed>
+    <FGL_Log_AlienRacesRescanComplete>Alien Races extended graphics rescan complete</FGL_Log_AlienRacesRescanComplete>
+    <FGL_Log_AlienLoadGraphicsHookNotFound>AlienPartGenerator.LoadGraphicsHook method not found</FGL_Log_AlienLoadGraphicsHookNotFound>
+    <FGL_Log_AlienRacesRescanFailed>Alien Races rescan failed:</FGL_Log_AlienRacesRescanFailed>
+    <FGL_Log_XmlCacheInvalidatedNewHashSaved>XML cache invalidated and new hash saved to settings on main thread.</FGL_Log_XmlCacheInvalidatedNewHashSaved>
+    <FGL_Log_FailedToSaveXmlHash>Failed to save updated XML combined hash: {0}</FGL_Log_FailedToSaveXmlHash>
+    <FGL_Log_EarlyLoadingFailedWillRetry>Early loading failed for {0}, will retry in normal flow:</FGL_Log_EarlyLoadingFailedWillRetry>
+    <FGL_Log_ErrorInjectingTranslations>Error injecting translations:</FGL_Log_ErrorInjectingTranslations>
+    <FGL_Log_WeightsLengthMustMatchHistorySize>WEIGHTS length must match HISTORY_SIZE!</FGL_Log_WeightsLengthMustMatchHistorySize>
+    <FGL_Log_StartingAdaptiveStaticAtlasBake>Starting adaptive static atlas bake</FGL_Log_StartingAdaptiveStaticAtlasBake>
+    <FGL_Log_AdaptiveStaticAtlasBakeComplete>Adaptive static atlas bake complete</FGL_Log_AdaptiveStaticAtlasBakeComplete>
+    <FGL_Log_ErrorBakingAtlasBatch>Error baking atlas batch:</FGL_Log_ErrorBakingAtlasBatch>
+    <FGL_Log_StaticAtlasesLoadedFromCacheSync>Static atlases loaded from cache (Raw DXT bytes) - Synchronous</FGL_Log_StaticAtlasesLoadedFromCacheSync>
+    <FGL_Log_AdaptiveBakeFailedFallbackSync>Adaptive bake failed, falling back to vanilla static atlas baking - Synchronous</FGL_Log_AdaptiveBakeFailedFallbackSync>
+    <FGL_Log_ErrorSyncStaticAtlasBaking>Error during synchronous static atlas baking: {0}</FGL_Log_ErrorSyncStaticAtlasBaking>
+    <FGL_Log_TranspilerNoApplyCallFound>StaticTextureAtlas_ApplyTextureCompression_Patch: Transpiler found no Apply(bool,bool) call to replace. The patch may be broken due to a game update — atlas cache write-back may fail.</FGL_Log_TranspilerNoApplyCallFound>
+    <FGL_Log_CacheLoadIOError>Cache load I/O error: {0}</FGL_Log_CacheLoadIOError>
+    <FGL_Log_CacheLoadAuthError>Cache load authorization error: {0}</FGL_Log_CacheLoadAuthError>
+    <FGL_Log_CacheLoadErrorFallback>Cache load error, falling back to vanilla atlas baking: {0}</FGL_Log_CacheLoadErrorFallback>
+    <FGL_Log_AtlasCacheBuildQueueMissingKey>Atlas cache: buildQueue does not contain key (group={0}, hasMask={1}). Cache entry skipped.</FGL_Log_AtlasCacheBuildQueueMissingKey>
+    <FGL_Log_AtlasCacheTextureMissingFromBuildQueue>Atlas cache: texture missing from buildQueue during cache load (key={0}, name={1}). Cache entry skipped.</FGL_Log_AtlasCacheTextureMissingFromBuildQueue>
+    <FGL_Log_AtlasCacheTextureCountMismatch>Atlas cache: texture count ({0}) != uvRects count ({1}) for group={2}. Cache entry skipped.</FGL_Log_AtlasCacheTextureCountMismatch>
+    <FGL_Log_FailedToBuildMeshesForAtlasGroup>Failed to build meshes for atlas group {0}: {1}</FGL_Log_FailedToBuildMeshesForAtlasGroup>
+    <FGL_Log_AtlasCacheFileTruncatedColor>Atlas cache file truncated for {0}: expected at least {1} bytes, got {2}. Skipping cache entry.</FGL_Log_AtlasCacheFileTruncatedColor>
+    <FGL_Log_AtlasCacheFileTruncatedMask>Atlas cache file truncated for {0}: expected at least {1} bytes, got {2}. Skipping cache entry.</FGL_Log_AtlasCacheFileTruncatedMask>
+    <FGL_Log_ErrorCreatingAtlasCacheDir>Error creating atlas cache directory: {0}</FGL_Log_ErrorCreatingAtlasCacheDir>
+    <FGL_Log_StaticAtlasCacheSaved>Static atlas cache saved.</FGL_Log_StaticAtlasCacheSaved>
+    <FGL_Log_ErrorSavingAtlasManifest>Error saving atlas manifest: {0}</FGL_Log_ErrorSavingAtlasManifest>
+    <FGL_Log_ErrorGettingRawBytesColor>Error getting raw bytes for color atlas: {0}</FGL_Log_ErrorGettingRawBytesColor>
+    <FGL_Log_ErrorSavingAtlasColorBytes>Error saving atlas color bytes: {0}</FGL_Log_ErrorSavingAtlasColorBytes>
+    <FGL_Log_ErrorGettingRawBytesMask>Error getting raw bytes for mask atlas: {0}</FGL_Log_ErrorGettingRawBytesMask>
+    <FGL_Log_ErrorSavingAtlasMaskBytes>Error saving atlas mask bytes: {0}</FGL_Log_ErrorSavingAtlasMaskBytes>
+    <FGL_Log_FailedToMakeColorAtlasTextureNonReadable>Failed to make color atlas texture non-readable: {0}</FGL_Log_FailedToMakeColorAtlasTextureNonReadable>
+    <FGL_Log_FailedToMakeMaskAtlasTextureNonReadable>Failed to make mask atlas texture non-readable: {0}</FGL_Log_FailedToMakeMaskAtlasTextureNonReadable>
+    <FGL_Log_FallbackToRenderTextureForTex>Cannot read raw texture data directly, falling back to RenderTexture for: {0}</FGL_Log_FallbackToRenderTextureForTex>
+    <FGL_Log_AtlasCacheCleared>Atlas cache cleared.</FGL_Log_AtlasCacheCleared>
+    <FGL_Log_FailedToClearAtlasCache>Failed to clear atlas cache: {0}</FGL_Log_FailedToClearAtlasCache>
+    <FGL_Log_TextureDownscaleCacheHits>Texture downscale cache hits: {0}, failures: {1}, configured entries: {2}</FGL_Log_TextureDownscaleCacheHits>
+    <FGL_Log_ErrorPreloadingCachedTextures>Error preloading cached textures: {0}</FGL_Log_ErrorPreloadingCachedTextures>
+    <FGL_Log_ErrorLoadingTextureMainThreadRedirect>Error loading texture on main thread redirect: {0}</FGL_Log_ErrorLoadingTextureMainThreadRedirect>
+    <FGL_Log_TimeoutWaitingTextureLoadMainThread>Timeout waiting for texture loading on main thread: {0}</FGL_Log_TimeoutWaitingTextureLoadMainThread>
+    <FGL_Log_ExceptionLoadingCachedTextureForPath>Exception loading cached texture for: {0}</FGL_Log_ExceptionLoadingCachedTextureForPath>
+    <FGL_Log_IOExceptionCacheKeyForPath>IOException when getting cache key for: {0}</FGL_Log_IOExceptionCacheKeyForPath>
+    <FGL_Log_UnauthorizedAccessExceptionCacheKeyForPath>UnauthorizedAccessException when getting cache key for: {0}</FGL_Log_UnauthorizedAccessExceptionCacheKeyForPath>
+    <FGL_Log_IOExceptionCheckFreshness>IOException checking cache freshness for: {0} and {1}</FGL_Log_IOExceptionCheckFreshness>
+    <FGL_Log_UnauthorizedAccessExceptionCheckFreshness>UnauthorizedAccessException checking cache freshness for: {0} and {1}</FGL_Log_UnauthorizedAccessExceptionCheckFreshness>
+    <FGL_Log_TextureCacheCleared>Texture cache cleared.</FGL_Log_TextureCacheCleared>
+    <FGL_Log_FailedToClearTextureCache>Failed to clear texture cache:</FGL_Log_FailedToClearTextureCache>
+    <FGL_Log_FailedSetupStagingDir>Failed to setup staging directory: {0}</FGL_Log_FailedSetupStagingDir>
+    <FGL_Log_FailedCleanStagingDir>Failed to clean up staging directory: {0} error: {1}</FGL_Log_FailedCleanStagingDir>
+    <FGL_Log_FailedReplaceTextureCacheDirFallback>Failed to replace texture cache directory. Falling back.</FGL_Log_FailedReplaceTextureCacheDirFallback>
+    <FGL_Log_FailedDeleteObsoleteCacheFile>Failed to delete obsolete cache file {0}: {1}</FGL_Log_FailedDeleteObsoleteCacheFile>
+    <FGL_Log_FailedDeleteUnreferencedCacheFile>Failed to delete unreferenced cache file {0}: {1}</FGL_Log_FailedDeleteUnreferencedCacheFile>
+    <FGL_Log_CacheCleanupSummary>Cache cleanup completed. Removed {0} obsolete cache map entries, deleted {1} obsolete files and {2} unreferenced files.</FGL_Log_CacheCleanupSummary>
+    <FGL_Log_ErrorObsoleteCacheCleanupGeneral>Error during obsolete cache files cleanup: {0}</FGL_Log_ErrorObsoleteCacheCleanupGeneral>
+    <FGL_Log_DownscaledTexturesCount>Downscaled {0} textures (cached, originals untouched)</FGL_Log_DownscaledTexturesCount>
+    <FGL_Log_TextureDownscaleFailedKeepingCache>Texture downscale failed, keeping previous cache:</FGL_Log_TextureDownscaleFailedKeepingCache>
+    <FGL_Log_FailedDownscaleTexturePath>Failed to downscale texture {0}:</FGL_Log_FailedDownscaleTexturePath>
+    <FGL_Log_CannotLoadOriginalTextureFromDiskInMemory>Cannot load original texture from disk, using in-memory copy:</FGL_Log_CannotLoadOriginalTextureFromDiskInMemory>
+    <FGL_Log_TextureDownscaleSummary>Texture downscale summary: resized={0}, sourcePixels={1}, downscaledPixels={2}, estimatedSaved={3}</FGL_Log_TextureDownscaleSummary>
+    <FGL_Log_DestroyImmediateFailedFallback>DestroyImmediate failed, falling back to Destroy: {0}</FGL_Log_DestroyImmediateFailedFallback>
+    <FGL_Log_CacheResetterErrorCleanup>CacheResetter error during cleanup:</FGL_Log_CacheResetterErrorCleanup>
+    <FGL_Log_ParallelLoadXmlAssetFailedForMod>Failed to load XML asset in parallel for Mod {0} (File: {1}): {2}</FGL_Log_ParallelLoadXmlAssetFailedForMod>
+    <FGL_Log_ParallelXmlLoadingFailedFallback>Parallel XML loading failed for Mod {0}, falling back to vanilla loader: {1}</FGL_Log_ParallelXmlLoadingFailedFallback>
+    <FGL_Log_XmlScanCompleteHashes>XML scan complete. Combined content hash: {0}, last saved hash: {1}</FGL_Log_XmlScanCompleteHashes>
+    <FGL_Log_ErrorBackgroundXmlScan>Error during background XML file scan: {0}</FGL_Log_ErrorBackgroundXmlScan>
 </LanguageData>

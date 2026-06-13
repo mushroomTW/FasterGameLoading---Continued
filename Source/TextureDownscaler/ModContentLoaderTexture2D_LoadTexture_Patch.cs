@@ -83,9 +83,7 @@ namespace FasterGameLoading
                     || cacheLoadFailures > 0
                     || FasterGameLoadingMod.Instance.CacheManager.CacheCount > 0)
                 {
-                    FGLLog.Message("Texture downscale cache hits: " + cacheLoadHits
-                        + ", failures: " + cacheLoadFailures
-                        + ", configured entries: " + FasterGameLoadingMod.Instance.CacheManager.CacheCount);
+                    FGLLog.Message("FGL_Log_TextureDownscaleCacheHits".TranslateWithFallback("Texture downscale cache hits: {0}, failures: {1}, configured entries: {2}", cacheLoadHits, cacheLoadFailures, FasterGameLoadingMod.Instance.CacheManager.CacheCount));
                 }
             });
         }
@@ -135,7 +133,7 @@ namespace FasterGameLoading
                 }
                 catch (Exception ex)
                 {
-                    FGLLog.Warning("Error preloading cached textures: " + ex.Message);
+                    FGLLog.Warning("FGL_Log_ErrorPreloadingCachedTextures".TranslateWithFallback("Error preloading cached textures: {0}", ex.Message));
                 }
             });
         }
@@ -195,7 +193,7 @@ namespace FasterGameLoading
                 {
                     if (request.Exception != null)
                     {
-                        FGLLog.Warning("Error loading texture on main thread redirect: " + request.Exception.Message);
+                        FGLLog.Warning("FGL_Log_ErrorLoadingTextureMainThreadRedirect".TranslateWithFallback("Error loading texture on main thread redirect: {0}", request.Exception.Message));
                         __state = true;
                         return true;
                     }
@@ -208,7 +206,7 @@ namespace FasterGameLoading
                 }
                 else
                 {
-                    FGLLog.Warning("Timeout waiting for texture loading on main thread: " + file.FullPath);
+                    FGLLog.Warning("FGL_Log_TimeoutWaitingTextureLoadMainThread".TranslateWithFallback("Timeout waiting for texture loading on main thread: {0}", file.FullPath));
                 }
 
                 __state = true;
@@ -278,7 +276,7 @@ namespace FasterGameLoading
                 {
                     if (FasterGameLoadingSettings.VerboseLogging)
                     {
-                        FGLLog.Warning("Exception loading cached texture for: " + fullPath, ex);
+                        FGLLog.Warning("FGL_Log_ExceptionLoadingCachedTextureForPath".TranslateWithFallback("Exception loading cached texture for: {0}", fullPath), ex);
                     }
                     FasterGameLoadingMod.Instance.CacheManager.RemoveCachedTexturePath(fullPath);
                     Interlocked.Increment(ref cacheLoadFailures);

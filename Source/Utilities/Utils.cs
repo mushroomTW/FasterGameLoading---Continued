@@ -109,12 +109,19 @@ namespace FasterGameLoading
         {
             try
             {
-                var activeLanguage = LanguageDatabase.activeLanguage;
-                if (activeLanguage == null || !activeLanguage.keyedReplacements.TryGetValue(key, out var replacement))
+                // keyedReplacements 是非執行緒安全的 Dictionary，且 TranslationInjector 會在主執行緒
+                // 對其寫入。若背景執行緒在此並行讀取，可能造成 Dictionary 內部結構損毀而陷入無限迴圈
+                // （遊戲硬卡死）。因此僅允許主執行緒查詢翻譯；背景執行緒一律回退至預設字串
+                // （此方法主要用於日誌，回退英文/預設字串完全足夠）。
+                if (UnityData.IsInMainThread)
                 {
-                    return args == null || args.Length == 0 ? fallback : string.Format(fallback, args);
+                    var activeLanguage = LanguageDatabase.activeLanguage;
+                    if (activeLanguage != null && activeLanguage.keyedReplacements.TryGetValue(key, out var replacement))
+                    {
+                        return args == null || args.Length == 0 ? replacement.value : string.Format(replacement.value, args);
+                    }
                 }
-                return args == null || args.Length == 0 ? replacement.value : string.Format(replacement.value, args);
+                return args == null || args.Length == 0 ? fallback : string.Format(fallback, args);
             }
             catch
             {

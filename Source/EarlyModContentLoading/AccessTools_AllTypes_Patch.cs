@@ -50,20 +50,29 @@ namespace FasterGameLoading
             
             Task.Run(() =>
             {
-                // 稍微延遲 50 毫秒，避開啟動時的併發載入高峰
-                System.Threading.Thread.Sleep(FGLConsts.AccessToolsPreloadDelayMs);
-
-                var types = assembliesSnapshot
-                    .SelectMany(assembly =>
-                    {
-                        try { return AccessTools.GetTypesFromAssembly(assembly); }
-                        catch { return Array.Empty<Type>(); }
-                    }).ToList();
-                lock (typesLock)
+                // 最外層安全網：fire-and-forget 背景 Task 的例外無人觀察，
+                // 若 ToList/lock/WarmupTypeCache 拋出例外將靜默遺失，故統一兜底記錄。
+                try
                 {
-                    allTypesCached = types;
-                    cachedAssembliesCount = snapshotCount;
-                    WarmupTypeCache(types);
+                    // 稍微延遲 50 毫秒，避開啟動時的併發載入高峰
+                    System.Threading.Thread.Sleep(FGLConsts.AccessToolsPreloadDelayMs);
+
+                    var types = assembliesSnapshot
+                        .SelectMany(assembly =>
+                        {
+                            try { return AccessTools.GetTypesFromAssembly(assembly); }
+                            catch { return Array.Empty<Type>(); }
+                        }).ToList();
+                    lock (typesLock)
+                    {
+                        allTypesCached = types;
+                        cachedAssembliesCount = snapshotCount;
+                        WarmupTypeCache(types);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    FGLLog.Warning("背景預載全類型快取時發生未預期例外: " + ex.Message);
                 }
             });
         }

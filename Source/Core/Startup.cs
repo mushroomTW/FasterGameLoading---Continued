@@ -60,36 +60,46 @@ namespace FasterGameLoading
             // 收集所有被 Patch 的 methods 關聯的 Patch Assembly 名稱（移至背景執行以避免卡頓主執行緒）
             System.Threading.Tasks.Task.Run(() =>
             {
-                var patchedAssemblies = new HashSet<string>();
+                // 最外層安全網：背景 Task 的例外不會被任何人觀察（fire-and-forget），
+                // 若未被捕捉將成為 unobserved task exception 而靜默遺失。此處統一兜底記錄，
+                // 以防未來新增的程式碼或下方未被細粒度 try 包覆的區段拋出例外導致背景執行緒悄悄崩潰。
                 try
                 {
-                    foreach (var method in Harmony.GetAllPatchedMethods())
+                    var patchedAssemblies = new HashSet<string>();
+                    try
                     {
-                        var patchInfo = Harmony.GetPatchInfo(method);
-                        if (patchInfo == null) continue;
+                        foreach (var method in Harmony.GetAllPatchedMethods())
+                        {
+                            var patchInfo = Harmony.GetPatchInfo(method);
+                            if (patchInfo == null) continue;
 
-                        AddPatchAssemblies(patchInfo.Prefixes, patchedAssemblies);
-                        AddPatchAssemblies(patchInfo.Postfixes, patchedAssemblies);
-                        AddPatchAssemblies(patchInfo.Transpilers, patchedAssemblies);
+                            AddPatchAssemblies(patchInfo.Prefixes, patchedAssemblies);
+                            AddPatchAssemblies(patchInfo.Postfixes, patchedAssemblies);
+                            AddPatchAssemblies(patchInfo.Transpilers, patchedAssemblies);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        FGLLog.Warning("Error collecting patched assemblies: " + ex.Message);
+                    }
+                    lock (SessionCache.patchedAssembliesLock)
+                    {
+                        SessionCache.patchedAssembliesLastSession = patchedAssemblies.ToList();
+                    }
+
+                    // 在背景背景執行緒啟動過期/無效的材質快取自動清理，避免阻塞啟動流程與主頁面
+                    try
+                    {
+                        FasterGameLoadingMod.Instance?.CacheManager?.CleanupObsoleteCacheFiles();
+                    }
+                    catch (Exception ex)
+                    {
+                        FGLLog.Warning("Error executing obsolete cache cleanup: " + ex.Message);
                     }
                 }
                 catch (Exception ex)
                 {
-                    FGLLog.Warning("Error collecting patched assemblies: " + ex.Message);
-                }
-                lock (SessionCache.patchedAssembliesLock)
-                {
-                    SessionCache.patchedAssembliesLastSession = patchedAssemblies.ToList();
-                }
-
-                // 在背景背景執行緒啟動過期/無效的材質快取自動清理，避免阻塞啟動流程與主頁面
-                try
-                {
-                    FasterGameLoadingMod.Instance?.CacheManager?.CleanupObsoleteCacheFiles();
-                }
-                catch (Exception ex)
-                {
-                    FGLLog.Warning("Error executing obsolete cache cleanup: " + ex.Message);
+                    FGLLog.Error("背景啟動收尾工作發生未預期例外", ex);
                 }
             });
 

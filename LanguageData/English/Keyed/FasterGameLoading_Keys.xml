@@ -9,7 +9,6 @@
     <FGL_AtlasCaching>Static atlases cache</FGL_AtlasCaching>
     <FGL_MultiThreading>Multi-threaded preloading</FGL_MultiThreading>
     <FGL_XPathCaching>XPath caching</FGL_XPathCaching>
-    <FGL_LazyTextureLoading>Lazy load textures</FGL_LazyTextureLoading>
     <FGL_ClearAtlasCache>Clear atlas cache</FGL_ClearAtlasCache>
     <FGL_ClearAtlasCacheConfirmation>Clear the cached static atlases?</FGL_ClearAtlasCacheConfirmation>
     <FGL_VerboseLogging>Verbose logging</FGL_VerboseLogging>

@@ -39,9 +39,6 @@ namespace FasterGameLoading
         /// <summary>XPath 快取（預設開啟）</summary>
         public static bool XPathCaching = true;
 
-        /// <summary>依需求延遲加載材質（預設關閉）</summary>
-        public static bool LazyTextureLoading = false;
-
 
         private static Vector2 scrollPosition = Vector2.zero;
         private static float viewHeight = 0f;
@@ -124,8 +121,6 @@ namespace FasterGameLoading
             Scribe_Values.Look(ref earlyModContentLoading, "earlyModContentLoading", true);
             Scribe_Values.Look(ref EnableMultiThreading, "enableMultiThreading", true);
             Scribe_Values.Look(ref XPathCaching, "XPathCaching", true);
-            Scribe_Values.Look(ref LazyTextureLoading, "lazyTextureLoading", false);
-            LazyTextureLoading = false; // 強制將其重置為 false，徹底拔除此功能
             Scribe_Values.Look(ref VerboseLogging, "verboseLogging", false);
 
 

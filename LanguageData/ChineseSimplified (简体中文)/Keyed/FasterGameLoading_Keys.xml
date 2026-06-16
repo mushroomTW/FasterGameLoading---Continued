@@ -9,7 +9,6 @@
     <FGL_AtlasCaching>静态图集缓存</FGL_AtlasCaching>
     <FGL_MultiThreading>多线程预载入</FGL_MultiThreading>
     <FGL_XPathCaching>XPath 缓存</FGL_XPathCaching>
-    <FGL_LazyTextureLoading>按需延迟加载材质</FGL_LazyTextureLoading>
     <FGL_ClearAtlasCache>清除图集缓存</FGL_ClearAtlasCache>
     <FGL_ClearAtlasCacheConfirmation>是否清除已缓存的静态图集？</FGL_ClearAtlasCacheConfirmation>
     <FGL_VerboseLogging>启用详细日志</FGL_VerboseLogging>

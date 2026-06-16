@@ -9,7 +9,6 @@
     <FGL_AtlasCaching>Статические атласы кэш</FGL_AtlasCaching>
     <FGL_MultiThreading>Многопоточная предварительная загрузка</FGL_MultiThreading>
     <FGL_XPathCaching>Кэширование XPath</FGL_XPathCaching>
-    <FGL_LazyTextureLoading>Ленивая загрузка текстур</FGL_LazyTextureLoading>
     <FGL_ClearAtlasCache>Очистить кэш атласов</FGL_ClearAtlasCache>
     <FGL_ClearAtlasCacheConfirmation>Очистить кэш статических атласов?</FGL_ClearAtlasCacheConfirmation>
 

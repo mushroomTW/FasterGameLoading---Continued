@@ -72,7 +72,7 @@ namespace FasterGameLoading
                 }
                 catch (Exception ex)
                 {
-                    FGLLog.Warning("FGL_Log_PreloadAllTypesUnexpectedException".TranslateWithFallback("Unexpected exception preloading all types cache in background: {0}", ex.Message));
+                    FGLLog.Warning("Unexpected exception preloading all types cache in background:", ex);
                 }
             });
         }

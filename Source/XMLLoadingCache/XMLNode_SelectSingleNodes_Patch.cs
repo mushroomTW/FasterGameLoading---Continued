@@ -72,7 +72,7 @@ namespace FasterGameLoading
                 {
                     try
                     {
-                        isXmlExtensionsActive = Verse.ModsConfig.IsActive("krafs.xmlextensions");
+                        isXmlExtensionsActive = ModsConfig.IsActive("krafs.xmlextensions");
                     }
                     catch
                     {

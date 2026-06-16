@@ -33,7 +33,7 @@ namespace FasterGameLoading
                 }
                 catch (Exception ex)
                 {
-                    FGLLog.Error("FGL_Log_RedirectHugslibFailed".TranslateWithFallback("Failed to redirect HugsLib OnDefsLoaded execution (HugsLib version might be incompatible):"), ex);
+                    FGLLog.Error("Failed to redirect HugsLib OnDefsLoaded execution (HugsLib version might be incompatible):", ex);
                 }
             });
             return false;

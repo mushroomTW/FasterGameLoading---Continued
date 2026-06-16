@@ -143,7 +143,7 @@ namespace FasterGameLoading
                 
                 if (FasterGameLoadingSettings.VerboseLogging)
                 {
-                    FGLLog.Message("FGL_Log_XmlScanCompleteHashes".TranslateWithFallback("XML scan complete. Combined content hash: {0}, last saved hash: {1}", newCombinedHash, SessionCache.xmlCombinedHashSinceLastSession));
+                    FGLLog.Message($"XML scan complete. Combined content hash: {newCombinedHash}, last saved hash: {SessionCache.xmlCombinedHashSinceLastSession}");
                 }
 
                 if (SessionCache.xmlCombinedHashSinceLastSession != newCombinedHash || anyContentChanged)
@@ -156,7 +156,7 @@ namespace FasterGameLoading
             }
             catch (Exception ex)
             {
-                FGLLog.Warning("FGL_Log_ErrorBackgroundXmlScan".TranslateWithFallback("Error during background XML file scan: {0}", ex.Message));
+                FGLLog.Warning("Error during background XML file scan:", ex);
             }
             finally
             {

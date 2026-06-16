@@ -215,7 +215,7 @@ namespace FasterGameLoading
             }
             catch (Exception ex)
             {
-                FGLLog.Error("FGL_Log_ErrorInitializingTargetModRoots".TranslateWithFallback("Error initializing target mod roots: {0}", ex));
+                FGLLog.Error("Error initializing target mod roots:",ex);
             }
         }
 

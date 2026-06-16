@@ -36,12 +36,12 @@ namespace FasterGameLoading
                     LoadedModManager.GetMod<FasterGameLoadingMod>().WriteSettings();
                     if (FasterGameLoadingSettings.VerboseLogging)
                     {
-                        FGLLog.Message("FGL_Log_XmlCacheInvalidatedNewHashSaved".TranslateWithFallback("XML cache invalidated and new hash saved to settings on main thread."));
+                        FGLLog.Message("XML cache invalidated and new hash saved to settings on main thread.");
                     }
                 }
                 catch (Exception ex)
                 {
-                    FGLLog.Warning("FGL_Log_FailedToSaveXmlHash".TranslateWithFallback("Failed to save updated XML combined hash: {0}", ex.Message));
+                    FGLLog.Warning("Failed to save updated XML combined hash:", ex);
                 }
             }
 
@@ -78,7 +78,7 @@ namespace FasterGameLoading
                 catch (Exception ex)
                 {
                     // 載入失敗時不加入 loadedMods，讓正式流程可以重試
-                    FGLLog.Warning("FGL_Log_EarlyLoadingFailedWillRetry".TranslateWithFallback("Early loading failed for {0}, will retry in normal flow:", modToLoad.PackageIdPlayerFacing), ex);
+                    FGLLog.Warning($"Early loading failed for {modToLoad.PackageIdPlayerFacing}, will retry in normal flow:", ex);
                 }
 
                 // 用完時間預算就讓出這幀，下幀繼續

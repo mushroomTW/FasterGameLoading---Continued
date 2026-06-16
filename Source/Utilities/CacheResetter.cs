@@ -34,7 +34,7 @@ namespace FasterGameLoading
                 }
                 catch (Exception ex)
                 {
-                    FGLLog.Error("FGL_Log_CacheResetterErrorCleanup".TranslateWithFallback("CacheResetter error during cleanup:"), ex);
+                    FGLLog.Error("CacheResetter error during cleanup:", ex);
                 }
             }
         }

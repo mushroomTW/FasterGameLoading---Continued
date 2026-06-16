@@ -155,6 +155,8 @@ namespace FasterGameLoading
 
         public void Update()
         {
+            // 在主執行緒排空背景執行緒累積的日誌，避免背景緒直接呼叫非執行緒安全的 Verse.Log
+            FGLLog.FlushPending();
             ModContentLoaderTexture2D_LoadTexture_Patch.ProcessPendingMainThreadRequests();
         }
 
@@ -211,7 +213,7 @@ namespace FasterGameLoading
             {
                 if (FasterGameLoadingSettings.AtlasCaching && AtlasCacheReader.TryLoadFromCache())
                 {
-                    FGLLog.Message("FGL_Log_StaticAtlasesLoadedFromCache".TranslateWithFallback("Static atlases loaded from cache (Raw DXT bytes)"));
+                    FGLLog.Message("Static atlases loaded from cache (Raw DXT bytes)");
                 }
                 else
                 {
@@ -229,9 +231,9 @@ namespace FasterGameLoading
 
                     if (AdaptiveStaticAtlasBakeFailed)
                     {
-                        FGLLog.Message("FGL_Log_AdaptiveBakeFailedFallback".TranslateWithFallback("Adaptive bake failed, falling back to vanilla static atlas baking"));
+                        FGLLog.Message("Adaptive bake failed, falling back to vanilla static atlas baking");
                         GlobalTextureAtlasManager.BakeStaticAtlases();
-                        FGLLog.Message("FGL_Log_VanillaStaticAtlasBakingComplete".TranslateWithFallback("Vanilla static atlas baking complete"));
+                        FGLLog.Message("Vanilla static atlas baking complete");
                     }
 
                     if (FasterGameLoadingSettings.AtlasCaching && !AdaptiveStaticAtlasBakeFailed && queueHash != null)
@@ -247,9 +249,9 @@ namespace FasterGameLoading
             }
             else
             {
-                FGLLog.Message("FGL_Log_StartingDeferredVanillaStaticAtlasBaking".TranslateWithFallback("Starting deferred vanilla static atlas baking"));
+                FGLLog.Message("Starting deferred vanilla static atlas baking");
                 GlobalTextureAtlasManager.BakeStaticAtlases();
-                FGLLog.Message("FGL_Log_DeferredVanillaStaticAtlasBakingComplete".TranslateWithFallback("Deferred vanilla static atlas baking complete"));
+                FGLLog.Message("Deferred vanilla static atlas baking complete");
             }
         }
 

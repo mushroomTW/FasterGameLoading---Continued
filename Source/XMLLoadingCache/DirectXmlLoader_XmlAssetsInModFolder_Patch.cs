@@ -76,7 +76,7 @@ namespace FasterGameLoading
                     catch (Exception ex)
                     {
                         // 一律輸出錯誤日誌，以利排查多執行緒載入問題
-                        FGLLog.Error("FGL_Log_ParallelLoadXmlAssetFailedForMod".TranslateWithFallback("Failed to load XML asset in parallel for Mod {0} (File: {1}): {2}", mod.Name, files[i]?.Item2?.FullName, ex.Message), ex);
+                        FGLLog.Error($"Failed to load XML asset in parallel for Mod {mod.Name} (File: {files[i]?.Item2?.FullName}): {ex.Message}", ex);
                     }
                 });
 
@@ -95,7 +95,7 @@ namespace FasterGameLoading
             }
             catch (Exception ex)
             {
-                FGLLog.Warning("FGL_Log_ParallelXmlLoadingFailedFallback".TranslateWithFallback("Parallel XML loading failed for Mod {0}, falling back to vanilla loader: {1}", mod?.Name ?? "Unknown", ex.Message));
+                FGLLog.Warning($"Parallel XML loading failed for Mod {mod?.Name ?? "Unknown"}, falling back to vanilla loader: {ex.Message}");
                 return true; // 萬一出錯，安全 fallback 回原生的單執行緒加載
             }
         }

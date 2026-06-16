@@ -6,34 +6,6 @@
 
 ---
 
-## 📁 Structure / 專案結構
-
-此模組的源碼與目錄結構如下：
-
-```text
-FasterGameLoading/ (專案根目錄)
-├── About/                # 模組基本資訊與 Steam 工作坊說明頁配置
-├── Assemblies/           # 編譯後的 DLL 輸出目錄
-├── LanguageData/         # 模組本機化翻譯資料 (XML)
-├── SteamDescriptions/    # Steam 商店頁面說明配置
-└── Source/               # 模組 C# 源碼目錄
-    ├── Core/             # 模組入口點與初始化 (Mod 進入點、Startup 收尾、翻譯注入註冊)
-    ├── Language/         # 翻譯注入器 (TranslationInjector、執行期注入模組翻譯鍵值)
-    ├── Settings/         # 模組設定與跨會話 (Session) 載入歷史快取管理
-    ├── XMLLoadingCache/  # XML 與資料載入優化 (多執行緒並行 XML 載入與 XPath 缺失快取)
-    ├── EarlyModContentLoading/ # 提早載入與型別反射快取 (AccessTools、GenTypes 反射查詢快取)
-    ├── TextureDownscaler/# 貼圖降質工具 (自動掃描、GPU 雙線性降採樣、WeakReference 快取、相容 Image Opt)
-    ├── SmarterAtlasBaking/ # 自適應圖集烘焙 (協程分幀拼合、基於 GPU 效能的自適應批次調整演算法)
-    ├── StaticAtlasesCache/ # 靜態圖集硬碟快取 (Raw DXT 載入與寫入、雙重雜湊校驗)
-    ├── DelayGraphicAndIconLoading/ # 延遲圖形與圖示載入 (ThingDef.PostLoad 攔截、時間預算協程、BadTex 圖示修正)
-    ├── DelaySoundLoading/  # 延遲音效載入 (SubSoundDef 解析延遲、啟動期靜音保護、世界初始化後 Unpatch)
-    ├── Compatibility/    # 第三方模組相容性處理 (Image Opt、HugsLib、Humanoid Alien Races 等退避或延遲邏輯)
-    ├── Utilities/        # 共用工具類別 (I/O 重試、全域常數、快取重置廣播器、日誌等)
-    └── FasterGameLoading.Tests/ # 模組單元測試 (路徑雜湊失效、快取清理等 NUnit 測試)
-```
-
----
-
 ## 🎮 RimWorld 遊戲啟動流程與本模組優化切入點
 
 RimWorld 的啟動是一個高度複雜的初始化過程，本模組在多個關鍵階段介入，將原生的單核、同步行為重構為多執行緒並行與智慧快取：
@@ -185,6 +157,34 @@ graph TD
 * **[XmlExtensions](https://github.com/15adhami/XmlExtensions)**：完美相容。當檢測到其啟用時，XPath 快取功能會自動停用，避免與 XmlExtensions 的自訂 XML 處理邏輯衝突。
 * **[AyaTweaks 2.0 (Ayameduki Tweaks)](https://gitlab.com/wrelick-rimworld/ayatweaks2.0)**：嘗試相容。本模組會自動偵測並將所有 Ayameduki 相關 Mod (`Ayameduki.*`) 以及 WRelicK 的翻譯與補丁 (`WRK.*`) 排除在「提早載入」與「多執行緒 XML 載入」之外，以確保其複雜的 Patch 載入順序與執行緒安全完全正常，防止爆紅。
 * **[Ancot Library（Ancot's Races Framework）](https://steamcommunity.com/sharedfiles/filedetails/?id=2988801276)**：完美相容。本模組會偵測 `Ancot.AncotLibrary` 本體與所有在 `About.xml` 中聲明依賴它的種族模組（如 Kiiro Race、Tsukin Race 等），並**動態**將其根目錄下的外觀貼圖排除在靜態圖集烘焙之外。偵測流程同時使用 `ModsConfig.IsActive` 與 `LoadedModManager.RunningMods`，避免載入早期狀態尚未穩定時漏判，徹底避免 Ancot 旗下種族因自訂多重遮罩（Multi-mask）渲染節點造成的貼圖黑化或 bodyAddon 消失問題。
+
+---
+
+## 📁 Structure / 專案結構
+
+此模組的源碼與目錄結構如下：
+
+```text
+FasterGameLoading/ (專案根目錄)
+├── About/                # 模組基本資訊與 Steam 工作坊說明頁配置
+├── Assemblies/           # 編譯後的 DLL 輸出目錄
+├── LanguageData/         # 模組本機化翻譯資料 (XML)
+├── SteamDescriptions/    # Steam 商店頁面說明配置
+└── Source/               # 模組 C# 源碼目錄
+    ├── Core/             # 模組入口點與初始化 (Mod 進入點、Startup 收尾、翻譯注入註冊)
+    ├── Language/         # 翻譯注入器 (TranslationInjector、執行期注入模組翻譯鍵值)
+    ├── Settings/         # 模組設定與跨會話 (Session) 載入歷史快取管理
+    ├── XMLLoadingCache/  # XML 與資料載入優化 (多執行緒並行 XML 載入與 XPath 缺失快取)
+    ├── EarlyModContentLoading/ # 提早載入與型別反射快取 (AccessTools、GenTypes 反射查詢快取)
+    ├── TextureDownscaler/# 貼圖降質工具 (自動掃描、GPU 雙線性降採樣、WeakReference 快取、相容 Image Opt)
+    ├── SmarterAtlasBaking/ # 自適應圖集烘焙 (協程分幀拼合、基於 GPU 效能的自適應批次調整演算法)
+    ├── StaticAtlasesCache/ # 靜態圖集硬碟快取 (Raw DXT 載入與寫入、雙重雜湊校驗)
+    ├── DelayGraphicAndIconLoading/ # 延遲圖形與圖示載入 (ThingDef.PostLoad 攔截、時間預算協程、BadTex 圖示修正)
+    ├── DelaySoundLoading/  # 延遲音效載入 (SubSoundDef 解析延遲、啟動期靜音保護、世界初始化後 Unpatch)
+    ├── Compatibility/    # 第三方模組相容性處理 (Image Opt、HugsLib、Humanoid Alien Races 等退避或延遲邏輯)
+    ├── Utilities/        # 共用工具類別 (I/O 重試、全域常數、快取重置廣播器、日誌等)
+    └── FasterGameLoading.Tests/ # 模組單元測試 (路徑雜湊失效、快取清理等 NUnit 測試)
+```
 
 ---
 

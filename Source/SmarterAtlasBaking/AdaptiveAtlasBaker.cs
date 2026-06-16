@@ -21,7 +21,7 @@ namespace FasterGameLoading
         /// <param name="delayedActions">延遲動作管理器實例，主要用來回報或獲取狀態。</param>
         public static IEnumerator PerformAdaptiveStaticAtlasBake(DelayedActions delayedActions)
         {
-            FGLLog.Message("FGL_Log_StartingAdaptiveStaticAtlasBake".TranslateWithFallback("Starting adaptive static atlas bake"));
+            FGLLog.Message("Starting adaptive static atlas bake");
 
             const float TARGET_BAKE_TIME_SECONDS = 0.008f;
             const float ADAPTATION_FACTOR = 0.2f;
@@ -140,7 +140,7 @@ namespace FasterGameLoading
             // 清除原始 buildQueue，防止 vanilla 重複處理
             GlobalTextureAtlasManager.buildQueue.Clear();
             GlobalTextureAtlasManager.buildQueueMasks.Clear();
-            FGLLog.Message("FGL_Log_AdaptiveStaticAtlasBakeComplete".TranslateWithFallback("Adaptive static atlas bake complete"));
+            FGLLog.Message("Adaptive static atlas bake complete");
         }
 
         private static bool TryBakeSingleBatch(
@@ -208,7 +208,7 @@ namespace FasterGameLoading
             }
             catch (Exception ex)
             {
-                FGLLog.Warning("FGL_Log_ErrorBakingAtlasBatch".TranslateWithFallback("Error baking atlas batch:"), ex);
+                FGLLog.Warning("Error baking atlas batch:", ex);
                 return false;
             }
         }

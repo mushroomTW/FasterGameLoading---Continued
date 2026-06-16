@@ -81,7 +81,7 @@ namespace FasterGameLoading
         {
             if (WEIGHTS.Length != HISTORY_SIZE)
             {
-                FGLLog.Error("FGL_Log_WeightsLengthMustMatchHistorySize".TranslateWithFallback("WEIGHTS length must match HISTORY_SIZE!"));
+                FGLLog.Error("WEIGHTS length must match HISTORY_SIZE!");
             }
         }
 

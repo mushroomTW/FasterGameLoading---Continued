@@ -52,7 +52,7 @@ namespace FasterGameLoading
             // 圖集快取在儲存後可能無法讀取紋理資料，需立即警告開發者。
             if (substitutions == 0)
             {
-                FGLLog.Warning("FGL_Log_TranspilerNoApplyCallFound".TranslateWithFallback("StaticTextureAtlas_ApplyTextureCompression_Patch: Transpiler found no Apply(bool,bool) call to replace. The patch may be broken due to a game update — atlas cache write-back may fail."));
+                FGLLog.Warning("StaticTextureAtlas_ApplyTextureCompression_Patch: Transpiler found no Apply(bool,bool) call to replace. The patch may be broken due to a game update — atlas cache write-back may fail.");
             }
         }
 

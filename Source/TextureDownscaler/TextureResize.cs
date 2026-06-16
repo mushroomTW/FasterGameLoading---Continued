@@ -72,7 +72,7 @@ namespace FasterGameLoading
                     {
                         ResizeTexture(entry);
                     }
-                    FGLLog.Warning("FGL_Log_DownscaledTexturesCount".TranslateWithFallback("Downscaled {0} textures (cached, originals untouched)", texturesToResize.Count));
+                    FGLLog.Warning($"Downscaled {texturesToResize.Count} textures (cached, originals untouched)");
                     cacheManager.ReplaceTextureCacheDirectory(stagingDirectory);
                     LogResizeSummary(texturesToResize.Count);
                 }
@@ -86,7 +86,7 @@ namespace FasterGameLoading
             }
             catch (Exception ex)
             {
-                FGLLog.Error("FGL_Log_TextureDownscaleFailedKeepingCache".TranslateWithFallback("Texture downscale failed, keeping previous cache:"), ex);
+                FGLLog.Error("Texture downscale failed, keeping previous cache:", ex);
                 cacheManager.RestorePreviousCacheState(previousCacheMap, previousCacheDirectory, stagingDirectory);
             }
             finally
@@ -150,15 +150,15 @@ namespace FasterGameLoading
             }
             catch (IOException ex)
             {
-                FGLLog.Error("FGL_Log_FailedDownscaleTexturePath".TranslateWithFallback("Failed to downscale texture {0}:", candidate.path), ex);
+                FGLLog.Error($"Failed to downscale texture {candidate.path}:", ex);
             }
             catch (UnauthorizedAccessException ex)
             {
-                FGLLog.Error("FGL_Log_FailedDownscaleTexturePath".TranslateWithFallback("Failed to downscale texture {0}:", candidate.path), ex);
+                FGLLog.Error($"Failed to downscale texture {candidate.path}:", ex);
             }
             catch (Exception ex)
             {
-                FGLLog.Warning("FGL_Log_FailedDownscaleTexturePath".TranslateWithFallback("Failed to downscale texture {0}:", candidate.path), ex);
+                FGLLog.Warning($"Failed to downscale texture {candidate.path}:", ex);
                 cacheManager.RemoveCachedTexturePath(candidate.path);
             }
             finally
@@ -185,7 +185,7 @@ namespace FasterGameLoading
             catch (Exception ex)
             {
                 // 無法從磁碟載入原始紋理，caller 會改用記憶體中的版本作為 fallback
-                FGLLog.Warning("FGL_Log_CannotLoadOriginalTextureFromDiskInMemory".TranslateWithFallback("Cannot load original texture from disk, using in-memory copy:"), ex);
+                FGLLog.Warning("Cannot load original texture from disk, using in-memory copy:", ex);
             }
 
             if (texture != null) { TextureResizer.DestroyTemporaryUnityObject(texture); texture = null; }
@@ -194,7 +194,7 @@ namespace FasterGameLoading
 
         private void LogResizeSummary(int resizedCount)
         {
-            FGLLog.Message("FGL_Log_TextureDownscaleSummary".TranslateWithFallback("Texture downscale summary: resized={0}, sourcePixels={1}, downscaledPixels={2}, estimatedSaved={3}", resizedCount, lastOriginalPixelCount, lastDownscaledPixelCount, FormatBytes((lastOriginalPixelCount - lastDownscaledPixelCount) * 4)));
+            FGLLog.Message($"Texture downscale summary: resized={resizedCount}, sourcePixels={lastOriginalPixelCount}, downscaledPixels={lastDownscaledPixelCount}, estimatedSaved={FormatBytes((lastOriginalPixelCount - lastDownscaledPixelCount) * 4)}");
         }
 
         private static string FormatBytes(long bytes)

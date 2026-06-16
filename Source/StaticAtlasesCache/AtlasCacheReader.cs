@@ -48,17 +48,17 @@ namespace FasterGameLoading
             }
             catch (IOException e)
             {
-                FGLLog.Warning("FGL_Log_CacheLoadIOError".TranslateWithFallback("Cache load I/O error: {0}", e));
+                FGLLog.Warning($"Cache load I/O error: {e}");
                 return false;
             }
             catch (UnauthorizedAccessException e)
             {
-                FGLLog.Warning("FGL_Log_CacheLoadAuthError".TranslateWithFallback("Cache load authorization error: {0}", e));
+                FGLLog.Warning($"Cache load authorization error: {e}");
                 return false;
             }
             catch (Exception e)
             {
-                FGLLog.Warning("FGL_Log_CacheLoadErrorFallback".TranslateWithFallback("Cache load error, falling back to vanilla atlas baking: {0}", e));
+                FGLLog.Warning($"Cache load error, falling back to vanilla atlas baking: {e}");
                 return false;
             }
         }
@@ -89,7 +89,7 @@ namespace FasterGameLoading
             if (!GlobalTextureAtlasManager.buildQueue.ContainsKey(key))
             {
                 // textureKey 不在 buildQueue：可能是 BakingSkipList 或佇列尚未填入
-                FGLLog.Warning("FGL_Log_AtlasCacheBuildQueueMissingKey".TranslateWithFallback("Atlas cache: buildQueue does not contain key (group={0}, hasMask={1}). Cache entry skipped.", info.group, info.hasMask));
+                FGLLog.Warning($"Atlas cache: buildQueue does not contain key (group={info.group}, hasMask={info.hasMask}). Cache entry skipped.");
                 return false;
             }
 
@@ -113,7 +113,7 @@ namespace FasterGameLoading
                     // textureKey 不在 buildQueue：可能是 BakingSkipList 在本次啟動攔截了該紋理，
                     // 或 mod 組合改變導致紋理缺失；應放棄此快取條目。
                     var texName = (info.textureNames != null && i < info.textureNames.Count) ? info.textureNames[i] : texKey;
-                    FGLLog.Warning("FGL_Log_AtlasCacheTextureMissingFromBuildQueue".TranslateWithFallback("Atlas cache: texture missing from buildQueue during cache load (key={0}, name={1}). Cache entry skipped.", texKey, texName));
+                    FGLLog.Warning($"Atlas cache: texture missing from buildQueue during cache load (key={texKey}, name={texName}). Cache entry skipped.");
                     return false;
                 }
             }
@@ -123,7 +123,7 @@ namespace FasterGameLoading
             // BuildMeshesForUvs 逐索引配對 textures[i] ↔ uvRects[i]，數量不符會造成越界或錯誤配對。
             if (atlas.textures.Count != info.uvRects.Count)
             {
-                FGLLog.Warning("FGL_Log_AtlasCacheTextureCountMismatch".TranslateWithFallback("Atlas cache: texture count ({0}) != uvRects count ({1}) for group={2}. Cache entry skipped.", atlas.textures.Count, info.uvRects.Count, info.group));
+                FGLLog.Warning($"Atlas cache: texture count ({atlas.textures.Count}) != uvRects count ({info.uvRects.Count}) for group={info.group}. Cache entry skipped.");
                 return false;
             }
 
@@ -140,7 +140,7 @@ namespace FasterGameLoading
             }
             catch (Exception ex)
             {
-                FGLLog.Warning("FGL_Log_FailedToBuildMeshesForAtlasGroup".TranslateWithFallback("Failed to build meshes for atlas group {0}: {1}", info.group, ex.Message));
+                FGLLog.Warning($"Failed to build meshes for atlas group {info.group}: {ex.Message}");
                 // 項目7：BuildMeshesForUvs 可能已部分建立 tiles 中的 mesh，
                 // 呼叫 atlas.Destroy() 確保所有 mesh 被銷毀，再清理紋理。
                 // Unity Object.Destroy 對已銷毀的物件是安全的，重複呼叫不會崩潰。
@@ -185,7 +185,7 @@ namespace FasterGameLoading
             // 僅檢查「不足」:來源紋理若帶有 mip chain,位元組數會多於基底層,屬合法情況
             if (colorExpected > 0 && colorBytes.Length < colorExpected)
             {
-                FGLLog.Warning("FGL_Log_AtlasCacheFileTruncatedColor".TranslateWithFallback("Atlas cache file truncated for {0}: expected at least {1} bytes, got {2}. Skipping cache entry.", info.colorFile, colorExpected, colorBytes.Length));
+                FGLLog.Warning($"Atlas cache file truncated for {info.colorFile}: expected at least {colorExpected} bytes, got {colorBytes.Length}. Skipping cache entry.");
                 return false;
             }
 
@@ -229,7 +229,7 @@ namespace FasterGameLoading
                     // 僅檢查「不足」,容許 mip chain 額外位元組
                     if (maskExpected > 0 && maskBytes.Length < maskExpected)
                     {
-                        FGLLog.Warning("FGL_Log_AtlasCacheFileTruncatedMask".TranslateWithFallback("Atlas cache file truncated for {0}: expected at least {1} bytes, got {2}. Skipping cache entry.", info.maskFile, maskExpected, maskBytes.Length));
+                        FGLLog.Warning($"Atlas cache file truncated for {info.maskFile}: expected at least {maskExpected} bytes, got {maskBytes.Length}. Skipping cache entry.");
                         UnityEngine.Object.Destroy(maskTex);
                         DestroyAtlasTextures(atlas);
                         return false;

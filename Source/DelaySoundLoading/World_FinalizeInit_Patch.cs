@@ -27,7 +27,7 @@ namespace FasterGameLoading
                     }
                     catch (Exception ex)
                     {
-                        FGLLog.Error("FGL_Log_ErrorResolvingAudioGrainForDefNoColon".TranslateWithFallback("Error resolving AudioGrain for {0}", def), ex);
+                        FGLLog.Error($"Error resolving AudioGrain for {def}", ex);
                     }
                 }
                 // 所有 SubSoundDef 解析完畢後才取消攔截，避免中途播放聲音

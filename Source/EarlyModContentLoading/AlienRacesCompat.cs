@@ -16,10 +16,15 @@ namespace FasterGameLoading
     {
         // 以下兩個旗標僅在主執行緒上讀寫：
         //   ScheduleRescan 由 ModContentPack_ReloadContentInt_Patch.Postfix 呼叫（RimWorld 主執行緒）
-        //   PerformRescan  由 LongEventHandler.ExecuteWhenFinished 的委派執行（同為主執行緒）
+        //   PerformRescan  由 DelayedActions.PerformActions 協程呼叫（Unity 協程在主執行緒）
         // 因此不需要額外的執行緒同步機制。
         private static bool rescanDone = false;
         private static bool isScheduled = false;
+
+        // ScheduleRescan 偵測到的 Alien Race assembly，供 PerformRescan 重用，省去二次查找。
+        private static Assembly cachedAlienAssembly;
+
+        public static bool IsScheduled => isScheduled;
 
         /// <summary>
         /// 在所有 Mod 完成 ReloadContentInt 後呼叫，安排在載入完成後重新掃描。
@@ -37,16 +42,26 @@ namespace FasterGameLoading
 
                 FGLLog.Message("Alien Races detected, scheduling extended graphics rescan after loading");
 
+                cachedAlienAssembly = alienAssembly;
                 isScheduled = true;
-                // 使用 LongEventHandler 在載入完成後執行
-                // 此時所有 Def 已解析完畢，貼圖資料庫完整
-                LongEventHandler.ExecuteWhenFinished(() => PerformRescan(alienAssembly));
             }
             catch (Exception ex)
             {
                 isScheduled = false;
                 FGLLog.Warning("Alien Races detection failed:", ex);
             }
+        }
+
+        /// <summary>
+        /// 實際執行重新掃描。由 DelayedActions.PerformActions 協程在延遲貼圖／圖集就緒後呼叫（主執行緒）。
+        /// 優先重用 ScheduleRescan 已偵測到的 assembly，必要時才重新查找。
+        /// </summary>
+        public static void PerformRescan()
+        {
+            var alienAssembly = cachedAlienAssembly ?? AppDomain.CurrentDomain.GetAssemblies()
+                .FirstOrDefault(a => a.GetName().Name == FGLConsts.AlienRaceAssemblyName);
+            if (alienAssembly == null) return;
+            PerformRescan(alienAssembly);
         }
 
         private static void PerformRescan(Assembly alienAssembly)
@@ -78,25 +93,32 @@ namespace FasterGameLoading
 
                 foreach (var def in DefDatabase<ThingDef>.AllDefs)
                 {
-                    var defType = def.GetType();
-                    if (!thingDefAlienRaceType.IsAssignableFrom(defType))
-                        continue;
+                    try
+                    {
+                        var defType = def.GetType();
+                        if (!thingDefAlienRaceType.IsAssignableFrom(defType))
+                            continue;
 
-                    // 導覽路徑: ThingDef_AlienRace.alienRace.generalSettings.alienPartGenerator
-                    var alienRace = AccessTools.Field(defType, FGLConsts.AlienRaceFieldName)?.GetValue(def) ??
-                                    AccessTools.Property(defType, FGLConsts.AlienRaceFieldName)?.GetValue(def);
-                    if (alienRace == null) continue;
+                        // 導覽路徑: ThingDef_AlienRace.alienRace.generalSettings.alienPartGenerator
+                        var alienRace = AccessTools.Field(defType, FGLConsts.AlienRaceFieldName)?.GetValue(def) ??
+                                        AccessTools.Property(defType, FGLConsts.AlienRaceFieldName)?.GetValue(def);
+                        if (alienRace == null) continue;
 
-                    var gs = AccessTools.Field(alienRace.GetType(), FGLConsts.GeneralSettingsPropertyName)?.GetValue(alienRace) ??
-                             AccessTools.Property(alienRace.GetType(), FGLConsts.GeneralSettingsPropertyName)?.GetValue(alienRace);
-                    if (gs == null) continue;
+                        var gs = AccessTools.Field(alienRace.GetType(), FGLConsts.GeneralSettingsPropertyName)?.GetValue(alienRace) ??
+                                 AccessTools.Property(alienRace.GetType(), FGLConsts.GeneralSettingsPropertyName)?.GetValue(alienRace);
+                        if (gs == null) continue;
 
-                    var apg = AccessTools.Field(gs.GetType(), FGLConsts.AlienPartGeneratorPropertyName)?.GetValue(gs) ??
-                              AccessTools.Property(gs.GetType(), FGLConsts.AlienPartGeneratorPropertyName)?.GetValue(gs);
-                    if (apg == null) continue;
+                        var apg = AccessTools.Field(gs.GetType(), FGLConsts.AlienPartGeneratorPropertyName)?.GetValue(gs) ??
+                                  AccessTools.Property(gs.GetType(), FGLConsts.AlienPartGeneratorPropertyName)?.GetValue(gs);
+                        if (apg == null) continue;
 
-                    addMethod.Invoke(queue, new object[] { apg });
-                    anyAdded = true;
+                        addMethod.Invoke(queue, new object[] { apg });
+                        anyAdded = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        FGLLog.Warning($"Failed to add AlienPartGenerator for def {def?.defName ?? "NULL"} to queue: {ex}");
+                    }
                 }
 
                 if (anyAdded)
@@ -104,8 +126,15 @@ namespace FasterGameLoading
                     var loadGraphicsHook = AccessTools.Method(apgType, FGLConsts.LoadGraphicsHookMethodName);
                     if (loadGraphicsHook != null)
                     {
-                        loadGraphicsHook.Invoke(null, null);
-                        FGLLog.Message("Alien Races extended graphics rescan complete");
+                        try
+                        {
+                            loadGraphicsHook.Invoke(null, null);
+                            FGLLog.Message("Alien Races extended graphics rescan complete");
+                        }
+                        catch (Exception ex)
+                        {
+                            FGLLog.Warning($"AlienPartGenerator.LoadGraphicsHook execution failed: {ex}");
+                        }
                     }
                     else
                     {

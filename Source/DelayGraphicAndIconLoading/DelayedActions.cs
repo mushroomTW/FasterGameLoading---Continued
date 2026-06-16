@@ -189,6 +189,13 @@ namespace FasterGameLoading
             var loadedDefs = new List<ThingDef>();
             yield return DeferredLoader.LoadDeferredGraphicsCoroutine(this, loadedDefs);
             yield return BakeDeferredAtlasesCoroutine();
+
+            // 確保在所有延遲貼圖與圖集載入／烘焙完成後，才重新掃描 Alien Races，避免 variantCount 錯誤或加載異常
+            if (AlienRacesCompat.IsScheduled)
+            {
+                AlienRacesCompat.PerformRescan();
+            }
+
             yield return DeferredLoader.UpdateMapMeshForLoadedDefs(loadedDefs);
             yield return DeferredLoader.LoadDeferredIconsCoroutine(this);
             yield return DeferredLoader.ResolveSubSoundDefsCoroutine(this);
@@ -232,6 +239,7 @@ namespace FasterGameLoading
                     if (AdaptiveStaticAtlasBakeFailed)
                     {
                         FGLLog.Message("Adaptive bake failed, falling back to vanilla static atlas baking");
+                        AtlasBakeDiagnostics.LogPotentialMaskIssues("deferred fallback");
                         GlobalTextureAtlasManager.BakeStaticAtlases();
                         FGLLog.Message("Vanilla static atlas baking complete");
                     }
@@ -250,6 +258,7 @@ namespace FasterGameLoading
             else
             {
                 FGLLog.Message("Starting deferred vanilla static atlas baking");
+                AtlasBakeDiagnostics.LogPotentialMaskIssues("deferred vanilla");
                 GlobalTextureAtlasManager.BakeStaticAtlases();
                 FGLLog.Message("Deferred vanilla static atlas baking complete");
             }

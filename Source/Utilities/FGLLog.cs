@@ -39,7 +39,7 @@ namespace FasterGameLoading
 
         public static void Warning(string message, Exception ex)
         {
-            Emit(LogLevel.Warning, Prefix + message + " - Exception: " + ex.Message + "\n" + ex.StackTrace);
+            Emit(LogLevel.Warning, Prefix + message + " - Exception: " + ex);
         }
 
         public static void Error(string message)

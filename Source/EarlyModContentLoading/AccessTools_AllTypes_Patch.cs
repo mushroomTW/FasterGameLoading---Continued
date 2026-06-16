@@ -33,41 +33,44 @@ namespace FasterGameLoading
             if (!FasterGameLoadingSettings.EnableMultiThreading)
             {
                 // 當關閉多執行緒預載入時，直接在當前（主）執行緒同步載入，避免後續在其他執行緒上觸發初始化
-                var types = assembliesSnapshot
-                    .SelectMany(assembly =>
-                    {
-                        try { return AccessTools.GetTypesFromAssembly(assembly); }
-                        catch { return Array.Empty<Type>(); }
-                    }).ToList();
+                var types = BuildTypeList(assembliesSnapshot);
                 lock (typesLock)
                 {
                     allTypesCached = types;
                     cachedAssembliesCount = snapshotCount;
-                    WarmupTypeCache(types);
                 }
+                // 主執行緒：直接預熱 FullName 快取（與下方多執行緒路徑不同，這裡本就在主緒，無競爭風險）
+                WarmupTypeCache(types);
                 return;
             }
-            
+
+            // 多執行緒路徑：背景緒只做型別「列舉」（Assembly.GetTypes），
+            // 不在背景緒讀取 type.FullName。
+            //
+            // 原因：type.FullName / 型別名稱解析會觸發 Mono 反射層的型別載入，而 Mono
+            // （Unity 2022.3 MonoBleedingEdge）的型別/名稱解析並非完全執行緒安全。若背景緒
+            // 在此大量解析型別名稱，剛好與主執行緒的型別解析（例如某些 Mod 透過
+            // System.Xml.Serialization.XmlSerializer → Assembly.GetType 載入設定）並行，
+            // 可能在 Mono 內部 class-init 狀態上競爭而導致原生崩潰（Assembly.GetType /
+            // InternalGetType 的 Access Violation）。本檔案下方 WarmupTypeCache 的註解亦記載過
+            // 型別名稱處理曾引發 MakeGenericType 崩潰，名稱解析確為此處最脆弱的環節。
+            //
+            // 因此：FullName 預熱改排程到主執行緒（載入長事件結束時）執行，與其他主緒型別
+            // 解析自然序列化、互不並行。
             Task.Run(() =>
             {
                 // 最外層安全網：fire-and-forget 背景 Task 的例外無人觀察，
-                // 若 ToList/lock/WarmupTypeCache 拋出例外將靜默遺失，故統一兜底記錄。
+                // 若 ToList/lock 拋出例外將靜默遺失，故統一兜底記錄。
                 try
                 {
                     // 稍微延遲 50 毫秒，避開啟動時的併發載入高峰
                     System.Threading.Thread.Sleep(FGLConsts.AccessToolsPreloadDelayMs);
 
-                    var types = assembliesSnapshot
-                        .SelectMany(assembly =>
-                        {
-                            try { return AccessTools.GetTypesFromAssembly(assembly); }
-                            catch { return Array.Empty<Type>(); }
-                        }).ToList();
+                    var types = BuildTypeList(assembliesSnapshot);
                     lock (typesLock)
                     {
                         allTypesCached = types;
                         cachedAssembliesCount = snapshotCount;
-                        WarmupTypeCache(types);
                     }
                 }
                 catch (Exception ex)
@@ -75,6 +78,33 @@ namespace FasterGameLoading
                     FGLLog.Warning("Unexpected exception preloading all types cache in background:", ex);
                 }
             });
+
+            // 在主執行緒排程 FullName 預熱（此處 Preload 由 Mod 建構子在主緒呼叫，
+            // ExecuteWhenFinished 的 Add 與其回呼皆在主緒，安全）。
+            // 回呼觸發時背景列舉通常已完成；若尚未完成（allTypesCached 仍為 null）則略過預熱，
+            // 之後由主緒在首次需要時自然補上，不影響正確性。
+            LongEventHandler.ExecuteWhenFinished(() =>
+            {
+                var cached = allTypesCached;
+                if (cached != null)
+                {
+                    WarmupTypeCache(cached);
+                }
+            });
+        }
+
+        /// <summary>
+        /// 對快照中的每個組件呼叫 <see cref="AccessTools.GetTypesFromAssembly"/> 並彙整為單一清單。
+        /// 僅做型別「列舉」，不讀取 type.FullName（名稱解析請交由 <see cref="WarmupTypeCache"/> 在主緒進行）。
+        /// </summary>
+        private static List<Type> BuildTypeList(System.Reflection.Assembly[] assemblies)
+        {
+            return assemblies
+                .SelectMany(assembly =>
+                {
+                    try { return AccessTools.GetTypesFromAssembly(assembly); }
+                    catch { return Array.Empty<Type>(); }
+                }).ToList();
         }
 
         /// <summary>

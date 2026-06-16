@@ -72,7 +72,7 @@ namespace FasterGameLoading
                     {
                         ResizeTexture(entry);
                     }
-                    FGLLog.Warning($"Downscaled {texturesToResize.Count} textures (cached, originals untouched)");
+                    FGLLog.Message($"Downscaled {texturesToResize.Count} textures (cached, originals untouched)");
                     cacheManager.ReplaceTextureCacheDirectory(stagingDirectory);
                     LogResizeSummary(texturesToResize.Count);
                 }

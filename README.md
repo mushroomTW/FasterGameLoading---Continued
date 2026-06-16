@@ -19,17 +19,18 @@ graph TD
     D -->|多核心並行| E(並行 XML 載入與解析)
     D -->|查詢快取| F(XPath 查詢結果快取)
     F -->|檔案異步監測| G(背景 XML 檔案變更偵測)
-    D --> H[材質貼圖載入]
+    %% 關鍵：圖形、圖集、音效等工作被延遲，先讓主選單快速出現
+    D --> O[進入遊戲主選單]
+    %% 進入主選單後，PerformActions 協程才分幀執行以下延遲工作
+    O -->|延遲協程| H[材質貼圖載入]
     H -->|VRAM 優化| K(紋理縮小工具)
     H --> L[圖集烘焙與快取]
     K --> L
     L -->|批次最佳化| M(更聰明的圖集烘焙)
     L -->|硬碟快取| N(靜態圖集快取)
-    D --> P[圖形與音效解析]
-    P -->|延遲載入| Q(延遲圖形、圖示與音效載入)
-    M --> O[進入遊戲主選單]
-    N --> O
-    Q --> O
+    O -->|延遲協程| P[圖形與圖示載入]
+    P -->|延遲載入| Q(延遲圖形、圖示載入)
+    O -->|更晚 · World 初始化| S(延遲音效解析)
 ```
 
 ### 1. 初始化與 Assembly 載入階段
@@ -146,17 +147,17 @@ graph TD
 
 ---
 
-## ⚙️ 推薦搭配與相容性
+## ⚙️ 相容性
 
 * **[Loading Progress](https://github.com/ilyvion/loading-progress/)**：完美相容。本模組會將載入進度精準輸出給 Loading Progress 顯示，並主動修復了 FGL 進度條在 Loading Progress 接手 Mod 載入期間不更新的問題。
 * **[Missile Girl](https://github.com/ViralReaction/MissileGirl)**：完美相容。作為 RocketMan 針對 RimWorld 1.6 版本的現代更新分支，除了優化遊戲內的運行 Tick 外，還提供加載速度提升、警報節流以及大規模數據與屬性快取，與本模組對「啟動階段」的優化相輔相成，是極力推薦的全方位性能組合。
 * **[DefLoadCache](https://github.com/FluxxField/rimworld-defload-cache)**：完美相容。當其快取失效重新建置時，本模組會大幅加速其 XML 載入過程。
 * **[Image Opt](https://steamcommunity.com/sharedfiles/filedetails/?id=3543873568)**：完美相容。當檢測到其啟用時，本模組會自動停用紋理縮小工具（Texture Downscaler），以防止兩者衝突，將貼圖處理安全地交由 Image Opt 處理。
 * **[HugsLib](https://github.com/UnlimitedHugs/RimworldHugsLib)**：完美相容。當延遲圖形載入啟用時，本模組會自動將 `HugsLibController.OnDefsLoaded` 重新導向到主執行緒執行，避免初始化時序衝突。
-* **[Alien Races (Humanoid Alien Races)](https://github.com/erdelf/AlienRaces)**：嘗試相容。在所有 Mod 完成載入後，本模組會自動重新觸發 Alien Races 的 extended graphics variant 掃描，確保外星種族的圖形正確載入。**同時，本模組會自動偵測並動態排除所有依賴 Humanoid Alien Races 的種族模組貼圖進入靜態圖集，從而徹底解決外星人種族的頭髮、耳朵等 bodyAddon 消失問題。**
 * **[XmlExtensions](https://github.com/15adhami/XmlExtensions)**：完美相容。當檢測到其啟用時，XPath 快取功能會自動停用，避免與 XmlExtensions 的自訂 XML 處理邏輯衝突。
-* **[AyaTweaks 2.0 (Ayameduki Tweaks)](https://gitlab.com/wrelick-rimworld/ayatweaks2.0)**：嘗試相容。本模組會自動偵測並將所有 Ayameduki 相關 Mod (`Ayameduki.*`) 以及 WRelicK 的翻譯與補丁 (`WRK.*`) 排除在「提早載入」與「多執行緒 XML 載入」之外，以確保其複雜的 Patch 載入順序與執行緒安全完全正常，防止爆紅。
-* **[Ancot Library（Ancot's Races Framework）](https://steamcommunity.com/sharedfiles/filedetails/?id=2988801276)**：完美相容。本模組會偵測 `Ancot.AncotLibrary` 本體與所有在 `About.xml` 中聲明依賴它的種族模組（如 Kiiro Race、Tsukin Race 等），並**動態**將其根目錄下的外觀貼圖排除在靜態圖集烘焙之外。偵測流程同時使用 `ModsConfig.IsActive` 與 `LoadedModManager.RunningMods`，避免載入早期狀態尚未穩定時漏判，徹底避免 Ancot 旗下種族因自訂多重遮罩（Multi-mask）渲染節點造成的貼圖黑化或 bodyAddon 消失問題。
+* **[AyaTweaks 2.0 (Ayameduki Tweaks)](https://gitlab.com/wrelick-rimworld/ayatweaks2.0)**：完美相容。本模組會自動偵測並將所有 Ayameduki 相關 Mod (`Ayameduki.*`) 以及 WRelicK 的翻譯與補丁 (`WRK.*`) 排除在「提早載入」與「多執行緒 XML 載入」之外，以確保其複雜的 Patch 載入順序與執行緒安全完全正常，防止爆紅。
+* **[Alien Races (Humanoid Alien Races)](https://github.com/erdelf/AlienRaces)**：嘗試相容。在所有 Mod 完成載入後，本模組會自動重新觸發 Alien Races 的 extended graphics variant 掃描，確保外星種族的圖形正確載入。**同時，本模組會自動偵測並動態排除所有依賴 Humanoid Alien Races 的種族模組貼圖進入靜態圖集，從而徹底解決外星人種族的頭髮、耳朵等 bodyAddon 消失問題。**
+* **[Ancot Library（Ancot's Races Framework）](https://steamcommunity.com/sharedfiles/filedetails/?id=2988801276)**：嘗試相容。本模組會偵測 `Ancot.AncotLibrary` 本體與所有在 `About.xml` 中聲明依賴它的種族模組（如 Kiiro Race、Tsukin Race 等），並**動態**將其根目錄下的外觀貼圖排除在靜態圖集烘焙之外。偵測流程同時使用 `ModsConfig.IsActive` 與 `LoadedModManager.RunningMods`，避免載入早期狀態尚未穩定時漏判，徹底避免 Ancot 旗下種族因自訂多重遮罩（Multi-mask）渲染節點造成的貼圖黑化或 bodyAddon 消失問題。
 
 ---
 

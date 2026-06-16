@@ -455,7 +455,7 @@ namespace FasterGameLoading
             }
             catch (Exception ex)
             {
-                FGLLog.Error($"Error during obsolete cache files cleanup: {ex.Message}", ex);
+                FGLLog.Error("Error during obsolete cache files cleanup:", ex);
             }
         }
     }

@@ -39,7 +39,7 @@ namespace FasterGameLoading
 
         public static void Warning(string message, Exception ex)
         {
-            Emit(LogLevel.Warning, Prefix + message + " - Exception: " + ex);
+            Emit(LogLevel.Warning, Prefix + message + "\n" + ex);
         }
 
         public static void Error(string message)
@@ -49,8 +49,9 @@ namespace FasterGameLoading
 
         public static void Error(string message, Exception ex)
         {
-            // ex.ToString() 已包含完整的例外訊息與呼叫堆疊，不需再附加 new StackTrace()
-            Emit(LogLevel.Error, Prefix + message + " - Exception: " + ex);
+            // ex.ToString() 已包含完整的例外訊息與呼叫堆疊，不需再附加 new StackTrace()。
+            // 以換行分隔，使「訊息以冒號結尾」時輸出自然（message:\n<例外>），避免「: - Exception:」的彆扭排版。
+            Emit(LogLevel.Error, Prefix + message + "\n" + ex);
         }
 
         /// <summary>

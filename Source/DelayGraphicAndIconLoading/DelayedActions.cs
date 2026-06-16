@@ -238,7 +238,7 @@ namespace FasterGameLoading
 
                     if (AdaptiveStaticAtlasBakeFailed)
                     {
-                        FGLLog.Message("Adaptive bake failed, falling back to vanilla static atlas baking");
+                        FGLLog.Warning("Adaptive bake failed, falling back to vanilla static atlas baking");
                         AtlasBakeDiagnostics.LogPotentialMaskIssues("deferred fallback");
                         GlobalTextureAtlasManager.BakeStaticAtlases();
                         FGLLog.Message("Vanilla static atlas baking complete");

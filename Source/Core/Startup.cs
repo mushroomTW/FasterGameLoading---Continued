@@ -52,7 +52,7 @@ namespace FasterGameLoading
                 }
                 catch (Exception ex)
                 {
-                    FGLLog.Error($"Error executing startup-completed callback: {ex.Message}", ex);
+                    FGLLog.Error("Error executing startup-completed callback:", ex);
                 }
             }
             onStartupCompleted.Clear();

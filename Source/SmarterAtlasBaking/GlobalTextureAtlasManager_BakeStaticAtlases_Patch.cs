@@ -87,7 +87,7 @@ namespace FasterGameLoading
                 {
                     // 烘焙失敗：重設旗標，放行 vanilla 烘焙（不寫快取）
                     StaticTextureAtlas_ApplyTextureCompression_Patch.KeepTexturesReadable = false;
-                    FGLLog.Message("Adaptive bake failed, falling back to vanilla static atlas baking - Synchronous");
+                    FGLLog.Warning("Adaptive bake failed, falling back to vanilla static atlas baking - Synchronous");
                     AtlasBakeDiagnostics.LogPotentialMaskIssues("sync fallback");
                     GlobalTextureAtlasManager.BakeStaticAtlases();
                 }

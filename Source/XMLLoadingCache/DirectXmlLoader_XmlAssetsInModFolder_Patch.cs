@@ -76,7 +76,7 @@ namespace FasterGameLoading
                     catch (Exception ex)
                     {
                         // 一律輸出錯誤日誌，以利排查多執行緒載入問題
-                        FGLLog.Error($"Failed to load XML asset in parallel for Mod {mod.Name} (File: {files[i]?.Item2?.FullName}): {ex.Message}", ex);
+                        FGLLog.Error($"Failed to load XML asset in parallel for Mod {mod.Name} (File: {files[i]?.Item2?.FullName}):", ex);
                     }
                 });
 

@@ -15,6 +15,7 @@ namespace FasterGameLoading
     /// 使用 WeakReference 追蹤已載入的紋理，避免強參考導致記憶體洩漏。
     /// </summary>
     [HarmonyPatch(typeof(ModContentLoader<Texture2D>), "LoadTexture")]
+    [HarmonyBefore(new[] { DDSCompat.GraphicsSetterHarmonyId })]
     public static class ModContentLoaderTexture2D_LoadTexture_Patch
     {
         private static readonly ConcurrentQueue<LoadRequest> mainThreadLoadRequests = new ConcurrentQueue<LoadRequest>();
@@ -172,7 +173,7 @@ namespace FasterGameLoading
 
         public static bool Prefix(VirtualFile file, out bool __state, ref Texture2D __result)
         {
-            if (ImageOptCompat.IsImageOptActive)
+            if (DDSCompat.IsImageOptActive)
             {
                 __state = false;
                 return true;
@@ -214,9 +215,10 @@ namespace FasterGameLoading
             }
 
             var fullPath = file.FullPath;
+            var shouldBypassTextureReplacement = DDSCompat.ShouldBypassTextureReplacement;
 
             // 優先檢查 WeakReference 快取中是否已有此紋理
-            if (savedTextures.TryGetValue(fullPath, out var weakRef) && weakRef.TryGetTarget(out __result))
+            if (!shouldBypassTextureReplacement && savedTextures.TryGetValue(fullPath, out var weakRef) && weakRef.TryGetTarget(out __result))
             {
                 RegisterSkippedBakingTextureIfApplicable(fullPath, __result);
                 __state = false;
@@ -225,7 +227,7 @@ namespace FasterGameLoading
 
 
             // 檢查是否有降質快取版本的紋理可用
-            if (FasterGameLoadingMod.Instance.CacheManager.TryGetCachedTexturePath(fullPath, out var cachePath))
+            if (!shouldBypassTextureReplacement && FasterGameLoadingMod.Instance.CacheManager.TryGetCachedTexturePath(fullPath, out var cachePath))
             {
                 try
                 {

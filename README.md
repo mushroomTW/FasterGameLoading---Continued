@@ -110,7 +110,7 @@ graph TD
   * 提供了一套預設的類別大小限制（如建築 256px、人物 256px、地形 1024px）。
   * **離線快取設計**：啟用後，模組在背景對所有符合的 Mod 紋理進行雙線性（Bilinear）降採樣縮小，並將縮小後的圖片快取在獨立目錄中，完全不破壞原 Mod 檔案。快取判定已進行優化，若原始檔案修改時間變更但長度不變，會自動 Touch 快取檔案時間，避免不必要的重新降階。
   * **執行期載入替換**：在啟動時，若檢測到該紋理存在縮小快取，直接載入快取版本，大幅縮短 I/O 與降低顯存佔用。
-  * **Image Opt 相容性安全閥**：本功能會自動檢測 [Image Opt](https://steamcommunity.com/sharedfiles/filedetails/?id=3543873568) (`dev.soeur.imageopt`) 模組。若檢測到其啟用，紋理縮小工具將自動跳過（立即放行回原始載入流程），確保其 DDS 壓縮與多核心載入邏輯不受干擾，防範重複覆寫貼圖資料產生的圖像衝突或崩潰。
+  * **外部貼圖載入器相容性安全閥**：本功能會自動檢測 [Image Opt](https://steamcommunity.com/sharedfiles/filedetails/?id=3543873568) (`dev.soeur.imageopt`) 與 [Graphics Settings+ / GraphicsSetter](https://github.com/RealTelefonmast/GraphicsSetter) (`Telefonmast.GraphicsSettings`)。若檢測到 Image Opt，紋理縮小工具將立即放行回外部載入流程；若檢測到 Graphics Settings+，則停用 FGL 的降質貼圖替換，但保留貼圖路徑追蹤與圖集排除登記，避免干擾其 DDS 與 mipmap 載入邏輯。
 
 #### 5. 自適應圖集烘焙 (Adaptive Atlas Baking) `預設關閉`
 
@@ -145,6 +145,7 @@ graph TD
 * **[Missile Girl](https://github.com/ViralReaction/MissileGirl)**：完美相容。作為 RocketMan 針對 RimWorld 1.6 版本的現代更新分支，除了優化遊戲內的運行 Tick 外，還提供加載速度提升、警報節流以及大規模數據與屬性快取，與本模組對「啟動階段」的優化相輔相成，是極力推薦的全方位性能組合。
 * **[DefLoadCache](https://github.com/FluxxField/rimworld-defload-cache)**：完美相容。當其快取失效重新建置時，本模組會大幅加速其 XML 載入過程。
 * **[Image Opt](https://steamcommunity.com/sharedfiles/filedetails/?id=3543873568)**：完美相容。當檢測到其啟用時，本模組會自動停用紋理縮小工具（Texture Downscaler），以防止兩者衝突，將貼圖處理安全地交由 Image Opt 處理。
+* **[Graphics Settings+ / GraphicsSetter](https://github.com/RealTelefonmast/GraphicsSetter)**：相容。當檢測到其啟用時，本模組會讓 GraphicsSetter 的 DDS 與 mipmap 載入流程優先處理貼圖，同時保留 FGL 的貼圖路徑追蹤與靜態圖集排除登記。
 * **[HugsLib](https://github.com/UnlimitedHugs/RimworldHugsLib)**：完美相容。當延遲圖形載入啟用時，本模組會自動將 `HugsLibController.OnDefsLoaded` 重新導向到主執行緒執行，避免初始化時序衝突。
 * **[XmlExtensions](https://github.com/15adhami/XmlExtensions)**：完美相容。當檢測到其啟用時，XPath 快取功能會自動停用，避免與 XmlExtensions 的自訂 XML 處理邏輯衝突。
 * **[AyaTweaks 2.0 (Ayameduki Tweaks)](https://gitlab.com/wrelick-rimworld/ayatweaks2.0)**：完美相容。本模組會自動偵測並將所有 Ayameduki 相關 Mod (`Ayameduki.*`) 以及 WRelicK 的翻譯與補丁 (`WRK.*`) 排除在「提早載入」與「多執行緒 XML 載入」之外，以確保其複雜的 Patch 載入順序與執行緒安全完全正常，防止爆紅。
@@ -169,11 +170,11 @@ FasterGameLoading/ (專案根目錄)
     ├── Settings/         # 模組設定與跨會話 (Session) 載入歷史快取管理
     ├── XMLLoadingCache/  # XML 與資料載入優化 (多執行緒並行 XML 載入與 XPath 缺失快取)
     ├── EarlyModContentLoading/ # 提早載入與型別反射快取 (AccessTools、GenTypes 反射查詢快取)
-    ├── TextureDownscaler/# 貼圖降質工具 (自動掃描、GPU 雙線性降採樣、WeakReference 快取、相容 Image Opt)
+    ├── TextureDownscaler/# 貼圖降質工具 (自動掃描、GPU 雙線性降採樣、WeakReference 快取、相容外部貼圖載入器)
     ├── SmarterAtlasBaking/ # 自適應圖集烘焙 (協程分幀拼合、基於 GPU 效能的自適應批次調整演算法)
     ├── DelayGraphicAndIconLoading/ # 延遲圖形與圖示載入 (ThingDef.PostLoad 攔截、時間預算協程、BadTex 圖示修正)
     ├── DelaySoundLoading/  # 延遲音效載入 (SubSoundDef 解析延遲、啟動期靜音保護、世界初始化後 Unpatch)
-    ├── Compatibility/    # 第三方模組相容性處理 (Image Opt、HugsLib、Humanoid Alien Races 等退避或延遲邏輯)
+    ├── Compatibility/    # 第三方模組相容性處理 (Image Opt、Graphics Settings+、HugsLib、Humanoid Alien Races 等退避或延遲邏輯)
     ├── Utilities/        # 共用工具類別 (I/O 重試、全域常數、快取重置廣播器、日誌等)
     └── FasterGameLoading.Tests/ # 模組單元測試 (路徑雜湊失效、快取清理等 NUnit 測試)
 ```

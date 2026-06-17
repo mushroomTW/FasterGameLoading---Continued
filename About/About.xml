@@ -6,7 +6,7 @@
     <li>1.6</li>
   </supportedVersions>
   <packageId>Taranchuk.FasterGameLoading</packageId>
-  <modVersion>2026.06.17.5</modVersion>
+  <modVersion>2026.06.17.7</modVersion>
   <description>
 GitHub (Maintained Fork): https://github.com/mushroomTW/FasterGameLoading---Continued
 Original Project: https://github.com/Taranchuk/FasterGameLoading
@@ -29,13 +29,14 @@ Sick of staring at the loading screen every time you start RimWorld? This mod cu
 
 - The game may briefly freeze or feel unresponsive during startup. This is normal — the mod is doing work in the background.
 - It may take a while to get any sound after entering the main menu, which is normal.
-- If you are using image conversion tools like Image Opt or RimSort (Optimize Texture), this mod's texture downscaler will not work. (Converting to DDS is actually more efficient and has higher quality than directly downscaled images, so it is recommended to use the texture downscaler only when you cannot use such tools)
+- If you are using external texture loaders or image conversion tools like Image Opt, Graphics Settings+, or RimSort (Optimize Texture), this mod's texture downscaler will step aside. (Converting to DDS is actually more efficient and has higher quality than directly downscaled images, so it is recommended to use the texture downscaler only when you cannot use such tools)
 
 --- Works well with ---
 
 - Loading Progress
 - Missile Girl - Performance Mod or DefLoadCache (choose one)
 - Image Opt
+- Graphics Settings+
 
 --- Works best with a lot of mods. Zero impact on gameplay or saves. ---
 
@@ -61,13 +62,14 @@ Original mod by Taranchuk. This is a maintained fork with bug fixes and improvem
 
 - 啟動期間遊戲可能短暫無回應，這是正常現象，模組正在背景運作。
 - 進入主畫面後會有一小段時間沒有聲音，屬於正常現象。
-- 如果有使用Image Opt或RimSort的Optimize Texture等圖片轉化工具，本模組的貼圖降解析度工具是無效的（轉換成 DDS 實際上比直接降解析度更有效率且品質更高，所以建議只有在無法使用此類工具時使用貼圖降解析度工具）。
+- 如果有使用 Image Opt、Graphics Settings+ 或 RimSort 的 Optimize Texture 等外部貼圖載入或圖片轉化工具，本模組的貼圖降解析度工具會自動退避（轉換成 DDS 實際上比直接降解析度更有效率且品質更高，所以建議只有在無法使用此類工具時使用貼圖降解析度工具）。
 
 --- 推薦搭配與相容性 ---
 
 - Loading Progress
 - Missile Girl - Performance Mod 或 DefLoadCache（二選一）
 - Image Opt
+- Graphics Settings+
 
 --- 模組越多效果越明顯，對遊戲內容與存檔零影響。---
 

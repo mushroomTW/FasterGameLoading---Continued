@@ -264,13 +264,5 @@ namespace FasterGameLoading
             }
         }
 
-        /// <summary>
-        /// 記錄錯誤訊息，包含完整堆疊追蹤。
-        /// </summary>
-        [Obsolete("Use FGLLog.Error instead")]
-        public void Error(string message, Exception ex)
-        {
-            FGLLog.Error(message, ex);
-        }
     }
 }

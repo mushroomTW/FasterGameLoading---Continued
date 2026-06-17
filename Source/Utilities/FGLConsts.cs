@@ -6,9 +6,7 @@ namespace FasterGameLoading
     public static class FGLConsts
     {
         // ── 專案與類群名稱常數 ──
-        public const string LogPrefix = "[FasterGameLoading] ";
         public const string ModName = "FasterGameLoading";
-        public const string SoundStarterCategory = "SoundStarter";
         public const int PlaceholderTextureSize = 2;
 
         // ── Def 與型別匹配關鍵字 ──
@@ -40,7 +38,6 @@ namespace FasterGameLoading
         public const string AlienRaceAssemblyName = "AlienRace";
         public const string AlienPartGeneratorTypeName = "AlienRace.AlienPartGenerator";
         public const string GraphicsQueueFieldName = "graphicsQueue";
-        public const string CountPropertyName = "Count";
         public const string ThingDefAlienRaceTypeName = "AlienRace.ThingDef_AlienRace";
         public const string AddMethodName = "Add";
         public const string AlienRaceFieldName = "alienRace";
@@ -58,7 +55,6 @@ namespace FasterGameLoading
         public const int TexturePreloadDelayMs = 150;
 
         // ── 外部 Mod 相容與 XML 目錄常數 ──
-        public const string BionicIconsModId = "bionicicons";
         public const string DefsDirName = "Defs";
         public const string PatchesDirName = "Patches";
     }

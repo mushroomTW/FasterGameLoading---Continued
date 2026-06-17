@@ -26,8 +26,9 @@ namespace FasterGameLoading
         /// </summary>
         public static void Preload()
         {
-            // 在主執行緒先取得 Assemblies 快照，防止列舉時集合發生 Race Condition
-            var assembliesSnapshot = Enumerable.ToArray(AppDomain.CurrentDomain.GetAssemblies());
+            // 在主執行緒先取得 Assemblies 快照，防止列舉時集合發生 Race Condition。
+            // GetAssemblies() 本身每次即回傳全新陣列快照，無需再包一層 ToArray。
+            var assembliesSnapshot = AppDomain.CurrentDomain.GetAssemblies();
             int snapshotCount = assembliesSnapshot.Length;
 
             if (!FasterGameLoadingSettings.EnableMultiThreading)
@@ -136,14 +137,15 @@ namespace FasterGameLoading
                     __result = cached;
                     return false;
                 }
-                allTypesCached = assemblies
-                    .SelectMany(assembly =>
-                    {
-                        try { return AccessTools.GetTypesFromAssembly(assembly); }
-                        catch { return Array.Empty<Type>(); }
-                    }).ToList();
+                allTypesCached = BuildTypeList(assemblies);
                 cachedAssembliesCount = currentCount;
-                WarmupTypeCache(allTypesCached);
+                // FullName 預熱僅在主緒進行（與 Preload 路徑一致）：背景緒解析型別名稱可能與
+                // 主緒型別解析並行而觸發 Mono 原生崩潰（詳見上方 Preload 的長註解）。
+                // 若此處在背景緒命中 cache-miss，略過預熱即可，之後由主緒首次需要時自然補上，不影響正確性。
+                if (UnityData.IsInMainThread)
+                {
+                    WarmupTypeCache(allTypesCached);
+                }
                 __result = allTypesCached;
                 return false;
             }

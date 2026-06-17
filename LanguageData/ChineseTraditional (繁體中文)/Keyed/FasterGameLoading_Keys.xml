@@ -5,12 +5,9 @@
     <!-- Settings -->
     <FGL_EarlyModContentLoading>提早載入模組內容</FGL_EarlyModContentLoading>
     <FGL_DelayGraphicLoading>延遲圖形和圖示載入</FGL_DelayGraphicLoading>
-    <FGL_StaticAtlasesBaking>更聰明的圖集烘焙</FGL_StaticAtlasesBaking>
-    <FGL_AtlasCaching>靜態圖集快取</FGL_AtlasCaching>
+    <FGL_StaticAtlasesBaking>自適應圖集烘焙</FGL_StaticAtlasesBaking>    
     <FGL_MultiThreading>多執行緒預載入</FGL_MultiThreading>
-    <FGL_XPathCaching>XPath 快取</FGL_XPathCaching>
-    <FGL_ClearAtlasCache>清除圖集快取</FGL_ClearAtlasCache>
-    <FGL_ClearAtlasCacheConfirmation>是否清除已快取的靜態圖集？</FGL_ClearAtlasCacheConfirmation>
+    <FGL_XPathCaching>XPath 快取</FGL_XPathCaching>    
     <FGL_VerboseLogging>啟用詳細日誌</FGL_VerboseLogging>
 
     <!-- Texture Resizing -->

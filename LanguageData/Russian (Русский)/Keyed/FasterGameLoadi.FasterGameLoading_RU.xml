@@ -5,13 +5,10 @@
     <!-- Settings -->
     <FGL_EarlyModContentLoading>Ранняя загрузка контента</FGL_EarlyModContentLoading>
     <FGL_DelayGraphicLoading>Отложенная загрузка графики</FGL_DelayGraphicLoading>
-    <FGL_StaticAtlasesBaking>Умное запекание атласов</FGL_StaticAtlasesBaking>
-    <FGL_AtlasCaching>Статические атласы кэш</FGL_AtlasCaching>
+    <FGL_StaticAtlasesBaking>Адаптивное запекание атласов</FGL_StaticAtlasesBaking>    
     <FGL_MultiThreading>Многопоточная предварительная загрузка</FGL_MultiThreading>
     <FGL_XPathCaching>Кэширование XPath</FGL_XPathCaching>
-    <FGL_ClearAtlasCache>Очистить кэш атласов</FGL_ClearAtlasCache>
-    <FGL_ClearAtlasCacheConfirmation>Очистить кэш статических атласов?</FGL_ClearAtlasCacheConfirmation>
-
+    <FGL_VerboseLogging>Подробное логирование</FGL_VerboseLogging>
     <!-- Texture Resizing -->
     <FGL_TextureResizingExplanation>Сжатие HD-текстур значительно ускоряет загрузку. Оригинальные файлы НЕ меняются; уменьшенные версии хранятся в отдельном кэше и загружаются автоматически.
         Лимиты размеров текстур после сжатия:

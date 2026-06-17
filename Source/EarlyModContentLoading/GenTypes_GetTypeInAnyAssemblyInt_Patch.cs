@@ -36,18 +36,20 @@ namespace FasterGameLoading
         /// <summary>
         /// 前置處理：優先使用執行期型別快取或跨 session 快取比對，命中時返回並跳過原方法。
         /// </summary>
-        public static bool Prefix(ref Type __result, out (string originalTypeName, bool isCached) __state, ref string typeName)
+        public static bool Prefix(ref Type __result, out (string originalTypeName, string namespaceIfAmbiguous, string cacheKey, bool isCached) __state, ref string typeName, string namespaceIfAmbiguous)
         {
-            if (cachedResults.TryGetValue(typeName, out var result))
+            var cacheKey = MakeCacheKey(typeName, namespaceIfAmbiguous);
+            if (cachedResults.TryGetValue(cacheKey, out var result))
             {
                 __result = result;
-                __state = (typeName, true);
+                __state = (typeName, namespaceIfAmbiguous, cacheKey, true);
                 return false;
             }
             else
             {
-                __state = (typeName, false);
-                if (SessionCache.loadedTypesByFullNameSinceLastSession.TryGetValue(typeName, out var fullName))
+                __state = (typeName, namespaceIfAmbiguous, cacheKey, false);
+                if (SessionCache.loadedTypesByFullNameSinceLastSession.TryGetValue(cacheKey, out var fullName)
+                    || (string.IsNullOrEmpty(namespaceIfAmbiguous) && SessionCache.loadedTypesByFullNameSinceLastSession.TryGetValue(typeName, out fullName)))
                 {
                     typeName = fullName;
                 }
@@ -58,24 +60,41 @@ namespace FasterGameLoading
         /// <summary>
         /// 後置處理：若為非快取查詢，將結果寫入執行期和 session 的名稱映射快取。
         /// </summary>
-        public static void Postfix(Type __result, (string originalTypeName, bool isCached) __state)
+        public static void Postfix(Type __result, (string originalTypeName, string namespaceIfAmbiguous, string cacheKey, bool isCached) __state)
         {
             if (__result != null)
             {
                 var fullName = __result.FullName;
+                if (string.IsNullOrEmpty(fullName))
+                {
+                    return;
+                }
                 if (__state.isCached is false)
                 {
-                    cachedResults[__state.originalTypeName] = __result;
+                    cachedResults[__state.cacheKey] = __result;
                     if (fullName != __state.originalTypeName)
                     {
-                        cachedResults[fullName] = __result;
+                        cachedResults[MakeCacheKey(fullName, null)] = __result;
+                        if (!string.IsNullOrEmpty(__state.namespaceIfAmbiguous))
+                        {
+                            cachedResults[MakeCacheKey(fullName, __state.namespaceIfAmbiguous)] = __result;
+                        }
                     }
                 }
                 if (__state.originalTypeName != fullName)
                 {
-                    loadedTypesThisSession[__state.originalTypeName] = fullName;
+                    loadedTypesThisSession[__state.cacheKey] = fullName;
                 }
             }
+        }
+
+        internal static string MakeCacheKey(string typeName, string namespaceIfAmbiguous = null)
+        {
+            if (string.IsNullOrEmpty(namespaceIfAmbiguous))
+            {
+                return typeName ?? string.Empty;
+            }
+            return $"{typeName}|ns|{namespaceIfAmbiguous}";
         }
     }
 }

@@ -207,9 +207,7 @@ namespace FasterGameLoading
         }
 
         /// <summary>
-        /// 執行靜態圖集烘焙。
-        /// 優先嘗試從快取載入，若無快取則執行自適應烘焙，
-        /// 烘焙失敗時 fallback 到原始流程。
+        /// 執行靜態圖集烘焙：執行自適應烘焙，失敗時 fallback 到原版流程。
         /// </summary>
         private IEnumerator BakeDeferredAtlasesCoroutine()
         {
@@ -218,41 +216,18 @@ namespace FasterGameLoading
 
             if (FasterGameLoadingSettings.StaticAtlasesBaking)
             {
-                if (FasterGameLoadingSettings.AtlasCaching && AtlasCacheReader.TryLoadFromCache())
+                var adaptiveBake = AdaptiveAtlasBaker.PerformAdaptiveStaticAtlasBake(this);
+                while (adaptiveBake.MoveNext())
                 {
-                    FGLLog.Message("Static atlases loaded from cache (Raw DXT bytes)");
+                    yield return adaptiveBake.Current;
                 }
-                else
+
+                if (AdaptiveStaticAtlasBakeFailed)
                 {
-                    string queueHash = null;
-                    if (FasterGameLoadingSettings.AtlasCaching)
-                    {
-                        queueHash = AtlasHashCalculator.ComputeQueueHash();
-                    }
-
-                    var adaptiveBake = AdaptiveAtlasBaker.PerformAdaptiveStaticAtlasBake(this);
-                    while (adaptiveBake.MoveNext())
-                    {
-                        yield return adaptiveBake.Current;
-                    }
-
-                    if (AdaptiveStaticAtlasBakeFailed)
-                    {
-                        FGLLog.Warning("Adaptive bake failed, falling back to vanilla static atlas baking");
-                        AtlasBakeDiagnostics.LogPotentialMaskIssues("deferred fallback");
-                        GlobalTextureAtlasManager.BakeStaticAtlases();
-                        FGLLog.Message("Vanilla static atlas baking complete");
-                    }
-
-                    if (FasterGameLoadingSettings.AtlasCaching && !AdaptiveStaticAtlasBakeFailed && queueHash != null)
-                    {
-                        var saveCache = AtlasCacheWriter.SaveToCacheCoroutine(
-                            GlobalTextureAtlasManager.staticTextureAtlases, queueHash);
-                        while (saveCache.MoveNext())
-                        {
-                            yield return saveCache.Current;
-                        }
-                    }
+                    FGLLog.Warning("Adaptive bake failed, falling back to vanilla static atlas baking");
+                    AtlasBakeDiagnostics.LogPotentialMaskIssues("deferred fallback");
+                    GlobalTextureAtlasManager.BakeStaticAtlases();
+                    FGLLog.Message("Vanilla static atlas baking complete");
                 }
             }
             else

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using RimWorld;
 using UnityEngine;
 using Verse;
 
@@ -56,6 +57,7 @@ namespace FasterGameLoading
 
             int adaptivePixelsPerSlice = INITIAL_PIXELS_PER_SLICE;
             var bakeStopwatch = new Stopwatch();
+            InsertVanillaStaticAtlasEntries();
             var buildQueueSnapshot = GlobalTextureAtlasManager.buildQueue.ToList();
             var atlasesToCommit = new List<StaticTextureAtlas>();
 
@@ -141,6 +143,12 @@ namespace FasterGameLoading
             GlobalTextureAtlasManager.buildQueue.Clear();
             GlobalTextureAtlasManager.buildQueueMasks.Clear();
             FGLLog.Message("Adaptive static atlas bake complete");
+        }
+
+        private static void InsertVanillaStaticAtlasEntries()
+        {
+            BuildingsDamageSectionLayerUtility.TryInsertIntoAtlas();
+            MinifiedThing.TryInsertIntoAtlas();
         }
 
         private static bool TryBakeSingleBatch(

@@ -30,9 +30,6 @@ namespace FasterGameLoading
         /// <summary>自適應靜態圖集烘焙（預設關閉）</summary>
         public static bool StaticAtlasesBaking = false;
 
-        /// <summary>圖集快取（預設關閉）</summary>
-        public static bool AtlasCaching = false;
-
         /// <summary>啟用多執行緒預載入（預設開啟）</summary>
         public static bool EnableMultiThreading = true;
 
@@ -56,7 +53,6 @@ namespace FasterGameLoading
             ls.CheckboxLabeled("FGL_DelayGraphicLoading".Translate(), ref DelayGraphicLoading);
 
             ls.CheckboxLabeled("FGL_StaticAtlasesBaking".Translate(), ref StaticAtlasesBaking);
-            ls.CheckboxLabeled("FGL_AtlasCaching".Translate(), ref AtlasCaching);
             ls.CheckboxLabeled("FGL_VerboseLogging".Translate(), ref VerboseLogging);
             ls.Gap(12f);
 
@@ -95,16 +91,6 @@ namespace FasterGameLoading
                 }, "GoBack".Translate()));
             }
 
-            // Atlas cache clear button
-            ls.Gap(4f);
-            if (ls.ButtonText("FGL_ClearAtlasCache".Translate()))
-            {
-                Find.WindowStack.Add(new Dialog_MessageBox("FGL_ClearAtlasCacheConfirmation".Translate(), "Confirm".Translate(), delegate
-                {
-                    StaticAtlasCache.ClearCache();
-                }, "GoBack".Translate()));
-            }
-
             ls.End();
             viewHeight = ls.CurHeight + 20f;
             Widgets.EndScrollView();
@@ -116,7 +102,6 @@ namespace FasterGameLoading
 
             // 使用者設定
             Scribe_Values.Look(ref StaticAtlasesBaking, "StaticAtlasesBaking", false);
-            Scribe_Values.Look(ref AtlasCaching, "atlasCaching", false);
             Scribe_Values.Look(ref DelayGraphicLoading, "delayGraphicLoading", false);
             Scribe_Values.Look(ref earlyModContentLoading, "earlyModContentLoading", true);
             Scribe_Values.Look(ref EnableMultiThreading, "enableMultiThreading", true);

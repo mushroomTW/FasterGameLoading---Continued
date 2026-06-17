@@ -44,6 +44,18 @@ namespace FasterGameLoading
                     foldersToLoadDebug
                 );
 
+                if (files != null)
+                {
+                    for (int i = files.Count - 1; i >= 0; i--)
+                    {
+                        var fileInfo = files[i]?.Item2;
+                        if (fileInfo == null || !IsVanillaVisibleXmlFile(fileInfo))
+                        {
+                            files.RemoveAt(i);
+                        }
+                    }
+                }
+
                 if (files == null || files.Count == 0)
                 {
                     __result = Array.Empty<LoadableXmlAsset>();
@@ -98,6 +110,13 @@ namespace FasterGameLoading
                 FGLLog.Warning($"Parallel XML loading failed for Mod {mod?.Name ?? "Unknown"}, falling back to vanilla loader: {ex.Message}");
                 return true; // 萬一出錯，安全 fallback 回原生的單執行緒加載
             }
+        }
+
+        private static bool IsVanillaVisibleXmlFile(FileInfo fileInfo)
+        {
+            var name = fileInfo.Name;
+            return !name.StartsWith("._", StringComparison.Ordinal)
+                && !name.StartsWith(".", StringComparison.Ordinal);
         }
 
     }

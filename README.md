@@ -1,6 +1,7 @@
 # Faster Game Loading - Continued
 
 [![RimWorld 1.6](https://img.shields.io/badge/RimWorld-1.6-brightgreen.svg)](http://rimworldgame.com/)
+![Languages](https://img.shields.io/badge/languages-EN%20%7C%20繁中%20%7C%20简中%20%7C%20RU-orange.svg)
 
 這款模組專為解決 RimWorld 在加載海量 Mod 時啟動緩慢、磁碟 I/O 瓶頸、以及單核 CPU 卡頓而設計。它透過多個底層 Hook（Harmony Patches），在不改變任何遊戲機制與存檔安全的前提下，大幅提速遊戲啟動。
 
@@ -24,10 +25,9 @@ graph TD
     %% 進入主選單後，PerformActions 協程才分幀執行以下延遲工作
     O -->|延遲協程| H[材質貼圖載入]
     H -->|VRAM 優化| K(紋理縮小工具)
-    H --> L[圖集烘焙與快取]
+    H --> L[靜態圖集烘焙]
     K --> L
-    L -->|批次最佳化| M(更聰明的圖集烘焙)
-    L -->|硬碟快取| N(靜態圖集快取)
+    L -->|批次最佳化| M(自適應圖集烘焙)
     O -->|延遲協程| P[圖形與圖示載入]
     P -->|延遲載入| Q(延遲圖形、圖示載入)
     O -->|更晚 · World 初始化| S(延遲音效解析)
@@ -54,12 +54,11 @@ graph TD
 * **本模組優化**：
   * **紋理縮小工具 (Texture Downscaler)**：將超高解析度材質安全地縮小至目標大小並快取，在不改變原 Mod 檔案的情況下減少載入負荷。
 
-### 4. 圖集烘焙與快取階段
+### 4. 靜態圖集烘焙階段
 
 * **原生行為**：遊戲開始拼合靜態圖集（Static Atlases）。
 * **本模組優化**：
-  * **更聰明的圖集烘焙 (Smarter Atlas Baking)**：動態感應 GPU 效能，調整單次烘焙批次大小，減少啟動過程中的微卡頓；若遇到 HAR、Ancot 等多遮罩或自訂渲染框架，會將相關貼圖排除在靜態圖集之外。
-  * **靜態圖集快取 (Static Atlases Caching)**：將烘焙好的圖集數據快取至磁碟，下次啟動直接載入，並以來源路徑為貼圖識別鍵，避免不同 Mod 的同名貼圖錯誤復用。
+  * **自適應圖集烘焙 (Adaptive Atlas Baking)**：動態感應 GPU 效能，調整單次烘焙批次大小，減少啟動過程中的微卡頓；若遇到 HAR、Ancot 等多遮罩或自訂渲染框架，會將相關貼圖排除在靜態圖集之外。自訂烘焙會在快照佇列前保留 RimWorld 1.6 原版的傷痕貼圖與 minified 物品圖集插入，維持原生視覺行為。
 
 ### 5. 圖形與音效解析階段
 
@@ -82,7 +81,7 @@ graph TD
   * 攔截 `ModContentPack.ReloadContentInt`（以及相關的資源初審加載點）。
   * 將 Mod 內容（包括 DLL 和 XML 虛擬檔案目錄）的預解析放到更早的初始化時間段中，利用主執行緒原本會被阻塞的等待空檔提前處理。
   * 使得原生遊戲在執行後續載入步驟時，能直接使用已經提前解析好的記憶體目錄，從而消除等待空檔。
-  * **型別反射快取加速**：背景預載入所有型別，並快取 `AccessTools.AllTypes()`、`AccessTools.TypeByName()`、`GenTypes.GetTypeInAnyAssemblyInt()`、`GenTypes.AllLeafSubclasses()` 等高頻反射查詢結果。型別名稱映射可跨 session 持久化，避免每次啟動都重新掃描所有 Assembly。
+  * **型別反射快取加速**：背景預載入所有型別，並快取 `AccessTools.AllTypes()`、`AccessTools.TypeByName()`、`GenTypes.GetTypeInAnyAssemblyInt()`、`GenTypes.AllLeafSubclasses()` 等高頻反射查詢結果。型別名稱映射可跨 session 持久化，避免每次啟動都重新掃描所有 Assembly；`GenTypes.GetTypeInAnyAssemblyInt()` 的快取鍵會保留 `namespaceIfAmbiguous`，避免不同命名空間的同名型別互相污染。
 
 #### 2. 多執行緒預載入 / 多執行緒並行 XML 載入與解析 (Enable multi-threaded preloading) `預設開啟`
 
@@ -90,6 +89,7 @@ graph TD
 * **技術細節**：
   * 攔截 `DirectXmlLoader.XmlAssetsInModFolder`。
   * 使用 `Parallel.For` 多核心並行讀取 XML 實體檔案並實例化 `LoadableXmlAsset`。由於每個 XML 實例的載入與 DOM 解析在記憶體中是執行緒安全的，因此能大幅度降低磁碟 I/O 阻塞。
+  * 遵循 RimWorld 1.6 原版 XML 檔案過濾規則，跳過 `._*` 與 `.*` 隱藏 XML，避免 macOS metadata 或 dotfile 被誤載入。
   * **安全回退 (Fallback)**：若並行解析過程中發生任何例外（例如髒資料或例外空值），會自動啟動 Fallback 安全閥，放行回原生的單執行緒加載，確保 100% 的相容性與遊戲可啟動性。
 
 #### 3. XPath 快取與背景變更偵測 (XPath Caching) `預設開啟`
@@ -112,29 +112,21 @@ graph TD
   * **執行期載入替換**：在啟動時，若檢測到該紋理存在縮小快取，直接載入快取版本，大幅縮短 I/O 與降低顯存佔用。
   * **Image Opt 相容性安全閥**：本功能會自動檢測 [Image Opt](https://steamcommunity.com/sharedfiles/filedetails/?id=3543873568) (`dev.soeur.imageopt`) 模組。若檢測到其啟用，紋理縮小工具將自動跳過（立即放行回原始載入流程），確保其 DDS 壓縮與多核心載入邏輯不受干擾，防範重複覆寫貼圖資料產生的圖像衝突或崩潰。
 
-#### 5. 更聰明的圖集烘焙 (Smarter Atlas Baking) `預設關閉`
+#### 5. 自適應圖集烘焙 (Adaptive Atlas Baking) `預設關閉`
 
 * **概念**：RimWorld 啟動時會把碎圖拼合成靜態圖集（Static Atlases）。原生拼合是一次性、寫死大小的同步處理，會造成畫面微凍結甚至顯示驅動重設（TDR 逾時）。
 * **技術細節**：
   * 攔截 `GlobalTextureAtlasManager.BakeStaticAtlases` 或圖集烘焙迴圈。
   * **動態批次最佳化**：根據玩家當前顯示卡（GPU）的烘焙效能與硬體規格，自適應地調整單次烘焙的紋理批次大小（Batch Size），減緩主執行緒被大量 I/O 與紋理上傳操作（TexImage2D）卡死的現象，顯著減少加載過程中的微卡頓。時間切片下限與圖集尺寸分離，避免慢速 GPU 被過大的最小批次拖出長幀。
+  * **原版圖集插入保留**：自訂烘焙會在建立佇列快照前執行 RimWorld 1.6 原版的 `BuildingsDamageSectionLayerUtility.TryInsertIntoAtlas()` 與 `MinifiedThing.TryInsertIntoAtlas()`，保留建築傷痕與 minified 物品的原生圖集行為。
   * **圖集烘焙排除名單**：自動偵測特定 Mod（如 Bionic Icons、Ancot Library 框架及其種族如 Kiiro Race、Ayameduki 等外星人種族）的紋理，將其排除在靜態圖集拼合之外，避免多遮罩（multi-mask）造成的圖案衝突與載入不全。本模組會動態檢測所有依賴 Humanoid Alien Races (HAR) 或 `Ancot.AncotLibrary` 的種族 Mod 並將其自動加入排除名單。
   * **載入時機安全性**：排除名單除了使用 `ModsConfig.IsActive`，也會掃描 `LoadedModManager.RunningMods` 作為備援，避免在啟動早期因 Mod 啟用狀態尚未完全穩定而錯過 Ancot/HAR 相關 Mod。
-
-#### 6. 靜態圖集快取 (Static Atlases Caching) `預設關閉`
-
-* **概念**：每次啟動 RimWorld 都需要重新計算並烘焙一遍相同的靜態圖集，耗費重複的 CPU 計算資源。
-* **技術細節**：
-  * 攔截圖集烘焙結果，將烘焙好的圖集貼圖與座標映射數據直接以二進位快取（Binary Cache）形式持久化存檔。
-  * 下次啟動遊戲時，如果檢測到 Mod 列表與順序沒有變更，直接讀取快取中的圖集，跳過整個複雜的靜態圖集重新拼合與計算過程。
-  * **快取版本 v4**：快取 manifest 會記錄每張貼圖的來源路徑 key，並將 mask 貼圖納入佇列雜湊，避免不同 Mod 的同名貼圖、同尺寸貼圖或遮罩變更造成錯誤快取命中。模組組合雜湊額外折入圖集排除名單（BakingSkipList）解析結果、Unity 與遊戲版本字串、以及貼圖壓縮設定，確保任何影響烘焙輸出的因子變更時舊快取都能正確失效。manifest 同時記錄彩色貼圖的 mip 層數與遮罩貼圖的實際尺寸，快取還原時可完整重現原版烘焙的遠距離渲染品質。舊版圖集快取會自動失效並重建。
-  * **載入前完整性驗證**：讀取快取時會依貼圖格式（RGBA32、DXT1/DXT5 等）預先計算期望位元組數，若快取檔案遭截斷或損毀則跳過該快取項目並回退至正常烘焙，防止 `LoadRawTextureData` 崩潰。
 
 ---
 
 ### 🖼️ 類別 C：延遲載入優化
 
-#### 7. 延遲圖形、圖示與音效載入 (Delay Graphic, Icon & Sound Loading) `預設關閉`
+#### 6. 延遲圖形、圖示與音效載入 (Delay Graphic, Icon & Sound Loading) `預設關閉`
 
 * **概念**：原生 RimWorld 在啟動期間同步解析所有 ThingDef 的圖形（`GraphicData.Init`）與所有 SubSoundDef 的音效資源（AudioGrain 載入等），即使許多物件的圖形在進入遊戲前並不需要立即顯示，啟動期間也不需要播放任何音效。這會造成大量不必要的 I/O 與紋理上傳。
 * **技術細節**：
@@ -179,7 +171,6 @@ FasterGameLoading/ (專案根目錄)
     ├── EarlyModContentLoading/ # 提早載入與型別反射快取 (AccessTools、GenTypes 反射查詢快取)
     ├── TextureDownscaler/# 貼圖降質工具 (自動掃描、GPU 雙線性降採樣、WeakReference 快取、相容 Image Opt)
     ├── SmarterAtlasBaking/ # 自適應圖集烘焙 (協程分幀拼合、基於 GPU 效能的自適應批次調整演算法)
-    ├── StaticAtlasesCache/ # 靜態圖集硬碟快取 (Raw DXT 載入與寫入、雙重雜湊校驗)
     ├── DelayGraphicAndIconLoading/ # 延遲圖形與圖示載入 (ThingDef.PostLoad 攔截、時間預算協程、BadTex 圖示修正)
     ├── DelaySoundLoading/  # 延遲音效載入 (SubSoundDef 解析延遲、啟動期靜音保護、世界初始化後 Unpatch)
     ├── Compatibility/    # 第三方模組相容性處理 (Image Opt、HugsLib、Humanoid Alien Races 等退避或延遲邏輯)

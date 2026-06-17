@@ -16,8 +16,7 @@ namespace FasterGameLoading
         /// <summary>
         /// 功能總開關。設為 false 即可完整停用整套烘焙排除邏輯：
         /// ・Prepare() 回 false → Harmony 不掛上 Prefix，TryInsertStatic 完全不被攔截（零執行期成本）；
-        /// ・ShouldSkipBaking() 一律回 false → 不登記任何排除貼圖；
-        /// ・GetResolvedSkipRootsForHash() 回空集合 → 快取雜湊穩定且不含排除根目錄。
+        /// ・ShouldSkipBaking() 一律回 false → 不登記任何排除貼圖。
         /// </summary>
         private static readonly bool Enabled = true;
 
@@ -196,22 +195,6 @@ namespace FasterGameLoading
             {
                 FGLLog.Error("Error initializing target mod roots:", ex);
             }
-        }
-
-        /// <summary>
-        /// 回傳本次啟動已解析完畢的排除 Mod 根目錄集合（排序後），
-        /// 供 AtlasHashCalculator 折入快取失效雜湊，確保 BakingSkipList
-        /// 結果改變時能正確使舊快取失效。
-        /// 若根目錄尚未初始化（RunningMods 尚未就緒），回傳 null 表示不確定。
-        /// </summary>
-        public static IReadOnlyCollection<string> GetResolvedSkipRootsForHash()
-        {
-            if (!Enabled) return Array.Empty<string>();
-            if (!rootsInitialized) return null;
-            // 回傳排序後的快照，確保雜湊結果與插入順序無關
-            var sorted = new List<string>(targetModRoots);
-            sorted.Sort(StringComparer.OrdinalIgnoreCase);
-            return sorted;
         }
 
         /// <summary>

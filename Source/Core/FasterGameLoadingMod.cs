@@ -16,7 +16,6 @@ namespace FasterGameLoading
         public static DelayedActions delayedActions;
 
         public ITextureCacheManager CacheManager { get; private set; }
-        public IAtlasCacheManager AtlasCache => StaticAtlasCache.Instance;
         public TextureResize Resizer { get; private set; }
 
         public FasterGameLoadingMod(ModContentPack pack) : base(pack)

@@ -194,7 +194,6 @@ namespace FasterGameLoading
                         patchedAssembliesLastSession.Clear();
                     }
                     FasterGameLoadingMod.Instance?.CacheManager?.ClearCache();
-                    StaticAtlasCache.ClearCache();
                 }
             }
         }

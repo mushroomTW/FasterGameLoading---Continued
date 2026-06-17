@@ -5,12 +5,9 @@
     <!-- Settings -->
     <FGL_EarlyModContentLoading>Load mod content early</FGL_EarlyModContentLoading>
     <FGL_DelayGraphicLoading>Delay graphic and icon loading</FGL_DelayGraphicLoading>
-    <FGL_StaticAtlasesBaking>Smarter atlas baking</FGL_StaticAtlasesBaking>
-    <FGL_AtlasCaching>Static atlases cache</FGL_AtlasCaching>
+    <FGL_StaticAtlasesBaking>Adaptive atlas baking</FGL_StaticAtlasesBaking>   
     <FGL_MultiThreading>Multi-threaded preloading</FGL_MultiThreading>
-    <FGL_XPathCaching>XPath caching</FGL_XPathCaching>
-    <FGL_ClearAtlasCache>Clear atlas cache</FGL_ClearAtlasCache>
-    <FGL_ClearAtlasCacheConfirmation>Clear the cached static atlases?</FGL_ClearAtlasCacheConfirmation>
+    <FGL_XPathCaching>XPath caching</FGL_XPathCaching>    
     <FGL_VerboseLogging>Verbose logging</FGL_VerboseLogging>
 
     <!-- Texture Resizing -->

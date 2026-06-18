@@ -119,6 +119,7 @@ graph TD
   * 攔截 `GlobalTextureAtlasManager.BakeStaticAtlases` 或圖集烘焙迴圈。
   * **動態批次最佳化**：根據玩家當前顯示卡（GPU）的烘焙效能與硬體規格，自適應地調整單次烘焙的紋理批次大小（Batch Size），減緩主執行緒被大量 I/O 與紋理上傳操作（TexImage2D）卡死的現象，顯著減少加載過程中的微卡頓。時間切片下限與圖集尺寸分離，避免慢速 GPU 被過大的最小批次拖出長幀。
   * **原版圖集插入保留**：自訂烘焙會在建立佇列快照前執行 RimWorld 1.6 原版的 `BuildingsDamageSectionLayerUtility.TryInsertIntoAtlas()` 與 `MinifiedThing.TryInsertIntoAtlas()`，保留建築傷痕與 minified 物品的原生圖集行為。
+  * **避免重複烘焙**：未啟用延遲圖形載入時，靜態圖集只在 RimWorld 原本的烘焙時機處理一次；啟動後的延遲收尾不再重新呼叫原版 `BakeStaticAtlases()`，避免大型種族或高貼圖量模組因重複 atlas 佔用 VRAM 而出現嚴重 FPS 下降。
   * **圖集烘焙排除名單**：自動偵測特定 Mod（如 Bionic Icons、Ancot Library 框架及其種族如 Kiiro Race、Ayameduki 等外星人種族）的紋理，將其排除在靜態圖集拼合之外，避免多遮罩（multi-mask）造成的圖案衝突與載入不全。本模組會動態檢測所有依賴 Humanoid Alien Races (HAR) 或 `Ancot.AncotLibrary` 的種族 Mod 並將其自動加入排除名單。
   * **載入時機安全性**：排除名單除了使用 `ModsConfig.IsActive`，也會掃描 `LoadedModManager.RunningMods` 作為備援，避免在啟動早期因 Mod 啟用狀態尚未完全穩定而錯過 Ancot/HAR 相關 Mod。
 
@@ -133,6 +134,7 @@ graph TD
   * **Transpiler 攔截 `ThingDef.PostLoad`**：將 `LongEventHandler.ExecuteWhenFinished` 中的非必要圖形載入動作重新導向到延遲佇列。透過 `ShouldBeLoadedImmediately()` 判斷是否為武器、裝備、食物、建築等常用類型（立即載入），其餘延遲處理。
   * **GraphicData 快取複用**：攔截 `GraphicData.Init`，以 `texPath` 為鍵快取已初始化的 `GraphicData` 實例。相同 texPath 且參數完全相同的 GraphicData 直接複用 `cachedGraphic`，跳過重複的初始化。
   * **時間預算排程**：使用 `DelayedActions` MonoBehaviour，在遊戲中每幀最多佔用 8ms（主選單中 50ms），批次處理延遲的圖形載入、圖示解析與地圖網格更新。
+  * **視覺管線隔離**：延遲圖形載入關閉時，`DelayedActions` 只執行音效與必要相容性收尾，不會啟動延遲圖形、圖示或靜態圖集重烘焙流程。
   * **Transpiler 攔截 `SubSoundDef.ResolveReferences`**：將音效解析動作排入延遲佇列，之後由 `DelayedActions` 的協程批次處理。
   * **啟動期間靜音保護**：在音效尚未解析完畢前，攔截 `SoundStarter.PlayOneShotOnCamera`、`PlayOneShot`、`TrySpawnSustainer` 以及 `SubSoundDef.TryPlay`，避免提早播放導致 `NullReferenceException`。
   * **世界初始化後恢復**：`World.FinalizeInit` Postfix 觸發所有累積的音效解析，完成後自動 Unpatch 恢復正常聲音播放。

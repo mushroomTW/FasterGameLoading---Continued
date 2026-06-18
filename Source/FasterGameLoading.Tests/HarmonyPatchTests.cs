@@ -339,6 +339,25 @@ namespace FasterGameLoading.Tests
             Assert.IsNull(result, "mod 為 null 時，result 應保持 null 不變");
         }
 
+        [TestCase(false, false)]
+        [TestCase(true, true)]
+        public void TestDelayedActions_ShouldRunDeferredVisualPipeline_FollowsDelayGraphicLoading(
+            bool delayGraphicLoading,
+            bool expected)
+        {
+            bool originalDelayGraphicLoading = FasterGameLoadingSettings.DelayGraphicLoading;
+            try
+            {
+                FasterGameLoadingSettings.DelayGraphicLoading = delayGraphicLoading;
+
+                Assert.AreEqual(expected, DelayedActions.ShouldRunDeferredVisualPipeline());
+            }
+            finally
+            {
+                FasterGameLoadingSettings.DelayGraphicLoading = originalDelayGraphicLoading;
+            }
+        }
+
 
     }
 }

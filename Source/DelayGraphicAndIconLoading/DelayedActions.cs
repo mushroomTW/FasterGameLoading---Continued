@@ -187,8 +187,16 @@ namespace FasterGameLoading
         public IEnumerator PerformActions()
         {
             var loadedDefs = new List<ThingDef>();
-            yield return DeferredLoader.LoadDeferredGraphicsCoroutine(this, loadedDefs);
-            yield return BakeDeferredAtlasesCoroutine();
+            bool runDeferredVisualPipeline = ShouldRunDeferredVisualPipeline();
+            if (runDeferredVisualPipeline)
+            {
+                yield return DeferredLoader.LoadDeferredGraphicsCoroutine(this, loadedDefs);
+                yield return BakeDeferredAtlasesCoroutine();
+            }
+            else
+            {
+                AllDeferredVisualsLoaded = true;
+            }
 
             // 確保在所有延遲貼圖與圖集載入／烘焙完成後，才重新掃描 Alien Races，避免 variantCount 錯誤或加載異常
             if (AlienRacesCompat.IsScheduled)
@@ -196,14 +204,25 @@ namespace FasterGameLoading
                 AlienRacesCompat.PerformRescan();
             }
 
-            yield return DeferredLoader.UpdateMapMeshForLoadedDefs(loadedDefs);
-            yield return DeferredLoader.LoadDeferredIconsCoroutine(this);
+            if (runDeferredVisualPipeline)
+            {
+                yield return DeferredLoader.UpdateMapMeshForLoadedDefs(loadedDefs);
+                yield return DeferredLoader.LoadDeferredIconsCoroutine(this);
+            }
             yield return DeferredLoader.ResolveSubSoundDefsCoroutine(this);
 
             GraphicData_Init_Patch.savedGraphics.Clear();
             stopwatch.Stop();
             this.enabled = false;
             yield return null;
+        }
+
+        /// <summary>
+        /// 延遲視覺管線只在延遲圖形載入啟用時執行，避免預設設定下重複烘焙原版靜態圖集。
+        /// </summary>
+        internal static bool ShouldRunDeferredVisualPipeline()
+        {
+            return FasterGameLoadingSettings.DelayGraphicLoading;
         }
 
         /// <summary>

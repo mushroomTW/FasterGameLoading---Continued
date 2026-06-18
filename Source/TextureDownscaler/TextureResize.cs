@@ -20,7 +20,7 @@ namespace FasterGameLoading
             None, Building, Pawn, Weapon, Apparel, Item, Plant, Tree, Terrain, Mote, Filth, Projectile, UI, Other
         }
 
-        private readonly ITextureCacheManager cacheManager;
+        private readonly TextureCacheManager cacheManager;
         private readonly TextureScanner scanner;
 
         private long lastOriginalPixelCount;
@@ -36,7 +36,7 @@ namespace FasterGameLoading
             public int originalHeight;
         }
 
-        public TextureResize(ITextureCacheManager cacheManager)
+        public TextureResize(TextureCacheManager cacheManager)
         {
             this.cacheManager = cacheManager;
             this.scanner = new TextureScanner();

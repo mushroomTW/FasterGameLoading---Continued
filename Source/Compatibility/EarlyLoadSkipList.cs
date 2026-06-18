@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using Verse;
 
 namespace FasterGameLoading
 {
@@ -9,12 +7,6 @@ namespace FasterGameLoading
     /// </summary>
     public static class EarlyLoadSkipList
     {
-        // ── 排除提早載入的 Mod 名單 ──
-        private static readonly HashSet<string> skippedMods = new(StringComparer.OrdinalIgnoreCase)
-        {
-            // 目前沒有
-        };
-
         /// <summary>
         /// 判斷指定的 Mod 是否應該跳過提早載入流程，改走原生同步載入。
         /// </summary>
@@ -25,7 +17,7 @@ namespace FasterGameLoading
             if (string.IsNullOrEmpty(packageId)) return false;
             if (packageId.StartsWith("Ayameduki.", StringComparison.OrdinalIgnoreCase)) return true;
             if (packageId.StartsWith("WRK.", StringComparison.OrdinalIgnoreCase)) return true;
-            return skippedMods.Contains(packageId);
+            return false;
         }
     }
 }

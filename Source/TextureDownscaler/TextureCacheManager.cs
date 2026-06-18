@@ -11,12 +11,12 @@ namespace FasterGameLoading
     /// <summary>
     /// 管理降質紋理快取的生命週期與對照表。
     /// </summary>
-    public class TextureCacheManager : ITextureCacheManager
+    public class TextureCacheManager
     {
         /// <summary>原始路徑 → 降質快取路徑的對照表（會透過 Scribe 持久化）。</summary>
         internal Dictionary<string, string> resizedTextureCache = new Dictionary<string, string>();
 
-        /// <summary>原始路徑 → 降質快取路徑的對照表（實作介面屬性）。</summary>
+        /// <summary>原始路徑 → 降質快取路徑的對照表。</summary>
         public Dictionary<string, string> ResizedTextureCache => resizedTextureCache;
         private readonly object cacheLock = new object();
         private readonly ConcurrentDictionary<string, string> md5HashCache = new ConcurrentDictionary<string, string>();

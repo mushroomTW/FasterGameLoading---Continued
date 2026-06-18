@@ -27,18 +27,22 @@ namespace FasterGameLoading
     [HarmonyPatch]
     internal static class FGLProgressReporter
     {
+        private const string PausePatchTypeName =
+            "ilyvion.LoadingProgress.FasterGameLoading.FasterGameLoading_DelayedActions_LateUpdate_Patches";
+        private const string UtilsTypeName =
+            "ilyvion.LoadingProgress.FasterGameLoading.FasterGameLoadingUtils";
+        private const string PauseFieldName = "_pauseFasterGameLoading_DelayedActions_LateUpdate";
+        private const string EarlyLoadingFinishedPropertyName = "FasterGameLoadingEarlyModContentLoadingIsFinished";
+
         private static readonly Func<bool> GetIsPaused;
 
         static FGLProgressReporter()
         {
             // 解析 loading-progress 的 pause flag 以備 Postfix 使用
-            var type = AccessTools.TypeByName(
-                "ilyvion.LoadingProgress.FasterGameLoading." +
-                "FasterGameLoading_DelayedActions_LateUpdate_Patches");
+            var type = AccessTools.TypeByName(PausePatchTypeName);
             if (type != null)
             {
-                var pauseField = AccessTools.Field(
-                    type, "_pauseFasterGameLoading_DelayedActions_LateUpdate");
+                var pauseField = AccessTools.Field(type, PauseFieldName);
                 if (pauseField != null)
                 {
                     try
@@ -52,7 +56,7 @@ namespace FasterGameLoading
                     }
                     catch (Exception ex)
                     {
-                        FGLLog.Warning("Failed to compile fast delegate for FGLProgressReporter pause field:",ex);
+                        FGLLog.Warning("Failed to compile fast delegate for FGLProgressReporter pause field:", ex);
                     }
                 }
             }
@@ -61,18 +65,15 @@ namespace FasterGameLoading
         /// <summary>只在此 patch 依賴的 loading-progress 型別存在時啟用。</summary>
         internal static bool Prepare()
         {
-            return AccessTools.TypeByName(
-                "ilyvion.LoadingProgress.FasterGameLoading.FasterGameLoadingUtils") != null;
+            return TargetMethod() != null;
         }
 
         /// <summary>回傳目標 property getter，patch 不應用於不存在的型別。</summary>
         internal static MethodBase TargetMethod()
         {
-            var type = AccessTools.TypeByName(
-                "ilyvion.LoadingProgress.FasterGameLoading.FasterGameLoadingUtils");
+            var type = AccessTools.TypeByName(UtilsTypeName);
             if (type == null) return null;
-            return AccessTools.PropertyGetter(
-                type, "FasterGameLoadingEarlyModContentLoadingIsFinished");
+            return AccessTools.PropertyGetter(type, EarlyLoadingFinishedPropertyName);
         }
 
         /// <summary>

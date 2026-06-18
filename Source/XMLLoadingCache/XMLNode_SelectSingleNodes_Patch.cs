@@ -152,5 +152,10 @@ namespace FasterGameLoading
         {
             XmlNode_SelectSingleNode_Patch.isInPatchOperation = false;
         }
+
+        public static void Finalizer()
+        {
+            XmlNode_SelectSingleNode_Patch.isInPatchOperation = false;
+        }
     }
 }

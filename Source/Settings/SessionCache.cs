@@ -33,12 +33,6 @@ namespace FasterGameLoading
         internal static List<string> modsInLastSession = new();
 
         /// <summary>
-        /// 上一次 session 中被 Harmony patch 的組件名稱清單。
-        /// </summary>
-        internal static List<string> patchedAssembliesLastSession = new();
-        internal static readonly object patchedAssembliesLock = new();
-
-        /// <summary>
         /// 上一次 session 中所有 XPath 查詢結果（僅存缺失的 XPath 查詢）。
         /// </summary>
         internal static ConcurrentDictionary<string, byte> xmlPathsSinceLastSession = new();
@@ -116,7 +110,6 @@ namespace FasterGameLoading
             Scribe_Collections.Look(ref xmlContentHashByMod, "FGL_XmlContentHashByMod", LookMode.Value, LookMode.Value);
             Scribe_Collections.Look(ref modsInLastSession, FGLConsts.ModsInLastSessionKey, LookMode.Value);
             Scribe_Collections.Look(ref historicalBakeSpeeds, FGLConsts.HistoricalBakeSpeedsKey, LookMode.Value);
-            Scribe_Collections.Look(ref patchedAssembliesLastSession, "patchedAssembliesLastSession", LookMode.Value);
 
 
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
@@ -154,10 +147,6 @@ namespace FasterGameLoading
                 xmlMetadataHashByMod ??= new Dictionary<string, long>();
                 xmlContentHashByMod ??= new Dictionary<string, long>();
                 historicalBakeSpeeds ??= new List<float>();
-                lock (patchedAssembliesLock)
-                {
-                    patchedAssembliesLastSession ??= new List<string>();
-                }
 
                 // 零分配偵測 mod 組合變更，避免 GetHashCode 隨機雜湊種子碰撞與 MD5 重複記憶體配發
                 var currentActiveMods = ModsConfig.ActiveModsInLoadOrder.ToList();
@@ -189,10 +178,6 @@ namespace FasterGameLoading
                     xmlPathsSinceLastSession.Clear();
                     xmlMetadataHashByMod.Clear();
                     xmlContentHashByMod.Clear();
-                    lock (patchedAssembliesLock)
-                    {
-                        patchedAssembliesLastSession.Clear();
-                    }
                     FasterGameLoadingMod.Instance?.CacheManager?.ClearCache();
                 }
             }

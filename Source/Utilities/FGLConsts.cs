@@ -12,16 +12,8 @@ namespace FasterGameLoading
         // ── Def 與型別匹配關鍵字 ──
         public const string BuildingPipe = "Building_Pipe";
         public const string MedicineDefName = "Medicine";
-        public const string FurnitureKeyword = "Furniture";
-        public const string ProductionKeyword = "Production";
-        public const string SecurityKeyword = "Security";
 
-        public static readonly string[] FurnitureKeywords = new[]
-        {
-            FurnitureKeyword,
-            ProductionKeyword,
-            SecurityKeyword
-        };
+        public static readonly string[] FurnitureKeywords = { "Furniture", "Production", "Security" };
 
 
 

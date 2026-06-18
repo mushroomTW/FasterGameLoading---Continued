@@ -1,4 +1,4 @@
-using HarmonyLib;
+﻿using HarmonyLib;
 using RimWorld.IO;
 using System;
 using System.Collections.Concurrent;
@@ -141,7 +141,7 @@ namespace FasterGameLoading
 
         public static void RegisterSkippedBakingTextureIfApplicable(string path, Texture2D tex)
         {
-            if (tex != null && SmartBakingSkipList.ShouldSkipBaking(path))
+            if (tex != null && AdaptiveBakingSkipList.ShouldSkipBaking(path))
             {
                 skippedBakingTextures[tex] = true;
                 string filename = Path.GetFileNameWithoutExtension(path);

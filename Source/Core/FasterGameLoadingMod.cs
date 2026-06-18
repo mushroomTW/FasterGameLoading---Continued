@@ -15,7 +15,7 @@ namespace FasterGameLoading
         public static FasterGameLoadingSettings settings;
         public static DelayedActions delayedActions;
 
-        public ITextureCacheManager CacheManager { get; private set; }
+        public TextureCacheManager CacheManager { get; private set; }
         public TextureResize Resizer { get; private set; }
 
         public FasterGameLoadingMod(ModContentPack pack) : base(pack)

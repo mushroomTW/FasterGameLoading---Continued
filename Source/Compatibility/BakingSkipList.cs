@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using HarmonyLib;
 using UnityEngine;
@@ -11,10 +12,24 @@ namespace FasterGameLoading
     /// 攔截 GlobalTextureAtlasManager.TryInsertStatic，阻止排除名單中 Mod 的紋理進入靜態圖集，避免因多遮罩（multi-mask）造成圖案衝突與載入不全。
     /// </summary>
     [HarmonyPatch(typeof(GlobalTextureAtlasManager), "TryInsertStatic")]
-    public static class SmartBakingSkipList
+    public static class AdaptiveBakingSkipList
     {
+        private static readonly string[] dependencyListMemberNames =
+        {
+            "modDependencies",
+            "dependencies",
+            "Dependencies"
+        };
+
+        private static readonly string[] dependencyPackageIdMemberNames =
+        {
+            "packageId",
+            "PackageId",
+            "PackageID"
+        };
+
         /// <summary>
-        /// 功能總開關。設為 false 即可完整停用整套烘焙排除邏輯：
+        /// 調適用總開關。設為 false 即可完整停用整套烘焙排除邏輯：
         /// ・Prepare() 回 false → Harmony 不掛上 Prefix，TryInsertStatic 完全不被攔截（零執行期成本）；
         /// ・ShouldSkipBaking() 一律回 false → 不登記任何排除貼圖。
         /// </summary>
@@ -31,7 +46,7 @@ namespace FasterGameLoading
         private static bool rootsInitialized = false;
         private static bool? isAnyTargetModActive;
 
-        static SmartBakingSkipList()
+        static AdaptiveBakingSkipList()
         {
             CacheResetter.Register(() =>
             {
@@ -139,26 +154,73 @@ namespace FasterGameLoading
             var metaData = mod.ModMetaData;
             if (metaData == null) return false;
 
-            var depsField = AccessTools.Field(metaData.GetType(), "dependencies") 
-                         ?? AccessTools.Field(metaData.GetType(), "Dependencies");
-            if (depsField == null) return false;
-
-            var depsList = depsField.GetValue(metaData) as System.Collections.IEnumerable;
+            var depsList = GetDependencyList(metaData);
             if (depsList == null) return false;
 
             foreach (var dep in depsList)
             {
                 if (dep == null) continue;
-                var packageIdField = AccessTools.Field(dep.GetType(), "packageId")
-                                  ?? AccessTools.Field(dep.GetType(), "PackageId");
-                if (packageIdField == null) continue;
 
-                var packageId = packageIdField.GetValue(dep) as string;
+                var packageId = GetDependencyPackageId(dep);
                 if (packageId != null && packageId.Equals(targetPackageId, StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
             }
+            return false;
+        }
+
+        private static IEnumerable GetDependencyList(object metaData)
+        {
+            foreach (var memberName in dependencyListMemberNames)
+            {
+                if (TryGetMemberValue(metaData, memberName, out var value) && value is IEnumerable dependencies && value is not string)
+                {
+                    return dependencies;
+                }
+            }
+            return null;
+        }
+
+        private static string GetDependencyPackageId(object dependency)
+        {
+            foreach (var memberName in dependencyPackageIdMemberNames)
+            {
+                if (TryGetMemberValue(dependency, memberName, out var value) && value is string packageId)
+                {
+                    return packageId;
+                }
+            }
+            return null;
+        }
+
+        private static bool TryGetMemberValue(object instance, string memberName, out object value)
+        {
+            value = null;
+            if (instance == null) return false;
+
+            var type = instance.GetType();
+            try
+            {
+                var field = AccessTools.Field(type, memberName);
+                if (field != null)
+                {
+                    value = field.GetValue(instance);
+                    return true;
+                }
+
+                var property = AccessTools.Property(type, memberName);
+                if (property != null)
+                {
+                    value = property.GetValue(instance, null);
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+
             return false;
         }
 
@@ -181,6 +243,7 @@ namespace FasterGameLoading
                     hasAny = true;
                     if (IsTargetMod(mod))
                     {
+                        if (string.IsNullOrEmpty(mod.RootDir)) continue;
                         string root = mod.RootDir.Replace('\\', '/').TrimEnd('/');
                         targetModRoots.Add(root);
                     }
@@ -212,12 +275,19 @@ namespace FasterGameLoading
             string normalizedPath = path.Replace('\\', '/');
             foreach (var root in targetModRoots)
             {
-                if (normalizedPath.StartsWith(root, StringComparison.OrdinalIgnoreCase))
+                if (IsPathUnderRoot(normalizedPath, root))
                 {
                     return true;
                 }
             }
             return false;
+        }
+
+        private static bool IsPathUnderRoot(string normalizedPath, string root)
+        {
+            if (string.IsNullOrEmpty(normalizedPath) || string.IsNullOrEmpty(root)) return false;
+            return normalizedPath.Equals(root, StringComparison.OrdinalIgnoreCase)
+                || normalizedPath.StartsWith(root + "/", StringComparison.OrdinalIgnoreCase);
         }
 
         public static bool Prepare() => Enabled && FasterGameLoadingSettings.StaticAtlasesBaking;

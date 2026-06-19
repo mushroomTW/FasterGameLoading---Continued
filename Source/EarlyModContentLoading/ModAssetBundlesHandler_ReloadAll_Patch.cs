@@ -9,6 +9,7 @@ namespace FasterGameLoading
     /// 提早載入階段可能重複呼叫 ReloadAll，此 patch 追蹤已處理的 handler 以避免重複的 I/O 操作。
     /// </summary>
     [HarmonyPatch(typeof(ModAssetBundlesHandler), "ReloadAll")]
+    [HarmonyAfter("ChezhouLib.lib")]
     public static class ModAssetBundlesHandler_ReloadAll_Patch
     {
         // 追蹤已完成 ReloadAll 的 handler，確保第一次呼叫一定放行

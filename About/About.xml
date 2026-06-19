@@ -6,7 +6,7 @@
     <li>1.6</li>
   </supportedVersions>
   <packageId>Taranchuk.FasterGameLoading</packageId>
-  <modVersion>2026.06.18.2</modVersion>
+  <modVersion>2026.06.19.4</modVersion>
   <description>
 GitHub (Maintained Fork): https://github.com/mushroomTW/FasterGameLoading---Continued
 Original Project: https://github.com/Taranchuk/FasterGameLoading
@@ -30,6 +30,8 @@ Sick of staring at the loading screen every time you start RimWorld? This mod cu
 - The game may briefly freeze or feel unresponsive during startup. This is normal — the mod is doing work in the background.
 - It may take a while to get any sound after entering the main menu, which is normal.
 - When delay graphic loading is disabled, static atlases are not baked again by the delayed startup cleanup, preventing duplicate atlas VRAM usage with large race or texture-heavy mods.
+- ChezhouLib's AssetBundle reload patch runs before FGL's duplicate-reload guard, so ChezhouLib-managed bundles can refresh correctly during development reload paths.
+- Early mod content loading now includes official Core/DLC packs as well as player mods.
 - If you are using external texture loaders or image conversion tools like Image Opt, Graphics Settings+, or RimSort (Optimize Texture), this mod's texture downscaler will step aside. (Converting to DDS is actually more efficient and has higher quality than directly downscaled images, so it is recommended to use the texture downscaler only when you cannot use such tools)
 
 --- Works well with ---
@@ -57,13 +59,15 @@ Original mod by Taranchuk. This is a maintained fork with bug fixes and improvem
 - 延遲圖形和圖示載入：延遲載入非必要貼圖（例如背景物件裝飾），等進入遊戲後才處理。武器、服裝、食物、人物、傢俱等必要物品仍會立即載入，不會出現問題。（預設關閉）
 - 自適應圖集烘焙：根據你的 GPU 速度自動調整每批次處理量，並保留 RimWorld 1.6 原版必要圖集插入，減少載入卡頓。（預設關閉）
 - 啟用詳細日誌：輸出偵錯訊息至控制台以利排查問題。（預設關閉）
-- 縮小紋理工具：可縮小高畫質貼圖來節省顯示記憶體與載入時間。（預設關閉）
+- 縮小紋理工具：可縮小高畫質貼圖來節省顯示記憶體與載入時間。原始模組檔案不會被修改，縮小後的副本會存放在獨立資料夾，可隨時刪除以還原完整品質。（預設關閉）
 
 --- 注意事項 ---
 
 - 啟動期間遊戲可能短暫無回應，這是正常現象，模組正在背景運作。
 - 進入主畫面後會有一小段時間沒有聲音，屬於正常現象。
 - 延遲圖形載入關閉時，啟動後的延遲收尾不會再次烘焙靜態圖集，避免大型種族或高貼圖量模組產生重複 atlas 顯存佔用。
+- ChezhouLib 的 AssetBundle reload patch 會早於 FGL 的重複 reload 防護執行，因此 ChezhouLib 管理的 bundle 在開發用 reload 流程中仍可正確刷新。
+- 提早載入模組內容現在會包含官方 Core/DLC 與玩家模組。
 - 如果有使用 Image Opt、Graphics Settings+ 或 RimSort 的 Optimize Texture 等外部貼圖載入或圖片轉化工具，本模組的貼圖降解析度工具會自動退避（轉換成 DDS 實際上比直接降解析度更有效率且品質更高，所以建議只有在無法使用此類工具時使用貼圖降解析度工具）。
 
 --- 推薦搭配與相容性 ---

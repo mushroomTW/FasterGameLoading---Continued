@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Xml;
 using HarmonyLib;
 using NUnit.Framework;
@@ -87,6 +88,25 @@ namespace FasterGameLoading.Tests
             {
                 field.SetValue(null, null);
             }
+        }
+
+        [Test]
+        public void TestModAssetBundlesHandler_ReloadAll_Patch_RunsAfterChezhouLib()
+        {
+            var harmonyAfter = typeof(ModAssetBundlesHandler_ReloadAll_Patch)
+                .GetCustomAttributes(typeof(HarmonyAfter), inherit: false)
+                .Cast<HarmonyAfter>()
+                .FirstOrDefault();
+
+            Assert.IsNotNull(harmonyAfter, "ReloadAll patch should declare HarmonyAfter for ChezhouLib.");
+            Assert.Contains("ChezhouLib.lib", harmonyAfter.info.after);
+        }
+
+        [Test]
+        public void TestEarlyLoadSkipList_AppliesPackageIdSkipRules()
+        {
+            Assert.IsFalse(EarlyLoadSkipList.ShouldSkip("chezhou.chezhoulib.lib"));
+            Assert.IsTrue(EarlyLoadSkipList.ShouldSkip("Ayameduki.SomeMod"));
         }
 
         [Test]
@@ -356,6 +376,44 @@ namespace FasterGameLoading.Tests
             {
                 FasterGameLoadingSettings.DelayGraphicLoading = originalDelayGraphicLoading;
             }
+        }
+
+        [Test]
+        public void TestBuildableDef_PostLoad_Patch_RoutesIconCallbacksToDelayedHandler()
+        {
+            var patchType = typeof(ThingDef_PostLoad_Patch).Assembly.GetType("FasterGameLoading.BuildableDef_PostLoad_Patch");
+            Assert.IsNotNull(patchType, "BuildableDef.PostLoad patch should feed the deferred icon queue.");
+
+            var prepare = patchType.GetMethod("Prepare", BindingFlags.Public | BindingFlags.Static);
+            Assert.IsNotNull(prepare);
+
+            bool originalDelayGraphicLoading = FasterGameLoadingSettings.DelayGraphicLoading;
+            try
+            {
+                FasterGameLoadingSettings.DelayGraphicLoading = false;
+                Assert.IsFalse((bool)prepare.Invoke(null, null));
+
+                FasterGameLoadingSettings.DelayGraphicLoading = true;
+                Assert.IsTrue((bool)prepare.Invoke(null, null));
+            }
+            finally
+            {
+                FasterGameLoadingSettings.DelayGraphicLoading = originalDelayGraphicLoading;
+            }
+
+            var transpiler = patchType.GetMethod("Transpiler", BindingFlags.Public | BindingFlags.Static);
+            var executeDelayed = AccessTools.Method(patchType, "ExecuteDelayed");
+            Assert.IsNotNull(transpiler);
+            Assert.IsNotNull(executeDelayed);
+
+            var executeWhenFinished = AccessTools.Method(typeof(LongEventHandler), nameof(LongEventHandler.ExecuteWhenFinished));
+            var input = new[] { new CodeInstruction(OpCodes.Call, executeWhenFinished) };
+            var output = ((IEnumerable<CodeInstruction>)transpiler.Invoke(null, new object[] { input })).ToList();
+
+            Assert.AreEqual(2, output.Count);
+            Assert.AreEqual(OpCodes.Ldarg_0, output[0].opcode);
+            Assert.AreEqual(OpCodes.Call, output[1].opcode);
+            Assert.AreEqual(executeDelayed, output[1].operand);
         }
 
 

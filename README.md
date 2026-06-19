@@ -131,7 +131,7 @@ graph TD
 
 * **概念**：原生 RimWorld 在啟動期間同步解析所有 ThingDef 的圖形（`GraphicData.Init`）與所有 SubSoundDef 的音效資源（AudioGrain 載入等），即使許多物件的圖形在進入遊戲前並不需要立即顯示，啟動期間也不需要播放任何音效。這會造成大量不必要的 I/O 與紋理上傳。
 * **技術細節**：
-  * **Transpiler 攔截 `ThingDef.PostLoad`**：將 `LongEventHandler.ExecuteWhenFinished` 中的非必要圖形載入動作重新導向到延遲佇列。透過 `ShouldBeLoadedImmediately()` 判斷是否為武器、裝備、食物、建築等常用類型（立即載入），其餘延遲處理。
+  * **Transpiler 攔截 `ThingDef.PostLoad` 與 `BuildableDef.PostLoad`**：將 `LongEventHandler.ExecuteWhenFinished` 中的非必要圖形與圖示載入動作重新導向到延遲佇列。透過 `ShouldBeLoadedImmediately()` 判斷是否為武器、裝備、食物、建築等常用類型（立即載入），其餘延遲處理。
   * **GraphicData 快取複用**：攔截 `GraphicData.Init`，以 `texPath` 為鍵快取已初始化的 `GraphicData` 實例。相同 texPath 且參數完全相同的 GraphicData 直接複用 `cachedGraphic`，跳過重複的初始化。
   * **時間預算排程**：使用 `DelayedActions` MonoBehaviour，在遊戲中每幀最多佔用 8ms（主選單中 50ms），批次處理延遲的圖形載入、圖示解析與地圖網格更新。
   * **視覺管線隔離**：延遲圖形載入關閉時，`DelayedActions` 只執行音效與必要相容性收尾，不會啟動延遲圖形、圖示或靜態圖集重烘焙流程。
@@ -153,6 +153,9 @@ graph TD
 * **[AyaTweaks 2.0 (Ayameduki Tweaks)](https://gitlab.com/wrelick-rimworld/ayatweaks2.0)**：完美相容。本模組會自動偵測並將所有 Ayameduki 相關 Mod (`Ayameduki.*`) 以及 WRelicK 的翻譯與補丁 (`WRK.*`) 排除在「提早載入」與「多執行緒 XML 載入」之外，以確保其複雜的 Patch 載入順序與執行緒安全完全正常，防止爆紅。
 * **[Alien Races (Humanoid Alien Races)](https://github.com/erdelf/AlienRaces)**：嘗試相容。在所有 Mod 完成載入後，本模組會自動重新觸發 Alien Races 的 extended graphics variant 掃描，確保外星種族的圖形正確載入。**同時，本模組會自動偵測並動態排除所有依賴 Humanoid Alien Races 的種族模組貼圖進入靜態圖集，從而徹底解決外星人種族的頭髮、耳朵等 bodyAddon 消失問題。**
 * **[Ancot Library（Ancot's Races Framework）](https://steamcommunity.com/sharedfiles/filedetails/?id=2988801276)**：嘗試相容。本模組會偵測 `Ancot.AncotLibrary` 本體與所有在 `About.xml` 中聲明依賴它的種族模組（如 Kiiro Race、Tsukin Race 等），並**動態**將其根目錄下的外觀貼圖排除在靜態圖集烘焙之外。偵測流程同時使用 `ModsConfig.IsActive` 與 `LoadedModManager.RunningMods`，避免載入早期狀態尚未穩定時漏判，徹底避免 Ancot 旗下種族因自訂多重遮罩（Multi-mask）渲染節點造成的貼圖黑化或 bodyAddon 消失問題。
+
+> [!Note]
+> ChezhouLib 的 AssetBundle reload patch 會優先於 FGL 的重複 reload 防護執行，避免開發模式或工具重複觸發 `ReloadAll` 時跳過 ChezhouLib 的清理與重載流程。
 
 ---
 

@@ -59,7 +59,7 @@ namespace FasterGameLoading
             {
                 var modsToLoad = LoadedModManager.RunningMods
                     .Where(x => !ModContentPack_ReloadContentInt_Patch.loadedMods.Contains(x)
-                                && !EarlyLoadSkipList.ShouldSkip(x.PackageIdPlayerFacing))
+                                && !EarlyLoadSkipList.ShouldSkip(x))
                     .ToList();
                 pendingEarlyLoads = new Queue<ModContentPack>(modsToLoad);
             }

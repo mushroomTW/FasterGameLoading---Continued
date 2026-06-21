@@ -39,6 +39,7 @@ namespace FasterGameLoading
         private static readonly HashSet<string> targetMods = new(StringComparer.OrdinalIgnoreCase)
         {
             "automatic.bionicicons",
+            "erdelf.HumanoidAlienRaces",
             "Ancot.AncotLibrary"
         };
 
@@ -244,7 +245,7 @@ namespace FasterGameLoading
                     if (IsTargetMod(mod))
                     {
                         if (string.IsNullOrEmpty(mod.RootDir)) continue;
-                        string root = mod.RootDir.Replace('\\', '/').TrimEnd('/');
+                        string root = mod.RootDir.Replace('\\', '/').TrimEnd(new[] { '/' });
                         targetModRoots.Add(root);
                     }
                 }
@@ -252,7 +253,7 @@ namespace FasterGameLoading
                 if (!hasAny) return; // 載入列表尚未初始化完畢（空集合），下次再來
 
                 // 迴圈順利完成後才標記初始化，避免例外導致半初始化狀態被永久鎖定
-                rootsInitialized = true;
+                rootsInitialized = targetModRoots.Count > 0;
             }
             catch (Exception ex)
             {
@@ -267,7 +268,11 @@ namespace FasterGameLoading
         {
             if (!Enabled) return false;
             if (!FasterGameLoadingSettings.StaticAtlasesBaking) return false;
-            if (!IsAnyTargetModActive) return false;
+            return IsProtectedModTexturePath(path);
+        }
+
+        public static bool IsProtectedModTexturePath(string path)
+        {
             if (string.IsNullOrEmpty(path)) return false;
 
             InitializeModRoots();

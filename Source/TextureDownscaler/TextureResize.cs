@@ -103,6 +103,8 @@ namespace FasterGameLoading
             var texturesToResize = new List<TextureResizeCandidate>();
             foreach (var texture in scanner.texturesByPaths)
             {
+                if (AdaptiveBakingSkipList.IsProtectedModTexturePath(texture.Value)) continue;
+
                 var sourceWidth = texture.Key.width;
                 var sourceHeight = texture.Key.height;
                 PngUtils.TryGetImageDimensions(texture.Value, ref sourceWidth, ref sourceHeight);

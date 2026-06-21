@@ -216,9 +216,10 @@ namespace FasterGameLoading
 
             var fullPath = file.FullPath;
             var shouldBypassTextureReplacement = DDSCompat.ShouldBypassTextureReplacement;
+            var isProtectedTexturePath = AdaptiveBakingSkipList.IsProtectedModTexturePath(fullPath);
 
             // 優先檢查 WeakReference 快取中是否已有此紋理
-            if (!shouldBypassTextureReplacement && savedTextures.TryGetValue(fullPath, out var weakRef) && weakRef.TryGetTarget(out __result))
+            if (!isProtectedTexturePath && !shouldBypassTextureReplacement && savedTextures.TryGetValue(fullPath, out var weakRef) && weakRef.TryGetTarget(out __result))
             {
                 RegisterSkippedBakingTextureIfApplicable(fullPath, __result);
                 __state = false;
@@ -227,7 +228,7 @@ namespace FasterGameLoading
 
 
             // 檢查是否有降質快取版本的紋理可用
-            if (!shouldBypassTextureReplacement && FasterGameLoadingMod.Instance.CacheManager.TryGetCachedTexturePath(fullPath, out var cachePath))
+            if (!isProtectedTexturePath && !shouldBypassTextureReplacement && FasterGameLoadingMod.Instance.CacheManager.TryGetCachedTexturePath(fullPath, out var cachePath))
             {
                 try
                 {
@@ -304,6 +305,9 @@ namespace FasterGameLoading
         {
             if (__state && __result != null)
             {
+                RegisterSkippedBakingTextureIfApplicable(file.FullPath, __result);
+                if (AdaptiveBakingSkipList.IsProtectedModTexturePath(file.FullPath)) return;
+
                 var weakRefPost = new System.WeakReference<Texture2D>(__result);
                 // 覆寫前先移除舊的反向對照，避免反向表累積孤兒項目
                 if (savedTextures.TryGetValue(file.FullPath, out var oldRefPost))
@@ -312,7 +316,6 @@ namespace FasterGameLoading
                 }
                 savedTextures[file.FullPath] = weakRefPost;
                 savedTexturesReverse[weakRefPost] = file.FullPath;
-                RegisterSkippedBakingTextureIfApplicable(file.FullPath, __result);
             }
         }
     }

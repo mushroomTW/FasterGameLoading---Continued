@@ -198,12 +198,6 @@ namespace FasterGameLoading
                 AllDeferredVisualsLoaded = true;
             }
 
-            // 確保在所有延遲貼圖與圖集載入／烘焙完成後，才重新掃描 Alien Races，避免 variantCount 錯誤或加載異常
-            if (AlienRacesCompat.IsScheduled)
-            {
-                AlienRacesCompat.PerformRescan();
-            }
-
             if (runDeferredVisualPipeline)
             {
                 yield return DeferredLoader.UpdateMapMeshForLoadedDefs(loadedDefs);

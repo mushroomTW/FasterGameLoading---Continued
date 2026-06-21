@@ -107,6 +107,29 @@ namespace FasterGameLoading.Tests
         {
             Assert.IsFalse(EarlyLoadSkipList.ShouldSkip("chezhou.chezhoulib.lib"));
             Assert.IsTrue(EarlyLoadSkipList.ShouldSkip("Ayameduki.SomeMod"));
+            Assert.IsTrue(EarlyLoadSkipList.ShouldSkip("erdelf.HumanoidAlienRaces"));
+            Assert.IsTrue(EarlyLoadSkipList.ShouldSkip("some.race.mod", new FakeModMetaData()));
+        }
+
+        private sealed class FakeModMetaData
+        {
+            public List<FakeDependency> modDependencies = new List<FakeDependency>
+            {
+                new FakeDependency { packageId = "erdelf.HumanoidAlienRaces" }
+            };
+        }
+
+        private sealed class FakeDependency
+        {
+            public string packageId;
+        }
+
+        [Test]
+        public void TestAlienRacesCompat_IsRemoved()
+        {
+            Assert.IsNull(
+                typeof(FasterGameLoadingMod).Assembly.GetType("FasterGameLoading.AlienRacesCompat"),
+                "HAR 相容性應靠 early-loading skip 保留原生時序，不再用非冪等的事後重掃。");
         }
 
         [Test]
@@ -414,6 +437,35 @@ namespace FasterGameLoading.Tests
             Assert.AreEqual(OpCodes.Ldarg_0, output[0].opcode);
             Assert.AreEqual(OpCodes.Call, output[1].opcode);
             Assert.AreEqual(executeDelayed, output[1].operand);
+        }
+
+        [Test]
+        public void TestAdaptiveBakingSkipList_ProtectsAlienRaceTextureRoots()
+        {
+            var type = typeof(AdaptiveBakingSkipList);
+            var targetMods = (HashSet<string>)type.GetField("targetMods", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+            CollectionAssert.Contains(targetMods, "erdelf.HumanoidAlienRaces");
+
+            var roots = (HashSet<string>)type.GetField("targetModRoots", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+            var rootsInitialized = type.GetField("rootsInitialized", BindingFlags.NonPublic | BindingFlags.Static);
+            var oldRoots = roots.ToList();
+            var oldRootsInitialized = (bool)rootsInitialized.GetValue(null);
+
+            try
+            {
+                roots.Clear();
+                roots.Add("C:/Mods/AlienRaces");
+                rootsInitialized.SetValue(null, true);
+
+                Assert.IsTrue(AdaptiveBakingSkipList.IsProtectedModTexturePath(@"C:\Mods\AlienRaces\Textures\Body.png"));
+                Assert.IsFalse(AdaptiveBakingSkipList.IsProtectedModTexturePath(@"C:\Mods\Other\Textures\Body.png"));
+            }
+            finally
+            {
+                roots.Clear();
+                foreach (var root in oldRoots) roots.Add(root);
+                rootsInitialized.SetValue(null, oldRootsInitialized);
+            }
         }
 
 

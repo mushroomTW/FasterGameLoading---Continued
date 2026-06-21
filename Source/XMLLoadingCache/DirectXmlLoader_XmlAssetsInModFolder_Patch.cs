@@ -28,7 +28,7 @@ namespace FasterGameLoading
             }
 
             // 如果該 Mod 屬於跳過清單，則放行回原生的單執行緒 XML 加載方法，避免多執行緒加載造成的 Patch 覆蓋與執行緒安全衝突
-            if (EarlyLoadSkipList.ShouldSkip(mod.PackageIdPlayerFacing))
+            if (EarlyLoadSkipList.ShouldSkip(mod))
             {
                 return true;
             }

@@ -80,6 +80,7 @@ graph TD
 * **技術細節**：
   * 攔截 `ModContentPack.ReloadContentInt`（以及相關的資源初審加載點）。
   * 將 Mod 內容（包括 DLL 和 XML 虛擬檔案目錄）的預解析放到更早的初始化時間段中，利用主執行緒原本會被阻塞的等待空檔提前處理。
+  * **HAR 時序保護**：Alien Races 本體與所有在 `About.xml` 中依賴 `erdelf.HumanoidAlienRaces` 的種族模組會自動跳過提早載入，保留 HAR 原本的貼圖 variant 掃描時序，避免 bodyAddon、頭髮、耳朵等外觀貼圖大量缺失。
   * 使得原生遊戲在執行後續載入步驟時，能直接使用已經提前解析好的記憶體目錄，從而消除等待空檔。
   * **型別反射快取加速**：背景預載入所有型別，並快取 `AccessTools.AllTypes()`、`AccessTools.TypeByName()`、`GenTypes.GetTypeInAnyAssemblyInt()`、`GenTypes.AllLeafSubclasses()` 等高頻反射查詢結果。型別名稱映射可跨 session 持久化，避免每次啟動都重新掃描所有 Assembly；`GenTypes.GetTypeInAnyAssemblyInt()` 的快取鍵會保留 `namespaceIfAmbiguous`，避免不同命名空間的同名型別互相污染。
 
@@ -151,7 +152,7 @@ graph TD
 * **[HugsLib](https://github.com/UnlimitedHugs/RimworldHugsLib)**：完美相容。當延遲圖形載入啟用時，本模組會自動將 `HugsLibController.OnDefsLoaded` 重新導向到主執行緒執行，避免初始化時序衝突。
 * **[XmlExtensions](https://github.com/15adhami/XmlExtensions)**：完美相容。當檢測到其啟用時，XPath 快取功能會自動停用，避免與 XmlExtensions 的自訂 XML 處理邏輯衝突。
 * **[AyaTweaks 2.0 (Ayameduki Tweaks)](https://gitlab.com/wrelick-rimworld/ayatweaks2.0)**：完美相容。本模組會自動偵測並將所有 Ayameduki 相關 Mod (`Ayameduki.*`) 以及 WRelicK 的翻譯與補丁 (`WRK.*`) 排除在「提早載入」與「多執行緒 XML 載入」之外，以確保其複雜的 Patch 載入順序與執行緒安全完全正常，防止爆紅。
-* **[Alien Races (Humanoid Alien Races)](https://github.com/erdelf/AlienRaces)**：嘗試相容。在所有 Mod 完成載入後，本模組會自動重新觸發 Alien Races 的 extended graphics variant 掃描，確保外星種族的圖形正確載入。**同時，本模組會自動偵測並動態排除所有依賴 Humanoid Alien Races 的種族模組貼圖進入靜態圖集，從而徹底解決外星人種族的頭髮、耳朵等 bodyAddon 消失問題。**
+* **[Alien Races (Humanoid Alien Races)](https://github.com/erdelf/AlienRaces)**：嘗試相容。Alien Races 本體與所有依賴 Humanoid Alien Races 的種族模組會自動跳過提早載入，保留 HAR 原生的 extended graphics variant 掃描時序，避免在貼圖尚未穩定時提早執行。**同時，本模組會自動偵測並動態排除 HAR 本體與所有依賴 Humanoid Alien Races 的種族模組貼圖進入靜態圖集、FGL 貼圖重用與貼圖降解析快取，降低外星人種族的頭髮、耳朵等 bodyAddon 消失風險。**
 * **[Ancot Library（Ancot's Races Framework）](https://steamcommunity.com/sharedfiles/filedetails/?id=2988801276)**：嘗試相容。本模組會偵測 `Ancot.AncotLibrary` 本體與所有在 `About.xml` 中聲明依賴它的種族模組（如 Kiiro Race、Tsukin Race 等），並**動態**將其根目錄下的外觀貼圖排除在靜態圖集烘焙之外。偵測流程同時使用 `ModsConfig.IsActive` 與 `LoadedModManager.RunningMods`，避免載入早期狀態尚未穩定時漏判，徹底避免 Ancot 旗下種族因自訂多重遮罩（Multi-mask）渲染節點造成的貼圖黑化或 bodyAddon 消失問題。
 
 > [!Note]

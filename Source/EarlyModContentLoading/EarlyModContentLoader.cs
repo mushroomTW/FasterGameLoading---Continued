@@ -46,7 +46,7 @@ namespace FasterGameLoading
             }
 
             // earlyModContentLoading 採 camelCase 以相容 loading-progress 的反射查詢，詳見 FasterGameLoadingSettings
-            if (EarlyLoadingComplete || !FasterGameLoadingSettings.earlyModContentLoading)
+            if (EarlyLoadingComplete || !FasterGameLoadingSettings.earlyModContentLoading || ImageOptCompat.IsActive)
                 return;
 
             if (skipFrames > 0)

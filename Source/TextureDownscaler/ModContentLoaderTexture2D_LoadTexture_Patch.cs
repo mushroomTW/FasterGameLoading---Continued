@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using RimWorld.IO;
 using System;
 using System.Collections.Concurrent;
@@ -15,7 +15,7 @@ namespace FasterGameLoading
     /// 使用 WeakReference 追蹤已載入的紋理，避免強參考導致記憶體洩漏。
     /// </summary>
     [HarmonyPatch(typeof(ModContentLoader<Texture2D>), "LoadTexture")]
-    [HarmonyBefore(new[] { DDSCompat.GraphicsSetterHarmonyId })]
+    [HarmonyBefore(new[] { GraphicsSettingsCompat.HarmonyId })]
     public static class ModContentLoaderTexture2D_LoadTexture_Patch
     {
         private static readonly ConcurrentQueue<LoadRequest> mainThreadLoadRequests = new ConcurrentQueue<LoadRequest>();
@@ -173,7 +173,7 @@ namespace FasterGameLoading
 
         public static bool Prefix(VirtualFile file, out bool __state, ref Texture2D __result)
         {
-            if (DDSCompat.IsImageOptActive)
+            if (ImageOptCompat.IsActive)
             {
                 __state = false;
                 return true;
@@ -215,7 +215,7 @@ namespace FasterGameLoading
             }
 
             var fullPath = file.FullPath;
-            var shouldBypassTextureReplacement = DDSCompat.ShouldBypassTextureReplacement;
+            var shouldBypassTextureReplacement = GraphicsSettingsCompat.ShouldBypassTextureReplacement;
             var isProtectedTexturePath = AdaptiveBakingSkipList.IsProtectedModTexturePath(fullPath);
 
             // 優先檢查 WeakReference 快取中是否已有此紋理
@@ -303,9 +303,13 @@ namespace FasterGameLoading
         /// </summary>
         public static void Postfix(VirtualFile file, bool __state, Texture2D __result)
         {
-            if (__state && __result != null)
+            if (__result != null)
             {
                 RegisterSkippedBakingTextureIfApplicable(file.FullPath, __result);
+            }
+
+            if (__state && __result != null)
+            {
                 if (AdaptiveBakingSkipList.IsProtectedModTexturePath(file.FullPath)) return;
 
                 var weakRefPost = new System.WeakReference<Texture2D>(__result);

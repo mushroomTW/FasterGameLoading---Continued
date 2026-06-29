@@ -1,6 +1,7 @@
 using HarmonyLib;
 using System;
 using System.Reflection;
+using Verse;
 
 namespace FasterGameLoading
 {
@@ -103,6 +104,44 @@ namespace FasterGameLoading
             catch
             {
                 // 任何 reflection 錯誤都安全忽略，使用原始結果
+            }
+        }
+    }
+
+    [HarmonyPatch]
+    internal static class LoadingProgress_ReloadContent_Patch
+    {
+        private static MethodBase TargetMethod()
+        {
+            var type = AccessTools.TypeByName("ilyvion.LoadingProgress.ReloadContentIntReplacement+<ReloadContentInt>d__0");
+            if (type == null) return null;
+            return AccessTools.Method(type, "MoveNext");
+        }
+
+        internal static bool Prepare()
+        {
+            return TargetMethod() != null;
+        }
+
+        internal static void Postfix(object __instance, bool __result)
+        {
+            if (__result) return; // 載入尚未結束 (MoveNext 還有下一步)
+
+            try
+            {
+                var field = AccessTools.Field(__instance.GetType(), "modContentPack");
+                if (field != null)
+                {
+                    var mod = field.GetValue(__instance) as ModContentPack;
+                    if (mod != null)
+                    {
+                        ModContentPack_ReloadContentInt_Patch.loadedMods.Add(mod);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                FGLLog.Warning("Failed to update loadedMods via LoadingProgress state machine postfix:", ex);
             }
         }
     }

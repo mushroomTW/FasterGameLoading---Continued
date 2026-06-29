@@ -1,4 +1,4 @@
-using HarmonyLib;
+﻿using HarmonyLib;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -99,7 +99,7 @@ namespace FasterGameLoading
 
         public static bool Prefix(string xpath, ref XmlNode __result)
         {
-            if (isInPatchOperation || !isXmlScanComplete || !patchEnabled || !FasterGameLoadingSettings.XPathCaching || IsXmlExtensionsActive)
+            if (isInPatchOperation || !isXmlScanComplete || !patchEnabled || !FasterGameLoadingSettings.XPathCaching || IsXmlExtensionsActive || Utils.IsMissileGirlActive)
             {
                 return true;
             }
@@ -122,7 +122,7 @@ namespace FasterGameLoading
 
         public static void Postfix(string xpath, XmlNode __result, bool __runOriginal)
         {
-            if (isInPatchOperation || !__runOriginal || !patchEnabled || !FasterGameLoadingSettings.XPathCaching || IsXmlExtensionsActive)
+            if (isInPatchOperation || !__runOriginal || !patchEnabled || !FasterGameLoadingSettings.XPathCaching || IsXmlExtensionsActive || Utils.IsMissileGirlActive)
             {
                 return;
             }

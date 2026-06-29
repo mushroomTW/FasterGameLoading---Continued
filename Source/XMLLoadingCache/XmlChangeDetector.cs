@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,6 +20,11 @@ namespace FasterGameLoading
 
         public static void ScanXmlFiles(List<string> modPaths, string configPath = null)
         {
+            if (Utils.IsMissileGirlActive)
+            {
+                XmlNode_SelectSingleNode_Patch.isXmlScanComplete = true;
+                return;
+            }
             if ((modPaths == null || modPaths.Count == 0) && string.IsNullOrEmpty(configPath))
             {
                 XmlNode_SelectSingleNode_Patch.isXmlScanComplete = true;

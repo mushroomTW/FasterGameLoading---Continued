@@ -9,6 +9,11 @@ namespace FasterGameLoading
     /// </summary>
     public static class Utils
     {
+        static Utils()
+        {
+            CacheResetter.Register(() => isMissileGirlActive = null);
+        }
+
         /// <summary>
         /// 將路徑中的反斜線統一替換為正斜線，確保跨平台相容性。
         /// </summary>
@@ -100,6 +105,29 @@ namespace FasterGameLoading
             }
 
             return false;
+        }
+
+        private static bool? isMissileGirlActive;
+        /// <summary>
+        /// 檢測目前是否啟用了 MissileGirl。
+        /// </summary>
+        public static bool IsMissileGirlActive
+        {
+            get
+            {
+                if (!isMissileGirlActive.HasValue)
+                {
+                    try
+                    {
+                        isMissileGirlActive = ModsConfig.IsActive("vr.missilegirl");
+                    }
+                    catch
+                    {
+                        isMissileGirlActive = false;
+                    }
+                }
+                return isMissileGirlActive.Value;
+            }
         }
     }
 }

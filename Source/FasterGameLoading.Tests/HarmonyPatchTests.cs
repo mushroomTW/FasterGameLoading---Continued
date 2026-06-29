@@ -468,6 +468,26 @@ namespace FasterGameLoading.Tests
             }
         }
 
+        [Test]
+        public void TestImageOptCompat_DoesNotExposeEarlyLoadingBypass()
+        {
+            Assert.IsNull(
+                typeof(ImageOptCompat).GetProperty("ShouldBypassEarlyContentLoading", BindingFlags.Public | BindingFlags.Static),
+                "Image Opt should no longer disable early mod content loading.");
+        }
+
+        [Test]
+        public void TestUtils_IsMissileGirlActiveCache_IsResetByCacheResetter()
+        {
+            var field = typeof(Utils).GetField("isMissileGirlActive", BindingFlags.NonPublic | BindingFlags.Static);
+            Assert.IsNotNull(field);
+
+            field.SetValue(null, true);
+            CacheResetter.ResetAll();
+
+            Assert.IsNull(field.GetValue(null), "CacheResetter should clear the cached Missile Girl active state.");
+        }
+
 
     }
 }

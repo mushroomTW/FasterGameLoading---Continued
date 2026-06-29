@@ -111,7 +111,7 @@ graph TD
   * 提供了一套預設的類別大小限制（如建築 256px、人物 256px、地形 1024px）。
   * **離線快取設計**：啟用後，模組在背景對所有符合的 Mod 紋理進行雙線性（Bilinear）降採樣縮小，並將縮小後的圖片快取在獨立目錄中，完全不破壞原 Mod 檔案。快取判定已進行優化，若原始檔案修改時間變更但長度不變，會自動 Touch 快取檔案時間，避免不必要的重新降階。
   * **執行期載入替換**：在啟動時，若檢測到該紋理存在縮小快取，直接載入快取版本，大幅縮短 I/O 與降低顯存佔用。
-  * **外部貼圖載入器相容性安全閥**：本功能會自動檢測 [Image Opt](https://steamcommunity.com/sharedfiles/filedetails/?id=3543873568) (`dev.soeur.imageopt`) 與 [Graphics Settings+ / GraphicsSetter](https://github.com/RealTelefonmast/GraphicsSetter) (`Telefonmast.GraphicsSettings`)。若檢測到 Image Opt，紋理縮小工具將立即放行回外部載入流程；若檢測到 Graphics Settings+，則停用 FGL 的降質貼圖替換，但保留貼圖路徑追蹤與圖集排除登記，避免干擾其 DDS 與 mipmap 載入邏輯。
+  * **外部貼圖載入器相容性安全閥**：本功能會自動檢測 [Image Opt](https://steamcommunity.com/sharedfiles/filedetails/?id=3543873568) (`dev.soeur.imageopt`) 與 [Graphics Settings+ / GraphicsSetter](https://github.com/RealTelefonmast/GraphicsSetter) (`Telefonmast.GraphicsSettings`)。若檢測到 Image Opt，紋理縮小工具會讓路給 Image Opt；若檢測到 Graphics Settings+，則停用 FGL 的降質貼圖替換，但保留貼圖路徑追蹤與圖集排除登記，避免干擾其 DDS 與 mipmap 載入邏輯。
 
 #### 5. 自適應圖集烘焙 (Adaptive Atlas Baking) `預設關閉`
 
@@ -144,16 +144,16 @@ graph TD
 
 ## ⚙️ 相容性
 
-* **[Loading Progress](https://github.com/ilyvion/loading-progress/)**：完美相容。本模組會將載入進度精準輸出給 Loading Progress 顯示，並主動修復了 FGL 進度條在 Loading Progress 接手 Mod 載入期間不更新的問題。
-* **[Missile Girl](https://github.com/ViralReaction/MissileGirl)**：完美相容。作為 RocketMan 針對 RimWorld 1.6 版本的現代更新分支，除了優化遊戲內的運行 Tick 外，還提供加載速度提升、警報節流以及大規模數據與屬性快取，與本模組對「啟動階段」的優化相輔相成，是極力推薦的全方位性能組合。
-* **[DefLoadCache](https://github.com/FluxxField/rimworld-defload-cache)**：完美相容。當其快取失效重新建置時，本模組會大幅加速其 XML 載入過程。
-* **[Image Opt](https://steamcommunity.com/sharedfiles/filedetails/?id=3543873568)**：完美相容。當檢測到其啟用時，本模組會自動停用紋理縮小工具（Texture Downscaler），以防止兩者衝突，將貼圖處理安全地交由 Image Opt 處理。
+* **[Loading Progress](https://github.com/ilyvion/loading-progress/)**：相容。本模組會將載入進度精準輸出給 Loading Progress 顯示，並主動修復了 FGL 進度條在 Loading Progress 接手 Mod 載入期間不更新的問題。
+* **[Missile Girl](https://github.com/ViralReaction/MissileGirl)**：相容。當檢測到其啟用時，本模組會自動停用 XPath 快取（XPath Caching）與背景 XML 變更掃描，避免與其快取機制衝突，同時保留並行 XML 加載優化與其他延遲載入優化，達到優勢互補。
+* **[DefLoadCache](https://github.com/FluxxField/rimworld-defload-cache)**：相容。當其快取失效重新建置時，本模組會大幅加速其 XML 載入過程。
+* **[Image Opt](https://steamcommunity.com/sharedfiles/filedetails/?id=3543873568)**：目前不相容。當檢測到其啟用時，本模組會自動停用紋理縮小工具（Texture Downscaler）。
 * **[Graphics Settings+ / GraphicsSetter](https://github.com/RealTelefonmast/GraphicsSetter)**：相容。當檢測到其啟用時，本模組會讓 GraphicsSetter 的 DDS 與 mipmap 載入流程優先處理貼圖，同時保留 FGL 的貼圖路徑追蹤與靜態圖集排除登記。
-* **[HugsLib](https://github.com/UnlimitedHugs/RimworldHugsLib)**：完美相容。當延遲圖形載入啟用時，本模組會自動將 `HugsLibController.OnDefsLoaded` 重新導向到主執行緒執行，避免初始化時序衝突。
-* **[XmlExtensions](https://github.com/15adhami/XmlExtensions)**：完美相容。當檢測到其啟用時，XPath 快取功能會自動停用，避免與 XmlExtensions 的自訂 XML 處理邏輯衝突。
-* **[AyaTweaks 2.0 (Ayameduki Tweaks)](https://gitlab.com/wrelick-rimworld/ayatweaks2.0)**：完美相容。本模組會自動偵測並將所有 Ayameduki 相關 Mod (`Ayameduki.*`) 以及 WRelicK 的翻譯與補丁 (`WRK.*`) 排除在「提早載入」與「多執行緒 XML 載入」之外，以確保其複雜的 Patch 載入順序與執行緒安全完全正常，防止爆紅。
-* **[Alien Races (Humanoid Alien Races)](https://github.com/erdelf/AlienRaces)**：嘗試相容。Alien Races 本體與所有依賴 Humanoid Alien Races 的種族模組會自動跳過提早載入，保留 HAR 原生的 extended graphics variant 掃描時序，避免在貼圖尚未穩定時提早執行。**同時，本模組會自動偵測並動態排除 HAR 本體與所有依賴 Humanoid Alien Races 的種族模組貼圖進入靜態圖集、FGL 貼圖重用與貼圖降解析快取，降低外星人種族的頭髮、耳朵等 bodyAddon 消失風險。**
-* **[Ancot Library（Ancot's Races Framework）](https://steamcommunity.com/sharedfiles/filedetails/?id=2988801276)**：嘗試相容。本模組會偵測 `Ancot.AncotLibrary` 本體與所有在 `About.xml` 中聲明依賴它的種族模組（如 Kiiro Race、Tsukin Race 等），並**動態**將其根目錄下的外觀貼圖排除在靜態圖集烘焙之外。偵測流程同時使用 `ModsConfig.IsActive` 與 `LoadedModManager.RunningMods`，避免載入早期狀態尚未穩定時漏判，徹底避免 Ancot 旗下種族因自訂多重遮罩（Multi-mask）渲染節點造成的貼圖黑化或 bodyAddon 消失問題。
+* **[HugsLib](https://github.com/UnlimitedHugs/RimworldHugsLib)**：相容。當延遲圖形載入啟用時，本模組會自動將 `HugsLibController.OnDefsLoaded` 重新導向到主執行緒執行，避免初始化時序衝突。
+* **[XmlExtensions](https://github.com/15adhami/XmlExtensions)**：相容。當檢測到其啟用時，XPath 快取功能會自動停用，避免與 XmlExtensions 的自訂 XML 處理邏輯衝突。
+* **[AyaTweaks 2.0 (Ayameduki Tweaks)](https://gitlab.com/wrelick-rimworld/ayatweaks2.0)**：相容。本模組會自動偵測並將所有 Ayameduki 相關 Mod (`Ayameduki.*`) 以及 WRelicK 的翻譯與補丁 (`WRK.*`) 排除在「提早載入」與「多執行緒 XML 載入」之外，以確保其複雜的 Patch 載入順序與執行緒安全完全正常，防止爆紅。
+* **[Alien Races (Humanoid Alien Races)](https://github.com/erdelf/AlienRaces)**：相容。Alien Races 本體與所有依賴 Humanoid Alien Races 的種族模組會自動跳過提早載入，保留 HAR 原生的 extended graphics variant 掃描時序，避免在貼圖尚未穩定時提早執行。**同時，本模組會自動偵測並動態排除 HAR 本體與所有依賴 Humanoid Alien Races 的種族模組貼圖進入靜態圖集、FGL 貼圖重用與貼圖降解析快取，降低外星人種族的頭髮、耳朵等 bodyAddon 消失風險。**
+* **[Ancot Library（Ancot's Races Framework）](https://steamcommunity.com/sharedfiles/filedetails/?id=2988801276)**：相容。本模組會偵測 `Ancot.AncotLibrary` 本體與所有在 `About.xml` 中聲明依賴它的種族模組（如 Kiiro Race、Tsukin Race 等），並**動態**將其根目錄下的外觀貼圖排除在靜態圖集烘焙之外。偵測流程同時使用 `ModsConfig.IsActive` 與 `LoadedModManager.RunningMods`，避免載入早期狀態尚未穩定時漏判，徹底避免 Ancot 旗下種族因自訂多重遮罩（Multi-mask）渲染節點造成的貼圖黑化或 bodyAddon 消失問題。
 
 > [!Note]
 > ChezhouLib 的 AssetBundle reload patch 會優先於 FGL 的重複 reload 防護執行，避免開發模式或工具重複觸發 `ReloadAll` 時跳過 ChezhouLib 的清理與重載流程。

@@ -20,6 +20,16 @@ namespace FasterGameLoading
         public const string XmlPathsKey = "xmlPathsSinceLastSession";
         public const string ModsInLastSessionKey = "modsInLastSession";
 
+        // ── Humanoid Alien Races 反射字串常數 ──
+        public const string AlienRaceAssemblyName = "AlienRace";
+        public const string AlienPartGeneratorTypeName = "AlienRace.AlienPartGenerator";
+        public const string GraphicsQueueFieldName = "graphicsQueue";
+        public const string ThingDefAlienRaceTypeName = "AlienRace.ThingDef_AlienRace";
+        public const string AlienRaceFieldName = "alienRace";
+        public const string GeneralSettingsPropertyName = "generalSettings";
+        public const string AlienPartGeneratorPropertyName = "alienPartGenerator";
+        public const string LoadGraphicsHookMethodName = "LoadGraphicsHook";
+
         public const string UIDirSlash = "/UI/";
         public const string TexturesDirSlash = "Textures/";
 

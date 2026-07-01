@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Verse;
 
 namespace FasterGameLoading
@@ -49,21 +50,57 @@ namespace FasterGameLoading
             {
                 if (string.IsNullOrEmpty(root) || !Directory.Exists(root)) continue;
 
-                foreach (var path in Directory.EnumerateFiles(root, "*.dds.zstd", SearchOption.AllDirectories))
+                foreach (var textureDir in TextureDirs(root))
                 {
-                    if (!HasSourceImage(path) || HasZstdMagic(path)) continue;
-
+                    IEnumerable<string> paths;
                     try
                     {
-                        File.Delete(path);
-                        deleted++;
+                        paths = Directory.EnumerateFiles(textureDir, "*.dds.zstd", SearchOption.AllDirectories).ToArray();
                     }
                     catch
                     {
+                        continue;
+                    }
+
+                    foreach (var path in paths)
+                    {
+                        if (!HasSourceImage(path) || HasZstdMagic(path)) continue;
+
+                        try
+                        {
+                            File.Delete(path);
+                            deleted++;
+                        }
+                        catch
+                        {
+                        }
                     }
                 }
             }
             return deleted;
+        }
+
+        private static IEnumerable<string> TextureDirs(string root)
+        {
+            var seen = new HashSet<string>();
+            IEnumerable<string> childDirs;
+            try
+            {
+                childDirs = Directory.EnumerateDirectories(root).ToArray();
+            }
+            catch
+            {
+                childDirs = Enumerable.Empty<string>();
+            }
+
+            foreach (var candidate in new[] { root }.Concat(childDirs))
+            {
+                var textureDir = Path.Combine(candidate, FGLConsts.TexturesDirName);
+                if (Directory.Exists(textureDir) && seen.Add(textureDir))
+                {
+                    yield return textureDir;
+                }
+            }
         }
 
         private static bool HasSourceImage(string ddsZstdPath)

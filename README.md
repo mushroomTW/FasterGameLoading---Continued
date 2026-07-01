@@ -148,7 +148,7 @@ graph TD
 * **[Loading Progress](https://github.com/ilyvion/loading-progress/)**：相容。本模組會將載入進度精準輸出給 Loading Progress 顯示，並主動修復了 FGL 進度條在 Loading Progress 接手 Mod 載入期間不更新的問題。
 * **[Missile Girl](https://github.com/ViralReaction/MissileGirl)**：相容。當檢測到其啟用時，本模組會自動停用 XPath 快取（XPath Caching）與背景 XML 變更掃描，避免與其快取機制衝突，同時保留並行 XML 加載優化與其他延遲載入優化，達到優勢互補。
 * **[DefLoadCache](https://github.com/FluxxField/rimworld-defload-cache)**：相容。當其快取失效重新建置時，本模組會大幅加速其 XML 載入過程。
-* **[Image Opt](https://steamcommunity.com/sharedfiles/filedetails/?id=3543873568)**：相容性退避。當檢測到其啟用時，本模組會自動停用紋理縮小工具（Texture Downscaler），但保留提早載入（Early Mod Content Loading），並在背景移除無效的 `.dds.zstd` 快取檔，讓 Image Opt 能重新 fallback 或產生有效快取。
+* **[Image Opt](https://steamcommunity.com/sharedfiles/filedetails/?id=3543873568)**：相容性退避。當檢測到其啟用時，本模組會自動停用紋理縮小工具（Texture Downscaler），但保留提早載入（Early Mod Content Loading），並只在貼圖目錄背景移除無效的 `.dds.zstd` 快取檔，讓 Image Opt 能重新 fallback 或產生有效快取。
 * **[Graphics Settings+](https://github.com/RealTelefonmast/GraphicsSetter)**：相容。當檢測到其啟用時，本模組會讓 GraphicsSetter 的 DDS 與 mipmap 載入流程優先處理貼圖，同時保留 FGL 的貼圖路徑追蹤與靜態圖集排除登記。
 * **[HugsLib](https://github.com/UnlimitedHugs/RimworldHugsLib)**：相容。當延遲圖形載入啟用時，本模組會自動將 `HugsLibController.OnDefsLoaded` 重新導向到主執行緒執行，避免初始化時序衝突。
 * **[XmlExtensions](https://github.com/15adhami/XmlExtensions)**：相容。當檢測到其啟用時，XPath 快取功能會自動停用，避免與 XmlExtensions 的自訂 XML 處理邏輯衝突。

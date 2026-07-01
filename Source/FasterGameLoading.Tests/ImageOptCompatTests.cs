@@ -48,5 +48,21 @@ namespace FasterGameLoading.Tests
             Assert.IsTrue(File.Exists(valid));
             Assert.IsTrue(File.Exists(orphan));
         }
+
+        [Test]
+        public void TestCleanupInvalidDdsZstdCaches_SkipsNonTextureFolders()
+        {
+            var defsDir = Path.Combine(tempDir, "Defs");
+            Directory.CreateDirectory(defsDir);
+
+            var corrupt = Path.Combine(defsDir, "corrupt.dds.zstd");
+            File.WriteAllBytes(Path.Combine(defsDir, "corrupt.png"), new byte[] { 1 });
+            File.WriteAllBytes(corrupt, new byte[] { 0, 0, 0, 0 });
+
+            var deleted = ImageOptCompat.CleanupInvalidDdsZstdCaches(new[] { tempDir });
+
+            Assert.AreEqual(0, deleted);
+            Assert.IsTrue(File.Exists(corrupt));
+        }
     }
 }

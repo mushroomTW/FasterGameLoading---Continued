@@ -31,6 +31,7 @@ namespace FasterGameLoading
         public const string LoadGraphicsHookMethodName = "LoadGraphicsHook";
 
         public const string UIDirSlash = "/UI/";
+        public const string TexturesDirName = "Textures";
         public const string TexturesDirSlash = "Textures/";
 
         public const int AccessToolsPreloadDelayMs = 50;

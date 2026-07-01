@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.Serialization;
 using System.Xml;
 using HarmonyLib;
 using NUnit.Framework;
@@ -467,6 +468,25 @@ namespace FasterGameLoading.Tests
             Assert.AreEqual(OpCodes.Ldarg_0, output[0].opcode);
             Assert.AreEqual(OpCodes.Call, output[1].opcode);
             Assert.AreEqual(executeDelayed, output[1].operand);
+        }
+
+        [Test]
+        public void TestTexturePathReverseLookup_UsesSavedTexturePath()
+        {
+            var texture = (Texture2D)FormatterServices.GetUninitializedObject(typeof(Texture2D));
+            const string path = @"C:\Mods\Test\Textures\Thing.png";
+            var saveTexturePath = typeof(ModContentLoaderTexture2D_LoadTexture_Patch)
+                .GetMethod("SaveTexturePath", BindingFlags.NonPublic | BindingFlags.Static);
+
+            try
+            {
+                Assert.IsNotNull(saveTexturePath);
+                saveTexturePath.Invoke(null, new object[] { path, texture });
+
+                Assert.IsTrue(ModContentLoaderTexture2D_LoadTexture_Patch.TryGetSavedTexturePath(texture, out var foundPath));
+                Assert.AreEqual(path, foundPath);
+            }
+            finally { }
         }
 
         [Test]

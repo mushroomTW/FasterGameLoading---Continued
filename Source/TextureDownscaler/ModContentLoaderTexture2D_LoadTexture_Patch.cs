@@ -55,7 +55,7 @@ namespace FasterGameLoading
         /// <summary>以 WeakReference 快取已載入的 Texture2D，鍵為完整檔案路徑。</summary>
         public static ConcurrentDictionary<string, System.WeakReference<Texture2D>> savedTextures = new ConcurrentDictionary<string, System.WeakReference<Texture2D>>();
         /// <summary>反向對照表：Texture2D 實體 → 完整檔案路徑，供 TryGetSavedTexturePath O(1) 查詢使用。</summary>
-        private static readonly ConcurrentDictionary<System.WeakReference<Texture2D>, string> savedTexturesReverse = new ConcurrentDictionary<System.WeakReference<Texture2D>, string>();
+        private static readonly ConcurrentDictionary<Texture, string> savedTexturePaths = new ConcurrentDictionary<Texture, string>();
         /// <summary>排除烘焙的目標 Mod 紋理快取，用於 O(1) 快速查詢。</summary>
         public static ConcurrentDictionary<Texture2D, bool> skippedBakingTextures = new ConcurrentDictionary<Texture2D, bool>();
         /// <summary>排除烘焙的目標 Mod 紋理名稱快取，用於處理克隆實體時的反向比對。以 ConcurrentDictionary 實作執行緒安全。</summary>
@@ -70,7 +70,7 @@ namespace FasterGameLoading
             CacheResetter.Register(() =>
             {
                 savedTextures.Clear();
-                savedTexturesReverse.Clear();
+                savedTexturePaths.Clear();
                 loadedTexturesThisSession.Clear();
                 skippedBakingTextures.Clear();
                 skippedBakingTextureNames.Clear(); // ConcurrentDictionary.Clear() 為執行緒安全
@@ -109,11 +109,9 @@ namespace FasterGameLoading
                 {
                     // 延遲 150ms 啟動，避免與啟動時最密集的 XML/Def I/O 爭奪頻寬
                     Thread.Sleep(FGLConsts.TexturePreloadDelayMs);
-                    var semaphore = new SemaphoreSlim(2); // 限制 2 個並行 I/O 執行緒，防止硬碟頻寬飽和
-                    Parallel.ForEach(cacheCopy.Values, cachePath =>
+                    foreach (var cachePath in cacheCopy.Values)
                     {
-                        if (string.IsNullOrEmpty(cachePath)) return;
-                        semaphore.Wait();
+                        if (string.IsNullOrEmpty(cachePath)) continue;
                         try
                         {
                             if (File.Exists(cachePath))
@@ -126,11 +124,7 @@ namespace FasterGameLoading
                         {
                             // 忽略個別快取讀取錯誤
                         }
-                        finally
-                        {
-                            semaphore.Release();
-                        }
-                    });
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -155,20 +149,25 @@ namespace FasterGameLoading
         public static bool TryGetSavedTexturePath(Texture texture, out string fullPath)
         {
             // 反向對照表支援 O(1) 查詢，避免每次呼叫對 savedTextures 進行 O(n) 線性掃描
-            if (texture != null)
+            if (!ReferenceEquals(texture, null) && savedTexturePaths.TryGetValue(texture, out fullPath))
             {
-                foreach (var kvp in savedTexturesReverse)
-                {
-                    if (kvp.Key.TryGetTarget(out var savedTexture) && ReferenceEquals(savedTexture, texture))
-                    {
-                        fullPath = kvp.Value;
-                        return true;
-                    }
-                }
+                return true;
             }
-
             fullPath = null;
             return false;
+        }
+
+        private static void SaveTexturePath(string fullPath, Texture2D texture)
+        {
+            if (ReferenceEquals(texture, null)) return;
+
+            if (savedTextures.TryGetValue(fullPath, out var oldRef) && oldRef.TryGetTarget(out var oldTexture))
+            {
+                savedTexturePaths.TryRemove(oldTexture, out _);
+            }
+
+            savedTextures[fullPath] = new System.WeakReference<Texture2D>(texture);
+            savedTexturePaths[texture] = fullPath;
         }
 
         public static bool Prefix(VirtualFile file, out bool __state, ref Texture2D __result)
@@ -248,14 +247,7 @@ namespace FasterGameLoading
                             tex.name = Path.GetFileNameWithoutExtension(fullPath);
                             tex.Compress(true);
                             tex.Apply(true, true);
-                            var weakRefCache = new System.WeakReference<Texture2D>(tex);
-                            // 覆寫前先移除舊的反向對照，避免反向表累積孤兒項目
-                            if (savedTextures.TryGetValue(fullPath, out var oldRefCache))
-                            {
-                                savedTexturesReverse.TryRemove(oldRefCache, out _);
-                            }
-                            savedTextures[fullPath] = weakRefCache;
-                            savedTexturesReverse[weakRefCache] = fullPath;
+                            SaveTexturePath(fullPath, tex);
                             RegisterSkippedBakingTextureIfApplicable(fullPath, tex);
                             Interlocked.Increment(ref cacheLoadHits);
                             __result = tex;
@@ -312,14 +304,7 @@ namespace FasterGameLoading
             {
                 if (AdaptiveBakingSkipList.IsProtectedModTexturePath(file.FullPath)) return;
 
-                var weakRefPost = new System.WeakReference<Texture2D>(__result);
-                // 覆寫前先移除舊的反向對照，避免反向表累積孤兒項目
-                if (savedTextures.TryGetValue(file.FullPath, out var oldRefPost))
-                {
-                    savedTexturesReverse.TryRemove(oldRefPost, out _);
-                }
-                savedTextures[file.FullPath] = weakRefPost;
-                savedTexturesReverse[weakRefPost] = file.FullPath;
+                SaveTexturePath(file.FullPath, __result);
             }
         }
     }

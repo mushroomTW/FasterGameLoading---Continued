@@ -80,7 +80,7 @@ namespace FasterGameLoading
                     continue;
                 }
 
-                foreach (var fileInfo in directory.GetFiles("*.xml", SearchOption.AllDirectories))
+                foreach (var fileInfo in directory.EnumerateFiles("*.xml", SearchOption.AllDirectories))
                 {
                     if (fileInfo.Name.StartsWith("._", StringComparison.Ordinal) || fileInfo.Name.StartsWith(".", StringComparison.Ordinal))
                     {

@@ -371,6 +371,136 @@ namespace FasterGameLoading.Tests
 
 
         [Test]
+        public void TestXmlChangeDetector_UsesMetadataOnlyForCacheVersion()
+        {
+            string tempDir = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "FGL_Test_Metadata_" + Guid.NewGuid());
+            string defsPath = System.IO.Path.Combine(tempDir, "Defs");
+            System.IO.Directory.CreateDirectory(defsPath);
+
+            string xmlFile = System.IO.Path.Combine(defsPath, "test.xml");
+            var originalTime = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            System.IO.File.WriteAllText(xmlFile, "<Defs><ThingDef>aaaa</ThingDef></Defs>");
+            System.IO.File.SetLastWriteTimeUtc(xmlFile, originalTime);
+
+            try
+            {
+                XmlNode_SelectSingleNode_Patch.isXmlScanComplete = false;
+                SessionCache.xmlCombinedHashSinceLastSession = 0;
+                SessionCache.xmlMetadataHashByMod.Clear();
+                SessionCache.xmlContentHashByMod.Clear();
+                XmlChangeDetector.needWriteSettings = false;
+
+                XmlChangeDetector.ScanXmlFiles(new List<string> { tempDir });
+                var hash1 = SessionCache.xmlCombinedHashSinceLastSession;
+                Assert.AreNotEqual(0, hash1);
+                Assert.IsTrue(XmlChangeDetector.needWriteSettings);
+
+                XmlChangeDetector.needWriteSettings = false;
+                XmlNode_SelectSingleNode_Patch.isXmlScanComplete = false;
+                System.IO.File.SetLastWriteTimeUtc(xmlFile, originalTime.AddSeconds(5));
+
+                XmlChangeDetector.ScanXmlFiles(new List<string> { tempDir });
+                Assert.AreNotEqual(hash1, SessionCache.xmlCombinedHashSinceLastSession);
+                Assert.IsTrue(XmlChangeDetector.needWriteSettings);
+            }
+            finally
+            {
+                if (System.IO.Directory.Exists(tempDir))
+                {
+                    System.IO.Directory.Delete(tempDir, true);
+                }
+            }
+        }
+
+        [Test]
+        public void TestXmlChangeDetector_MetadataHashIncludesXmlPath()
+        {
+            string tempDir = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "FGL_Test_Metadata_Path_" + Guid.NewGuid());
+            string defsPath = System.IO.Path.Combine(tempDir, "Defs");
+            System.IO.Directory.CreateDirectory(defsPath);
+
+            string firstFile = System.IO.Path.Combine(defsPath, "A.xml");
+            string secondFile = System.IO.Path.Combine(defsPath, "B.xml");
+            var originalTime = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            System.IO.File.WriteAllText(firstFile, "<Defs><ThingDef>same</ThingDef></Defs>");
+            System.IO.File.SetLastWriteTimeUtc(firstFile, originalTime);
+
+            try
+            {
+                XmlNode_SelectSingleNode_Patch.isXmlScanComplete = false;
+                SessionCache.xmlCombinedHashSinceLastSession = 0;
+                SessionCache.xmlMetadataHashByMod.Clear();
+                SessionCache.xmlContentHashByMod.Clear();
+                XmlChangeDetector.needWriteSettings = false;
+
+                XmlChangeDetector.ScanXmlFiles(new List<string> { tempDir });
+                var hash1 = SessionCache.xmlCombinedHashSinceLastSession;
+
+                System.IO.File.Move(firstFile, secondFile);
+                System.IO.File.SetLastWriteTimeUtc(secondFile, originalTime);
+                XmlChangeDetector.needWriteSettings = false;
+                XmlNode_SelectSingleNode_Patch.isXmlScanComplete = false;
+
+                XmlChangeDetector.ScanXmlFiles(new List<string> { tempDir });
+
+                Assert.AreNotEqual(hash1, SessionCache.xmlCombinedHashSinceLastSession);
+                Assert.IsTrue(XmlChangeDetector.needWriteSettings);
+            }
+            finally
+            {
+                if (System.IO.Directory.Exists(tempDir))
+                {
+                    System.IO.Directory.Delete(tempDir, true);
+                }
+            }
+        }
+
+        [Test]
+        public void TestXmlChangeDetector_MetadataHashIncludesXmlFolder()
+        {
+            string tempDir = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "FGL_Test_Metadata_Folder_" + Guid.NewGuid());
+            string defsPath = System.IO.Path.Combine(tempDir, "Defs");
+            string patchesPath = System.IO.Path.Combine(tempDir, "Patches");
+            System.IO.Directory.CreateDirectory(defsPath);
+            System.IO.Directory.CreateDirectory(patchesPath);
+
+            string defsFile = System.IO.Path.Combine(defsPath, "Same.xml");
+            string patchesFile = System.IO.Path.Combine(patchesPath, "Same.xml");
+            var originalTime = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            System.IO.File.WriteAllText(defsFile, "<Defs><ThingDef>same</ThingDef></Defs>");
+            System.IO.File.SetLastWriteTimeUtc(defsFile, originalTime);
+
+            try
+            {
+                XmlNode_SelectSingleNode_Patch.isXmlScanComplete = false;
+                SessionCache.xmlCombinedHashSinceLastSession = 0;
+                SessionCache.xmlMetadataHashByMod.Clear();
+                SessionCache.xmlContentHashByMod.Clear();
+                XmlChangeDetector.needWriteSettings = false;
+
+                XmlChangeDetector.ScanXmlFiles(new List<string> { tempDir });
+                var hash1 = SessionCache.xmlCombinedHashSinceLastSession;
+
+                System.IO.File.Move(defsFile, patchesFile);
+                System.IO.File.SetLastWriteTimeUtc(patchesFile, originalTime);
+                XmlChangeDetector.needWriteSettings = false;
+                XmlNode_SelectSingleNode_Patch.isXmlScanComplete = false;
+
+                XmlChangeDetector.ScanXmlFiles(new List<string> { tempDir });
+
+                Assert.AreNotEqual(hash1, SessionCache.xmlCombinedHashSinceLastSession);
+                Assert.IsTrue(XmlChangeDetector.needWriteSettings);
+            }
+            finally
+            {
+                if (System.IO.Directory.Exists(tempDir))
+                {
+                    System.IO.Directory.Delete(tempDir, true);
+                }
+            }
+        }
+
+        [Test]
         public void TestDirectXmlLoader_XmlAssetsInModFolder_Patch_NullModGuard()
         {
             // 驗證當 mod 參數為 null 時，Prefix 會直接回傳 true 讓 vanilla 處理，

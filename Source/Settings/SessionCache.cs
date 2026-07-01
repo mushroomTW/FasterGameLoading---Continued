@@ -48,7 +48,7 @@ namespace FasterGameLoading
         internal static Dictionary<string, long> xmlMetadataHashByMod = new();
 
         /// <summary>
-        /// 上一次 session 中每個 Mod 所有 XML 檔案的實質內容累積雜湊值。
+        /// 舊版 XML 內容雜湊欄位。保留 Scribe 相容性，新版 metadata-only 掃描不再使用。
         /// </summary>
         internal static Dictionary<string, long> xmlContentHashByMod = new();
 

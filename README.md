@@ -111,7 +111,7 @@ graph TD
   * 提供了一套預設的類別大小限制（如建築 256px、人物 256px、地形 1024px）。
   * **離線快取設計**：啟用後，模組在背景對所有符合的 Mod 紋理進行雙線性（Bilinear）降採樣縮小，並將縮小後的圖片快取在獨立目錄中，完全不破壞原 Mod 檔案。快取判定已進行優化，若原始檔案修改時間變更但長度不變，會自動 Touch 快取檔案時間，避免不必要的重新降階。
   * **執行期載入替換**：在啟動時，若檢測到該紋理存在縮小快取，直接載入快取版本，大幅縮短 I/O 與降低顯存佔用。
-  * **外部貼圖載入器相容性安全閥**：本功能會自動檢測 [Image Opt](https://steamcommunity.com/sharedfiles/filedetails/?id=3543873568) (`dev.soeur.imageopt`) 與 [Graphics Settings+ / GraphicsSetter](https://github.com/RealTelefonmast/GraphicsSetter) (`Telefonmast.GraphicsSettings`)。若檢測到 Image Opt，提早載入與紋理縮小工具會讓路給 Image Opt，並清除無效的 Image Opt `.dds.zstd` 快取；若檢測到 Graphics Settings+，則停用 FGL 的降質貼圖替換，但保留貼圖路徑追蹤與圖集排除登記，避免干擾其 DDS 與 mipmap 載入邏輯。
+  * **外部貼圖載入器相容性安全閥**：本功能會自動檢測 [Image Opt](https://steamcommunity.com/sharedfiles/filedetails/?id=3543873568) (`dev.soeur.imageopt`) 與 [Graphics Settings+ / GraphicsSetter](https://github.com/RealTelefonmast/GraphicsSetter) (`Telefonmast.GraphicsSettings`)。若檢測到 Image Opt，紋理縮小工具會讓路給 Image Opt，提早載入仍保持啟用，並在背景清除無效的 Image Opt `.dds.zstd` 快取；若檢測到 Graphics Settings+，則停用 FGL 的降質貼圖替換，但保留貼圖路徑追蹤與圖集排除登記，避免干擾其 DDS 與 mipmap 載入邏輯。
 
 #### 5. 自適應圖集烘焙 (Adaptive Atlas Baking) `預設關閉`
 
@@ -147,7 +147,7 @@ graph TD
 * **[Loading Progress](https://github.com/ilyvion/loading-progress/)**：相容。本模組會將載入進度精準輸出給 Loading Progress 顯示，並主動修復了 FGL 進度條在 Loading Progress 接手 Mod 載入期間不更新的問題。
 * **[Missile Girl](https://github.com/ViralReaction/MissileGirl)**：相容。當檢測到其啟用時，本模組會自動停用 XPath 快取（XPath Caching）與背景 XML 變更掃描，避免與其快取機制衝突，同時保留並行 XML 加載優化與其他延遲載入優化，達到優勢互補。
 * **[DefLoadCache](https://github.com/FluxxField/rimworld-defload-cache)**：相容。當其快取失效重新建置時，本模組會大幅加速其 XML 載入過程。
-* **[Image Opt](https://steamcommunity.com/sharedfiles/filedetails/?id=3543873568)**：相容性退避。當檢測到其啟用時，本模組會自動停用提早載入（Early Mod Content Loading）與紋理縮小工具（Texture Downscaler），並移除無效的 `.dds.zstd` 快取檔，讓 Image Opt 保持原本的貼圖載入時序並能重新 fallback 或產生有效快取。
+* **[Image Opt](https://steamcommunity.com/sharedfiles/filedetails/?id=3543873568)**：相容性退避。當檢測到其啟用時，本模組會自動停用紋理縮小工具（Texture Downscaler），但保留提早載入（Early Mod Content Loading），並在背景移除無效的 `.dds.zstd` 快取檔，讓 Image Opt 能重新 fallback 或產生有效快取。
 * **[Graphics Settings+](https://github.com/RealTelefonmast/GraphicsSetter)**：相容。當檢測到其啟用時，本模組會讓 GraphicsSetter 的 DDS 與 mipmap 載入流程優先處理貼圖，同時保留 FGL 的貼圖路徑追蹤與靜態圖集排除登記。
 * **[HugsLib](https://github.com/UnlimitedHugs/RimworldHugsLib)**：相容。當延遲圖形載入啟用時，本模組會自動將 `HugsLibController.OnDefsLoaded` 重新導向到主執行緒執行，避免初始化時序衝突。
 * **[XmlExtensions](https://github.com/15adhami/XmlExtensions)**：相容。當檢測到其啟用時，XPath 快取功能會自動停用，避免與 XmlExtensions 的自訂 XML 處理邏輯衝突。

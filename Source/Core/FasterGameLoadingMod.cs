@@ -1,5 +1,6 @@
 using HarmonyLib;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using Verse;
 
@@ -32,7 +33,7 @@ namespace FasterGameLoading
             
             // 背景預載入已快取的紋理
             ModContentLoaderTexture2D_LoadTexture_Patch.StartPreloadCachedTextures();
-            CleanupInvalidImageOptCaches();
+            StartCleanupInvalidImageOptCaches();
 
             harmony = new Harmony("FasterGameLoadingMod");
 
@@ -83,7 +84,7 @@ namespace FasterGameLoading
 
         }
 
-        private static void CleanupInvalidImageOptCaches()
+        private static void StartCleanupInvalidImageOptCaches()
         {
             if (!ImageOptCompat.IsActive) return;
 
@@ -96,11 +97,14 @@ namespace FasterGameLoading
                 }
             }
 
-            var deleted = ImageOptCompat.CleanupInvalidDdsZstdCaches(roots);
-            if (deleted > 0)
+            Task.Run(() =>
             {
-                FGLLog.Message($"Removed invalid ImageOpt DDS cache files: {deleted}");
-            }
+                var deleted = ImageOptCompat.CleanupInvalidDdsZstdCaches(roots);
+                if (deleted > 0)
+                {
+                    FGLLog.Message($"Removed invalid ImageOpt DDS cache files: {deleted}");
+                }
+            });
         }
 
 

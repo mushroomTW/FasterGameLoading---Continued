@@ -469,16 +469,16 @@ namespace FasterGameLoading.Tests
         }
 
         [Test]
-        public void TestEarlyModContentLoader_BypassesWhenImageOptActive()
+        public void TestEarlyModContentLoader_DoesNotBypassWhenImageOptActive()
         {
             var update = typeof(EarlyModContentLoader).GetMethod(nameof(EarlyModContentLoader.Update));
             var imageOptActiveGetter = typeof(ImageOptCompat)
                 .GetProperty(nameof(ImageOptCompat.IsActive))
                 .GetGetMethod();
 
-            Assert.IsTrue(
+            Assert.IsFalse(
                 MethodBodyContainsMetadataToken(update, imageOptActiveGetter),
-                "Image Opt owns async texture loading, so FGL early content loading must step aside.");
+                "Image Opt should only bypass FGL texture replacement, not early content loading.");
         }
 
         private static bool MethodBodyContainsMetadataToken(MethodInfo method, MethodInfo calledMethod)

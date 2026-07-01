@@ -90,6 +90,7 @@ graph TD
 * **技術細節**：
   * 攔截 `DirectXmlLoader.XmlAssetsInModFolder`。
   * 使用 `Parallel.For` 多核心並行讀取 XML 實體檔案並實例化 `LoadableXmlAsset`。由於每個 XML 實例的載入與 DOM 解析在記憶體中是執行緒安全的，因此能大幅度降低磁碟 I/O 阻塞。
+  * 保留 RimWorld 原版 XML 檔案收集與 load folder 覆蓋順序，只並行化單檔解析，避免改變 Patch XML 的套用順序。
   * 遵循 RimWorld 1.6 原版 XML 檔案過濾規則，跳過 `._*` 與 `.*` 隱藏 XML，避免 macOS metadata 或 dotfile 被誤載入。
   * **安全回退 (Fallback)**：若並行解析過程中發生任何例外（例如髒資料或例外空值），會自動啟動 Fallback 安全閥，放行回原生的單執行緒加載，確保 100% 的相容性與遊戲可啟動性。
 

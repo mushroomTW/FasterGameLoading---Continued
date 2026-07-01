@@ -382,6 +382,36 @@ namespace FasterGameLoading.Tests
             Assert.IsNull(result, "mod 為 null 時，result 應保持 null 不變");
         }
 
+        [Test]
+        public void TestDirectXmlLoader_XmlAssetsInModFolder_Patch_PreservesVanillaFolderOrder()
+        {
+            var firstRoot = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "FGL_First_" + Guid.NewGuid());
+            var secondRoot = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "FGL_Second_" + Guid.NewGuid());
+            try
+            {
+                System.IO.Directory.CreateDirectory(System.IO.Path.Combine(firstRoot, "Patches"));
+                System.IO.Directory.CreateDirectory(System.IO.Path.Combine(secondRoot, "Patches"));
+                System.IO.File.WriteAllText(System.IO.Path.Combine(firstRoot, "Patches", "Same.xml"), "<Patch />");
+                System.IO.File.WriteAllText(System.IO.Path.Combine(secondRoot, "Patches", "Same.xml"), "<Patch />");
+                System.IO.File.WriteAllText(System.IO.Path.Combine(secondRoot, "Patches", "Other.xml"), "<Patch />");
+                System.IO.File.WriteAllText(System.IO.Path.Combine(firstRoot, "Patches", "._Hidden.xml"), "<Patch />");
+
+                var method = AccessTools.Method(typeof(DirectXmlLoader_XmlAssetsInModFolder_Patch), "XmlFilesInVanillaOrder");
+                var files = (List<System.IO.FileInfo>)method.Invoke(
+                    null,
+                    new object[] { null, "Patches/", new List<string> { firstRoot, secondRoot } });
+
+                Assert.AreEqual(2, files.Count);
+                Assert.AreEqual(System.IO.Path.Combine(firstRoot, "Patches", "Same.xml"), files[0].FullName);
+                Assert.AreEqual(System.IO.Path.Combine(secondRoot, "Patches", "Other.xml"), files[1].FullName);
+            }
+            finally
+            {
+                if (System.IO.Directory.Exists(firstRoot)) System.IO.Directory.Delete(firstRoot, true);
+                if (System.IO.Directory.Exists(secondRoot)) System.IO.Directory.Delete(secondRoot, true);
+            }
+        }
+
         [TestCase(false, false)]
         [TestCase(true, true)]
         public void TestDelayedActions_ShouldRunDeferredVisualPipeline_FollowsDelayGraphicLoading(

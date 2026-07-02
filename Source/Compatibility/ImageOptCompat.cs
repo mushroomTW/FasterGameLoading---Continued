@@ -10,6 +10,7 @@ namespace FasterGameLoading
     /// </summary>
     public static class ImageOptCompat
     {
+        private static readonly byte[] ddsMagic = { (byte)'D', (byte)'D', (byte)'S', (byte)' ' };
         private static readonly byte[] zstdMagic = { 0x28, 0xB5, 0x2F, 0xFD };
         private static bool? isActive;
 
@@ -55,7 +56,9 @@ namespace FasterGameLoading
                     IEnumerable<string> paths;
                     try
                     {
-                        paths = Directory.EnumerateFiles(textureDir, "*.dds.zstd", SearchOption.AllDirectories).ToArray();
+                        paths = Directory.EnumerateFiles(textureDir, "*.dds.zstd", SearchOption.AllDirectories)
+                            .Concat(Directory.EnumerateFiles(textureDir, "*.dds", SearchOption.AllDirectories))
+                            .ToArray();
                     }
                     catch
                     {
@@ -64,7 +67,7 @@ namespace FasterGameLoading
 
                     foreach (var path in paths)
                     {
-                        if (!HasSourceImage(path) || HasZstdMagic(path)) continue;
+                        if (!HasSourceImage(path) || HasValidCacheMagic(path)) continue;
 
                         try
                         {
@@ -103,25 +106,53 @@ namespace FasterGameLoading
             }
         }
 
-        private static bool HasSourceImage(string ddsZstdPath)
+        private static bool HasSourceImage(string cachePath)
         {
-            var withoutDdsZstd = ddsZstdPath.Substring(0, ddsZstdPath.Length - ".dds.zstd".Length);
-            return File.Exists(withoutDdsZstd + ".png")
-                || File.Exists(withoutDdsZstd + ".jpg")
-                || File.Exists(withoutDdsZstd + ".jpeg");
+            var sourcePath = StripCacheExtension(cachePath);
+            if (sourcePath == null) return false;
+
+            return File.Exists(sourcePath + ".png")
+                || File.Exists(sourcePath + ".jpg")
+                || File.Exists(sourcePath + ".jpeg");
         }
 
-        private static bool HasZstdMagic(string path)
+        private static string StripCacheExtension(string cachePath)
+        {
+            if (cachePath.EndsWith(".dds.zstd", System.StringComparison.OrdinalIgnoreCase))
+            {
+                return cachePath.Substring(0, cachePath.Length - ".dds.zstd".Length);
+            }
+            if (cachePath.EndsWith(".dds", System.StringComparison.OrdinalIgnoreCase))
+            {
+                return cachePath.Substring(0, cachePath.Length - ".dds".Length);
+            }
+            return null;
+        }
+
+        private static bool HasValidCacheMagic(string path)
+        {
+            if (path.EndsWith(".dds.zstd", System.StringComparison.OrdinalIgnoreCase))
+            {
+                return HasMagic(path, zstdMagic);
+            }
+            if (path.EndsWith(".dds", System.StringComparison.OrdinalIgnoreCase))
+            {
+                return HasMagic(path, ddsMagic);
+            }
+            return true;
+        }
+
+        private static bool HasMagic(string path, byte[] magic)
         {
             try
             {
                 using (var stream = File.OpenRead(path))
                 {
-                    if (stream.Length < zstdMagic.Length) return false;
+                    if (stream.Length < magic.Length) return false;
 
-                    for (int i = 0; i < zstdMagic.Length; i++)
+                    for (int i = 0; i < magic.Length; i++)
                     {
-                        if (stream.ReadByte() != zstdMagic[i]) return false;
+                        if (stream.ReadByte() != magic[i]) return false;
                     }
                     return true;
                 }

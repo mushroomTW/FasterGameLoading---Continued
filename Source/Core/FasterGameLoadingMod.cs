@@ -1,5 +1,6 @@
 using HarmonyLib;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using Verse;
@@ -99,6 +100,7 @@ namespace FasterGameLoading
 
             Task.Run(() =>
             {
+                Thread.Sleep(FGLConsts.TexturePreloadDelayMs);
                 var deleted = ImageOptCompat.CleanupInvalidDdsZstdCaches(roots);
                 if (deleted > 0)
                 {

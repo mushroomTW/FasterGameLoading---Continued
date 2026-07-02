@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -110,6 +111,16 @@ namespace FasterGameLoading.Tests
             Assert.IsTrue(EarlyLoadSkipList.ShouldSkip("Ayameduki.SomeMod"));
             Assert.IsTrue(EarlyLoadSkipList.ShouldSkip("erdelf.HumanoidAlienRaces"));
             Assert.IsTrue(EarlyLoadSkipList.ShouldSkip("some.race.mod", new FakeModMetaData()));
+        }
+
+        [Test]
+        public void TestTextureReverseCache_DoesNotHoldStrongTextureKeys()
+        {
+            var field = typeof(ModContentLoaderTexture2D_LoadTexture_Patch)
+                .GetField("savedTexturesReverse", BindingFlags.NonPublic | BindingFlags.Static);
+
+            Assert.IsNotNull(field);
+            Assert.AreEqual(typeof(ConcurrentDictionary<System.WeakReference<Texture2D>, string>), field.FieldType);
         }
 
         private sealed class FakeModMetaData

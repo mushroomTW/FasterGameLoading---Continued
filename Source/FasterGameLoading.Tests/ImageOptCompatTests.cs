@@ -50,6 +50,30 @@ namespace FasterGameLoading.Tests
         }
 
         [Test]
+        public void TestCleanupInvalidDdsZstdCaches_AlsoDeletesCorruptDdsCachesWithSourceImage()
+        {
+            var texturesDir = Path.Combine(tempDir, "Textures");
+            Directory.CreateDirectory(texturesDir);
+
+            var corrupt = Path.Combine(texturesDir, "corrupt.dds");
+            var valid = Path.Combine(texturesDir, "valid.dds");
+            var orphan = Path.Combine(texturesDir, "orphan.dds");
+
+            File.WriteAllBytes(Path.Combine(texturesDir, "corrupt.png"), new byte[] { 1 });
+            File.WriteAllBytes(Path.Combine(texturesDir, "valid.png"), new byte[] { 1 });
+            File.WriteAllBytes(corrupt, new byte[] { 0, 0, 0, 0 });
+            File.WriteAllBytes(valid, new byte[] { (byte)'D', (byte)'D', (byte)'S', (byte)' ', 0 });
+            File.WriteAllBytes(orphan, new byte[] { 0, 0, 0, 0 });
+
+            var deleted = ImageOptCompat.CleanupInvalidDdsZstdCaches(new[] { tempDir });
+
+            Assert.AreEqual(1, deleted);
+            Assert.IsFalse(File.Exists(corrupt));
+            Assert.IsTrue(File.Exists(valid));
+            Assert.IsTrue(File.Exists(orphan));
+        }
+
+        [Test]
         public void TestCleanupInvalidDdsZstdCaches_SkipsNonTextureFolders()
         {
             var defsDir = Path.Combine(tempDir, "Defs");

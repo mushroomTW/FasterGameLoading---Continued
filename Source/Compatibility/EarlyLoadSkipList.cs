@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using Verse;
 
@@ -11,6 +12,9 @@ namespace FasterGameLoading
     public static class EarlyLoadSkipList
     {
         private const string AlienRacesPackageId = "erdelf.HumanoidAlienRaces";
+
+        private static readonly Dictionary<ModContentPack, bool> shouldSkipCache = new();
+        private static readonly object shouldSkipCacheLock = new();
 
         private static readonly string[] dependencyListMemberNames =
         {
@@ -34,8 +38,20 @@ namespace FasterGameLoading
         public static bool ShouldSkip(ModContentPack mod)
         {
             if (mod == null) return false;
-            return ShouldSkip(mod.PackageIdPlayerFacing, mod.ModMetaData)
+            lock (shouldSkipCacheLock)
+            {
+                if (shouldSkipCache.TryGetValue(mod, out var cached)) return cached;
+            }
+
+            var shouldSkip = ShouldSkip(mod.PackageIdPlayerFacing, mod.ModMetaData)
                 || ShouldSkip(mod.PackageId, mod.ModMetaData);
+
+            lock (shouldSkipCacheLock)
+            {
+                shouldSkipCache[mod] = shouldSkip;
+            }
+
+            return shouldSkip;
         }
 
         public static bool ShouldSkip(string packageId, object metaData)

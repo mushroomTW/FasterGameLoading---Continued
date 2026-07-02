@@ -69,6 +69,7 @@ Important behavior:
 
 - When Missile Girl is active, XPath caching and background XML change scanning are disabled to avoid conflicting with its cache system.
 - When Image Opt, Graphics Settings+, or RimSort Optimize Texture is active, FGL's downscaled texture replacement steps aside.
+- Invalid Image Opt `.dds` / `.dds.zstd` cache files are cleaned from texture folders only.
 - HAR and Ancot-related race mods skip some early-loading and atlas-baking paths to reduce bodyAddon, hair, ear, and multi-mask texture issues.
 
 ## Recommended Settings

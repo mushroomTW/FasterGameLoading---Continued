@@ -2,8 +2,7 @@
 .opencode/
 .sisyphus/
 SteamDescriptions/
-graphify-out/
-
+.agents/
 AGENTS.md
 _PublisherPlus.xml
 

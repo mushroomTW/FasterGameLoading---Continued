@@ -672,12 +672,27 @@ namespace FasterGameLoading.Tests
                 "Image Opt should only bypass FGL texture replacement, not early content loading.");
         }
 
+        [Test]
+        public void TestEarlyModContentLoader_WaitsForVanillaLoadModContent()
+        {
+            var update = typeof(EarlyModContentLoader).GetMethod(nameof(EarlyModContentLoader.Update));
+            var gate = typeof(DelayedActions).GetField(nameof(DelayedActions.VanillaModContentLoadCompleted));
+
+            Assert.IsTrue(
+                MethodBodyContainsMetadataToken(update, gate.MetadataToken),
+                "Early content loading must wait until vanilla LoadModContent has scheduled content and loaded assemblies.");
+        }
+
         private static bool MethodBodyContainsMetadataToken(MethodInfo method, MethodInfo calledMethod)
+        {
+            return MethodBodyContainsMetadataToken(method, calledMethod.MetadataToken);
+        }
+
+        private static bool MethodBodyContainsMetadataToken(MethodInfo method, int token)
         {
             var il = method?.GetMethodBody()?.GetILAsByteArray();
             if (il == null) return false;
 
-            var token = calledMethod.MetadataToken;
             for (int i = 0; i <= il.Length - sizeof(int); i++)
             {
                 if (BitConverter.ToInt32(il, i) == token) return true;

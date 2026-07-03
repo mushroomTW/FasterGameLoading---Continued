@@ -26,7 +26,7 @@ graph TD
 
 Enabled by default:
 
-- **Load mod content early**: Processes some mod content and type reflection during otherwise idle loading gaps.
+- **Load mod content early**: Processes some mod content and type reflection during otherwise idle loading gaps, after RimWorld's vanilla mod content scheduling and assembly loading have completed.
 - **Multi-threaded preloading**: Loads XML assets in parallel while preserving RimWorld's original load-folder override order.
 - **XPath caching**: Caches common missing XML queries during startup. Background validation checks only XML metadata (path, size, modified time), so it no longer reads full XML file contents.
 

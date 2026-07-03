@@ -28,7 +28,7 @@ namespace FasterGameLoading
         /// <param name="delayedActions">延遲動作管理器的實例，用於確認時間預算。</param>
         public void Update(DelayedActions delayedActions)
         {
-            if (XmlChangeDetector.needWriteSettings && DelayedActions.allModClassesCreated)
+            if (XmlChangeDetector.needWriteSettings && DelayedActions.VanillaModContentLoadCompleted)
             {
                 XmlChangeDetector.needWriteSettings = false;
                 try
@@ -46,7 +46,7 @@ namespace FasterGameLoading
             }
 
             // earlyModContentLoading 採 camelCase 以相容 loading-progress 的反射查詢，詳見 FasterGameLoadingSettings
-            if (EarlyLoadingComplete || !FasterGameLoadingSettings.earlyModContentLoading)
+            if (EarlyLoadingComplete || !FasterGameLoadingSettings.earlyModContentLoading || !DelayedActions.VanillaModContentLoadCompleted)
                 return;
 
             if (skipFrames > 0)

@@ -20,13 +20,21 @@ namespace FasterGameLoading
 
         public static bool Prefix(ModContentPack __instance)
         {
-            DelayedActions.allModClassesCreated = true;
             return !loadedMods.Contains(__instance);
         }
 
         public static void Postfix(ModContentPack __instance)
         {
             loadedMods.Add(__instance);
+        }
+    }
+
+    [HarmonyPatch(typeof(LoadedModManager), nameof(LoadedModManager.LoadModContent))]
+    public static class LoadedModManager_LoadModContent_Patch
+    {
+        public static void Postfix()
+        {
+            DelayedActions.VanillaModContentLoadCompleted = true;
         }
     }
 }

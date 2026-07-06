@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using HarmonyLib;
 using UnityEngine;
@@ -14,20 +13,6 @@ namespace FasterGameLoading
     [HarmonyPatch(typeof(GlobalTextureAtlasManager), "TryInsertStatic")]
     public static class AdaptiveBakingSkipList
     {
-        private static readonly string[] dependencyListMemberNames =
-        {
-            "modDependencies",
-            "dependencies",
-            "Dependencies"
-        };
-
-        private static readonly string[] dependencyPackageIdMemberNames =
-        {
-            "packageId",
-            "PackageId",
-            "PackageID"
-        };
-
         /// <summary>
         /// 調適用總開關。設為 false 即可完整停用整套烘焙排除邏輯：
         /// ・Prepare() 回 false → Harmony 不掛上 Prefix，TryInsertStatic 完全不被攔截（零執行期成本）；
@@ -142,92 +127,8 @@ namespace FasterGameLoading
             string packageId = mod.PackageId;
             if (packageId != null && targetMods.Contains(packageId)) return true;
 
-            return IsAlienRaceMod(mod) || DependsOnMod(mod, "Ancot.AncotLibrary");
-        }
-
-        /// <summary>
-        /// 動態判定一個 Mod 是否依賴於指定的 PackageId。
-        /// 採用反射以維護跨 RimWorld 版本的相容性，防止直接欄位取用出錯。
-        /// </summary>
-        private static bool DependsOnMod(ModContentPack mod, string targetPackageId)
-        {
-            if (mod == null) return false;
-            var metaData = mod.ModMetaData;
-            if (metaData == null) return false;
-
-            var depsList = GetDependencyList(metaData);
-            if (depsList == null) return false;
-
-            foreach (var dep in depsList)
-            {
-                if (dep == null) continue;
-
-                var packageId = GetDependencyPackageId(dep);
-                if (packageId != null && packageId.Equals(targetPackageId, StringComparison.OrdinalIgnoreCase))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private static IEnumerable GetDependencyList(object metaData)
-        {
-            foreach (var memberName in dependencyListMemberNames)
-            {
-                if (TryGetMemberValue(metaData, memberName, out var value) && value is IEnumerable dependencies && value is not string)
-                {
-                    return dependencies;
-                }
-            }
-            return null;
-        }
-
-        private static string GetDependencyPackageId(object dependency)
-        {
-            foreach (var memberName in dependencyPackageIdMemberNames)
-            {
-                if (TryGetMemberValue(dependency, memberName, out var value) && value is string packageId)
-                {
-                    return packageId;
-                }
-            }
-            return null;
-        }
-
-        private static bool TryGetMemberValue(object instance, string memberName, out object value)
-        {
-            value = null;
-            if (instance == null) return false;
-
-            var type = instance.GetType();
-            try
-            {
-                var field = AccessTools.Field(type, memberName);
-                if (field != null)
-                {
-                    value = field.GetValue(instance);
-                    return true;
-                }
-
-                var property = AccessTools.Property(type, memberName);
-                if (property != null)
-                {
-                    value = property.GetValue(instance, null);
-                    return true;
-                }
-            }
-            catch
-            {
-                return false;
-            }
-
-            return false;
-        }
-
-        private static bool IsAlienRaceMod(ModContentPack mod)
-        {
-            return DependsOnMod(mod, "erdelf.HumanoidAlienRaces");
+            return ModDependencyReflection.DependsOnMod(mod.ModMetaData, "erdelf.HumanoidAlienRaces")
+                || ModDependencyReflection.DependsOnMod(mod.ModMetaData, "Ancot.AncotLibrary");
         }
 
         private static void InitializeModRoots()

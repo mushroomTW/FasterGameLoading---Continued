@@ -20,6 +20,7 @@ namespace FasterGameLoading
 
         public static bool Prefix(ModContentPack __instance)
         {
+            DelayedActions.VanillaModContentLoadCompleted = true;
             return !loadedMods.Contains(__instance);
         }
 

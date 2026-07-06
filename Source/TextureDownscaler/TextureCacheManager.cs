@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using Verse;
-
 namespace FasterGameLoading
 {
     /// <summary>
@@ -20,6 +20,12 @@ namespace FasterGameLoading
         public Dictionary<string, string> ResizedTextureCache => resizedTextureCache;
         private readonly object cacheLock = new object();
         private readonly ConcurrentDictionary<string, string> md5HashCache = new ConcurrentDictionary<string, string>();
+        /// <summary>
+        /// 每執行緒重用的 MD5 實例。MD5 非執行緒安全，故以 ThreadLocal 隔離；
+        /// 重用避免每次 GetCachePath（首次某路徑時計算雜湊）都 allocate 新 MD5 與其原生資源。
+        /// </summary>
+        private static readonly ThreadLocal<MD5> md5PerThread =
+            new ThreadLocal<MD5>(() => MD5.Create());
         private readonly string baseCacheDir;
 
         /// <summary>紋理快取的根目錄。</summary>
@@ -55,16 +61,14 @@ namespace FasterGameLoading
         {
             return md5HashCache.GetOrAdd(GetCacheKey(originalPath), key =>
             {
-                using (var md5 = MD5.Create())
+                var md5 = md5PerThread.Value;
+                var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(key));
+                var sb = new StringBuilder();
+                foreach (var b in hash)
                 {
-                    var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(key));
-                    var sb = new StringBuilder();
-                    foreach (var b in hash)
-                    {
-                        sb.Append(b.ToString("x2"));
-                    }
-                    return Path.Combine(activeCacheDirectory, sb.ToString() + ".png");
+                    sb.Append(b.ToString("x2"));
                 }
+                return Path.Combine(activeCacheDirectory, sb.ToString() + ".png");
             });
         }
 

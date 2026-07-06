@@ -41,7 +41,14 @@ namespace FasterGameLoading
         /// </summary>
         static void ExecuteDelayed(Action action, SubSoundDef def)
         {
-            FasterGameLoadingMod.delayedActions.EnqueueSubSound(def, action);
+            var delayedActions = FasterGameLoadingMod.delayedActions;
+            if (delayedActions)
+            {
+                delayedActions.EnqueueSubSound(def, action);
+                return;
+            }
+
+            LongEventHandler.ExecuteWhenFinished(action);
         }
     }
 }

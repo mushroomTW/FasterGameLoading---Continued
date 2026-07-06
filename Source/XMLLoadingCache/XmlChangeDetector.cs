@@ -92,12 +92,8 @@ namespace FasterGameLoading
 
                 // 以確定性排序後進行順序敏感折疊（polynomial rolling hash），
                 // 避免不同檔案的變更互相抵消導致雜湊碰撞。
-                long newCombinedHash = 0;
-                foreach (var key in nextMetadataHashes.Keys.OrderBy(k => k, StringComparer.Ordinal))
-                {
-                    newCombinedHash = unchecked(newCombinedHash * 31 + nextMetadataHashes[key]);
-                }
-                
+                long newCombinedHash = CombineMetadataHashes(nextMetadataHashes);
+
                 if (FasterGameLoadingSettings.VerboseLogging)
                 {
                     FGLLog.Message($"XML scan complete. Combined metadata hash: {newCombinedHash}, last saved hash: {SessionCache.xmlCombinedHashSinceLastSession}");
@@ -171,6 +167,25 @@ namespace FasterGameLoading
                     hash = hash * 31 + value[i];
                 }
                 return hash;
+            }
+        }
+
+        /// <summary>
+        /// 將每個 Mod 的 metadata 雜湊值以確定性順序折疊為單一 long。
+        /// 採順序敏感的 polynomial rolling hash（乘 31）並以字串序排序鍵，
+        /// 確保跨平台、跨次執行結果一致，且不同檔案的變更不會互相抵消。
+        /// 純函式，不依賴 RimWorld 執行環境，可單元測試。
+        /// </summary>
+        internal static long CombineMetadataHashes(IReadOnlyDictionary<string, long> hashesByMod)
+        {
+            unchecked
+            {
+                long combined = 0;
+                foreach (var key in hashesByMod.Keys.OrderBy(k => k, StringComparer.Ordinal))
+                {
+                    combined = combined * 31 + hashesByMod[key];
+                }
+                return combined;
             }
         }
     }

@@ -53,6 +53,7 @@
   <PropertyGroup>
     <!-- Disable automatic generation of assembly attributes -->
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <BaseOutputPath>C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Assemblies</BaseOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Publicize Include="Assembly-CSharp" />

@@ -4,6 +4,7 @@
 SteamDescriptions/
 .agents/
 AGENTS.md
+CLAUDE.md
 _PublisherPlus.xml
 
 #IDE state
@@ -21,3 +22,4 @@ TestResults/
 .omc/
 .omo/
 .codegraph/
+.claude

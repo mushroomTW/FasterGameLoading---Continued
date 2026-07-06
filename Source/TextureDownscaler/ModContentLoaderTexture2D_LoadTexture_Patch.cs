@@ -3,6 +3,7 @@ using RimWorld.IO;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -54,8 +55,18 @@ namespace FasterGameLoading
         public static readonly ConcurrentDictionary<string, byte[]> preloadedCacheBytes = new ConcurrentDictionary<string, byte[]>();
         /// <summary>以 WeakReference 快取已載入的 Texture2D，鍵為完整檔案路徑。</summary>
         public static ConcurrentDictionary<string, System.WeakReference<Texture2D>> savedTextures = new ConcurrentDictionary<string, System.WeakReference<Texture2D>>();
-        /// <summary>反向對照表：Texture2D 實體 → 完整檔案路徑，避免用強引用留住 Unity 貼圖。</summary>
-        private static readonly ConcurrentDictionary<System.WeakReference<Texture2D>, string> savedTexturesReverse = new ConcurrentDictionary<System.WeakReference<Texture2D>, string>();
+        /// <summary>
+        /// O(1) 反向查找表：Texture2D → 路徑。ConditionalWeakTable 以弱鍵追蹤，Texture2D 被 GC 時自動移除條目，
+        /// 不會強引用留住 Unity 貼圖。
+        /// </summary>
+        private static readonly ConditionalWeakTable<Texture2D, StringHolder> savedTexturePathsByTexture = new ConditionalWeakTable<Texture2D, StringHolder>();
+
+        /// <summary>ConditionalWeakTable 的值必須為 reference type，故以輕量 holder 包裹路徑字串。Value 可變以便同一 Texture2D 路徑變更時覆寫。</summary>
+        private sealed class StringHolder
+        {
+            public string Value;
+            public StringHolder(string value) { Value = value; }
+        }
         /// <summary>排除烘焙的目標 Mod 紋理快取，用於 O(1) 快速查詢。</summary>
         public static ConcurrentDictionary<Texture2D, bool> skippedBakingTextures = new ConcurrentDictionary<Texture2D, bool>();
         /// <summary>排除烘焙的目標 Mod 紋理名稱快取，用於處理克隆實體時的反向比對。以 ConcurrentDictionary 實作執行緒安全。</summary>
@@ -70,7 +81,9 @@ namespace FasterGameLoading
             CacheResetter.Register(() =>
             {
                 savedTextures.Clear();
-                savedTexturesReverse.Clear();
+                // ConditionalWeakTable 沒有 Clear API，且其條目隨鍵被 GC 自動消失；
+                // 語言切換時舊 Texture2D 通常仍活著，殘留條目只會在後續被新條目覆寫或隨 GC 移除，
+                // 不影響正確性。故此處不另作清理。
                 loadedTexturesThisSession.Clear();
                 skippedBakingTextures.Clear();
                 skippedBakingTextureNames.Clear(); // ConcurrentDictionary.Clear() 為執行緒安全
@@ -148,16 +161,13 @@ namespace FasterGameLoading
 
         public static bool TryGetSavedTexturePath(Texture texture, out string fullPath)
         {
-            if (!ReferenceEquals(texture, null))
+            if (texture is Texture2D t2d && !ReferenceEquals(t2d, null)
+                && savedTexturePathsByTexture.TryGetValue(t2d, out var holder))
             {
-                foreach (var kvp in savedTexturesReverse)
-                {
-                    if (kvp.Key.TryGetTarget(out var savedTexture) && ReferenceEquals(savedTexture, texture))
-                    {
-                        fullPath = kvp.Value;
-                        return true;
-                    }
-                }
+                // O(1) 弱鍵查找。ConditionalWeakTable 在 Texture2D 被 GC 時自動清條目。
+                // 非 Texture2D 的 Texture（如 RenderTexture）不會進入此表,視為查無路徑。
+                fullPath = holder.Value;
+                return true;
             }
 
             fullPath = null;
@@ -170,12 +180,23 @@ namespace FasterGameLoading
 
             if (savedTextures.TryGetValue(fullPath, out var oldRef) && oldRef.TryGetTarget(out var oldTexture))
             {
-                savedTexturesReverse.TryRemove(oldRef, out _);
+                // 同步移除舊紋理在弱鍵表中的條目；舊實體可能已被替換，TryRemove 容錯即可。
+                savedTexturePathsByTexture.Remove(oldTexture);
             }
 
             var weakRef = new System.WeakReference<Texture2D>(texture);
             savedTextures[fullPath] = weakRef;
-            savedTexturesReverse[weakRef] = fullPath;
+            // ConditionalWeakTable.GetValue 在 key 已存在時回傳舊 holder、不呼叫 factory，
+            // 故同一 Texture2D 若以新路徑重新登記，需手動覆寫 holder.Value，否則
+            // TryGetSavedTexturePath 仍回傳舊路徑，導致掃描/縮圖歸因錯誤來源。
+            if (savedTexturePathsByTexture.TryGetValue(texture, out var holder))
+            {
+                holder.Value = fullPath;
+            }
+            else
+            {
+                savedTexturePathsByTexture.GetValue(texture, _ => new StringHolder(fullPath));
+            }
         }
 
         public static bool Prefix(VirtualFile file, out bool __state, ref Texture2D __result)

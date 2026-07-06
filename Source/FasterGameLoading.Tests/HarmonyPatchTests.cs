@@ -117,10 +117,10 @@ namespace FasterGameLoading.Tests
         public void TestTextureReverseCache_DoesNotHoldStrongTextureKeys()
         {
             var field = typeof(ModContentLoaderTexture2D_LoadTexture_Patch)
-                .GetField("savedTexturesReverse", BindingFlags.NonPublic | BindingFlags.Static);
+                .GetField("savedTextures", BindingFlags.Public | BindingFlags.Static);
 
             Assert.IsNotNull(field);
-            Assert.AreEqual(typeof(ConcurrentDictionary<System.WeakReference<Texture2D>, string>), field.FieldType);
+            Assert.AreEqual(typeof(ConcurrentDictionary<string, System.WeakReference<Texture2D>>), field.FieldType);
         }
 
         private sealed class FakeModMetaData
@@ -712,6 +712,15 @@ namespace FasterGameLoading.Tests
             Assert.IsNull(field.GetValue(null), "CacheResetter should clear the cached Missile Girl active state.");
         }
 
+        [Test]
+        public void TestReloadContentIntPrefix_UnlocksVanillaModContentLoadCompleted()
+        {
+            var prefix = typeof(ModContentPack_ReloadContentInt_Patch).GetMethod(nameof(ModContentPack_ReloadContentInt_Patch.Prefix));
+            var gate = typeof(DelayedActions).GetField(nameof(DelayedActions.VanillaModContentLoadCompleted));
 
+            Assert.IsTrue(
+                MethodBodyContainsMetadataToken(prefix, gate.MetadataToken),
+                "ReloadContentInt Prefix must unlock VanillaModContentLoadCompleted as soon as mod content loading begins.");
+        }
     }
 }

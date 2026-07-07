@@ -72,6 +72,23 @@ namespace FasterGameLoading
             });
         }
 
+        /// <summary>
+        /// 直接根據目前檔案狀態計算快取路徑，不寫入 md5HashCache，
+        /// 供 IsCacheFresh 比較用，避免經 GetCachePath 重算時的 TOCTOU 風險。
+        /// </summary>
+        private string ComputeCachePathDirect(string originalPath)
+        {
+            var cacheKey = GetCacheKey(originalPath);
+            var md5 = md5PerThread.Value;
+            var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(cacheKey));
+            var sb = new StringBuilder();
+            foreach (var b in hash)
+            {
+                sb.Append(b.ToString("x2"));
+            }
+            return Path.Combine(activeCacheDirectory, sb.ToString() + ".png");
+        }
+
         private string GetCacheKey(string originalPath)
         {
             try
@@ -181,7 +198,7 @@ namespace FasterGameLoading
 
                 // 原始檔案的修改時間比快取新。若快取路徑的檔名雜湊（基於目前檔案長度）與已儲存的快取路徑一致，
                 // 代表檔案長度並未改變（實質內容未變），此時只需將快取檔案的時間更新為原始檔案時間即可。
-                var currentExpectedPath = GetCachePath(originalPath);
+                var currentExpectedPath = ComputeCachePathDirect(originalPath);
                 if (string.Equals(currentExpectedPath, cachePath, StringComparison.OrdinalIgnoreCase))
                 {
                     File.SetLastWriteTimeUtc(cachePath, originalTime);
@@ -430,6 +447,23 @@ namespace FasterGameLoading
                         foreach (var key in keysToRemove)
                         {
                             resizedTextureCache.Remove(key);
+                        }
+                    }
+                }
+
+                // 刪除未引用檔案前，重新取得最新的有效路徑集合，
+                // 防止快照拍攝後由 SetCacheEntry 併發新增的項目被誤刪。
+                lock (cacheLock)
+                {
+                    foreach (var kvp in resizedTextureCache)
+                    {
+                        try
+                        {
+                            validCacheFiles.Add(Path.GetFullPath(kvp.Value));
+                        }
+                        catch
+                        {
+                            validCacheFiles.Add(kvp.Value);
                         }
                     }
                 }

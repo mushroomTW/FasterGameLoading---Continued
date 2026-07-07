@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using HarmonyLib;
 
@@ -95,8 +96,13 @@ namespace FasterGameLoading
                     return true;
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                // 反射探測失敗是預期行為（跨版本欄位/屬性不存在），但在 Verbose 模式下記錄以利診斷
+                if (FasterGameLoadingSettings.VerboseLogging)
+                {
+                    FGLLog.Warning($"Reflection probe failed for {type.Name}.{memberName}", ex);
+                }
                 return false;
             }
 

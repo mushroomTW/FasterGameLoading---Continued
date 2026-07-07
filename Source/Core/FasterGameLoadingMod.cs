@@ -62,7 +62,7 @@ namespace FasterGameLoading
                 }
             });
 
-            // 啟動異步 XML 檔案變更掃描，比對是否需要清除 XPath 快取
+            // 啟動同步 XML 檔案變更掃描，比對是否需要清除 XPath 快取
             try
             {
                 var thirdPartyModPaths = new System.Collections.Generic.List<string>();
@@ -74,11 +74,11 @@ namespace FasterGameLoading
                     }
                 }
                 string configPath = GenFilePaths.ConfigFolderPath;
-                System.Threading.Tasks.Task.Run(() => XmlChangeDetector.ScanXmlFiles(thirdPartyModPaths, configPath));
+                XmlChangeDetector.ScanXmlFiles(thirdPartyModPaths, configPath);
             }
             catch (System.Exception ex)
             {
-                FGLLog.Warning("Failed to start asynchronous XML file scan:", ex);
+                FGLLog.Warning("Failed to perform synchronous XML file scan:", ex);
                 // 萬一出錯，確保快取攔截功能不會被永久關閉
                 XmlNode_SelectSingleNode_Patch.isXmlScanComplete = true;
             }

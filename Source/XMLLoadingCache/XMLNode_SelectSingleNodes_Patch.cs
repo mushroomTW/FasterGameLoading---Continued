@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -20,7 +20,7 @@ namespace FasterGameLoading
         /// 使用 ConcurrentDictionary 以確保多執行緒環境下安全
         /// </summary>
         public static ConcurrentDictionary<string, bool> xmlPathsThisSession = new ConcurrentDictionary<string, bool>();
-        private static bool patchEnabled = true;
+        private static volatile bool patchEnabled = true;
         
         /// <summary>
         /// 背景 XML 檔案掃描與雜湊比對是否已完成。
@@ -39,11 +39,11 @@ namespace FasterGameLoading
             {
                 isXmlScanComplete = false;
                 xmlPathsThisSession.Clear();
+                isXmlExtensionsActive = null;
             });
 
             Startup.RegisterOnStartupCompleted(() =>
             {
-                SessionCache.xmlPathsSinceLastSession.Clear();
                 foreach (var kvp in xmlPathsThisSession)
                 {
                     if (!kvp.Value)
@@ -51,7 +51,24 @@ namespace FasterGameLoading
                         SessionCache.xmlPathsSinceLastSession.TryAdd(kvp.Key, 0);
                     }
                 }
-                DisableAndClear();
+                xmlPathsThisSession.Clear();
+
+                if (XmlChangeDetector.needWriteSettings)
+                {
+                    XmlChangeDetector.needWriteSettings = false;
+                    try
+                    {
+                        LoadedModManager.GetMod<FasterGameLoadingMod>().WriteSettings();
+                        if (FasterGameLoadingSettings.VerboseLogging)
+                        {
+                            FGLLog.Message("XML cache invalidated and new hash saved to settings on main thread at startup completion.");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        FGLLog.Warning("Failed to save updated XML combined hash at startup completion:", ex);
+                    }
+                }
             });
         }
 
@@ -63,6 +80,7 @@ namespace FasterGameLoading
             SessionCache.xmlPathsSinceLastSession.Clear();
         }
 
+        private static readonly object xmlExtensionsLock = new object();
         private static bool? isXmlExtensionsActive;
         public static bool IsXmlExtensionsActive
         {
@@ -70,13 +88,19 @@ namespace FasterGameLoading
             {
                 if (!isXmlExtensionsActive.HasValue)
                 {
-                    try
+                    lock (xmlExtensionsLock)
                     {
-                        isXmlExtensionsActive = ModsConfig.IsActive("krafs.xmlextensions");
-                    }
-                    catch
-                    {
-                        isXmlExtensionsActive = false;
+                        if (!isXmlExtensionsActive.HasValue)
+                        {
+                            try
+                            {
+                                isXmlExtensionsActive = ModsConfig.IsActive("krafs.xmlextensions");
+                            }
+                            catch
+                            {
+                                isXmlExtensionsActive = false;
+                            }
+                        }
                     }
                 }
                 return isXmlExtensionsActive.Value;

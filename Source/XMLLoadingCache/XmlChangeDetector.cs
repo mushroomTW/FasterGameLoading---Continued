@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -122,26 +122,25 @@ namespace FasterGameLoading
         {
             try
             {
-                // 排序後再折疊，確保跨平台與跨次執行的確定性
-                var files = Directory.EnumerateFiles(dirPath, "*.xml", SearchOption.AllDirectories)
-                                     .OrderBy(f => f, StringComparer.Ordinal);
-                foreach (var file in files)
+                var dirInfo = new System.IO.DirectoryInfo(dirPath);
+                if (!dirInfo.Exists) return;
+
+                var files = dirInfo.EnumerateFiles("*.xml", System.IO.SearchOption.AllDirectories)
+                                   .OrderBy(f => f.FullName, System.StringComparer.Ordinal);
+                foreach (var info in files)
                 {
                     try
                     {
-                        var info = new FileInfo(file);
-                        if (info.Exists)
-                        {
-                            var relativePath = Path.GetFileName(dirPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
-                                + "/"
-                                + file.Substring(dirPath.Length).TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-                            long fileHash = 17;
-                            fileHash = fileHash * 31 + StableStringHash(relativePath.Replace('\\', '/'));
-                            fileHash = fileHash * 31 + info.LastWriteTimeUtc.Ticks;
-                            fileHash = fileHash * 31 + info.Length;
-                            combinedHash = unchecked(combinedHash * 31 + fileHash);
-                            xmlCount++;
-                        }
+                        var file = info.FullName;
+                        var relativePath = Path.GetFileName(dirPath.TrimEnd(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar))
+                            + "/"
+                            + file.Substring(dirPath.Length).TrimStart(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
+                        long fileHash = 17;
+                        fileHash = fileHash * 31 + StableStringHash(relativePath.Replace('\\', '/'));
+                        fileHash = fileHash * 31 + info.LastWriteTimeUtc.Ticks;
+                        fileHash = fileHash * 31 + info.Length;
+                        combinedHash = unchecked(combinedHash * 31 + fileHash);
+                        xmlCount++;
                     }
                     catch
                     {

@@ -107,6 +107,7 @@ namespace FasterGameLoading
             return false;
         }
 
+        private static readonly object missileGirlLock = new object();
         private static bool? isMissileGirlActive;
         /// <summary>
         /// 檢測目前是否啟用了 MissileGirl。
@@ -117,13 +118,19 @@ namespace FasterGameLoading
             {
                 if (!isMissileGirlActive.HasValue)
                 {
-                    try
+                    lock (missileGirlLock)
                     {
-                        isMissileGirlActive = ModsConfig.IsActive("vr.missilegirl");
-                    }
-                    catch
-                    {
-                        isMissileGirlActive = false;
+                        if (!isMissileGirlActive.HasValue)
+                        {
+                            try
+                            {
+                                isMissileGirlActive = ModsConfig.IsActive("vr.missilegirl");
+                            }
+                            catch
+                            {
+                                isMissileGirlActive = false;
+                            }
+                        }
                     }
                 }
                 return isMissileGirlActive.Value;

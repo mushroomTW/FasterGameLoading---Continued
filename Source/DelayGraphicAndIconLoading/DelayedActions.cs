@@ -122,7 +122,7 @@ namespace FasterGameLoading
         public static bool AllDeferredVisualsLoaded = false;
         /// <summary>自適應靜態圖集烘焙是否失敗（fallback 到原始流程）。</summary>
         public static bool AdaptiveStaticAtlasBakeFailed = false;
-        /// <summary>原版 LoadModContent 是否已排程內容載入並完成 assembly 載入。</summary>
+        /// <summary>模組內容載入是否已開始（由 ReloadContentInt Prefix 設定）。</summary>
         public static bool VanillaModContentLoadCompleted = false;
 
         /// <summary>靜態建構子：註冊快取重置時的回呼。</summary>

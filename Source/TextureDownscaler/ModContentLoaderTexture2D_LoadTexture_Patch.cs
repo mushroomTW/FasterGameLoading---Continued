@@ -49,6 +49,23 @@ namespace FasterGameLoading
             }
         }
 
+        private static bool _draining;
+
+        public static void TryDrainMainThreadRequests()
+        {
+            if (_draining) return;
+            _draining = true;
+            try
+            {
+                ProcessPendingMainThreadRequests();
+            }
+            finally
+            {
+                _draining = false;
+            }
+        }
+
+
         /// <summary>本次 session 中所有已載入的紋理路徑映射。</summary>
         public static ConcurrentDictionary<string, string> loadedTexturesThisSession = new ConcurrentDictionary<string, string>();
         /// <summary>已非同步預載入至記憶體的降質快取紋理位元組數據。</summary>

@@ -114,6 +114,10 @@ namespace FasterGameLoading
             if (cacheManager != null)
             {
                 Scribe_Collections.Look(ref cacheManager.resizedTextureCache, "resizedTextureCache", LookMode.Value, LookMode.Value);
+                if (cacheManager.resizedTextureCache == null)
+                {
+                    cacheManager.resizedTextureCache = new Dictionary<string, string>();
+                }
             }
 
             // 跨 session 快取資料委派給 SessionCache

@@ -303,6 +303,8 @@ namespace FasterGameLoading.Tests
                 SessionCache.xmlPathsSinceLastSession.TryAdd($"/root/missing_{i}", 0);
             }
 
+            var nodes = new XmlNode[500];
+
             // 多執行緒併發呼叫 SelectSingleNode
             System.Threading.Tasks.Parallel.For(0, 500, i =>
             {
@@ -311,13 +313,18 @@ namespace FasterGameLoading.Tests
 
                 // 測試命中快取攔截的 xpath
                 string xpathMissing = $"/root/missing_{i % 50}";
-                var node = doc.SelectSingleNode(xpathMissing);
-                Assert.IsNull(node);
+                nodes[i] = doc.SelectSingleNode(xpathMissing);
 
                 // 測試未命中快取但實際不存在，觸發 Postfix 記錄的 xpath
                 string xpathNew = $"/root/new_{i}";
                 doc.SelectSingleNode(xpathNew);
             });
+
+            // 在主執行緒統一斷言
+            for (int i = 0; i < 500; i++)
+            {
+                Assert.IsNull(nodes[i]);
+            }
 
             // 驗證 ConcurrentDictionary 記錄正確
             Assert.AreEqual(500, XmlNode_SelectSingleNode_Patch.xmlPathsThisSession.Count);

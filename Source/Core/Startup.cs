@@ -82,13 +82,18 @@ namespace FasterGameLoading
             // 透過 LongEventHandler 排程設定寫入與延遲動作，以避免阻塞啟動流程
             try
             {
-                LongEventHandler.toExecuteWhenFinished.Add(delegate
+                LongEventHandler.ExecuteWhenFinished(delegate
                 {
                     LoadedModManager.GetMod<FasterGameLoadingMod>().WriteSettings();
                 });
-                LongEventHandler.toExecuteWhenFinished.Add(delegate
+                LongEventHandler.ExecuteWhenFinished(delegate
                 {
-                    FasterGameLoadingMod.delayedActions.StartCoroutine(FasterGameLoadingMod.delayedActions.PerformActions());
+                    var delayedActions = FasterGameLoadingMod.delayedActions;
+                    if (delayedActions)
+                    {
+                        delayedActions.enabled = true;
+                        delayedActions.StartCoroutine(delayedActions.PerformActions());
+                    }
                 });
             }
             catch (Exception ex)

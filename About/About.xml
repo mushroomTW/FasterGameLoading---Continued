@@ -6,7 +6,7 @@
     <li>1.6</li>
   </supportedVersions>
   <packageId>Taranchuk.FasterGameLoading</packageId>
-  <modVersion>2026.07.07.6</modVersion>
+  <modVersion>2026.07.08.2</modVersion>
   <description>
 === Does loading take forever? This mod is for you! ===
 
@@ -14,7 +14,7 @@ Sick of staring at the loading screen every time you start RimWorld? This mod cu
 
 --- What it does ---
 
-- Early mod content loading: Starts loading mod content earlier after RimWorld's vanilla mod content scheduling and assembly loading have completed. (enabled by default)
+- Early mod content loading: Starts loading pending mod content during idle loading gaps before RimWorld's normal ReloadContentInt pass reaches those mods. (enabled by default)
 - Multi-threaded preloading: Speeds up XML loading and type resolution by utilizing multiple CPU cores. (enabled by default)
 - XPath cache: Caches XML queries during load and safely releases it on main menu initialization to prevent runtime conflicts and free up memory. (enabled by default)
 - Delay graphic and icon loading: Delay loading non-essential textures (like background objects) until after you enter a game — weapons, clothing, food, pawns, and furniture are always loaded right away so nothing looks broken. (disabled by default)
@@ -25,7 +25,7 @@ Sick of staring at the loading screen every time you start RimWorld? This mod cu
 --- Things to know ---
 
 - The game may briefly freeze or feel unresponsive during startup. This is normal — the mod is doing work in the background.
-- It may take a while to get any sound after entering the main menu, which is normal.
+- It may take a while to get any sound after entering the main menu, which is normal; sound playback is released automatically after deferred sound definitions finish resolving.
 - When delay graphic loading is disabled, static atlases are not baked again by the delayed startup cleanup, preventing duplicate atlas VRAM usage with large race or texture-heavy mods.
 - ChezhouLib's AssetBundle reload patch runs before FGL's duplicate-reload guard, so ChezhouLib-managed bundles can refresh correctly during development reload paths.
 - Early mod content loading now includes official Core/DLC packs as well as player mods.

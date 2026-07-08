@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Xml;
 using HarmonyLib;
@@ -680,14 +681,14 @@ namespace FasterGameLoading.Tests
         }
 
         [Test]
-        public void TestEarlyModContentLoader_WaitsForVanillaLoadModContent()
+        public void TestEarlyModContentLoader_DoesNotWaitForVanillaLoadModContent()
         {
             var update = typeof(EarlyModContentLoader).GetMethod(nameof(EarlyModContentLoader.Update));
-            var gate = typeof(DelayedActions).GetField(nameof(DelayedActions.VanillaModContentLoadCompleted));
+            var gate = typeof(DelayedActions).GetField("VanillaModContentLoadCompleted");
 
-            Assert.IsTrue(
-                MethodBodyContainsMetadataToken(update, gate.MetadataToken),
-                "Early content loading must wait until vanilla LoadModContent has scheduled content and loaded assemblies.");
+            Assert.IsFalse(
+                gate != null && MethodBodyContainsMetadataToken(update, gate.MetadataToken),
+                "Early content loading must run before vanilla ReloadContentInt starts, otherwise the normal loader can consume the whole queue first.");
         }
 
         private static bool MethodBodyContainsMetadataToken(MethodInfo method, MethodInfo calledMethod)
@@ -707,6 +708,58 @@ namespace FasterGameLoading.Tests
             return false;
         }
 
+        private static bool MethodOrStateMachineReferencesMethod(MethodInfo method, MethodInfo referencedMethod)
+        {
+            if (MethodBodyReferencesMethod(method, referencedMethod)) return true;
+
+            var stateMachineType = method.GetCustomAttribute<IteratorStateMachineAttribute>()?.StateMachineType;
+            if (stateMachineType != null && TypeReferencesMethod(stateMachineType, referencedMethod)) return true;
+
+            foreach (var nestedType in method.DeclaringType.GetNestedTypes(BindingFlags.NonPublic))
+            {
+                if (!nestedType.Name.Contains(method.Name)) continue;
+
+                if (TypeReferencesMethod(nestedType, referencedMethod)) return true;
+            }
+            return false;
+        }
+
+        private static bool TypeReferencesMethod(Type type, MethodInfo referencedMethod)
+        {
+            foreach (var nestedMethod in type.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public))
+            {
+                if (MethodBodyReferencesMethod(nestedMethod, referencedMethod)) return true;
+            }
+            return false;
+        }
+
+        private static bool MethodBodyReferencesMethod(MethodInfo method, MethodInfo referencedMethod)
+        {
+            var il = method?.GetMethodBody()?.GetILAsByteArray();
+            if (il == null) return false;
+
+            for (int i = 0; i <= il.Length - sizeof(int); i++)
+            {
+                var token = BitConverter.ToInt32(il, i);
+                if (token == referencedMethod.MetadataToken) return true;
+
+                try
+                {
+                    var candidate = method.Module.ResolveMethod(token);
+                    if (candidate.Name == referencedMethod.Name
+                        && candidate.DeclaringType?.FullName == referencedMethod.DeclaringType?.FullName)
+                    {
+                        return true;
+                    }
+                }
+                catch
+                {
+                    // Ignore non-token bytes while scanning compact test IL.
+                }
+            }
+            return false;
+        }
+
         [Test]
         public void TestUtils_IsMissileGirlActiveCache_IsResetByCacheResetter()
         {
@@ -720,14 +773,26 @@ namespace FasterGameLoading.Tests
         }
 
         [Test]
-        public void TestReloadContentIntPrefix_UnlocksVanillaModContentLoadCompleted()
+        public void TestStartupPostfix_UsesExecuteWhenFinishedForCompletionActions()
         {
-            var prefix = typeof(ModContentPack_ReloadContentInt_Patch).GetMethod(nameof(ModContentPack_ReloadContentInt_Patch.Prefix));
-            var gate = typeof(DelayedActions).GetField(nameof(DelayedActions.VanillaModContentLoadCompleted));
+            var postfix = typeof(Startup).GetMethod(nameof(Startup.Postfix));
+            var executeWhenFinished = AccessTools.Method(typeof(LongEventHandler), nameof(LongEventHandler.ExecuteWhenFinished));
 
             Assert.IsTrue(
-                MethodBodyContainsMetadataToken(prefix, gate.MetadataToken),
-                "ReloadContentInt Prefix must unlock VanillaModContentLoadCompleted as soon as mod content loading begins.");
+                MethodBodyReferencesMethod(postfix, executeWhenFinished),
+                "Startup completion actions must use ExecuteWhenFinished instead of mutating LongEventHandler.toExecuteWhenFinished directly.");
         }
+
+        [Test]
+        public void TestDelayedActionsPerformActions_UnpatchesSoundStarterDirectly()
+        {
+            var performActions = typeof(DelayedActions).GetMethod(nameof(DelayedActions.PerformActions));
+            var unpatch = typeof(SoundStarter_Patch).GetMethod(nameof(SoundStarter_Patch.Unpatch), BindingFlags.NonPublic | BindingFlags.Static);
+
+            Assert.IsTrue(
+                MethodOrStateMachineReferencesMethod(performActions, unpatch),
+                "DelayedActions.PerformActions must directly release the startup sound guard even if deferred loading exits early.");
+        }
+
     }
 }

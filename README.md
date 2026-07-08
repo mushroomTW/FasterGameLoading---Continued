@@ -26,7 +26,7 @@ graph TD
 
 Enabled by default:
 
-- **Load mod content early**: Processes some mod content and type reflection during otherwise idle loading gaps, after RimWorld's vanilla mod content scheduling and assembly loading have completed.
+- **Load mod content early**: Processes pending mod content and type reflection during idle loading gaps before RimWorld's normal `ReloadContentInt` pass reaches those mods.
 - **Multi-threaded preloading**: Loads XML assets in parallel while preserving RimWorld's original load-folder override order.
 - **XPath caching**: Caches common missing XML queries during startup. Synchronous validation checks only XML metadata (path, size, modified time), so it no longer reads full XML file contents.
 
@@ -46,6 +46,7 @@ Manual tool:
 - XPath caching may rebuild after the first launch, mod updates, or XML edits.
 - XML edits are detected when file path, size, or modified time changes.
 - Brief startup unresponsiveness can be normal, especially with large mod lists.
+- Startup sound playback is temporarily held until deferred sound definitions finish resolving, then released automatically.
 - **Delay graphic and icon loading** is an advanced option. If you see texture or icon timing issues, disable it first.
 - Downscaled texture cache can be cleared from the mod settings.
 

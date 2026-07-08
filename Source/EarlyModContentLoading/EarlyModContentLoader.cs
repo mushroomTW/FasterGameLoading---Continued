@@ -29,7 +29,7 @@ namespace FasterGameLoading
         public void Update(DelayedActions delayedActions)
         {
             // earlyModContentLoading 採 camelCase 以相容 loading-progress 的反射查詢，詳見 FasterGameLoadingSettings
-            if (EarlyLoadingComplete || !FasterGameLoadingSettings.earlyModContentLoading || !DelayedActions.VanillaModContentLoadCompleted)
+            if (EarlyLoadingComplete || !FasterGameLoadingSettings.earlyModContentLoading)
                 return;
 
             if (skipFrames > 0)

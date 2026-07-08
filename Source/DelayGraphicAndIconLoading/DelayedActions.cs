@@ -122,15 +122,11 @@ namespace FasterGameLoading
         public static bool AllDeferredVisualsLoaded = false;
         /// <summary>自適應靜態圖集烘焙是否失敗（fallback 到原始流程）。</summary>
         public static bool AdaptiveStaticAtlasBakeFailed = false;
-        /// <summary>模組內容載入是否已開始（由 ReloadContentInt Prefix 設定）。</summary>
-        public static bool VanillaModContentLoadCompleted = false;
-
         /// <summary>靜態建構子：註冊快取重置時的回呼。</summary>
         static DelayedActions()
         {
             CacheResetter.Register(() =>
             {
-                VanillaModContentLoadCompleted = false;
                 AllDeferredVisualsLoaded = false;
                 AdaptiveStaticAtlasBakeFailed = false;
             });
@@ -171,7 +167,6 @@ namespace FasterGameLoading
         public void ResetEarlyLoading()
         {
             earlyModContentLoader.Reset();
-            VanillaModContentLoadCompleted = false;
             AllDeferredVisualsLoaded = false;
             AdaptiveStaticAtlasBakeFailed = false;
         }
@@ -187,28 +182,33 @@ namespace FasterGameLoading
         public IEnumerator PerformActions()
         {
             var loadedDefs = new List<ThingDef>();
-            bool runDeferredVisualPipeline = ShouldRunDeferredVisualPipeline();
-            if (runDeferredVisualPipeline)
+            try
             {
-                yield return DeferredLoader.LoadDeferredGraphicsCoroutine(this, loadedDefs);
-                yield return BakeDeferredAtlasesCoroutine();
-            }
-            else
-            {
-                AllDeferredVisualsLoaded = true;
-            }
+                bool runDeferredVisualPipeline = ShouldRunDeferredVisualPipeline();
+                if (runDeferredVisualPipeline)
+                {
+                    yield return DeferredLoader.LoadDeferredGraphicsCoroutine(this, loadedDefs);
+                    yield return BakeDeferredAtlasesCoroutine();
+                }
+                else
+                {
+                    AllDeferredVisualsLoaded = true;
+                }
 
-            if (runDeferredVisualPipeline)
-            {
-                yield return DeferredLoader.UpdateMapMeshForLoadedDefs(loadedDefs);
-                yield return DeferredLoader.LoadDeferredIconsCoroutine(this);
+                if (runDeferredVisualPipeline)
+                {
+                    yield return DeferredLoader.UpdateMapMeshForLoadedDefs(loadedDefs);
+                    yield return DeferredLoader.LoadDeferredIconsCoroutine(this);
+                }
+                yield return DeferredLoader.ResolveSubSoundDefsCoroutine(this);
             }
-            yield return DeferredLoader.ResolveSubSoundDefsCoroutine(this);
-
-            GraphicData_Init_Patch.savedGraphics.Clear();
-            stopwatch.Stop();
-            this.enabled = false;
-            yield return null;
+            finally
+            {
+                SoundStarter_Patch.Unpatch();
+                GraphicData_Init_Patch.savedGraphics.Clear();
+                stopwatch.Stop();
+                this.enabled = false;
+            }
         }
 
         /// <summary>

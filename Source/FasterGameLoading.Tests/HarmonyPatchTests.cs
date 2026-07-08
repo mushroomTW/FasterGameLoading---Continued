@@ -794,5 +794,13 @@ namespace FasterGameLoading.Tests
                 "DelayedActions.PerformActions must directly release the startup sound guard even if deferred loading exits early.");
         }
 
+        [Test]
+        public void TestSubSoundExecuteDelayed_IgnoresNullAction()
+        {
+            var executeDelayed = typeof(SubSoundDef_ResolvePatch).GetMethod("ExecuteDelayed", BindingFlags.NonPublic | BindingFlags.Static);
+
+            Assert.DoesNotThrow(() => executeDelayed.Invoke(null, new object[] { null, null }));
+        }
+
     }
 }

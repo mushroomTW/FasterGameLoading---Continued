@@ -1,17 +1,17 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using System.Threading;
 using System.Xml;
 using HarmonyLib;
 using NUnit.Framework;
-using System.Linq;
-using System.Threading;
-using Verse;
 using UnityEngine;
+using Verse;
 
 
 namespace FasterGameLoading.Tests
@@ -25,7 +25,7 @@ namespace FasterGameLoading.Tests
         public void OneTimeSetUp()
         {
             harmony = new Harmony("FasterGameLoading.Tests.Harmony");
-            
+
             // 1. 手動套用 AccessTools.TypeByName 補丁
             var typeByNameOriginal = AccessTools.Method(typeof(AccessTools), nameof(AccessTools.TypeByName));
             var typeByNamePrefix = AccessTools.Method(typeof(AccessTools_TypeByName_Patch), nameof(AccessTools_TypeByName_Patch.Prefix));
@@ -60,7 +60,7 @@ namespace FasterGameLoading.Tests
             SessionCache.loadedTypesByFullNameSinceLastSession.Clear();
             SessionCache.xmlPathsSinceLastSession.Clear();
             XmlNode_SelectSingleNode_Patch.xmlPathsThisSession.Clear();
-            
+
             // 手動啟用 XML 掃描完成標記，以便測試快取攔截邏輯
             XmlNode_SelectSingleNode_Patch.isXmlScanComplete = true;
 
@@ -84,7 +84,7 @@ namespace FasterGameLoading.Tests
             SessionCache.loadedTypesByFullNameSinceLastSession.Clear();
             SessionCache.xmlPathsSinceLastSession.Clear();
             XmlNode_SelectSingleNode_Patch.xmlPathsThisSession.Clear();
-            
+
             // 清除 AccessTools_AllTypes_Patch 的快取欄位以利後續測試
             var field = typeof(AccessTools_AllTypes_Patch).GetField("allTypesCached", BindingFlags.NonPublic | BindingFlags.Static);
             if (field != null)
@@ -211,7 +211,7 @@ namespace FasterGameLoading.Tests
             var fieldCount = typeof(AccessTools_AllTypes_Patch).GetField("cachedAssembliesCount", BindingFlags.NonPublic | BindingFlags.Static);
             Assert.IsNotNull(fieldCached);
             Assert.IsNotNull(fieldCount);
-            
+
             var mockList = new List<Type> { typeof(string), typeof(int), typeof(double) };
             fieldCached.SetValue(null, mockList);
             fieldCount.SetValue(null, AppDomain.CurrentDomain.GetAssemblies().Length);
@@ -296,6 +296,20 @@ namespace FasterGameLoading.Tests
         }
 
         [Test]
+        public void TestXmlNode_SelectSingleNode_Patch_Postfix_PreservesAnyPreviousMatch()
+        {
+            const string xpath = "/root/item";
+            var document = new XmlDocument();
+            document.LoadXml("<root><item /></root>");
+
+            XmlNode_SelectSingleNode_Patch.Postfix(xpath, document.SelectSingleNode(xpath), true);
+            XmlNode_SelectSingleNode_Patch.Postfix(xpath, null, true);
+
+            Assert.IsTrue(XmlNode_SelectSingleNode_Patch.xmlPathsThisSession[xpath],
+                "An XPath that matched in any XML context must never be persisted as missing.");
+        }
+
+        [Test]
         public void TestXmlNode_SelectSingleNode_Patch_ConcurrencySafety()
         {
             // 模擬跨 session 快取中有一部分已知不存在的節點
@@ -366,11 +380,11 @@ namespace FasterGameLoading.Tests
                 // 5. 修改檔案內容並重新掃描，雜湊應變更
                 XmlChangeDetector.needWriteSettings = false;
                 XmlNode_SelectSingleNode_Patch.isXmlScanComplete = false;
-                
+
                 // 稍微延遲並更新 LastWriteTime 確保變更
                 System.IO.File.SetLastWriteTimeUtc(xmlFile, DateTime.UtcNow.AddSeconds(5));
                 System.IO.File.WriteAllText(xmlFile, "<Defs><ThingDef>mock_modified</ThingDef></Defs>");
-                
+
                 XmlChangeDetector.ScanXmlFiles(new List<string> { tempDir });
 
                 Assert.IsTrue(XmlNode_SelectSingleNode_Patch.isXmlScanComplete);

@@ -1,7 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Verse;
 
 namespace FasterGameLoading
@@ -18,23 +20,56 @@ namespace FasterGameLoading
         /// </summary>
         public static volatile bool needWriteSettings = false;
 
+        internal sealed class XmlScanResult
+        {
+            public readonly Dictionary<string, long> MetadataHashes;
+            public readonly int FileCount;
+            public readonly long ElapsedMilliseconds;
+            public readonly Exception Exception;
+            public readonly bool Bypassed;
+
+            public XmlScanResult(Dictionary<string, long> metadataHashes, int fileCount, long elapsedMilliseconds = 0, Exception exception = null, bool bypassed = false)
+            {
+                MetadataHashes = metadataHashes ?? new Dictionary<string, long>();
+                FileCount = fileCount;
+                ElapsedMilliseconds = elapsedMilliseconds;
+                Exception = exception;
+                Bypassed = bypassed;
+            }
+        }
+
         public static void ScanXmlFiles(List<string> modPaths, string configPath = null)
         {
-            if (Utils.IsMissileGirlActive)
+            CommitXmlScanResult(ScanXmlMetadata(modPaths, configPath));
+        }
+
+        public static void StartScanAsync(List<string> modPaths, string configPath, Action<Action> enqueueMainThreadAction)
+        {
+            if (enqueueMainThreadAction == null) throw new ArgumentNullException(nameof(enqueueMainThreadAction));
+
+            // 背景工作只保有不可變的路徑副本，絕不讀寫 Verse/SessionCache 狀態。
+            var pathCopy = modPaths == null ? new List<string>() : new List<string>(modPaths);
+            Task.Run(() => ScanXmlMetadata(pathCopy, configPath)).ContinueWith(task =>
             {
-                XmlNode_SelectSingleNode_Patch.isXmlScanComplete = true;
-                return;
-            }
-            if ((modPaths == null || modPaths.Count == 0) && string.IsNullOrEmpty(configPath))
+                var result = task.Status == TaskStatus.RanToCompletion
+                    ? task.Result
+                    : new XmlScanResult(null, 0, exception: task.Exception);
+                enqueueMainThreadAction(() => CommitXmlScanResult(result));
+            });
+        }
+
+        internal static XmlScanResult ScanXmlMetadata(List<string> modPaths, string configPath = null)
+        {
+            var stopwatch = Stopwatch.StartNew();
+            if (Utils.IsMissileGirlActive || ((modPaths == null || modPaths.Count == 0) && string.IsNullOrEmpty(configPath)))
             {
-                XmlNode_SelectSingleNode_Patch.isXmlScanComplete = true;
-                return;
+                return new XmlScanResult(null, 0, stopwatch.ElapsedMilliseconds, bypassed: true);
             }
 
             try
             {
                 var nextMetadataHashes = new Dictionary<string, long>();
-                bool anyMetadataChanged = false;
+                int totalXmlCount = 0;
 
                 // 1. 掃描所有 Mod
                 if (modPaths != null)
@@ -62,12 +97,8 @@ namespace FasterGameLoading
                             ScanDirectoryMetadata(patchesPath, ref metadataHash, ref xmlCount);
                         }
 
-                        if (!SessionCache.xmlMetadataHashByMod.TryGetValue(key, out var lastMetadataHash)
-                            || metadataHash != lastMetadataHash)
-                        {
-                            anyMetadataChanged = true;
-                        }
                         nextMetadataHashes[key] = metadataHash;
+                        totalXmlCount += xmlCount;
                     }
                 }
 
@@ -78,42 +109,51 @@ namespace FasterGameLoading
                     long metadataHash = 0;
                     int xmlCount = 0;
                     ScanDirectoryMetadata(configPath, ref metadataHash, ref xmlCount);
-                    if (!SessionCache.xmlMetadataHashByMod.TryGetValue(key, out var lastMetadataHash)
-                        || metadataHash != lastMetadataHash)
-                    {
-                        anyMetadataChanged = true;
-                    }
                     nextMetadataHashes[key] = metadataHash;
+                    totalXmlCount += xmlCount;
                 }
 
-                // 3. 更新快取字典
-                SessionCache.xmlMetadataHashByMod = nextMetadataHashes;
-                SessionCache.xmlContentHashByMod = new Dictionary<string, long>();
-
-                // 以確定性排序後進行順序敏感折疊（polynomial rolling hash），
-                // 避免不同檔案的變更互相抵消導致雜湊碰撞。
-                long newCombinedHash = CombineMetadataHashes(nextMetadataHashes);
-
-                if (FasterGameLoadingSettings.VerboseLogging)
-                {
-                    FGLLog.Message($"XML scan complete. Combined metadata hash: {newCombinedHash}, last saved hash: {SessionCache.xmlCombinedHashSinceLastSession}");
-                }
-
-                if (SessionCache.xmlCombinedHashSinceLastSession != newCombinedHash || anyMetadataChanged)
-                {
-                    // XML metadata 改變，失效 XPath 查詢快取
-                    SessionCache.xmlPathsSinceLastSession.Clear();
-                    SessionCache.xmlCombinedHashSinceLastSession = newCombinedHash;
-                    needWriteSettings = true;
-                }
+                return new XmlScanResult(nextMetadataHashes, totalXmlCount, stopwatch.ElapsedMilliseconds);
             }
             catch (Exception ex)
             {
-                FGLLog.Warning("Error during background XML file scan:", ex);
+                return new XmlScanResult(null, 0, stopwatch.ElapsedMilliseconds, ex);
+            }
+        }
+
+        internal static void CommitXmlScanResult(XmlScanResult result)
+        {
+            try
+            {
+                if (result == null || result.Exception != null)
+                {
+                    FGLLog.Warning("Error during background XML file scan:", result?.Exception);
+                    return;
+                }
+                if (result.Bypassed) return;
+
+                var previous = SessionCache.xmlMetadataHashByMod;
+                bool metadataChanged = previous.Count != result.MetadataHashes.Count
+                    || result.MetadataHashes.Any(pair => !previous.TryGetValue(pair.Key, out var oldHash) || oldHash != pair.Value);
+                long combinedHash = CombineMetadataHashes(result.MetadataHashes);
+
+                SessionCache.xmlMetadataHashByMod = result.MetadataHashes;
+                SessionCache.xmlContentHashByMod = new Dictionary<string, long>();
+
+                if (FasterGameLoadingSettings.VerboseLogging)
+                {
+                    FGLLog.Message($"XML scan complete. Files: {result.FileCount}, elapsed: {result.ElapsedMilliseconds}ms, combined metadata hash: {combinedHash}, last saved hash: {SessionCache.xmlCombinedHashSinceLastSession}");
+                }
+
+                if (SessionCache.xmlCombinedHashSinceLastSession != combinedHash || metadataChanged)
+                {
+                    SessionCache.xmlPathsSinceLastSession.Clear();
+                    SessionCache.xmlCombinedHashSinceLastSession = combinedHash;
+                    needWriteSettings = true;
+                }
             }
             finally
             {
-                // 無論如何，將掃描標記設為完成，確保主執行緒加載順利啟用攔截
                 XmlNode_SelectSingleNode_Patch.isXmlScanComplete = true;
             }
         }
@@ -125,16 +165,16 @@ namespace FasterGameLoading
                 var dirInfo = new System.IO.DirectoryInfo(dirPath);
                 if (!dirInfo.Exists) return;
 
-                var files = dirInfo.EnumerateFiles("*.xml", System.IO.SearchOption.AllDirectories)
-                                   .OrderBy(f => f.FullName, System.StringComparer.Ordinal);
+                var files = dirInfo.EnumerateFiles("*.xml", SearchOption.AllDirectories)
+                                   .OrderBy(f => f.FullName, StringComparer.Ordinal);
                 foreach (var info in files)
                 {
                     try
                     {
                         var file = info.FullName;
-                        var relativePath = Path.GetFileName(dirPath.TrimEnd(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar))
+                        var relativePath = Path.GetFileName(dirPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
                             + "/"
-                            + file.Substring(dirPath.Length).TrimStart(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
+                            + file.Substring(dirPath.Length).TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
                         long fileHash = 17;
                         fileHash = fileHash * 31 + StableStringHash(relativePath.Replace('\\', '/'));
                         fileHash = fileHash * 31 + info.LastWriteTimeUtc.Ticks;

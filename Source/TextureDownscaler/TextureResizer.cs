@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Verse;
@@ -51,22 +51,22 @@ namespace FasterGameLoading
         public static void DestroyTemporaryUnityObject(UnityEngine.Object obj)
         {
             if (obj == null) return;
-            try 
-            { 
-                UnityEngine.Object.DestroyImmediate(obj); 
+            try
+            {
+                UnityEngine.Object.DestroyImmediate(obj);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 if (FasterGameLoadingSettings.VerboseLogging)
                 {
                     FGLLog.Warning($"DestroyImmediate failed, falling back to Destroy: {ex.Message}");
                 }
-                try 
-                { 
-                    UnityEngine.Object.Destroy(obj); 
+                try
+                {
+                    UnityEngine.Object.Destroy(obj);
                 }
-                catch 
-                { 
+                catch
+                {
                     // Ignore double fault
                 }
             }

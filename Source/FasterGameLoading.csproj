@@ -45,7 +45,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Krafs.Rimworld.Ref" Version="1.6.4850" />
-    <PackageReference Include="Lib.Harmony" Version="2.*">
+    <PackageReference Include="Lib.Harmony" Version="2.4.2">
       <ExcludeAssets>runtime</ExcludeAssets>
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -53,7 +53,6 @@
   <PropertyGroup>
     <!-- Disable automatic generation of assembly attributes -->
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <BaseOutputPath>C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\FasterGameLoading---Continued\Assemblies</BaseOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Publicize Include="Assembly-CSharp" />

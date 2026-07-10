@@ -28,7 +28,7 @@ Enabled by default:
 
 - **Load mod content early**: Processes pending mod content and type reflection during idle loading gaps before RimWorld's normal `ReloadContentInt` pass reaches those mods.
 - **Multi-threaded preloading**: Loads XML assets in parallel while preserving RimWorld's original load-folder override order.
-- **XPath caching**: Caches common missing XML queries during startup. Synchronous validation checks only XML metadata (path, size, modified time), so it no longer reads full XML file contents.
+- **XPath caching**: Caches only XML queries that never matched in the observed startup session. Metadata validation runs in the background; its result is committed on the Unity main thread before persisted misses are used.
 
 Disabled by default:
 
@@ -97,7 +97,7 @@ FasterGameLoading/
 │   ├── XMLLoadingCache/           # XML loading and XPath caching
 │   ├── EarlyModContentLoading/    # Load mod content early and reflection cache
 │   ├── TextureDownscaler/         # Downscale textures and cache loading
-│   ├── SmarterAtlasBaking/        # Adaptive atlas baking
+│   ├── AdaptiveAtlasBaking/       # Adaptive atlas baking
 │   ├── DelayGraphicAndIconLoading/# Delay graphic and icon loading
 │   ├── DelaySoundLoading/         # Deferred sound resolution
 │   ├── Compatibility/             # Third-party mod compatibility handling

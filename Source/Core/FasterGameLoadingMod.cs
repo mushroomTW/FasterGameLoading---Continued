@@ -1,7 +1,7 @@
-using HarmonyLib;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using HarmonyLib;
 using UnityEngine;
 using Verse;
 
@@ -31,7 +31,7 @@ namespace FasterGameLoading
             Object.DontDestroyOnLoad(gameObject);
             delayedActions = gameObject.AddComponent<DelayedActions>();
             settings = this.GetSettings<FasterGameLoadingSettings>();
-            
+
             // 背景預載入已快取的紋理
             ModContentLoaderTexture2D_LoadTexture_Patch.StartPreloadCachedTextures();
             StartCleanupInvalidImageOptCaches();
@@ -62,7 +62,7 @@ namespace FasterGameLoading
                 }
             });
 
-            // 啟動同步 XML 檔案變更掃描，比對是否需要清除 XPath 快取
+            // XML metadata 僅在背景執行緒讀取；快取狀態由 Update 主執行緒提交。
             try
             {
                 var thirdPartyModPaths = new System.Collections.Generic.List<string>();
@@ -74,11 +74,12 @@ namespace FasterGameLoading
                     }
                 }
                 string configPath = GenFilePaths.ConfigFolderPath;
-                XmlChangeDetector.ScanXmlFiles(thirdPartyModPaths, configPath);
+                XmlNode_SelectSingleNode_Patch.isXmlScanComplete = false;
+                XmlChangeDetector.StartScanAsync(thirdPartyModPaths, configPath, delayedActions.EnqueueMainThreadAction);
             }
             catch (System.Exception ex)
             {
-                FGLLog.Warning("Failed to perform synchronous XML file scan:", ex);
+                FGLLog.Warning("Failed to start XML file scan:", ex);
                 // 萬一出錯，確保快取攔截功能不會被永久關閉
                 XmlNode_SelectSingleNode_Patch.isXmlScanComplete = true;
             }

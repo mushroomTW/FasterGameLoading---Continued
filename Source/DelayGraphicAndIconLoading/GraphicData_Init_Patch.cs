@@ -1,6 +1,6 @@
-using HarmonyLib;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
+using HarmonyLib;
 using Verse;
 
 namespace FasterGameLoading

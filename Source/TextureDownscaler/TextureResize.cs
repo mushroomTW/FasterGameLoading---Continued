@@ -1,8 +1,8 @@
-using RimWorld;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using RimWorld;
 using UnityEngine;
 using Verse;
 using Color = UnityEngine.Color;
@@ -73,16 +73,21 @@ namespace FasterGameLoading
                         ResizeTexture(entry);
                     }
                     FGLLog.Message($"Downscaled {texturesToResize.Count} textures (cached, originals untouched)");
-                    cacheManager.ReplaceTextureCacheDirectory(stagingDirectory);
-                    LogResizeSummary(texturesToResize.Count);
+                    if (cacheManager.ReplaceTextureCacheDirectory(stagingDirectory))
+                    {
+                        LogResizeSummary(texturesToResize.Count);
+                        // 只在目錄與對照表一同升級成功後持久化。
+                        LoadedModManager.GetMod<FasterGameLoadingMod>().WriteSettings();
+                    }
+                    else
+                    {
+                        FGLLog.Warning("Texture cache promotion failed; previous cache was kept.");
+                    }
                 }
                 else
                 {
                     cacheManager.RestorePreviousCacheState(previousCacheMap, previousCacheDirectory, stagingDirectory);
                 }
-
-                // 持久化快取對照表
-                LoadedModManager.GetMod<FasterGameLoadingMod>().WriteSettings();
             }
             catch (Exception ex)
             {

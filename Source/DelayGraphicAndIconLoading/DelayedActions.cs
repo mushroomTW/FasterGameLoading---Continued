@@ -1,9 +1,10 @@
-using RimWorld;
-using System;
+﻿using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using RimWorld;
 using UnityEngine;
 using Verse;
 using Verse.Sound;
@@ -25,6 +26,12 @@ namespace FasterGameLoading
         private readonly Queue<(ThingDef def, Action action)> graphicsToLoad = new();
         private readonly Queue<(BuildableDef def, Action action)> iconsToLoad = new();
         private readonly Queue<(SubSoundDef def, Action action)> subSoundDefToResolve = new();
+        private readonly ConcurrentQueue<Action> mainThreadActions = new();
+
+        public void EnqueueMainThreadAction(Action action)
+        {
+            if (action != null) mainThreadActions.Enqueue(action);
+        }
 
         public int GraphicsToLoadCount
         {
@@ -115,6 +122,7 @@ namespace FasterGameLoading
             lock (graphicsToLoad) graphicsToLoad.Clear();
             lock (iconsToLoad) iconsToLoad.Clear();
             lock (subSoundDefToResolve) subSoundDefToResolve.Clear();
+            while (mainThreadActions.TryDequeue(out _)) { }
         }
 
         // ── 全域狀態旗標 ──
@@ -153,6 +161,17 @@ namespace FasterGameLoading
         {
             // 在主執行緒排空背景執行緒累積的日誌，避免背景緒直接呼叫非執行緒安全的 Verse.Log
             FGLLog.FlushPending();
+            while (mainThreadActions.TryDequeue(out var action))
+            {
+                try
+                {
+                    action();
+                }
+                catch (Exception ex)
+                {
+                    FGLLog.Warning("Error executing main-thread action:", ex);
+                }
+            }
             ModContentLoaderTexture2D_LoadTexture_Patch.ProcessPendingMainThreadRequests();
         }
 
@@ -207,7 +226,7 @@ namespace FasterGameLoading
                 SoundStarter_Patch.Unpatch();
                 GraphicData_Init_Patch.savedGraphics.Clear();
                 stopwatch.Stop();
-                this.enabled = false;
+                // 保持 Update 泵送運作，讓後續背景貼圖請求仍能安全回到 Unity 主執行緒。
             }
         }
 

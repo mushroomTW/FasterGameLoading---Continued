@@ -1,4 +1,4 @@
-namespace FasterGameLoading
+﻿namespace FasterGameLoading
 {
     /// <summary>
     /// FasterGameLoading 內部共用常數。

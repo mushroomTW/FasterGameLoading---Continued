@@ -1,11 +1,11 @@
-using HarmonyLib;
-using RimWorld.IO;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using HarmonyLib;
+using RimWorld.IO;
 using UnityEngine;
 using Verse;
 
@@ -27,12 +27,25 @@ namespace FasterGameLoading
             public Texture2D Result;
             public Exception Exception;
             public ManualResetEventSlim CompletedEvent = new ManualResetEventSlim(false);
+            private int cancelled;
+
+            public bool IsCancelled => Volatile.Read(ref cancelled) != 0;
+
+            public void Cancel()
+            {
+                Interlocked.Exchange(ref cancelled, 1);
+            }
         }
 
         public static void ProcessPendingMainThreadRequests()
         {
             while (mainThreadLoadRequests.TryDequeue(out var request))
             {
+                if (request.IsCancelled)
+                {
+                    continue;
+                }
+
                 try
                 {
                     var result = ModContentLoader<Texture2D>.LoadTexture(request.File);
@@ -240,8 +253,9 @@ namespace FasterGameLoading
                     if (request.Exception != null)
                     {
                         FGLLog.Warning($"Error loading texture on main thread redirect: {request.Exception.Message}");
-                        __state = true;
-                        return true;
+                        __result = null;
+                        __state = false;
+                        return false;
                     }
                     if (request.Result != null)
                     {
@@ -255,8 +269,10 @@ namespace FasterGameLoading
                     FGLLog.Warning($"Timeout waiting for texture loading on main thread: {file.FullPath}");
                 }
 
-                __state = true;
-                return true;
+                request.Cancel();
+                __result = null;
+                __state = false;
+                return false;
             }
 
             var fullPath = file.FullPath;

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -115,7 +115,7 @@ namespace FasterGameLoading
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
                 loadedTexturesSinceLastSession ??= new Dictionary<string, string>();
-                
+
                 if (tempTypes != null)
                 {
                     loadedTypesByFullNameSinceLastSession = new ConcurrentDictionary<string, string>(tempTypes);
@@ -131,8 +131,8 @@ namespace FasterGameLoading
                         if (!kvp.Value && XmlNode_SelectSingleNode_Patch.IsCacheableXpath(kvp.Key))
                         {
                             // 排除之前因 Bug 錯誤快取的 Ayameduki/WRelicK 相關補丁 XPath，或是包含定位符的 XPath
-                            if (kvp.Key.Contains("AT_Tag_") || 
-                                kvp.Key.Contains("KeyedSettings") || 
+                            if (kvp.Key.Contains("AT_Tag_") ||
+                                kvp.Key.Contains("KeyedSettings") ||
                                 kvp.Key.Contains("FactionDef") ||
                                 kvp.Key.Contains("[@"))
                             {
@@ -142,7 +142,7 @@ namespace FasterGameLoading
                         }
                     }
                 }
-                
+
                 modsInLastSession ??= new List<string>();
                 xmlMetadataHashByMod ??= new Dictionary<string, long>();
                 xmlContentHashByMod ??= new Dictionary<string, long>();

@@ -1,5 +1,5 @@
+﻿using System.Collections.Generic;
 using NUnit.Framework;
-using System.Collections.Generic;
 
 namespace FasterGameLoading
 {
@@ -51,7 +51,7 @@ namespace FasterGameLoading
         public void CombineMetadataHashes_IsOrderSensitive()
         {
             // 順序敏感的 polynomial hash：交換兩個值應改變結果。
-            var first  = new Dictionary<string, long> { ["a"] = 1L, ["b"] = 2L };
+            var first = new Dictionary<string, long> { ["a"] = 1L, ["b"] = 2L };
             var second = new Dictionary<string, long> { ["a"] = 2L, ["b"] = 1L };
 
             Assert.AreNotEqual(
@@ -79,6 +79,25 @@ namespace FasterGameLoading
             // combined_aB = (0 * 31 + 1) * 31 + 2 = 33
             var input = new Dictionary<string, long> { ["a"] = 1L, ["b"] = 2L };
             Assert.AreEqual(33L, XmlChangeDetector.CombineMetadataHashes(input));
+        }
+
+        [Test]
+        public void ScanXmlMetadata_DoesNotCommitSessionState()
+        {
+            var original = SessionCache.xmlMetadataHashByMod;
+            try
+            {
+                SessionCache.xmlMetadataHashByMod = new Dictionary<string, long> { ["existing"] = 7L };
+
+                var result = XmlChangeDetector.ScanXmlMetadata(new List<string>(), null);
+
+                Assert.IsTrue(result.Bypassed);
+                Assert.AreEqual(7L, SessionCache.xmlMetadataHashByMod["existing"]);
+            }
+            finally
+            {
+                SessionCache.xmlMetadataHashByMod = original;
+            }
         }
     }
 }

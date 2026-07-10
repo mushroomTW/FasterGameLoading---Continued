@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using HarmonyLib;
 
@@ -40,7 +40,7 @@ namespace FasterGameLoading
             {
                 if (dep == null) continue;
                 var packageId = GetDependencyPackageId(dep);
-                if (packageId != null && packageId.Equals(targetPackageId, System.StringComparison.OrdinalIgnoreCase))
+                if (packageId != null && packageId.Equals(targetPackageId, StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }

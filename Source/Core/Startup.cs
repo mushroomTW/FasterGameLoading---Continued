@@ -1,6 +1,6 @@
-using HarmonyLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using HarmonyLib;
 using Verse;
 
 namespace FasterGameLoading
@@ -41,7 +41,7 @@ namespace FasterGameLoading
                 }
             }
             SessionCache.modsInLastSession = mods;
-            
+
             // 執行所有註冊的啟動完成回呼
             foreach (var callback in onStartupCompleted)
             {

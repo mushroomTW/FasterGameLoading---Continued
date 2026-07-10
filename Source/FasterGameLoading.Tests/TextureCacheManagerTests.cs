@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using NUnit.Framework;
 
@@ -49,7 +49,7 @@ namespace FasterGameLoading.Tests
         public void TestCacheKeyInvalidation_WhenFileChanges()
         {
             string originalPath = Path.Combine(tempDir, "original.png");
-            
+
             // 1. 檔案不存在時，使用純路徑作為 Key
             string path1 = manager.GetCachePath(originalPath);
 
@@ -67,10 +67,10 @@ namespace FasterGameLoading.Tests
             File.SetLastWriteTimeUtc(originalPath, DateTime.UtcNow.AddMinutes(-3));
             string path4 = manager.GetCachePath(originalPath);
 
-            // 驗證當檔案長度或存在狀態變更時，產生的快取路徑（MD5）不相同；但若僅修改時間改變，路徑應保持相同以支援 Touch 機制。
+            // 驗證來源身分包含長度與 UTC 修改時間；相同大小的替換檔案也必須失效。
             Assert.AreNotEqual(path1, path2);
             Assert.AreNotEqual(path2, path3);
-            Assert.AreEqual(path3, path4);
+            Assert.AreNotEqual(path3, path4);
         }
 
         [Test]
@@ -133,47 +133,60 @@ namespace FasterGameLoading.Tests
         }
 
         [Test]
+        public void ReplaceTextureCacheDirectory_MissingStagingPreservesExistingCache()
+        {
+            Directory.CreateDirectory(manager.CacheDirectory);
+            string retainedFile = Path.Combine(manager.CacheDirectory, "retained.png");
+            File.WriteAllBytes(retainedFile, new byte[] { 1 });
+
+            bool replaced = manager.ReplaceTextureCacheDirectory(Path.Combine(tempDir, "missing-staging"));
+
+            Assert.IsFalse(replaced);
+            Assert.IsTrue(File.Exists(retainedFile));
+        }
+
+        [Test]
         public void TestCleanupObsoleteCacheFiles()
         {
             // 1. 建立測試環境：一個存在的原始檔案，一個不存在的原始檔案
             string originalExist = Path.Combine(tempDir, "exist.png");
             string originalDeleted = Path.Combine(tempDir, "deleted.png");
-            
+
             File.WriteAllBytes(originalExist, new byte[] { 1 });
             // deleted.png 刻意不建立，模擬已被刪除或更名的原始檔案
-            
+
             string cacheDir = manager.CacheDirectory;
             if (!Directory.Exists(cacheDir))
             {
                 Directory.CreateDirectory(cacheDir);
             }
-            
+
             string cacheExistPath = Path.Combine(cacheDir, "cache_exist.png");
             string cacheDeletedPath = Path.Combine(cacheDir, "cache_deleted.png");
             string cacheUnreferencedPath = Path.Combine(cacheDir, "cache_unref.png");
-            
+
             File.WriteAllBytes(cacheExistPath, new byte[] { 2 });
             File.WriteAllBytes(cacheDeletedPath, new byte[] { 3 });
             File.WriteAllBytes(cacheUnreferencedPath, new byte[] { 4 });
-            
+
             // 2. 註冊對照字典
             manager.SetCacheEntry(originalExist, cacheExistPath);
             manager.SetCacheEntry(originalDeleted, cacheDeletedPath);
             // cacheUnreferencedPath 刻意不註冊，模擬孤立的無效快取檔案
-            
+
             Assert.AreEqual(2, manager.CacheCount);
             Assert.IsTrue(File.Exists(cacheExistPath));
             Assert.IsTrue(File.Exists(cacheDeletedPath));
             Assert.IsTrue(File.Exists(cacheUnreferencedPath));
-            
+
             // 3. 執行清理
             manager.CleanupObsoleteCacheFiles();
-            
+
             // 4. 驗證字典與實體檔案清理結果
             Assert.AreEqual(1, manager.CacheCount);
             Assert.IsTrue(manager.ResizedTextureCache.ContainsKey(originalExist));
             Assert.IsFalse(manager.ResizedTextureCache.ContainsKey(originalDeleted));
-            
+
             Assert.IsTrue(File.Exists(cacheExistPath));
             Assert.IsFalse(File.Exists(cacheDeletedPath));
             Assert.IsFalse(File.Exists(cacheUnreferencedPath));

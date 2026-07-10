@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -30,7 +30,7 @@ namespace FasterGameLoading
 
         /// <summary>紋理快取的根目錄。</summary>
         public string CacheDirectory => baseCacheDir ?? Path.Combine(GenFilePaths.SaveDataFolderPath, FGLConsts.ModName, FGLConsts.TextureCacheDir);
-        
+
         public string BuildCacheDirectory(string suffix)
         {
             if (baseCacheDir != null)
@@ -39,7 +39,7 @@ namespace FasterGameLoading
             }
             return Path.Combine(GenFilePaths.SaveDataFolderPath, FGLConsts.ModName, suffix);
         }
-        
+
         private string activeCacheDirectory;
 
         public TextureCacheManager()
@@ -96,7 +96,7 @@ namespace FasterGameLoading
                 var file = new FileInfo(originalPath);
                 if (file.Exists)
                 {
-                    return originalPath + "|" + file.Length;
+                    return originalPath.NormalizePath() + "|" + file.Length + "|" + file.LastWriteTimeUtc.Ticks;
                 }
             }
             catch (IOException ex)
@@ -305,28 +305,30 @@ namespace FasterGameLoading
         }
 
         /// <summary>將暫存目錄替換為正式快取目錄，並重建相對路徑對照表。</summary>
-        public void ReplaceTextureCacheDirectory(string stagingDirectory)
+        public bool ReplaceTextureCacheDirectory(string stagingDirectory)
         {
-            bool moved = false;
-            try
+            if (string.IsNullOrEmpty(stagingDirectory) || !Directory.Exists(stagingDirectory))
             {
-                if (Directory.Exists(CacheDirectory))
-                {
-                    Directory.Delete(CacheDirectory, true);
-                }
-                if (Directory.Exists(stagingDirectory))
-                {
-                    Directory.Move(stagingDirectory, CacheDirectory);
-                    moved = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                FGLLog.Error("Failed to replace texture cache directory. Falling back.", ex);
+                return false;
             }
 
-            if (moved)
+            string backupDirectory = CacheDirectory + "_Backup";
+            bool movedPreviousCache = false;
+            bool movedStagingCache = false;
+            try
             {
+                if (Directory.Exists(backupDirectory))
+                {
+                    Directory.Delete(backupDirectory, true);
+                }
+                if (Directory.Exists(CacheDirectory))
+                {
+                    Directory.Move(CacheDirectory, backupDirectory);
+                    movedPreviousCache = true;
+                }
+                Directory.Move(stagingDirectory, CacheDirectory);
+                movedStagingCache = true;
+
                 var updatedCacheMap = new Dictionary<string, string>();
                 lock (cacheLock)
                 {
@@ -337,13 +339,34 @@ namespace FasterGameLoading
                     resizedTextureCache = updatedCacheMap;
                 }
                 activeCacheDirectory = CacheDirectory;
+                md5HashCache.Clear();
+
+                if (movedPreviousCache && Directory.Exists(backupDirectory))
+                {
+                    Directory.Delete(backupDirectory, true);
+                }
+                return true;
             }
-            else
+            catch (Exception ex)
             {
-                lock (cacheLock) { resizedTextureCache.Clear(); }
-                activeCacheDirectory = CacheDirectory;
+                try
+                {
+                    if (movedStagingCache && Directory.Exists(CacheDirectory))
+                    {
+                        Directory.Delete(CacheDirectory, true);
+                    }
+                    if (movedPreviousCache && Directory.Exists(backupDirectory) && !Directory.Exists(CacheDirectory))
+                    {
+                        Directory.Move(backupDirectory, CacheDirectory);
+                    }
+                }
+                catch (Exception rollbackEx)
+                {
+                    FGLLog.Error("Failed to restore previous texture cache directory.", rollbackEx);
+                }
+                FGLLog.Error("Failed to replace texture cache directory; previous cache was restored.", ex);
+                return false;
             }
-            md5HashCache.Clear();
         }
 
         /// <summary>提供向內部字典新增項目的執行緒安全介面。</summary>

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using HarmonyLib;
 using UnityEngine;
@@ -154,7 +154,7 @@ namespace FasterGameLoading
                 if (!hasAny) return; // 載入列表尚未初始化完畢（空集合），下次再來
 
                 // 迴圈順利完成後才標記初始化，避免例外導致半初始化狀態被永久鎖定
-                rootsInitialized = targetModRoots.Count > 0;
+                rootsInitialized = true;
             }
             catch (Exception ex)
             {
@@ -214,7 +214,7 @@ namespace FasterGameLoading
         private static bool IsTargetModTexture(Texture2D texture)
         {
             if (texture == null) return false;
-            
+
             // 1. 優先比對實體
             if (ModContentLoaderTexture2D_LoadTexture_Patch.skippedBakingTextures.ContainsKey(texture))
             {

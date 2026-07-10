@@ -1,9 +1,9 @@
-using HarmonyLib;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Xml;
+using HarmonyLib;
 using Verse;
 
 namespace FasterGameLoading
@@ -21,7 +21,7 @@ namespace FasterGameLoading
         /// </summary>
         public static ConcurrentDictionary<string, bool> xmlPathsThisSession = new ConcurrentDictionary<string, bool>();
         private static volatile bool patchEnabled = true;
-        
+
         /// <summary>
         /// 背景 XML 檔案掃描與雜湊比對是否已完成。
         /// </summary>
@@ -115,9 +115,9 @@ namespace FasterGameLoading
 
             // 只有包含 '/'，或者以 'Defs'、'/'、'[' 開頭的 XPath 查詢才被認為是定位用的 XPath，可以安全地進行快取。
             // 避免誤快取像是 'settingsKey', 'match', 'nomatch', 'value', 'xpath' 這樣的局部子節點欄位名稱。
-            return xpath.Contains("/") || 
-                   xpath.StartsWith("Defs", StringComparison.OrdinalIgnoreCase) || 
-                   xpath.StartsWith("/") || 
+            return xpath.Contains("/") ||
+                   xpath.StartsWith("Defs", StringComparison.OrdinalIgnoreCase) ||
+                   xpath.StartsWith("/") ||
                    xpath.StartsWith("[");
         }
 
@@ -156,7 +156,8 @@ namespace FasterGameLoading
                 return;
             }
 
-            xmlPathsThisSession[xpath] = __result is not null;
+            // 同一 XPath 可在多份 XML 中有不同結果；只要曾命中就不可持久化為不存在。
+            xmlPathsThisSession.AddOrUpdate(xpath, __result is not null, (_, wasEverMatched) => wasEverMatched || __result is not null);
         }
     }
 

@@ -1,7 +1,7 @@
-using HarmonyLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection.Emit;
+using HarmonyLib;
 using Verse;
 using Verse.Sound;
 

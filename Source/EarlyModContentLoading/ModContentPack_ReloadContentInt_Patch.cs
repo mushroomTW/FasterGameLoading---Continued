@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using HarmonyLib;
 using Verse;
 
@@ -20,7 +20,10 @@ namespace FasterGameLoading
 
         public static bool Prefix(ModContentPack __instance)
         {
-            ModContentLoaderTexture2D_LoadTexture_Patch.TryDrainMainThreadRequests();
+            if (UnityData.IsInMainThread)
+            {
+                ModContentLoaderTexture2D_LoadTexture_Patch.TryDrainMainThreadRequests();
+            }
             return !loadedMods.Contains(__instance);
         }
 

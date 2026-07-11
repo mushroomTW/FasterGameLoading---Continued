@@ -28,7 +28,7 @@ Enabled by default:
 
 - **Load mod content early**: Processes pending mod content and type reflection during idle loading gaps before RimWorld's normal `ReloadContentInt` pass reaches those mods.
 - **Multi-threaded preloading**: Loads XML assets in parallel while preserving RimWorld's original load-folder override order.
-- **XPath caching**: Caches only XML queries that never matched in the observed startup session. Metadata validation runs in the background; its result is committed on the Unity main thread before persisted misses are used.
+- **XPath caching**: Caches only XML queries that never matched in the observed startup session. Metadata validation scans Mod `Defs` and `Patches` in the background; its result is committed on the Unity main thread before persisted misses are used.
 
 Disabled by default:
 
@@ -44,7 +44,7 @@ Manual tool:
 ## Notes
 
 - XPath caching may rebuild after the first launch, mod updates, or XML edits.
-- XML edits are detected when file path, size, or modified time changes.
+- Mod `Defs` and `Patches` XML edits are detected when file path, size, or modified time changes; Mod settings XML is ignored.
 - Brief startup unresponsiveness can be normal, especially with large mod lists.
 - Startup sound playback is temporarily held until deferred sound definitions finish resolving, then released automatically.
 - **Delay graphic and icon loading** is an advanced option. If you see texture or icon timing issues, disable it first.
@@ -54,17 +54,17 @@ Manual tool:
 
 Compatibility handling exists for:
 
-- Loading Progress
-- Missile Girl - Performance Mod
-- DefLoadCache
-- Image Opt
-- Graphics Settings+
-- HugsLib
-- XmlExtensions
-- AyaTweaks / Ayameduki mods
-- Humanoid Alien Races
-- Ancot Library / Ancot's Races Framework
-- ChezhouLib
+- [Loading Progress](https://github.com/ilyvion/LoadingProgress)
+- [Missile Girl - Performance Mod](https://github.com/ViralReaction/MissileGirl)
+- [DefLoadCache](https://github.com/FluxxField/rimworld-defload-cache)
+- [Image Opt](https://steamcommunity.com/sharedfiles/filedetails/?id=3543873568)
+- [Graphics Settings+](https://github.com/RealTelefonmast/GraphicsSetter)
+- [HugsLib](https://github.com/UnlimitedHugs/RimworldHugsLib)
+- [XmlExtensions](https://github.com/15adhami/XmlExtensions)
+- [AyaTweaks](https://gitlab.com/WRelicK/AyaTweaks2.0) / Ayameduki mods
+- [Humanoid Alien Races](https://github.com/erdelf/AlienRaces)
+- [Ancot Library](https://steamcommunity.com/sharedfiles/filedetails/?id=2988801276)
+- [ChezhouLib](https://steamcommunity.com/sharedfiles/filedetails/?id=3595247479)
 
 Important behavior:
 

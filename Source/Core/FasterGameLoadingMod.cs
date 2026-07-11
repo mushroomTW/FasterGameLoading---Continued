@@ -73,9 +73,8 @@ namespace FasterGameLoading
                         thirdPartyModPaths.Add(m.RootDir.FullName);
                     }
                 }
-                string configPath = GenFilePaths.ConfigFolderPath;
                 XmlNode_SelectSingleNode_Patch.isXmlScanComplete = false;
-                XmlChangeDetector.StartScanAsync(thirdPartyModPaths, configPath, delayedActions.EnqueueMainThreadAction);
+                XmlChangeDetector.StartScanAsync(thirdPartyModPaths, null, delayedActions.EnqueueMainThreadAction);
             }
             catch (System.Exception ex)
             {

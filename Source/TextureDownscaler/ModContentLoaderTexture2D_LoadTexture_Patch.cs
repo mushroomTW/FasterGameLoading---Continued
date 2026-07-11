@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -237,6 +237,15 @@ namespace FasterGameLoading
                 return true;
             }
 
+            // Graphics Settings+ 啟用時，FGL 不需要攔截紋理載入。
+            // 原版 LoadTexture 可以安全在背景執行緒執行，
+            // Graphics Settings+ 自行處理 DDS 載入。
+            if (GraphicsSettingsCompat.ShouldBypassTextureReplacement)
+            {
+                __state = false;
+                return true;
+            }
+
             if (!UnityData.IsInMainThread)
             {
                 // 當前非主線程，我們無法安全地呼叫 Unity 的資源載入 API。
@@ -248,7 +257,7 @@ namespace FasterGameLoading
                 // 泵送合約：DelayedActions（MonoBehaviour）的 Update() 每幀在主執行緒呼叫
                 // ProcessPendingMainThreadRequests()，確保此請求在下一幀內被處理。
                 // 參見 Source\DelayGraphicAndIconLoading\DelayedActions.cs:Update()。
-                if (request.CompletedEvent.Wait(5000))
+                if (request.CompletedEvent.Wait(1000))
                 {
                     if (request.Exception != null)
                     {

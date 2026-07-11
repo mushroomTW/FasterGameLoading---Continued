@@ -9,7 +9,7 @@ using Verse;
 namespace FasterGameLoading
 {
     /// <summary>
-    /// 在背景執行緒中異步掃描所有啟用中第三方 Mod 的 XML 檔案，
+    /// 在背景執行緒中異步掃描所有啟用中第三方 Mod 的 Defs 與 Patches XML 檔案，
     /// 計算 XML 檔案路徑、大小與修改時間的 metadata 雜湊，並動態決定是否失效快取。
     /// 不讀取 XML 內容，避免大 modlist 啟動時產生大量磁碟 I/O。
     /// </summary>
@@ -100,17 +100,6 @@ namespace FasterGameLoading
                         nextMetadataHashes[key] = metadataHash;
                         totalXmlCount += xmlCount;
                     }
-                }
-
-                // 2. 掃描 Config 目錄
-                if (!string.IsNullOrEmpty(configPath) && Directory.Exists(configPath))
-                {
-                    var key = configPath.ToLowerInvariant();
-                    long metadataHash = 0;
-                    int xmlCount = 0;
-                    ScanDirectoryMetadata(configPath, ref metadataHash, ref xmlCount);
-                    nextMetadataHashes[key] = metadataHash;
-                    totalXmlCount += xmlCount;
                 }
 
                 return new XmlScanResult(nextMetadataHashes, totalXmlCount, stopwatch.ElapsedMilliseconds);

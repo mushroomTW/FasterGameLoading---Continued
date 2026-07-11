@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
@@ -61,7 +61,7 @@ namespace FasterGameLoading
                         LoadedModManager.GetMod<FasterGameLoadingMod>().WriteSettings();
                         if (FasterGameLoadingSettings.VerboseLogging)
                         {
-                            FGLLog.Message("XML cache invalidated and new hash saved to settings on main thread at startup completion.");
+                            FGLLog.Message("XPath cache invalidated and new hash saved to settings on main thread at startup completion.");
                         }
                     }
                     catch (Exception ex)

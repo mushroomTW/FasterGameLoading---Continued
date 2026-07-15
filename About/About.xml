@@ -6,7 +6,7 @@
     <li>1.6</li>
   </supportedVersions>
   <packageId>Taranchuk.FasterGameLoading</packageId>
-  <modVersion>2026.07.11.4</modVersion>
+  <modVersion>2026.07.15.1</modVersion>
   <description>
 === Does loading take forever? This mod is for you! ===
 
@@ -44,6 +44,7 @@ Original mod by Taranchuk. This is a maintained fork with bug fixes and improvem
   </description>
   <loadBefore>
     <li>Ludeon.RimWorld</li>
+    <li>brrainz.visualexceptions</li>
   </loadBefore>
   <loadAfter>
     <li>brrainz.harmony</li>

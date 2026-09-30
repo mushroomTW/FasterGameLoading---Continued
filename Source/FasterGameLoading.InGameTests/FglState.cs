@@ -28,7 +28,10 @@ namespace FasterGameLoading.InGameTests
             + $"staticAtlasesBaking={FasterGameLoadingSettings.StaticAtlasesBaking}, "
             + $"earlyModContentLoading={FasterGameLoadingSettings.earlyModContentLoading}, "
             + $"typeLookupCache={FasterGameLoadingSettings.TypeLookupCache}, "
-            + $"enableMultiThreading={FasterGameLoadingSettings.EnableMultiThreading}";
+            + $"enableMultiThreading={FasterGameLoadingSettings.EnableMultiThreading}, "
+            + $"trimStaticAtlases={FasterGameLoadingSettings.TrimStaticAtlases}, "
+            + $"deduplicateStaticAtlases={FasterGameLoadingSettings.DeduplicateStaticAtlases}, "
+            + $"fastStaticAtlasCompression={FasterGameLoadingSettings.FastStaticAtlasCompression}";
 
         public static bool HasFglPatch(MethodBase method)
         {

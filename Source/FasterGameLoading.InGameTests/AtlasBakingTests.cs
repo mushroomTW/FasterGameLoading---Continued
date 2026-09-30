@@ -14,7 +14,7 @@ namespace FasterGameLoading.InGameTests
     internal static class AtlasBakingTests
     {
         /// <summary>本次載入烘焙的圖集；語言重載後排除原版留下的舊圖集（見 <see cref="LanguageReload.AtlasesBeforeReload"/>）。</summary>
-        private static IEnumerable<StaticTextureAtlas> CurrentLoadAtlases
+        internal static IEnumerable<StaticTextureAtlas> CurrentLoadAtlases
             => GlobalTextureAtlasManager.staticTextureAtlases.Where(static a => TestRunDriver.Round != 2 || !LanguageReload.AtlasesBeforeReload.Contains(a));
 
         [Test]

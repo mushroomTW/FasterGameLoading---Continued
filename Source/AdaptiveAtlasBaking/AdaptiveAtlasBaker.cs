@@ -111,6 +111,9 @@ namespace FasterGameLoading
 
             var bakeStopwatch = new Stopwatch();
             InsertVanillaStaticAtlasEntries();
+            // 與原版烘焙前相同，先移除 Item 與 Misc 中也排在 Building 的紋理（見 StaticAtlasDeduplicator）。
+            // As before vanilla's bake, first remove the Item and Misc entries of textures also queued for Building (see StaticAtlasDeduplicator).
+            StaticAtlasDeduplicator.RemoveDuplicateCopies();
             var buildQueueSnapshot = GlobalTextureAtlasManager.buildQueue.ToList();
             var atlasesToCommit = new List<StaticTextureAtlas>();
 

@@ -21,7 +21,7 @@ Harmony patch 實際套用結果、延遲圖形／圖示／音效是否全部完
    | 組別 | `seed_config` | `quicktest` | 額外 `companion_mods` | 涵蓋 |
    |---|---|---|---|---|
    | 預設 | 無 | `false` | 無 | 預設設定＋語言重載 |
-   | 全開 | `Profiles/AllOn/` | `false` | 無 | 延遲圖形、自適應圖集＋語言重載 |
+   | 全開 | `Profiles/AllOn/` | `false` | 無 | 延遲圖形、自適應圖集、較快的圖集壓縮＋語言重載 |
    | 地圖 | 無 | `true` | 無 | World.FinalizeInit 音效路徑、地圖物件圖形 |
    | 相容（HAR 等） | `Profiles/AllOn/` | `false` | `UnlimitedHugs.HugsLib`、`erdelf.HumanoidAlienRaces`、`Ancot.AncotLibrary`、`automatic.bionicicons` | HugsLib 重新導向、排除名單、圖集保護 |
    | 相容（GS+） | 無 | `false` | `Telefonmast.GraphicsSettings` | 降質快取對 Graphics Settings+ 讓開 |

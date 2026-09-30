@@ -3,5 +3,8 @@
 	<ModSettings Class="FasterGameLoading.FasterGameLoadingSettings">
 		<StaticAtlasesBaking>True</StaticAtlasesBaking>
 		<delayGraphicLoading>True</delayGraphicLoading>
+		<trimStaticAtlases>True</trimStaticAtlases>
+		<deduplicateStaticAtlases>True</deduplicateStaticAtlases>
+		<fastStaticAtlasCompression>True</fastStaticAtlasCompression>
 	</ModSettings>
 </SettingsBlock>

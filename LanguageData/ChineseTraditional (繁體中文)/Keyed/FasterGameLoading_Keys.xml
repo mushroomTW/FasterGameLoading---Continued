@@ -7,6 +7,12 @@
     <FGL_DelayGraphicLoading>延遲圖形和圖示載入</FGL_DelayGraphicLoading>
     <FGL_StaticAtlasesBaking>自適應圖集烘焙</FGL_StaticAtlasesBaking>    
     <FGL_RequiresRestart>（需重新啟動遊戲）</FGL_RequiresRestart>
+    <FGL_TrimStaticAtlases>裁切靜態圖集</FGL_TrimStaticAtlases>
+    <FGL_TrimStaticAtlasesTip>每張靜態圖集只烘焙到紋理實際用到的高度，不再使用常有一半空白的 2 的次方高度。圖集佔用的記憶體更少、烘焙更快，每張紋理的像素位置不變。重新啟動遊戲後生效。</FGL_TrimStaticAtlasesTip>
+    <FGL_DeduplicateStaticAtlases>略過重複的圖集紋理</FGL_DeduplicateStaticAtlases>
+    <FGL_DeduplicateStaticAtlasesTip>RimWorld 會把可打包建築的紋理分別烘進 Building、Item 與 Misc 三組圖集。開啟後只烘焙 Building 那一份，打包後的建築與藍圖都從它繪製。重新啟動遊戲後生效。</FGL_DeduplicateStaticAtlasesTip>
+    <FGL_FastStaticAtlasCompression>較快的圖集壓縮</FGL_FastStaticAtlasCompression>
+    <FGL_FastStaticAtlasCompressionTip>以 Unity 的標準模式壓縮烘焙好的靜態圖集，取代會加上抖色處理、耗時較長的高品質模式。重新啟動遊戲後生效。</FGL_FastStaticAtlasCompressionTip>
     <FGL_MultiThreading>多執行緒預載入</FGL_MultiThreading>
     <FGL_TypeLookupCache>型別查詢快取</FGL_TypeLookupCache>
     <FGL_VerboseLogging>啟用詳細日誌</FGL_VerboseLogging>

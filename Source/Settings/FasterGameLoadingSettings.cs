@@ -34,6 +34,24 @@ namespace FasterGameLoading
         /// <summary>自適應靜態圖集烘焙（預設關閉）</summary>
         public static bool StaticAtlasesBaking { get; set; }
 
+        /// <summary>
+        /// 把靜態圖集裁到實際用到的高度（預設開啟）；重新啟動遊戲後生效。
+        /// Trim static atlases to the height they use (on by default); takes effect after restarting the game.
+        /// </summary>
+        public static bool TrimStaticAtlases { get; set; } = true;
+
+        /// <summary>
+        /// 不把也排在 Building 的紋理再烘進 Item 與 Misc 圖集（預設開啟）；重新啟動遊戲後生效。
+        /// Do not bake textures also queued for Building into the Item and Misc atlases (on by default); takes effect after restarting the game.
+        /// </summary>
+        public static bool DeduplicateStaticAtlases { get; set; } = true;
+
+        /// <summary>
+        /// 以不抖色的標準模式壓縮靜態圖集（預設關閉）；重新啟動遊戲後生效。
+        /// Compress static atlases in the standard mode, without dithering (off by default); takes effect after restarting the game.
+        /// </summary>
+        public static bool FastStaticAtlasCompression { get; set; }
+
         /// <summary>啟用多執行緒預載入（預設開啟）</summary>
         public static bool EnableMultiThreading { get; set; } = true;
 
@@ -84,6 +102,15 @@ namespace FasterGameLoading
             var staticAtlasesBaking = StaticAtlasesBaking;
             ls.CheckboxLabeled("FGL_StaticAtlasesBaking".Translate() + " " + "FGL_RequiresRestart".Translate(), ref staticAtlasesBaking);
             StaticAtlasesBaking = staticAtlasesBaking;
+            var trimStaticAtlases = TrimStaticAtlases;
+            ls.CheckboxLabeled("FGL_TrimStaticAtlases".Translate(), ref trimStaticAtlases, "FGL_TrimStaticAtlasesTip".Translate());
+            TrimStaticAtlases = trimStaticAtlases;
+            var deduplicateStaticAtlases = DeduplicateStaticAtlases;
+            ls.CheckboxLabeled("FGL_DeduplicateStaticAtlases".Translate(), ref deduplicateStaticAtlases, "FGL_DeduplicateStaticAtlasesTip".Translate());
+            DeduplicateStaticAtlases = deduplicateStaticAtlases;
+            var fastStaticAtlasCompression = FastStaticAtlasCompression;
+            ls.CheckboxLabeled("FGL_FastStaticAtlasCompression".Translate(), ref fastStaticAtlasCompression, "FGL_FastStaticAtlasCompressionTip".Translate());
+            FastStaticAtlasCompression = fastStaticAtlasCompression;
             var verboseLogging = VerboseLogging;
             ls.CheckboxLabeled("FGL_VerboseLogging".Translate(), ref verboseLogging);
             VerboseLogging = verboseLogging;
@@ -153,6 +180,15 @@ namespace FasterGameLoading
             var staticAtlasesBaking = StaticAtlasesBaking;
             Scribe_Values.Look(ref staticAtlasesBaking, "StaticAtlasesBaking", defaultValue: false);
             StaticAtlasesBaking = staticAtlasesBaking;
+            var trimStaticAtlases = TrimStaticAtlases;
+            Scribe_Values.Look(ref trimStaticAtlases, "trimStaticAtlases", defaultValue: true);
+            TrimStaticAtlases = trimStaticAtlases;
+            var deduplicateStaticAtlases = DeduplicateStaticAtlases;
+            Scribe_Values.Look(ref deduplicateStaticAtlases, "deduplicateStaticAtlases", defaultValue: true);
+            DeduplicateStaticAtlases = deduplicateStaticAtlases;
+            var fastStaticAtlasCompression = FastStaticAtlasCompression;
+            Scribe_Values.Look(ref fastStaticAtlasCompression, "fastStaticAtlasCompression", defaultValue: false);
+            FastStaticAtlasCompression = fastStaticAtlasCompression;
             var delayGraphicLoading = DelayGraphicLoading;
             Scribe_Values.Look(ref delayGraphicLoading, "delayGraphicLoading", defaultValue: false);
             DelayGraphicLoading = delayGraphicLoading;

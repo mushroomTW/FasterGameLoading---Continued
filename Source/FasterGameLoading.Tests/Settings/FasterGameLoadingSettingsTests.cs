@@ -12,6 +12,9 @@ namespace FasterGameLoading.Tests.Settings
         private bool origStaticAtlasesBaking;
         private bool origEnableMultiThreading;
         private bool origTypeLookupCache;
+        private bool origTrimStaticAtlases;
+        private bool origDeduplicateStaticAtlases;
+        private bool origFastStaticAtlasCompression;
 
         [SetUp]
         public void SetUp()
@@ -22,6 +25,9 @@ namespace FasterGameLoading.Tests.Settings
             origStaticAtlasesBaking = FasterGameLoadingSettings.StaticAtlasesBaking;
             origEnableMultiThreading = FasterGameLoadingSettings.EnableMultiThreading;
             origTypeLookupCache = FasterGameLoadingSettings.TypeLookupCache;
+            origTrimStaticAtlases = FasterGameLoadingSettings.TrimStaticAtlases;
+            origDeduplicateStaticAtlases = FasterGameLoadingSettings.DeduplicateStaticAtlases;
+            origFastStaticAtlasCompression = FasterGameLoadingSettings.FastStaticAtlasCompression;
         }
 
         [TearDown]
@@ -33,6 +39,57 @@ namespace FasterGameLoading.Tests.Settings
             FasterGameLoadingSettings.StaticAtlasesBaking = origStaticAtlasesBaking;
             FasterGameLoadingSettings.EnableMultiThreading = origEnableMultiThreading;
             FasterGameLoadingSettings.TypeLookupCache = origTypeLookupCache;
+            FasterGameLoadingSettings.TrimStaticAtlases = origTrimStaticAtlases;
+            FasterGameLoadingSettings.DeduplicateStaticAtlases = origDeduplicateStaticAtlases;
+            FasterGameLoadingSettings.FastStaticAtlasCompression = origFastStaticAtlasCompression;
+        }
+
+        [Test]
+        public void ExposeData_RoundTrip_RestoresStaticAtlasOptions()
+        {
+            WithTextureCacheManager((_, savePath) =>
+            {
+                FasterGameLoadingSettings.TrimStaticAtlases = false;
+                FasterGameLoadingSettings.DeduplicateStaticAtlases = false;
+                FasterGameLoadingSettings.FastStaticAtlasCompression = true;
+                SaveSettings(savePath);
+
+                FasterGameLoadingSettings.TrimStaticAtlases = true;
+                FasterGameLoadingSettings.DeduplicateStaticAtlases = true;
+                FasterGameLoadingSettings.FastStaticAtlasCompression = false;
+                LoadSettings(savePath);
+
+                Assert.That(FasterGameLoadingSettings.TrimStaticAtlases, Is.False);
+                Assert.That(FasterGameLoadingSettings.DeduplicateStaticAtlases, Is.False);
+                Assert.That(FasterGameLoadingSettings.FastStaticAtlasCompression, Is.True);
+            });
+        }
+
+        [Test]
+        public void ExposeData_WithoutStaticAtlasOptionsInTheFile_LoadsTheDefaults()
+        {
+            WithTextureCacheManager((_, savePath) =>
+            {
+                // 值等於預設值時 Scribe 不寫節點，所以這份檔案就像是加入這三個選項之前存的設定檔。
+                // Scribe writes no node for a value equal to its default, so this file is like one saved before the three options existed.
+                FasterGameLoadingSettings.TrimStaticAtlases = true;
+                FasterGameLoadingSettings.DeduplicateStaticAtlases = true;
+                FasterGameLoadingSettings.FastStaticAtlasCompression = false;
+                SaveSettings(savePath);
+                var saved = System.IO.File.ReadAllText(savePath);
+                Assert.That(saved, Does.Not.Contain("trimStaticAtlases"));
+                Assert.That(saved, Does.Not.Contain("deduplicateStaticAtlases"));
+                Assert.That(saved, Does.Not.Contain("fastStaticAtlasCompression"));
+
+                FasterGameLoadingSettings.TrimStaticAtlases = false;
+                FasterGameLoadingSettings.DeduplicateStaticAtlases = false;
+                FasterGameLoadingSettings.FastStaticAtlasCompression = true;
+                LoadSettings(savePath);
+
+                Assert.That(FasterGameLoadingSettings.TrimStaticAtlases, Is.True);
+                Assert.That(FasterGameLoadingSettings.DeduplicateStaticAtlases, Is.True);
+                Assert.That(FasterGameLoadingSettings.FastStaticAtlasCompression, Is.False);
+            });
         }
 
         [Test]

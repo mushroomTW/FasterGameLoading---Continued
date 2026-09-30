@@ -128,10 +128,9 @@ namespace FasterGameLoading.Tests.DelaySoundLoading
             Assert.That(capturedExecuteWhenFinishedAction, Is.Null);
             Assert.That(delayedActions.SubSoundDefToResolveCount, Is.EqualTo(1));
 
-            Assert.That(delayedActions.TryDequeueSubSound(out var outSound, out var outAct), Is.True);
-            Assert.That(outSound, Is.SameAs(sound));
-            outAct();
+            delayedActions.ResolvePendingSubSounds();
             Assert.That(actionExecuted, Is.True);
+            Assert.That(delayedActions.SubSoundDefToResolveCount, Is.EqualTo(0));
         }
 
         [Test]

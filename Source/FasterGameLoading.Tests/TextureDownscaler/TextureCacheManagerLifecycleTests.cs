@@ -42,15 +42,15 @@ namespace FasterGameLoading.Tests.TextureDownscaler
             }
         }
 
-        // ── 目錄解析 ──
+        private string StagingDir => Path.Combine(rootDir, FGLConsts.TextureCacheStagingDir);
 
-        [Test]
-        public void BuildCacheDirectory_WithCustomBase_ResolvesSiblingOfCacheDirectory()
+        /// <summary>在 rebuild 的暫存目錄寫一個快取檔並登記，回傳暫存路徑。</summary>
+        private static string StageFile(TextureCacheManager.CacheRebuild rebuild, string originalPath, byte content)
         {
-            string staging = manager.BuildCacheDirectory(FGLConsts.TextureCacheStagingDir);
-
-            Assert.That(staging, Is.EqualTo(Path.Combine(rootDir, FGLConsts.TextureCacheStagingDir)));
-            Assert.That(manager.CacheDirectory, Is.EqualTo(cacheDir));
+            string stagedPath = rebuild.GetCachePath(originalPath);
+            File.WriteAllBytes(stagedPath, new[] { content });
+            rebuild.Add(originalPath, stagedPath);
+            return stagedPath;
         }
 
         // 註：無自訂根目錄的預設建構式無法在此測試 —— CacheDirectory 會讀
@@ -121,101 +121,149 @@ namespace FasterGameLoading.Tests.TextureDownscaler
             Assert.That(manager.ResizedTextureCache.ContainsKey("injected"), Is.False);
         }
 
-        // ── 暫存目錄與還原 ──
+        // ── 重建交易 ──
 
         [Test]
-        public void SetupResizeStagingDirectory_RecreatesDirectoryAndClearsMap()
+        public void Rebuild_PromotesStagedEntriesAndRepointsCacheMap()
         {
-            string staging = manager.BuildCacheDirectory(FGLConsts.TextureCacheStagingDir);
-            Directory.CreateDirectory(staging);
-            File.WriteAllBytes(Path.Combine(staging, "leftover.png"), new byte[] { 1 });
-            manager.SetCacheEntry(Path.Combine(rootDir, "x.png"), Path.Combine(staging, "x_cache.png"));
-
-            manager.SetupResizeStagingDirectory(staging);
-
-            Assert.That(Directory.Exists(staging), Is.True);
-            Assert.That(Directory.GetFiles(staging), Is.Empty, "上一輪殘留的暫存檔必須清空，否則會被誤認為本輪產物而升級為正式快取。");
-            Assert.That(manager.CacheCount, Is.Zero);
-        }
-
-        [Test]
-        public void RestorePreviousCacheState_RestoresMapAndDeletesStaging()
-        {
-            string staging = manager.BuildCacheDirectory(FGLConsts.TextureCacheStagingDir);
-            string originalPath = Path.Combine(rootDir, "keep.png");
-            manager.SetCacheEntry(originalPath, Path.Combine(cacheDir, "keep_cache.png"));
-            var previous = manager.GetResizedTextureCacheCopy();
-
-            manager.SetupResizeStagingDirectory(staging);
-            Assert.That(manager.CacheCount, Is.Zero);
-
-            manager.RestorePreviousCacheState(previous, cacheDir, staging);
-
-            Assert.That(manager.CacheCount, Is.EqualTo(1));
-            Assert.That(manager.ResizedTextureCache.ContainsKey(originalPath), Is.True);
-            Assert.That(Directory.Exists(staging), Is.False);
-            Assert.That(manager.GetCachePath(originalPath),
-                Does.StartWith(cacheDir), "還原後新算出的快取路徑必須回到正式目錄，不能再指向已刪除的暫存目錄。");
-        }
-
-        // ── 升級與回滾 ──
-
-        [Test]
-        public void ReplaceTextureCacheDirectory_PromotesStagingAndRepointsCacheMap()
-        {
-            string staging = manager.BuildCacheDirectory(FGLConsts.TextureCacheStagingDir);
             Directory.CreateDirectory(cacheDir);
             File.WriteAllBytes(Path.Combine(cacheDir, "old.png"), new byte[] { 1 });
-            Directory.CreateDirectory(staging);
-            File.WriteAllBytes(Path.Combine(staging, "new_cache.png"), new byte[] { 2 });
-
+            manager.SetCacheEntry(Path.Combine(rootDir, "old-source.png"), Path.Combine(cacheDir, "old.png"));
             string originalPath = Path.Combine(rootDir, "promote.png");
-            manager.SetCacheEntry(originalPath, Path.Combine(staging, "new_cache.png"));
+            string stagedName = null;
 
-            bool replaced = manager.ReplaceTextureCacheDirectory(staging);
+            bool promoted = manager.Rebuild(rebuild => stagedName = Path.GetFileName(StageFile(rebuild, originalPath, 2)));
 
-            Assert.That(replaced, Is.True);
-            Assert.That(Directory.Exists(staging), Is.False);
+            Assert.That(promoted, Is.True);
+            Assert.That(Directory.Exists(StagingDir), Is.False);
             Assert.That(Directory.Exists(cacheDir + "_Backup"), Is.False, "升級成功後備份目錄必須清掉，否則快取空間會翻倍。");
-            Assert.That(File.Exists(Path.Combine(cacheDir, "new_cache.png")), Is.True);
+            Assert.That(File.Exists(Path.Combine(cacheDir, stagedName)), Is.True);
             Assert.That(File.Exists(Path.Combine(cacheDir, "old.png")), Is.False);
+            Assert.That(manager.CacheCount, Is.EqualTo(1), "對照表必須整份換成本次重建的項目。");
             Assert.That(manager.ResizedTextureCache[originalPath],
-                Is.EqualTo(Path.Combine(cacheDir, "new_cache.png")),
+                Is.EqualTo(Path.Combine(cacheDir, stagedName)),
                 "對照表必須改指向正式目錄，否則升級後每一筆快取都會查無檔案。");
         }
 
         [Test]
-        public void ReplaceTextureCacheDirectory_EmptyStagingPathIsRejected()
+        public void Rebuild_DiscardsLeftoverStagingFilesFromAnInterruptedRun()
         {
-            Assert.That(manager.ReplaceTextureCacheDirectory(string.Empty), Is.False);
+            Directory.CreateDirectory(StagingDir);
+            File.WriteAllBytes(Path.Combine(StagingDir, "leftover.png"), new byte[] { 1 });
+
+            manager.Rebuild(rebuild =>
+            {
+                Assert.That(Directory.GetFiles(rebuild.StagingDirectory), Is.Empty,
+                    "上一輪殘留的暫存檔必須清空，否則會被誤認為本輪產物而升級為正式快取。");
+                StageFile(rebuild, Path.Combine(rootDir, "fresh.png"), 2);
+            });
+
+            Assert.That(File.Exists(Path.Combine(cacheDir, "leftover.png")), Is.False);
         }
 
         [Test]
-        public void ReplaceTextureCacheDirectory_LockedCacheDirectoryFailsAndKeepsExistingCache()
+        public void Rebuild_KeepsLiveCacheQueryableWhilePopulating()
         {
-            string staging = manager.BuildCacheDirectory(FGLConsts.TextureCacheStagingDir);
             Directory.CreateDirectory(cacheDir);
-            Directory.CreateDirectory(staging);
-            File.WriteAllBytes(Path.Combine(staging, "new_cache.png"), new byte[] { 2 });
+            string originalPath = Path.Combine(rootDir, "live.png");
+            string livePath = Path.Combine(cacheDir, "live_cache.png");
+            File.WriteAllBytes(livePath, new byte[] { 1 });
+            manager.SetCacheEntry(originalPath, livePath);
 
+            manager.Rebuild(rebuild =>
+            {
+                Assert.That(manager.TryGetCachedTexturePath(originalPath, out var resolved), Is.True,
+                    "重建期間正式對照表必須維持原狀，貼圖載入仍要命中舊快取。");
+                Assert.That(resolved, Is.EqualTo(livePath));
+                Assert.That(manager.GetCachePath(originalPath), Does.StartWith(cacheDir),
+                    "正式快取的路徑計算不可被重建的暫存目錄影響。");
+            });
+
+            Assert.That(manager.CacheCount, Is.EqualTo(1));
+            Assert.That(File.Exists(livePath), Is.True, "沒有登記任何項目的重建不得動到正式快取。");
+        }
+
+        [Test]
+        public void Rebuild_WithNoStagedEntries_KeepsExistingCacheAndDeletesStaging()
+        {
+            Directory.CreateDirectory(cacheDir);
+            string retainedFile = Path.Combine(cacheDir, "retained.png");
+            File.WriteAllBytes(retainedFile, new byte[] { 1 });
+            manager.SetCacheEntry(Path.Combine(rootDir, "retained-source.png"), retainedFile);
+
+            bool promoted = manager.Rebuild(_ => { });
+
+            Assert.That(promoted, Is.False);
+            Assert.That(File.Exists(retainedFile), Is.True);
+            Assert.That(manager.CacheCount, Is.EqualTo(1));
+            Assert.That(Directory.Exists(StagingDir), Is.False);
+        }
+
+        [Test]
+        public void Rebuild_WhenPopulateThrows_PropagatesAndKeepsExistingCache()
+        {
+            Directory.CreateDirectory(cacheDir);
+            string retainedFile = Path.Combine(cacheDir, "retained.png");
+            File.WriteAllBytes(retainedFile, new byte[] { 1 });
+            manager.SetCacheEntry(Path.Combine(rootDir, "retained-source.png"), retainedFile);
+
+            Assert.Throws<InvalidOperationException>(() => manager.Rebuild(rebuild =>
+            {
+                StageFile(rebuild, Path.Combine(rootDir, "half.png"), 2);
+                throw new InvalidOperationException("Simulated resize failure");
+            }));
+
+            Assert.That(File.Exists(retainedFile), Is.True);
+            Assert.That(manager.CacheCount, Is.EqualTo(1));
+            Assert.That(manager.ResizedTextureCache.ContainsKey(Path.Combine(rootDir, "half.png")), Is.False);
+            Assert.That(Directory.Exists(StagingDir), Is.False);
+        }
+
+        [Test]
+        public void Rebuild_BackgroundCleanupWaitsUntilRebuildFinishes()
+        {
+            Directory.CreateDirectory(cacheDir);
+            string originalPath = Path.Combine(rootDir, "kept.png");
+            File.WriteAllBytes(originalPath, new byte[] { 1 });
+            System.Threading.Tasks.Task cleanup = null;
+
+            manager.Rebuild(rebuild =>
+            {
+                StageFile(rebuild, originalPath, 2);
+                cleanup = System.Threading.Tasks.Task.Run(manager.CleanupObsoleteCacheFiles);
+                // 清理若在升級搬移目錄的途中執行，會把剛搬進正式目錄、還沒登記的新檔當成未引用檔刪掉。
+                Assert.That(cleanup.Wait(200), Is.False, "背景清理必須等重建結束才開始。");
+            });
+            cleanup.Wait();
+
+            Assert.That(manager.TryGetCachedTexturePath(originalPath, out var resolved), Is.True);
+            Assert.That(File.Exists(resolved), Is.True, "重建後的新快取檔不可被清理刪除。");
+        }
+
+        [Test]
+        public void Rebuild_LockedCacheDirectoryFailsAndKeepsExistingCache()
+        {
+            Directory.CreateDirectory(cacheDir);
             string lockedFile = Path.Combine(cacheDir, "locked.png");
             File.WriteAllBytes(lockedFile, new byte[] { 1 });
+            string previousSource = Path.Combine(rootDir, "previous.png");
+            manager.SetCacheEntry(previousSource, lockedFile);
 
-            bool replaced;
+            bool promoted;
             using (var handle = new FileStream(lockedFile, FileMode.Open, FileAccess.Read, FileShare.None))
             {
                 // 開啟中的檔案會讓 Directory.Move 失敗，觸發升級流程的回滾分支。
-                replaced = manager.ReplaceTextureCacheDirectory(staging);
+                promoted = manager.Rebuild(rebuild => StageFile(rebuild, Path.Combine(rootDir, "new.png"), 2));
             }
 
-            Assert.That(replaced, Is.False);
+            Assert.That(promoted, Is.False);
             Assert.That(File.Exists(lockedFile), Is.True, "升級失敗後原本的快取目錄必須原封不動。");
+            Assert.That(manager.ResizedTextureCache[previousSource], Is.EqualTo(lockedFile), "升級失敗後對照表必須維持原狀。");
         }
 
         [Test]
-        public void ReplaceTextureCacheDirectory_LockedStagingRollsBackPreviousCacheFromBackup()
+        public void Rebuild_LockedStagingRollsBackPreviousCacheFromBackup()
         {
-            string staging = manager.BuildCacheDirectory(FGLConsts.TextureCacheStagingDir);
             string backupDir = cacheDir + "_Backup";
 
             Directory.CreateDirectory(cacheDir);
@@ -226,19 +274,24 @@ namespace FasterGameLoading.Tests.TextureDownscaler
             Directory.CreateDirectory(backupDir);
             File.WriteAllBytes(Path.Combine(backupDir, "stale_backup.png"), new byte[] { 9 });
 
-            Directory.CreateDirectory(staging);
-            string lockedStagingFile = Path.Combine(staging, "locked.png");
-            File.WriteAllBytes(lockedStagingFile, new byte[] { 2 });
-
-            bool replaced;
-            using (var handle = new FileStream(lockedStagingFile, FileMode.Open, FileAccess.Read, FileShare.None))
+            FileStream handle = null;
+            bool promoted;
+            try
             {
-                // 正式目錄已搬去備份、暫存目錄卻搬不動：必須把備份搬回原位，
-                // 否則使用者會在一次失敗的降質後完全失去既有快取。
-                replaced = manager.ReplaceTextureCacheDirectory(staging);
+                promoted = manager.Rebuild(rebuild =>
+                {
+                    var stagedPath = StageFile(rebuild, Path.Combine(rootDir, "new.png"), 2);
+                    // 正式目錄已搬去備份、暫存目錄卻搬不動：必須把備份搬回原位，
+                    // 否則使用者會在一次失敗的降質後完全失去既有快取。
+                    handle = new FileStream(stagedPath, FileMode.Open, FileAccess.Read, FileShare.None);
+                });
+            }
+            finally
+            {
+                handle?.Dispose();
             }
 
-            Assert.That(replaced, Is.False);
+            Assert.That(promoted, Is.False);
             Assert.That(Directory.Exists(backupDir), Is.False);
             Assert.That(File.Exists(survivor), Is.True, "回滾後原本的快取檔必須回到正式目錄。");
         }
@@ -333,7 +386,7 @@ namespace FasterGameLoading.Tests.TextureDownscaler
             {
                 [originalPath] = cachePath,
             };
-            manager.RestorePreviousCacheState(beforeCleanup, cacheDir, Path.Combine(rootDir, "no-such-staging"));
+            manager.ReplaceCacheMap(beforeCleanup);
 
             manager.CleanupObsoleteCacheFiles();
 

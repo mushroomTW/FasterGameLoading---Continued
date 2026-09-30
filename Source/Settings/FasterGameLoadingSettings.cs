@@ -73,7 +73,8 @@ namespace FasterGameLoading
             ls.CheckboxLabeled("FGL_TypeLookupCache".Translate(), ref typeLookupCache);
             TypeLookupCache = typeLookupCache;
             var delayGraphicLoading = DelayGraphicLoading;
-            ls.CheckboxLabeled("FGL_DelayGraphicLoading".Translate(), ref delayGraphicLoading);
+            // 延遲載入與自適應烘焙在 Mod 建構子定案（DelayedActions.CaptureStartupSettings），改了要重開遊戲才生效。
+            ls.CheckboxLabeled("FGL_DelayGraphicLoading".Translate() + " " + "FGL_RequiresRestart".Translate(), ref delayGraphicLoading);
             DelayGraphicLoading = delayGraphicLoading;
         }
 
@@ -81,7 +82,7 @@ namespace FasterGameLoading
         private static void DrawDiagnosticsOptions(Listing_Standard ls)
         {
             var staticAtlasesBaking = StaticAtlasesBaking;
-            ls.CheckboxLabeled("FGL_StaticAtlasesBaking".Translate(), ref staticAtlasesBaking);
+            ls.CheckboxLabeled("FGL_StaticAtlasesBaking".Translate() + " " + "FGL_RequiresRestart".Translate(), ref staticAtlasesBaking);
             StaticAtlasesBaking = staticAtlasesBaking;
             var verboseLogging = VerboseLogging;
             ls.CheckboxLabeled("FGL_VerboseLogging".Translate(), ref verboseLogging);
@@ -99,7 +100,12 @@ namespace FasterGameLoading
 
             // Texture resize button
             ls.Gap(4f);
-            if (ls.ButtonText("FGL_DownscaleTextures".Translate()))
+            if (!TextureOwnership.FglOwnsTextureLoading)
+            {
+                // 外部工具接手貼圖載入時 FGL 不登記貼圖，降質工具掃描不到任何東西，按了也只會留下舊快取。
+                ls.Label("FGL_DownscaleTexturesUnavailable".Translate());
+            }
+            else if (ls.ButtonText("FGL_DownscaleTextures".Translate()))
             {
                 Find.WindowStack.Add(new Dialog_MessageBox("FGL_DownscaleTexturesConfirmation".Translate(), "Confirm".Translate(), delegate
                 {
@@ -124,9 +130,17 @@ namespace FasterGameLoading
             {
                 Find.WindowStack.Add(new Dialog_MessageBox("FGL_ClearTextureCacheConfirmation".Translate(), "Confirm".Translate(), static () =>
                 {
-                    // 防止 Mod 初始化失敗時 Instance 或 CacheManager 為 null 導致 NRE
-                    FasterGameLoadingMod.Instance?.CacheManager?.ClearCache();
-                    LoadedModManager.GetMod<FasterGameLoadingMod>().WriteSettings();
+                    // 與降質相同走長事件：清除要等背景快取清理結束（共用維護鎖），期間顯示載入畫面而不是讓遊戲無回應。
+                    LongEventHandler.QueueLongEvent(
+                        static () =>
+                        {
+                            // 防止 Mod 初始化失敗時 Instance 或 CacheManager 為 null 導致 NRE
+                            FasterGameLoadingMod.Instance?.CacheManager?.ClearCache();
+                            LoadedModManager.GetMod<FasterGameLoadingMod>().WriteSettings();
+                        },
+                        "FGL_ClearingTextureCache",
+                        doAsynchronously: false,
+                        exceptionHandler: static ex => FGLLog.Error("Clear texture cache long event failed:", ex));
                 }, "GoBack".Translate()));
             }
         }

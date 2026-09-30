@@ -17,11 +17,6 @@ namespace FasterGameLoading
 
         internal static ConcurrentDictionary<string, Type> cachedResults { get; } = new ConcurrentDictionary<string, Type>(StringComparer.Ordinal);
 
-        static AccessTools_TypeByName_Patch()
-        {
-            CacheResetter.Register(static () => cachedResults.Clear());
-        }
-
         /// <summary>
         /// 前置處理：命中執行期快取時直接回傳並跳過原方法。
         /// </summary>

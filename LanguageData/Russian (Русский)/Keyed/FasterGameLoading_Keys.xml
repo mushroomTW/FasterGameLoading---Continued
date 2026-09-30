@@ -6,6 +6,7 @@
     <FGL_EarlyModContentLoading>Ранняя загрузка контента</FGL_EarlyModContentLoading>
     <FGL_DelayGraphicLoading>Отложенная загрузка графики</FGL_DelayGraphicLoading>
     <FGL_StaticAtlasesBaking>Адаптивное запекание атласов</FGL_StaticAtlasesBaking>    
+    <FGL_RequiresRestart>(требуется перезапуск)</FGL_RequiresRestart>
     <FGL_MultiThreading>Многопоточная предварительная загрузка</FGL_MultiThreading>
     <FGL_TypeLookupCache>Кэш поиска типов</FGL_TypeLookupCache>
     <FGL_VerboseLogging>Подробное логирование</FGL_VerboseLogging>
@@ -21,7 +22,9 @@
         Деревья — 256px
         Покрытия — 1024px</FGL_TextureResizingExplanation>
     <FGL_DownscaleTextures>Сжать текстуры</FGL_DownscaleTextures>
+    <FGL_DownscaleTexturesUnavailable>Текстуры загружает Graphics Settings+ или Image Opt, поэтому сжатие текстур недоступно.</FGL_DownscaleTexturesUnavailable>
     <FGL_DownscalingTextures>Сжатие текстур</FGL_DownscalingTextures>
+    <FGL_ClearingTextureCache>Очистка кэша текстур</FGL_ClearingTextureCache>
     <FGL_DownscaleTexturesConfirmation>Выполнить сжатие текстур? Будут созданы отдельные кэшированные копии, файлы модов не будут изменены.(требует перезапуска раз)</FGL_DownscaleTexturesConfirmation>
     <FGL_ClearTextureCache>Очистить кэш текстур</FGL_ClearTextureCache>
     <FGL_ClearTextureCacheConfirmation>Удалить все сжатые копии текстур? При следующем запуске будут использоваться оригиналы.</FGL_ClearTextureCacheConfirmation>

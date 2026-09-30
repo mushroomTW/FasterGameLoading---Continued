@@ -21,7 +21,7 @@ namespace FasterGameLoading.Tests.Compatibility
         [Test]
         public void TryInstall_WhenImageOptNotActive_RemainsUninstalled()
         {
-            // 在單元測試環境中 ImageOptCompat.IsActive 為 false，TryInstall 應保持 installed 為 false
+            // 在單元測試環境中 TextureOwnership.Current 不是 ImageOpt，TryInstall 應保持 installed 為 false
             ImageOptEarlyLoadCoordinator.TryInstall();
             Assert.That(ImageOptEarlyLoadCoordinator.IsInstalled, Is.False);
         }

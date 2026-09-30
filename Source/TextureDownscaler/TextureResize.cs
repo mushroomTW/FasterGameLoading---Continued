@@ -49,51 +49,52 @@ namespace FasterGameLoading
 
         /// <summary>
         /// 執行完整紋理降質流程：
-        /// 掃描所有已載入的紋理 → 計算縮放候選 → 批次降質 → 替換快取目錄。
-        /// 失敗時自動還原先前的快取狀態。
+        /// 掃描所有已載入的紋理 → 計算縮放候選 → 在快取重建交易中批次降質並升級為正式快取。
+        /// 沒有候選、沒有任何紋理寫入成功、任何快取檔寫入失敗或中途失敗時，原本的快取保持不變。
         /// </summary>
         public void DoTextureResizing()
         {
-            // 透過執行緒安全介面取得快照，避免與 TextureCacheManager 內部的 cacheLock 競爭
-            var previousCacheMap = cacheManager.GetResizedTextureCacheCopy();
-            var previousCacheDirectory = cacheManager.CacheDirectory;
-            var stagingDirectory = cacheManager.BuildCacheDirectory(FGLConsts.TextureCacheStagingDir);
             lastOriginalPixelCount = 0;
             lastDownscaledPixelCount = 0;
             try
             {
-                cacheManager.SetupResizeStagingDirectory(stagingDirectory);
                 scanner.BuildTextureScanData();
 
                 var texturesToResize = BuildResizeCandidates();
+                if (!texturesToResize.Any())
+                {
+                    return;
+                }
 
-                if (texturesToResize.Any())
+                int resizedCount = 0;
+                bool promoted = cacheManager.Rebuild(rebuild =>
                 {
                     foreach (var entry in texturesToResize)
                     {
-                        ResizeTexture(entry);
+                        var cachePath = rebuild.GetCachePath(entry.path);
+                        if (ResizeTexture(entry, cachePath))
+                        {
+                            rebuild.Add(entry.path, cachePath);
+                            resizedCount++;
+                        }
                     }
-                    FGLLog.Message($"Downscaled {texturesToResize.Count} textures (cached, originals untouched)");
-                    if (cacheManager.ReplaceTextureCacheDirectory(stagingDirectory))
-                    {
-                        LogResizeSummary(texturesToResize.Count);
-                        // 只在目錄與對照表一同升級成功後持久化。
-                        LoadedModManager.GetMod<FasterGameLoadingMod>().WriteSettings();
-                    }
-                    else
-                    {
-                        FGLLog.Warning("Texture cache promotion failed; previous cache was kept.");
-                    }
+                });
+
+                if (promoted)
+                {
+                    FGLLog.Message($"Downscaled {resizedCount.ToString(CultureInfo.InvariantCulture)} textures (cached, originals untouched)");
+                    LogResizeSummary(resizedCount);
+                    // 只在目錄與對照表一同升級成功後持久化。
+                    LoadedModManager.GetMod<FasterGameLoadingMod>().WriteSettings();
                 }
                 else
                 {
-                    cacheManager.RestorePreviousCacheState(previousCacheMap, previousCacheDirectory, stagingDirectory);
+                    FGLLog.Warning("Texture cache was not replaced; previous cache was kept.");
                 }
             }
             catch (Exception ex)
             {
                 FGLLog.Error("Texture downscale failed, keeping previous cache:", ex);
-                cacheManager.RestorePreviousCacheState(previousCacheMap, previousCacheDirectory, stagingDirectory);
             }
             finally
             {
@@ -109,7 +110,7 @@ namespace FasterGameLoading
             var texturesToResize = new List<TextureResizeCandidate>();
             foreach (var texture in scanner.texturesByPaths)
             {
-                if (AdaptiveBakingSkipList.IsProtectedModTexturePath(texture.Value)) continue;
+                if (ProtectedMods.IsProtectedTexturePath(texture.Value)) continue;
 
                 var sourceWidth = texture.Key.width;
                 var sourceHeight = texture.Key.height;
@@ -133,15 +134,17 @@ namespace FasterGameLoading
         }
 
         /// <summary>
-        /// 執行單一紋理降質：載入原始 PNG → 按比例縮放 → 輸出 PNG 到快取目錄。
+        /// 執行單一紋理降質：載入原始 PNG → 按比例縮放 → 輸出 PNG 到 <paramref name="cachePath"/>。
+        /// 寫入成功才回傳 true，由呼叫端登記快取項目；個別紋理無法處理時回傳 false（略過該張），
+        /// 寫入快取檔的 IO 錯誤則往外拋，讓 <see cref="TextureCacheManager.Rebuild"/> 放棄整批並保留原本的快取。
         /// </summary>
-        private void ResizeTexture(TextureResizeCandidate candidate)
+        private bool ResizeTexture(TextureResizeCandidate candidate, string cachePath)
         {
             Texture2D originalTexture = null;
             try
             {
                 var resizeSource = TryLoadOriginalTexture(candidate.path, out originalTexture) ? originalTexture : candidate.source;
-                if (resizeSource == null || resizeSource.width <= 0 || resizeSource.height <= 0) return;
+                if (resizeSource == null || resizeSource.width <= 0 || resizeSource.height <= 0) return false;
 
                 var sourceWidth = originalTexture != null ? resizeSource.width : candidate.originalWidth;
                 var sourceHeight = originalTexture != null ? resizeSource.height : candidate.originalHeight;
@@ -154,29 +157,33 @@ namespace FasterGameLoading
                 // 將寬高對齊至 4 的倍數，確保 Unity 桌面端 DXT 區塊壓縮 (DXT1/DXT5) 正常運作。
                 newWidth = AlignToBlockSize(newWidth, sourceWidth);
                 newHeight = AlignToBlockSize(newHeight, sourceHeight);
+                IORetryHelper.WriteAllBytesWithRetry(cachePath, TextureResizer.ResizeTextureToPng(resizeSource, newWidth, newHeight));
+                // 寫入成功才計入，摘要的像素節省量只反映實際進入快取的紋理。
                 lastOriginalPixelCount += (long)sourceWidth * sourceHeight;
                 lastDownscaledPixelCount += (long)newWidth * newHeight;
-                var cachePath = cacheManager.GetCachePath(candidate.path);
-                IORetryHelper.WriteAllBytesWithRetry(cachePath, TextureResizer.ResizeTextureToPng(resizeSource, newWidth, newHeight));
-                cacheManager.SetCacheEntry(candidate.path, cachePath);
+                return true;
             }
             catch (IOException ex)
             {
+                // 寫入失敗（磁碟已滿、權限不足）代表這批快取不完整：中止整個重建，保留原本的快取，
+                // 否則只寫成功幾張也會取代掉原本完整的快取。
                 FGLLog.Error($"Failed to downscale texture {candidate.path}:", ex);
+                throw;
             }
             catch (UnauthorizedAccessException ex)
             {
                 FGLLog.Error($"Failed to downscale texture {candidate.path}:", ex);
+                throw;
             }
             catch (Exception ex)
             {
                 FGLLog.Warning($"Failed to downscale texture {candidate.path}:", ex);
-                cacheManager.RemoveCachedTexturePath(candidate.path);
             }
             finally
             {
                 if (originalTexture != null) TextureResizer.DestroyTemporaryUnityObject(originalTexture);
             }
+            return false;
         }
 
         /// <summary>

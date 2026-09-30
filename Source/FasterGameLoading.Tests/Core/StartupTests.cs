@@ -14,37 +14,23 @@ namespace FasterGameLoading.Tests.Core
         private static readonly int[] ExpectedFullOrder = { 1, 2, 3 };
         private static readonly int[] ExpectedOrderAfterThrow = { 1, 3 };
 
-        private FieldInfo callbacksField;
+        // 註：SessionLifecycle 的處理常式無法取消登記；各測試只登記寫入自身區域變數的處理常式，
+        // 之後其他測試再觸發時只會改到已結束測試的區域變數，不影響斷言。
 
-        [SetUp]
-        public void SetUp()
+        [Test]
+        public void On_WithNullHandler_DoesNotThrow()
         {
-            callbacksField = AccessTools.Field(typeof(Startup), "onStartupCompleted");
-            var callbacks = (List<Action>)callbacksField?.GetValue(null);
-            callbacks?.Clear();
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            var callbacks = (List<Action>)callbacksField?.GetValue(null);
-            callbacks?.Clear();
+            Assert.DoesNotThrow(() => SessionLifecycle.On(LifecyclePhase.StartupCompleted, handler: null));
         }
 
         [Test]
-        public void RegisterOnStartupCompleted_WithNull_DoesNotThrow()
-        {
-            Assert.DoesNotThrow(() => Startup.RegisterOnStartupCompleted(callback: null));
-        }
-
-        [Test]
-        public void RegisterOnStartupCompleted_ExecutesInRegistrationOrderOnPostfix()
+        public void Postfix_RaisesStartupCompletedInRegistrationOrder()
         {
             var executionOrder = new List<int>();
 
-            Startup.RegisterOnStartupCompleted(() => executionOrder.Add(1));
-            Startup.RegisterOnStartupCompleted(() => executionOrder.Add(2));
-            Startup.RegisterOnStartupCompleted(() => executionOrder.Add(3));
+            SessionLifecycle.On(LifecyclePhase.StartupCompleted, () => executionOrder.Add(1));
+            SessionLifecycle.On(LifecyclePhase.StartupCompleted, () => executionOrder.Add(2));
+            SessionLifecycle.On(LifecyclePhase.StartupCompleted, () => executionOrder.Add(3));
 
             Startup.Postfix();
 
@@ -52,13 +38,13 @@ namespace FasterGameLoading.Tests.Core
         }
 
         [Test]
-        public void Postfix_WhenCallbackThrows_ContinuesExecutingRemainingCallbacks()
+        public void Postfix_WhenHandlerThrows_ContinuesExecutingRemainingHandlers()
         {
             var executionOrder = new List<int>();
 
-            Startup.RegisterOnStartupCompleted(() => executionOrder.Add(1));
-            Startup.RegisterOnStartupCompleted(() => throw new InvalidOperationException("Simulated error"));
-            Startup.RegisterOnStartupCompleted(() => executionOrder.Add(3));
+            SessionLifecycle.On(LifecyclePhase.StartupCompleted, () => executionOrder.Add(1));
+            SessionLifecycle.On(LifecyclePhase.StartupCompleted, () => throw new InvalidOperationException("Simulated error"));
+            SessionLifecycle.On(LifecyclePhase.StartupCompleted, () => executionOrder.Add(3));
 
             Assert.DoesNotThrow(() => Startup.Postfix());
 
@@ -66,17 +52,28 @@ namespace FasterGameLoading.Tests.Core
         }
 
         [Test]
-        public void Postfix_ClearsCallbacksListAfterExecution()
+        public void Postfix_RaisesStartupCompletedAgainAfterLanguageReload()
         {
+            // 切換語言後 CallAll 會再跑一次；型別快照等結算必須反映重載後這一輪，而不是停在第一輪。
             var executionCount = 0;
-            Startup.RegisterOnStartupCompleted(() => executionCount++);
+            SessionLifecycle.On(LifecyclePhase.StartupCompleted, () => executionCount++);
 
             Startup.Postfix();
-            Assert.That(executionCount, Is.EqualTo(1));
-
-            // 第二次呼叫 Postfix 不應再次執行已清除的回呼
+            SessionLifecycle.Raise(LifecyclePhase.LanguageReloading);
             Startup.Postfix();
-            Assert.That(executionCount, Is.EqualTo(1));
+
+            Assert.That(executionCount, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void Raise_OnlyRunsHandlersOfThatPhase()
+        {
+            bool reloadHandlerRan = false;
+            SessionLifecycle.On(LifecyclePhase.LanguageReloading, () => reloadHandlerRan = true);
+
+            SessionLifecycle.Raise(LifecyclePhase.StartupCompleted);
+
+            Assert.That(reloadHandlerRan, Is.False);
         }
 
         [Test]

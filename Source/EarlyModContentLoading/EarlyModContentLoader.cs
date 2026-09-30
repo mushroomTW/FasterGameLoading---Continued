@@ -52,7 +52,7 @@ namespace FasterGameLoading
         static EarlyModContentLoader()
         {
             // 重載流程（切換語言）會重建 mod 類別；重置後等下一次 LoadModXML 才再開放。
-            CacheResetter.Register(static () => ModClassesCreated = false);
+            SessionLifecycle.On(LifecyclePhase.LanguageReloading, static () => ModClassesCreated = false);
         }
 
         /// <summary>
@@ -150,7 +150,7 @@ namespace FasterGameLoading
             useImageOptSyncScope = ImageOptEarlyLoadCoordinator.IsInstalled;
             var pending = LoadedModManager.RunningMods
                 .Where(static x => !ModContentPack_ReloadContentInt_Patch.loadedMods.Contains(x)
-                            && !EarlyLoadSkipList.ShouldSkip(x));
+                            && !ProtectedMods.ShouldSkipEarlyLoad(x));
             pendingEarlyLoads = new Queue<ModContentPack>(pending);
         }
 

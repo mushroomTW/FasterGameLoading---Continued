@@ -12,19 +12,6 @@ namespace FasterGameLoading
     [HarmonyPatch(typeof(StaticConstructorOnStartupUtility), nameof(StaticConstructorOnStartupUtility.CallAll))]
     public static class Startup
     {
-        private static readonly List<Action> onStartupCompleted = new List<Action>();
-
-        /// <summary>
-        /// 註冊在遊戲啟動載入完畢（CallAll 完成）後要執行的回呼。
-        /// </summary>
-        public static void RegisterOnStartupCompleted(Action callback)
-        {
-            if (callback != null)
-            {
-                onStartupCompleted.Add(callback);
-            }
-        }
-
         public static void Postfix()
         {
             // 儲存目前 session 的數據，以用於跨 session 快取（使用 loop 避免 LINQ 分配）
@@ -42,27 +29,11 @@ namespace FasterGameLoading
             }
             SessionCache.modsInLastSession = mods;
 
-            RunStartupCallbacks();
+            // 初次啟動與每次語言重載後的 CallAll 都會到這裡，各模組據此結算本輪的載入資料。
+            SessionLifecycle.Raise(LifecyclePhase.StartupCompleted);
             StartBackgroundCacheCleanup();
             InjectTranslations();
             ScheduleDeferredStartupActions();
-        }
-
-        /// <summary>依註冊順序執行所有啟動完成回呼；個別回呼的例外只記錄，不影響其餘回呼。</summary>
-        private static void RunStartupCallbacks()
-        {
-            foreach (var callback in onStartupCompleted)
-            {
-                try
-                {
-                    callback();
-                }
-                catch (Exception ex)
-                {
-                    FGLLog.Error("Error executing startup-completed callback:", ex);
-                }
-            }
-            onStartupCompleted.Clear();
         }
 
         /// <summary>在背景執行緒啟動過期／無效的材質快取自動清理，避免阻塞啟動流程與主頁面。</summary>

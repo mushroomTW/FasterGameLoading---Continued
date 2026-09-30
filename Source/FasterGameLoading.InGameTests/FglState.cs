@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -15,11 +14,11 @@ namespace FasterGameLoading.InGameTests
 
         /// <summary>
         /// 第 <paramref name="round"/> 次載入的 DelayedActions.PerformActions 主協程是否已整個跑完（含圖集烘焙與音效解析）。
-        /// 切換語言重載會再跑一次 CallAll 與整條延遲管線，因此以次數判斷，而非單一旗標；
-        /// 只看最近一次啟動的協程，先前被 StopAllCoroutines 中斷而沒跑完的不影響判斷。
+        /// 切換語言重載會再跑一次 CallAll 與整條延遲管線，因此先確認已啟動到第幾輪；
+        /// Phase 只反映最近一次啟動的協程（語言切換時重置為 Idle），先前被 StopAllCoroutines 中斷的不影響判斷。
         /// </summary>
         public static bool DeferredPipelineFinished(int round)
-            => PerformActionsTracker.Started >= round && PerformActionsTracker.LastFinished == PerformActionsTracker.Started;
+            => PerformActionsTracker.Started >= round && FasterGameLoadingMod.delayedActions.Phase == DeferredPhase.Completed;
 
         /// <summary>以 -quicktest 啟動：跳過主選單直接生成地圖。</summary>
         public static bool Quicktest => GenCommandLine.CommandLineArgPassed("quicktest");
@@ -53,39 +52,15 @@ namespace FasterGameLoading.InGameTests
         }
     }
 
-    /// <summary>
-    /// 包住 PerformActions 回傳的協程以得知它何時結束。FGL 本身沒有「整條延遲管線完成」的旗標：
-    /// AllDeferredVisualsLoaded 在烘焙開始前就設為 true，SoundStarter 的解除攔截也可能先由
-    /// World.FinalizeInit 觸發，兩者都不能代表圖集已烘焙完。
-    /// 內層 yield 出的巢狀 IEnumerator 原樣轉交，Unity 仍會把它當成子協程跑完才繼續，執行語意不變。
-    /// </summary>
+    /// <summary>計算 PerformActions 主協程被啟動的次數，用來對應第幾輪載入；完成與否看 <see cref="DelayedActions.Phase"/>。</summary>
     [HarmonyPatch(typeof(DelayedActions), nameof(DelayedActions.PerformActions))]
     internal static class PerformActionsTracker
     {
         public static int Started { get; private set; }
 
-        /// <summary>最近跑完的協程序號（對應 <see cref="Started"/> 的計數）。</summary>
-        public static int LastFinished { get; private set; }
-
-        public static void Postfix(ref IEnumerator __result)
+        public static void Postfix()
         {
             Started++;
-            __result = Track(__result, Started);
-        }
-
-        private static IEnumerator Track(IEnumerator inner, int sequence)
-        {
-            try
-            {
-                while (inner.MoveNext())
-                {
-                    yield return inner.Current;
-                }
-            }
-            finally
-            {
-                LastFinished = sequence;
-            }
         }
     }
 }

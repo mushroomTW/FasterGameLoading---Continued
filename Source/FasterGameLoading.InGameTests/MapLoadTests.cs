@@ -66,11 +66,7 @@ namespace FasterGameLoading.InGameTests
             finally
             {
                 // 失敗時也不能讓整個 session 保持無聲，或留下未解析的 SubSoundDef。
-                while (delayedActions.TryDequeueSubSound(out var def, out var run))
-                {
-                    DeferredLoader.TryRunSubSoundAction(def, run);
-                }
-                SoundStarter_Patch.Unpatch();
+                delayedActions.ResolvePendingSubSounds();
             }
         }
 

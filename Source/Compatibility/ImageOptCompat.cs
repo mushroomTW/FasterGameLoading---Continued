@@ -14,8 +14,6 @@ namespace FasterGameLoading
         private static readonly byte[] ddsMagic = { (byte)'D', (byte)'D', (byte)'S', (byte)' ' };
         private static readonly byte[] zstdMagic = { 0x28, 0xB5, 0x2F, 0xFD };
 
-        public static bool IsActive => Utils.IsModActive("dev.soeur.imageopt");
-
         public static int CleanupInvalidDdsZstdCaches(IEnumerable<string> roots)
         {
             if (roots == null) return 0;

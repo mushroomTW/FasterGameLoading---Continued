@@ -53,7 +53,7 @@ namespace FasterGameLoading.InGameTests
             (2048, 6, 512),
         };
 
-        private static bool ExternalTextureToolActive => ImageOptCompat.IsActive || GraphicsSettingsCompat.IsActive;
+        private static bool ExternalTextureToolActive => !TextureOwnership.FglOwnsTextureLoading;
 
         /// <summary>
         /// 降質快取載入的貼圖要與原版載入同一張 PNG 的結果一致（格式、濾波、mipmap；壓縮後的濾波設定也以原版為準）。
@@ -133,7 +133,7 @@ namespace FasterGameLoading.InGameTests
                 using var probe = new ResizeProbe(width, height);
                 int hitsBefore = ModContentLoaderTexture2D_LoadTexture_Patch.cacheLoadHits;
 
-                resize.ResizeTexture(probe.Candidate(target));
+                probe.Resize(resize, target);
                 var texture = probe.Load();
 
                 if (ModContentLoaderTexture2D_LoadTexture_Patch.cacheLoadHits != hitsBefore + 1)
@@ -177,7 +177,7 @@ namespace FasterGameLoading.InGameTests
                 Directory.CreateDirectory(Path.GetDirectoryName(cachePath));
                 WritePng(cachePath, CachedSize, CachedSize);
                 cacheManager.SetCacheEntry(OriginalPath, cachePath);
-                ModContentLoaderTexture2D_LoadTexture_Patch.savedTextures.TryRemove(OriginalPath, out _);
+                LoadedTextureRegistry.Forget(OriginalPath);
             }
 
             public Texture2D Load() => loaded = LoadTexture(OriginalPath);
@@ -188,8 +188,8 @@ namespace FasterGameLoading.InGameTests
             public void Dispose()
             {
                 cacheManager.RemoveCachedTexturePath(OriginalPath);
-                ModContentLoaderTexture2D_LoadTexture_Patch.savedTextures.TryRemove(OriginalPath, out _);
-                ModContentLoaderTexture2D_LoadTexture_Patch.savedTextures.TryRemove(cachePath, out _);
+                LoadedTextureRegistry.Forget(OriginalPath);
+                LoadedTextureRegistry.Forget(cachePath);
                 if (loaded != null) UnityEngine.Object.Destroy(loaded);
                 if (reference != null) UnityEngine.Object.Destroy(reference);
                 File.Delete(OriginalPath);
@@ -244,20 +244,31 @@ namespace FasterGameLoading.InGameTests
                 originalPath = Path.Combine(directory, FormattableString.Invariant($"FglResizeProbe_{width}x{height}.png"));
                 Probe.WritePng(originalPath, width, height);
                 Directory.CreateDirectory(Path.GetDirectoryName(cacheManager.GetCachePath(originalPath)));
-                ModContentLoaderTexture2D_LoadTexture_Patch.savedTextures.TryRemove(originalPath, out _);
+                LoadedTextureRegistry.Forget(originalPath);
             }
 
             /// <summary>
-            /// 與 BuildResizeCandidates 產生的候選相同；ResizeTexture 會自行從磁碟讀入原圖。
-            /// The same candidate BuildResizeCandidates would make; ResizeTexture reads the source from disk itself.
+            /// 以 BuildResizeCandidates 會產生的同一個候選呼叫 ResizeTexture（它自行從磁碟讀入原圖），
+            /// 寫到正式快取目錄後登記項目，與重建交易升級後的結果相同。
+            /// Calls ResizeTexture with the same candidate BuildResizeCandidates would make (it reads the source
+            /// from disk itself), writes into the live cache folder and registers the entry, which matches what a
+            /// promoted rebuild leaves behind.
             /// </summary>
-            public TextureResize.TextureResizeCandidate Candidate(int targetSize) => new TextureResize.TextureResizeCandidate
+            public void Resize(TextureResize resize, int targetSize)
             {
-                path = originalPath,
-                targetSize = targetSize,
-                originalWidth = width,
-                originalHeight = height,
-            };
+                var candidate = new TextureResize.TextureResizeCandidate
+                {
+                    path = originalPath,
+                    targetSize = targetSize,
+                    originalWidth = width,
+                    originalHeight = height,
+                };
+                var cachePath = cacheManager.GetCachePath(originalPath);
+                if (resize.ResizeTexture(candidate, cachePath))
+                {
+                    cacheManager.SetCacheEntry(originalPath, cachePath);
+                }
+            }
 
             public Texture2D Load() => loaded = Probe.LoadTexture(originalPath);
 
@@ -268,7 +279,7 @@ namespace FasterGameLoading.InGameTests
                 // deleting the source.
                 var cachePath = cacheManager.GetCachePath(originalPath);
                 cacheManager.RemoveCachedTexturePath(originalPath);
-                ModContentLoaderTexture2D_LoadTexture_Patch.savedTextures.TryRemove(originalPath, out _);
+                LoadedTextureRegistry.Forget(originalPath);
                 if (loaded != null) UnityEngine.Object.Destroy(loaded);
                 File.Delete(originalPath);
                 File.Delete(cachePath);

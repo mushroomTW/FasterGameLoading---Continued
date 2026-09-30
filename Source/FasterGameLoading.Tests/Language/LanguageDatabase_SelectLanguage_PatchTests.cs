@@ -9,7 +9,7 @@ namespace FasterGameLoading.Tests.Language
         public void Prefix_InvokesRegisteredCacheResetActions()
         {
             var wasReset = false;
-            CacheResetter.Register(() => wasReset = true);
+            SessionLifecycle.On(LifecyclePhase.LanguageReloading, () => wasReset = true);
 
             LanguageDatabase_SelectLanguage_Patch.Prefix();
 

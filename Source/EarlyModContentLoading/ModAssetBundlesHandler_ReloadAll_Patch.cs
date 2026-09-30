@@ -17,7 +17,7 @@ namespace FasterGameLoading
 
         static ModAssetBundlesHandler_ReloadAll_Patch()
         {
-            CacheResetter.Register(() => reloadedHandlers.Clear());
+            SessionLifecycle.On(LifecyclePhase.LanguageReloading, () => reloadedHandlers.Clear());
         }
 
         /// <summary>

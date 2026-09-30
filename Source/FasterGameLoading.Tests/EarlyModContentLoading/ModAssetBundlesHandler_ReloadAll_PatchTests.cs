@@ -62,12 +62,12 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
         }
 
         [Test]
-        public void CacheResetter_ResetAll_ClearsReloadedHandlers()
+        public void LanguageReloading_ClearsReloadedHandlers()
         {
             var handler = CreateMockHandler();
             ModAssetBundlesHandler_ReloadAll_Patch.reloadedHandlers.Add(handler);
 
-            CacheResetter.ResetAll();
+            SessionLifecycle.Raise(LifecyclePhase.LanguageReloading);
 
             Assert.That(ModAssetBundlesHandler_ReloadAll_Patch.reloadedHandlers, Is.Empty);
         }

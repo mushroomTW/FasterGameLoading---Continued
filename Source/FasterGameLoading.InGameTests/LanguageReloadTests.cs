@@ -10,7 +10,7 @@ namespace FasterGameLoading.InGameTests
 {
     /// <summary>
     /// 切換語言會跑 ClearAllPlayData + LoadAllPlayData：所有 ModContentPack、Def 與貼圖重建，CallAll 與 FGL 的延遲管線再跑一次，
-    /// 但 Mod 類別不會重建（FGL 建構子不再執行）。FGL 靠 CacheResetter 在 SelectLanguage 時清掉所有快取。
+    /// 但 Mod 類別不會重建（FGL 建構子不再執行）。FGL 靠 SessionLifecycle 的 LanguageReloading 在 SelectLanguage 時清掉所有快取。
     /// 第 1 輪結束後由 <see cref="TestRunDriver"/> 呼叫 <see cref="TryStart"/>，第 2 輪重跑全部測試並加跑本 suite。
     /// </summary>
     internal static class LanguageReload
@@ -102,7 +102,7 @@ namespace FasterGameLoading.InGameTests
             }
         }
 
-        /// <summary>CacheResetter 沒清掉的話，舊 ModContentPack／handler 會留在集合裡，新的同名 mod 則可能被誤判為已載入。</summary>
+        /// <summary>LanguageReloading 沒清掉的話，舊 ModContentPack／handler 會留在集合裡，新的同名 mod 則可能被誤判為已載入。</summary>
         [Test]
         public static void ContentTrackingOnlyHoldsCurrentModPacks()
         {
@@ -124,9 +124,9 @@ namespace FasterGameLoading.InGameTests
         public static void TextureCacheHoldsNoDestroyedTextures()
         {
             if (!AfterReload) return;
-            var failures = ModContentLoaderTexture2D_LoadTexture_Patch.savedTextures
-                .Where(static e => e.Value.TryGetTarget(out var texture) && !ReferenceEquals(texture, null) && texture == null)
-                .Select(static e => e.Key)
+            var failures = LoadedTextureRegistry.Snapshot()
+                .Where(static e => e.Key == null)
+                .Select(static e => e.Value)
                 .ToList();
             FglState.AssertNone(failures, "destroyed textures still cached");
         }

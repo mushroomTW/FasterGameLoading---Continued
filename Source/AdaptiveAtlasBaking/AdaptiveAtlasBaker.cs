@@ -17,6 +17,26 @@ namespace FasterGameLoading
     /// </summary>
     public static class AdaptiveAtlasBaker
     {
+        /// <summary>最近一次自適應烘焙是否失敗；失敗時已產生的圖集都已銷毀，由呼叫端改以原版流程烘焙。</summary>
+        internal static bool LastBakeFailed { get; private set; }
+
+        /// <summary>加權移動平均的權重，越新的記錄權重越高；保留的歷史筆數與權重數相同。</summary>
+        internal static readonly float[] BakeSpeedWeights = { 0.4f, 0.3f, 0.2f, 0.1f };
+
+        /// <summary>保留的烘焙速度記錄筆數上限。</summary>
+        internal static int BakeSpeedHistorySize => BakeSpeedWeights.Length;
+
+        /// <summary>歷次靜態圖集烘焙速度（像素／秒，新的在前），跨 session 保存，用於推估下次的起始批次大小。</summary>
+        internal static List<float> BakeSpeedHistory { get; set; } = new();
+
+        /// <summary>序列化烘焙速度記錄；由 SessionCache.ExposeData 在每一輪 Scribe 呼叫。</summary>
+        internal static void ExposeBakeSpeedHistory()
+        {
+            var speeds = BakeSpeedHistory;
+            Scribe_Collections.Look(ref speeds, FGLConsts.HistoricalBakeSpeedsKey, LookMode.Value);
+            BakeSpeedHistory = speeds ?? new List<float>();
+        }
+
         /// <summary>
         /// 自適應烘焙的可變狀態：目前測得的烘焙速度，以及依此推導的下個 slice 大小。
         /// 每烘完一批就地更新，故以 ref 傳遞。
@@ -68,6 +88,7 @@ namespace FasterGameLoading
 #pragma warning restore MA0051, S3776
         {
             FGLLog.Message("Starting adaptive static atlas bake");
+            LastBakeFailed = false;
 
             // 每個 slice 就是一張圖集，slice 大小直接決定圖集大小與數量。
             // 沿用原作（Taranchuk）的參數：小於 1024×1024 的圖集對繪製批次合併幾乎沒有幫助，
@@ -155,25 +176,25 @@ namespace FasterGameLoading
         /// </summary>
         private static float EstimateInitialBakeSpeed()
         {
-            if (SessionCache.historicalBakeSpeeds.Count is 0)
+            if (BakeSpeedHistory.Count is 0)
             {
                 // 初次執行：使用保守估計值
                 return 2_000_000f;
             }
 
-            int count = Math.Min(SessionCache.historicalBakeSpeeds.Count, SessionCache.WEIGHTS.Length);
-            return SessionCache.historicalBakeSpeeds.Take(count).Zip(SessionCache.WEIGHTS, static (speed, weight) => speed * weight).Sum() / SessionCache.WEIGHTS.Take(count).Sum();
+            int count = Math.Min(BakeSpeedHistory.Count, BakeSpeedWeights.Length);
+            return BakeSpeedHistory.Take(count).Zip(BakeSpeedWeights, static (speed, weight) => speed * weight).Sum() / BakeSpeedWeights.Take(count).Sum();
         }
 
         /// <summary>
-        /// 烘焙失敗時的收尾：銷毀已產生的所有圖集紋理並豎起失敗旗標，
+        /// 烘焙失敗時的收尾：銷毀已產生的所有圖集紋理並記錄失敗，
         /// 由呼叫端接手 fallback 到原版烘焙流程。
         /// </summary>
         private static void AbortBake(List<StaticTextureAtlas> atlasesToCommit, List<StaticTextureAtlas> bakedAtlasesForGroup)
         {
             DestroyAtlases(atlasesToCommit);
             DestroyAtlases(bakedAtlasesForGroup);
-            DelayedActions.AdaptiveStaticAtlasBakeFailed = true;
+            LastBakeFailed = true;
         }
 
         /// <summary>
@@ -187,10 +208,10 @@ namespace FasterGameLoading
                 GlobalTextureAtlasManager.staticTextureAtlases.Add(staticTextureAtlas);
             }
 
-            SessionCache.historicalBakeSpeeds.Insert(0, measuredBakeSpeed);
-            if (SessionCache.historicalBakeSpeeds.Count > SessionCache.HISTORY_SIZE)
+            BakeSpeedHistory.Insert(0, measuredBakeSpeed);
+            if (BakeSpeedHistory.Count > BakeSpeedHistorySize)
             {
-                SessionCache.historicalBakeSpeeds.RemoveAt(SessionCache.HISTORY_SIZE);
+                BakeSpeedHistory.RemoveAt(BakeSpeedHistorySize);
             }
 
             GlobalTextureAtlasManager.buildQueue.Clear();

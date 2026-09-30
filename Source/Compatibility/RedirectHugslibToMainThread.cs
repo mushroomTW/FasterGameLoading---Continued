@@ -14,7 +14,7 @@ namespace FasterGameLoading
     public static class RedirectHugslibToMainThread
     {
         public static MethodBase targetMethod { get; } = AccessTools.Method("HugsLib.HugsLibController:OnDefsLoaded");
-        public static bool Prepare() => FasterGameLoadingSettings.DelayGraphicLoading
+        public static bool Prepare() => DelayedActions.DeferredVisualsEnabled
             && targetMethod != null;
         public static MethodBase TargetMethod() => targetMethod;
 

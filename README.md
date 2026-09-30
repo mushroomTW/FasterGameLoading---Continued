@@ -43,14 +43,14 @@ Enabled by default:
 
 Disabled by default:
 
-- **Delay graphic and icon loading**: Moves some non-essential visual and icon work to batched processing after entering the game. Essential categories such as furniture are chosen after Def references resolve. RimWorld's `ResolveIcon` handles icons before deferred atlas baking.
-- **Adaptive atlas baking**: Only takes effect together with **Delay graphic and icon loading**. The deferred static atlases are baked one atlas per frame, sized from the measured GPU speed but never smaller than 1024×1024 pixels, so rendering still benefits from batching. Without delayed loading, RimWorld's original baking is used. Known risky race/multi-mask textures are kept out of static atlases.
+- **Delay graphic and icon loading**: Moves some non-essential visual and icon work to batched processing after entering the game. Essential categories such as furniture are chosen after Def references resolve. RimWorld's `ResolveIcon` handles icons before deferred atlas baking. Changes take effect after restarting the game.
+- **Adaptive atlas baking**: Only takes effect together with **Delay graphic and icon loading**. The deferred static atlases are baked one atlas per frame, sized from the measured GPU speed but never smaller than 1024×1024 pixels, so rendering still benefits from batching. Without delayed loading, RimWorld's original baking is used. Known risky race/multi-mask textures are kept out of static atlases. Changes take effect after restarting the game.
 - **Verbose logging**: Prints debugging messages.
 
 Manual tool:
 
-- **Downscale textures**: Shows a loading screen while it downscales high-resolution textures into a separate cache (in successive halving steps to avoid aliasing). Original mod files are never modified, and cached textures use RimWorld's filtering and compression pipeline. Textures under `/UI/` keep mipmaps disabled. When the mod list changes, cache entries for still-active mods are retained. If you already use Graphics Settings+ or RimSort Optimize Texture, you usually do not need this.
-- **Clear texture cache**: Removes cached downscaled textures so original textures are used on the next startup.
+- **Downscale textures**: Shows a loading screen while it downscales high-resolution textures into a separate cache (in successive halving steps to avoid aliasing). Original mod files are never modified, and cached textures use RimWorld's filtering and compression pipeline. Textures under `/UI/` keep mipmaps disabled. When the mod list changes, cache entries for still-active mods are retained. Rebuilding replaces the previous cache only after every new file is in place; if any cache file fails to write, or nothing could be written, the previous cache is kept. If you already use Graphics Settings+ or RimSort Optimize Texture, you usually do not need this. While Graphics Settings+ or Image Opt is loading textures, the tool is unavailable and the button is hidden.
+- **Clear texture cache**: Shows a loading screen while it removes cached downscaled textures, so original textures are used on the next startup.
 
 > [!NOTE]
 > Brief startup unresponsiveness can be normal, especially with large mod lists. Startup sound playback is temporarily held until deferred sound definitions finish resolving, then released automatically.

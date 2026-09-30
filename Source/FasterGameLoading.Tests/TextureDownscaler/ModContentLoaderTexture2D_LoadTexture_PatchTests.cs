@@ -15,9 +15,9 @@ using HarmonyLib;
 namespace FasterGameLoading.Tests.TextureDownscaler
 {
     /// <summary>
-    /// ModContentLoaderTexture2D_LoadTexture_Patch 的 headless 測試。
-    /// 主執行緒重導向佇列、WeakReference 快取、降質快取回退與 session 記錄
-    /// 四條路徑在真實遊戲中都只在啟動期跑到，這裡以反射與 Harmony stub 重建其前置狀態。
+    /// ModContentLoaderTexture2D_LoadTexture_Patch 的 headless 測試：背景轉交、registry 命中、
+    /// 相容性短路、Postfix 登記與背景預讀。佇列與登記本身另見
+    /// MainThreadTextureLoaderTests、LoadedTextureRegistryTests。
     /// </summary>
     [TestFixture]
     public class ModContentLoaderTexture2D_LoadTexture_PatchTests
@@ -28,27 +28,8 @@ namespace FasterGameLoading.Tests.TextureDownscaler
         private FasterGameLoadingMod originalInstance;
         private bool originalStaticAtlasesBaking;
         private bool originalVerboseLogging;
-        private bool? originalImageOptActive;
-        private bool? originalGraphicsSettingsActive;
         private int originalRedirectTimeoutMs;
-        private Harmony compatHarmony;
-
-        // ImageOptCompat／GraphicsSettingsCompat.IsActive 已改為 Utils.IsModActive 的無快取直通，
-        // 舊的 isActive 反射接縫已不存在；改以 Harmony 前綴 stub 控制各 packageId 的回傳值。
-        // 此處字串須與兩 Compat 類別的呼叫端保持一致。
-        private const string ImageOptPackageId = "dev.soeur.imageopt";
-        private const string GraphicsSettingsPackageId = "Telefonmast.GraphicsSettings";
-        private static readonly Dictionary<string, bool> modActiveOverrides = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
-
-        private static bool Prefix_ModActiveStub(string packageId, ref bool __result)
-        {
-            if (modActiveOverrides.TryGetValue(packageId, out var active))
-            {
-                __result = active;
-                return false;
-            }
-            return true;
-        }
+        private Func<VirtualFile, Texture2D> originalMainThreadLoad;
 
         /// <summary>測試用的轉交逾時；正式值為 10 秒，會讓「泵送從未執行」的測試空等太久。</summary>
         private const int TestRedirectTimeoutMs = 1000;
@@ -87,20 +68,12 @@ namespace FasterGameLoading.Tests.TextureDownscaler
             originalStaticAtlasesBaking = FasterGameLoadingSettings.StaticAtlasesBaking;
             originalVerboseLogging = FasterGameLoadingSettings.VerboseLogging;
             originalInstance = FasterGameLoadingMod.Instance;
-            originalImageOptActive = GetCompatFlag(typeof(ImageOptCompat));
-            originalGraphicsSettingsActive = GetCompatFlag(typeof(GraphicsSettingsCompat));
-            originalRedirectTimeoutMs = ModContentLoaderTexture2D_LoadTexture_Patch.mainThreadRedirectTimeoutMs;
-            ModContentLoaderTexture2D_LoadTexture_Patch.mainThreadRedirectTimeoutMs = TestRedirectTimeoutMs;
+            originalRedirectTimeoutMs = MainThreadTextureLoader.RedirectTimeoutMs;
+            originalMainThreadLoad = MainThreadTextureLoader.LoadOnMainThread;
+            MainThreadTextureLoader.RedirectTimeoutMs = TestRedirectTimeoutMs;
 
-            // 以 stub 接管 Utils.IsModActive，使各測試能開關相容性旗標
-            compatHarmony = new Harmony("FasterGameLoading.Tests.CompatFlagStub");
-            compatHarmony.Patch(
-                AccessTools.Method(typeof(Utils), nameof(Utils.IsModActive)),
-                prefix: new HarmonyMethod(AccessTools.Method(typeof(ModContentLoaderTexture2D_LoadTexture_PatchTests), nameof(Prefix_ModActiveStub))));
-
-            // 兩個相容性旗標一律固定為「未啟用」，否則 Prefix 會在第一個分支就短路。
-            SetCompatFlag(typeof(ImageOptCompat), value: false);
-            SetCompatFlag(typeof(GraphicsSettingsCompat), value: false);
+            // 預設由 FGL 負責載入貼圖，否則 Prefix 會在第一個分支就短路。
+            TextureOwnership.OverrideForTests(TextureOwner.Fgl);
             FasterGameLoadingSettings.StaticAtlasesBaking = false;
             FasterGameLoadingSettings.VerboseLogging = false;
 
@@ -114,20 +87,16 @@ namespace FasterGameLoading.Tests.TextureDownscaler
         public void TearDown()
         {
             TestSetup.IsInMainThreadOverride = null;
-            ModContentLoaderTexture2D_LoadTexture_Patch.mainThreadRedirectTimeoutMs = originalRedirectTimeoutMs;
-            DrainQueueSilently();
+            MainThreadTextureLoader.Drain();
+            MainThreadTextureLoader.RedirectTimeoutMs = originalRedirectTimeoutMs;
+            MainThreadTextureLoader.LoadOnMainThread = originalMainThreadLoad;
             ClearPatchState();
-            ResetBakingSkipListState();
+            SessionLifecycle.Raise(LifecyclePhase.LanguageReloading);
 
             SetModInstance(originalInstance);
             FasterGameLoadingSettings.StaticAtlasesBaking = originalStaticAtlasesBaking;
             FasterGameLoadingSettings.VerboseLogging = originalVerboseLogging;
-            SetCompatFlag(typeof(ImageOptCompat), originalImageOptActive);
-            SetCompatFlag(typeof(GraphicsSettingsCompat), originalGraphicsSettingsActive);
-
-            compatHarmony?.UnpatchAll("FasterGameLoading.Tests.CompatFlagStub");
-            compatHarmony = null;
-            modActiveOverrides.Clear();
+            TextureOwnership.OverrideForTests(null);
 
             try
             {
@@ -142,158 +111,27 @@ namespace FasterGameLoading.Tests.TextureDownscaler
             }
         }
 
-        // ── 主執行緒重導向佇列 ──
+        // ── Prefix：非主執行緒轉交 ──
 
         [Test]
-        public void ProcessPendingMainThreadRequests_CapturesLoaderExceptionAndStillSignals()
+        public void Prefix_OffMainThread_ReturnsTextureFromMainThreadLoaderAndSkipsOriginal()
         {
-            // headless 環境沒有 Unity 圖形裝置，真正的 LoadTexture 一定失敗；
-            // 這正是要驗證的情境：失敗也必須喚醒等待端。
-            var request = EnqueueRequest(new FakeVirtualFile(Path.Combine(tempDir, "b.png")));
-
-            ModContentLoaderTexture2D_LoadTexture_Patch.ProcessPendingMainThreadRequests();
-
-            Assert.That(GetRequestField(request, "Result"), Is.Null);
-            Assert.That(GetRequestField(request, "Exception"), Is.Not.Null);
-            Assert.That(IsCompleted(request), Is.True, "即使載入失敗也必須喚醒等待端，否則呼叫端會空等到逾時。");
-        }
-
-        [Test]
-        public void ProcessPendingMainThreadRequests_SkipsCancelledRequestWithoutInvokingLoader()
-        {
-            var request = EnqueueRequest(new FakeVirtualFile(Path.Combine(tempDir, "c.png")));
-            CancelRequest(request);
-
-            ModContentLoaderTexture2D_LoadTexture_Patch.ProcessPendingMainThreadRequests();
-
-            // 若已取消的請求仍被送進載入器，Exception 欄位會被填上。
-            Assert.That(GetRequestField(request, "Result"), Is.Null);
-            Assert.That(GetRequestField(request, "Exception"), Is.Null);
-            Assert.That(IsCompleted(request), Is.False);
-        }
-
-        [Test]
-        public void TryDrainMainThreadRequests_DrainsQueue()
-        {
-            var request = EnqueueRequest(new FakeVirtualFile(Path.Combine(tempDir, "d.png")));
-
-            ModContentLoaderTexture2D_LoadTexture_Patch.TryDrainMainThreadRequests();
-
-            Assert.That(IsCompleted(request), Is.True);
-            Assert.That(QueueCount(), Is.Zero);
-        }
-
-        [Test]
-        public void TryDrainMainThreadRequests_IsReentrancySafe()
-        {
-            var drainingField = PatchType.GetField("_draining", BindingFlags.NonPublic | BindingFlags.Static);
-            Assert.That(drainingField, Is.Not.Null);
-
-            EnqueueRequest(new FakeVirtualFile(Path.Combine(tempDir, "e.png")));
-
-            drainingField.SetValue(obj: null, value: true);
-            try
-            {
-                ModContentLoaderTexture2D_LoadTexture_Patch.TryDrainMainThreadRequests();
-                Assert.That(QueueCount(), Is.EqualTo(1), "已在泵送中時再次呼叫必須直接返回，不得遞迴消費佇列。");
-            }
-            finally
-            {
-                drainingField.SetValue(obj: null, value: false);
-            }
-        }
-
-        // ── Prefix：非主執行緒重導向 ──
-
-        [Test]
-        public void Prefix_OffMainThread_ReturnsTextureSuppliedByMainThreadPump()
-        {
+            // 佇列、逾時與取消的細節由 MainThreadTextureLoaderTests 驗證；這裡只確認補丁把背景載入交給它。
             var expected = NewDetachedTexture();
+            MainThreadTextureLoader.LoadOnMainThread = _ => expected;
             TestSetup.IsInMainThreadOverride = () => false;
-
-            // 以反射直接完成佇列中的請求，模擬 DelayedActions.Update() 在主執行緒泵送成功的情形。
-            // （headless 下真正的 LoadTexture 必然失敗，無法用來測成功路徑。）
-            var pump = Task.Run(() => CompleteFirstQueuedRequest(expected, deadlineMs: 900));
+            var pump = Task.Run(() =>
+            {
+                SpinWait.SpinUntil(() => MainThreadTextureLoader.PendingCount > 0, TimeSpan.FromMilliseconds(900));
+                MainThreadTextureLoader.Drain();
+            });
 
             Texture2D result = null;
             bool runOriginal = ModContentLoaderTexture2D_LoadTexture_Patch.Prefix(
                 new FakeVirtualFile(Path.Combine(tempDir, "f.png")), out bool state, ref result);
-
             pump.Wait(2000);
 
-            Assert.That(runOriginal, Is.False);
-            Assert.That(state, Is.False);
-            Assert.That(result, Is.SameAs(expected));
-        }
-
-        [Test]
-        public void Prefix_OffMainThread_ReturnsNullWhenPumpReportsLoadFailure()
-        {
-            TestSetup.IsInMainThreadOverride = () => false;
-
-            var pump = Task.Run(() =>
-            {
-                SpinWait.SpinUntil(() => QueueCount() > 0, TimeSpan.FromMilliseconds(900));
-                ModContentLoaderTexture2D_LoadTexture_Patch.ProcessPendingMainThreadRequests();
-            });
-
-            Texture2D result = NewDetachedTexture();
-            bool runOriginal = ModContentLoaderTexture2D_LoadTexture_Patch.Prefix(
-                new FakeVirtualFile(Path.Combine(tempDir, "h.png")), out bool state, ref result);
-
-            pump.Wait(2000);
-
-            Assert.That(runOriginal, Is.False);
-            Assert.That(state, Is.False);
-            Assert.That(result, Is.Null);
-        }
-
-        [Test]
-        public void Prefix_OffMainThread_ReturnsNullWhenPumpNeverRuns()
-        {
-            TestSetup.IsInMainThreadOverride = () => false;
-
-            Texture2D result = NewDetachedTexture();
-            bool runOriginal = ModContentLoaderTexture2D_LoadTexture_Patch.Prefix(
-                new FakeVirtualFile(Path.Combine(tempDir, "g.png")), out bool state, ref result);
-
-            Assert.That(runOriginal, Is.False, "逾時後必須跳過原始方法，不得讓背景執行緒去碰 Unity 資源 API。");
-            Assert.That(state, Is.False);
-            Assert.That(result, Is.Null);
-        }
-
-        [Test]
-        public void Prefix_OffMainThread_WhenTimeoutRacesWithMainThreadLoad_ReturnsLoadedTexture()
-        {
-            // 主執行緒已取得處理權，但完成時間晚於逾時：等待端不得放棄，
-            // 否則主執行緒載入出的貼圖會無人持有而洩漏，呼叫端也拿不到貼圖。
-            var expected = NewDetachedTexture();
-            TestSetup.IsInMainThreadOverride = () => false;
-
-            var pump = Task.Run(() =>
-            {
-                var queue = GetQueue();
-                var tryDequeue = queue.GetType().GetMethod("TryDequeue");
-                var args = new object[] { null };
-                if (!SpinWait.SpinUntil(() => (bool)tryDequeue.Invoke(queue, args), TestRedirectTimeoutMs))
-                {
-                    return;
-                }
-
-                var request = args[0];
-                request.GetType().GetMethod("TryTake").Invoke(request, parameters: null);
-                Thread.Sleep(TestRedirectTimeoutMs + 300);
-                request.GetType().GetField("Result").SetValue(request, expected);
-                ((ManualResetEventSlim)GetRequestField(request, "CompletedEvent")).Set();
-            });
-
-            Texture2D result = null;
-            bool runOriginal = ModContentLoaderTexture2D_LoadTexture_Patch.Prefix(
-                new FakeVirtualFile(Path.Combine(tempDir, "race.png")), out bool state, ref result);
-
-            pump.Wait(5000);
-
-            Assert.That(runOriginal, Is.False);
+            Assert.That(runOriginal, Is.False, "背景執行緒不得去碰 Unity 資源 API。");
             Assert.That(state, Is.False);
             Assert.That(result, Is.SameAs(expected));
         }
@@ -303,7 +141,7 @@ namespace FasterGameLoading.Tests.TextureDownscaler
         [Test]
         public void Prefix_WhenImageOptActive_DefersToOriginalLoader()
         {
-            SetCompatFlag(typeof(ImageOptCompat), value: true);
+            TextureOwnership.OverrideForTests(TextureOwner.ImageOpt);
 
             Texture2D result = null;
             bool runOriginal = ModContentLoaderTexture2D_LoadTexture_Patch.Prefix(
@@ -316,7 +154,7 @@ namespace FasterGameLoading.Tests.TextureDownscaler
         [Test]
         public void Prefix_WhenGraphicsSettingsActive_DefersToOriginalLoader()
         {
-            SetCompatFlag(typeof(GraphicsSettingsCompat), value: true);
+            TextureOwnership.OverrideForTests(TextureOwner.GraphicsSettings);
 
             Texture2D result = null;
             bool runOriginal = ModContentLoaderTexture2D_LoadTexture_Patch.Prefix(
@@ -333,8 +171,7 @@ namespace FasterGameLoading.Tests.TextureDownscaler
         {
             string fullPath = Path.Combine(tempDir, "Textures", "cached.png");
             var cached = NewDetachedTexture();
-            ModContentLoaderTexture2D_LoadTexture_Patch.savedTextures[fullPath] =
-                new System.WeakReference<Texture2D>(cached);
+            LoadedTextureRegistry.Record(fullPath, cached);
 
             Texture2D result = null;
             bool runOriginal = ModContentLoaderTexture2D_LoadTexture_Patch.Prefix(
@@ -351,82 +188,6 @@ namespace FasterGameLoading.Tests.TextureDownscaler
         // 「ECall methods must be packaged into a system module」而非在呼叫時才失敗，
         // 因此連「進入方法後立刻回傳 false」的路徑也無法執行。
 
-        // ── 路徑登記與烘焙排除 ──
-
-        [Test]
-        public void SaveTexturePath_RebindingSameTextureUpdatesReverseLookup()
-        {
-            string firstPath = Path.Combine(tempDir, "first.png");
-            string secondPath = Path.Combine(tempDir, "second.png");
-            var texture = NewDetachedTexture();
-
-            InvokeSaveTexturePath(firstPath, texture);
-            InvokeSaveTexturePath(secondPath, texture);
-
-            Assert.That(
-                ModContentLoaderTexture2D_LoadTexture_Patch.TryGetSavedTexturePath(texture, out string resolved),
-                Is.True);
-            Assert.That(resolved, Is.EqualTo(secondPath),
-                "同一 Texture2D 換路徑重新登記後，反向查表必須指向新路徑。");
-        }
-
-        [Test]
-        public void SaveTexturePath_ReplacingTextureAtSamePathDetachesOldEntry()
-        {
-            string fullPath = Path.Combine(tempDir, "same.png");
-            var oldTexture = NewDetachedTexture();
-            var newTexture = NewDetachedTexture();
-
-            InvokeSaveTexturePath(fullPath, oldTexture);
-            InvokeSaveTexturePath(fullPath, newTexture);
-
-            Assert.That(
-                ModContentLoaderTexture2D_LoadTexture_Patch.TryGetSavedTexturePath(oldTexture, out _),
-                Is.False);
-            Assert.That(
-                ModContentLoaderTexture2D_LoadTexture_Patch.TryGetSavedTexturePath(newTexture, out string resolved),
-                Is.True);
-            Assert.That(resolved, Is.EqualTo(fullPath));
-        }
-
-        [Test]
-        public void TryGetSavedTexturePath_UnknownTextureReturnsFalse()
-        {
-            Assert.That(
-                ModContentLoaderTexture2D_LoadTexture_Patch.TryGetSavedTexturePath(NewDetachedTexture(), out string resolved),
-                Is.False);
-            Assert.That(resolved, Is.Null);
-        }
-
-        [Test]
-        public void RegisterSkippedBakingTextureIfApplicable_RegistersInstance()
-        {
-            string modRoot = Path.Combine(tempDir, "TargetMod").Replace('\\', '/');
-            SeedBakingSkipListRoot(modRoot);
-            FasterGameLoadingSettings.StaticAtlasesBaking = true;
-
-            string texturePath = modRoot + "/Textures/Alien/head.png";
-            var texture = NewDetachedTexture();
-
-            ModContentLoaderTexture2D_LoadTexture_Patch.RegisterSkippedBakingTextureIfApplicable(texturePath, texture);
-
-            Assert.That(ModContentLoaderTexture2D_LoadTexture_Patch.skippedBakingTextures.ContainsKey(texture), Is.True);
-        }
-
-        [Test]
-        public void RegisterSkippedBakingTextureIfApplicable_IgnoresPathsOutsideTargetMods()
-        {
-            string modRoot = Path.Combine(tempDir, "TargetMod").Replace('\\', '/');
-            SeedBakingSkipListRoot(modRoot);
-            FasterGameLoadingSettings.StaticAtlasesBaking = true;
-
-            var texture = NewDetachedTexture();
-            ModContentLoaderTexture2D_LoadTexture_Patch.RegisterSkippedBakingTextureIfApplicable(
-                Path.Combine(tempDir, "OtherMod", "Textures", "rock.png"), texture);
-
-            Assert.That(ModContentLoaderTexture2D_LoadTexture_Patch.skippedBakingTextures, Is.Empty);
-        }
-
         // ── Postfix ──
 
         [Test]
@@ -439,7 +200,7 @@ namespace FasterGameLoading.Tests.TextureDownscaler
                 new FakeVirtualFile(fullPath), __state: true, texture);
 
             Assert.That(
-                ModContentLoaderTexture2D_LoadTexture_Patch.TryGetSavedTexturePath(texture, out string resolved),
+                LoadedTextureRegistry.TryGetPath(texture, out string resolved),
                 Is.True);
             Assert.That(resolved, Is.EqualTo(fullPath));
         }
@@ -454,7 +215,7 @@ namespace FasterGameLoading.Tests.TextureDownscaler
                 new FakeVirtualFile(fullPath), __state: false, texture);
 
             Assert.That(
-                ModContentLoaderTexture2D_LoadTexture_Patch.TryGetSavedTexturePath(texture, out _),
+                LoadedTextureRegistry.TryGetPath(texture, out _),
                 Is.False);
         }
 
@@ -462,7 +223,7 @@ namespace FasterGameLoading.Tests.TextureDownscaler
         public void Postfix_SkipsProtectedModTexturePath()
         {
             string modRoot = Path.Combine(tempDir, "TargetMod").Replace('\\', '/');
-            SeedBakingSkipListRoot(modRoot);
+            ProtectedMods.SetProtectedTextureRootsForTests(modRoot);
             string fullPath = modRoot + "/Textures/Alien/body.png";
             var texture = NewDetachedTexture();
 
@@ -470,7 +231,7 @@ namespace FasterGameLoading.Tests.TextureDownscaler
                 new FakeVirtualFile(fullPath), __state: true, texture);
 
             Assert.That(
-                ModContentLoaderTexture2D_LoadTexture_Patch.TryGetSavedTexturePath(texture, out _),
+                LoadedTextureRegistry.TryGetPath(texture, out _),
                 Is.False,
                 "排除烘焙的 Mod 紋理不得進入 WeakReference 快取，否則下次載入會沿用同一實體而繞過排除判定。");
         }
@@ -530,7 +291,7 @@ namespace FasterGameLoading.Tests.TextureDownscaler
         public void StartPreloadCachedTextures_WhenGraphicsSettingsActive_SkipsPreload()
         {
             string cachePath = WriteCacheEntry("gs_cache.png");
-            SetCompatFlag(typeof(GraphicsSettingsCompat), value: true);
+            TextureOwnership.OverrideForTests(TextureOwner.GraphicsSettings);
 
             ModContentLoaderTexture2D_LoadTexture_Patch.StartPreloadCachedTextures();
             WaitForPreloadTask();
@@ -600,130 +361,12 @@ namespace FasterGameLoading.Tests.TextureDownscaler
 
         // ── 測試輔助 ──
 
-        /// <summary>
-        /// 取出佇列中的第一個請求，直接填入指定紋理並喚醒等待端。
-        /// 這是 DelayedActions.Update() 泵送成功時的等效行為，但不經過需要 Unity 圖形裝置的載入器。
-        /// </summary>
-        private static bool CompleteFirstQueuedRequest(Texture2D result, int deadlineMs)
-        {
-            var queue = GetQueue();
-            var tryDequeue = queue.GetType().GetMethod("TryDequeue");
-            var args = new object[] { null };
-
-            if (!SpinWait.SpinUntil(() => (bool)tryDequeue.Invoke(queue, args), deadlineMs))
-            {
-                return false;
-            }
-
-            var request = args[0];
-            request.GetType().GetField("Result").SetValue(request, result);
-            ((ManualResetEventSlim)GetRequestField(request, "CompletedEvent")).Set();
-            return true;
-        }
-
-        private static object GetQueue()
-        {
-            return PatchType.GetField("mainThreadLoadRequests", BindingFlags.NonPublic | BindingFlags.Static)
-                .GetValue(null);
-        }
-
-        private static int QueueCount()
-        {
-            var queue = GetQueue();
-            return (int)queue.GetType().GetProperty("Count").GetValue(queue);
-        }
-
-        private static object EnqueueRequest(VirtualFile file)
-        {
-            var requestType = PatchType.GetNestedType("LoadRequest", BindingFlags.NonPublic);
-            var request = Activator.CreateInstance(requestType, nonPublic: true);
-            requestType.GetField("File").SetValue(request, file);
-
-            var queue = GetQueue();
-            queue.GetType().GetMethod("Enqueue").Invoke(queue, new object[] { request });
-            return request;
-        }
-
-        private static object GetRequestField(object request, string name)
-        {
-            return request.GetType().GetField(name).GetValue(request);
-        }
-
-        private static bool IsCompleted(object request)
-        {
-            var completedEvent = (ManualResetEventSlim)GetRequestField(request, "CompletedEvent");
-            return completedEvent.IsSet;
-        }
-
-        private static void CancelRequest(object request)
-        {
-            request.GetType().GetMethod("Cancel").Invoke(request, parameters: null);
-        }
-
-        private static void DrainQueueSilently()
-        {
-            var queue = GetQueue();
-            var tryDequeue = queue.GetType().GetMethod("TryDequeue");
-            var args = new object[] { null };
-            while ((bool)tryDequeue.Invoke(queue, args))
-            {
-                args[0] = null;
-            }
-        }
-
-        private static void InvokeSaveTexturePath(string fullPath, Texture2D texture)
-        {
-            PatchType.GetMethod("SaveTexturePath", BindingFlags.NonPublic | BindingFlags.Static)
-                .Invoke(obj: null, new object[] { fullPath, texture });
-        }
-
         private static void ClearPatchState()
         {
-            ModContentLoaderTexture2D_LoadTexture_Patch.savedTextures.Clear();
+            LoadedTextureRegistry.Clear();
             ModContentLoaderTexture2D_LoadTexture_Patch.preloadedCacheBytes.Clear();
-            ModContentLoaderTexture2D_LoadTexture_Patch.skippedBakingTextures.Clear();
         }
 
-        /// <summary>直接把根目錄塞進排除名單並鎖定初始化旗標，繞過需要 RunningMods 的探測流程。</summary>
-        private static void SeedBakingSkipListRoot(string root)
-        {
-            var roots = (HashSet<string>)typeof(AdaptiveBakingSkipList)
-                .GetField("targetModRoots", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
-            roots.Clear();
-            roots.Add(root);
-            typeof(AdaptiveBakingSkipList)
-                .GetField("rootsInitialized", BindingFlags.NonPublic | BindingFlags.Static)
-                .SetValue(obj: null, value: true);
-        }
-
-        private static void ResetBakingSkipListState()
-        {
-            var roots = (HashSet<string>)typeof(AdaptiveBakingSkipList)
-                .GetField("targetModRoots", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
-            roots.Clear();
-            typeof(AdaptiveBakingSkipList)
-                .GetField("rootsInitialized", BindingFlags.NonPublic | BindingFlags.Static)
-                .SetValue(obj: null, value: false);
-        }
-
-        private static string PackageIdFor(Type compatType)
-        {
-            return compatType == typeof(ImageOptCompat) ? ImageOptPackageId : GraphicsSettingsPackageId;
-        }
-
-        private static bool? GetCompatFlag(Type compatType)
-        {
-            var packageId = PackageIdFor(compatType);
-            if (modActiveOverrides.TryGetValue(packageId, out var overridden)) return overridden;
-            return Utils.IsModActive(packageId);
-        }
-
-        private static void SetCompatFlag(Type compatType, bool? value)
-        {
-            var packageId = PackageIdFor(compatType);
-            if (value is null) modActiveOverrides.Remove(packageId);
-            else modActiveOverrides[packageId] = value.Value;
-        }
 
         private static FasterGameLoadingMod CreateModWithCacheManager(TextureCacheManager cacheManager)
         {
@@ -747,9 +390,7 @@ namespace FasterGameLoading.Tests.TextureDownscaler
         public void Prefix_WhenProtectedModTexturePath_BypassesCacheAndCallsOriginal()
         {
             TestSetup.IsInMainThreadOverride = () => true;
-            var roots = (HashSet<string>)HarmonyLib.AccessTools.Field(typeof(AdaptiveBakingSkipList), "targetModRoots").GetValue(null);
-            roots.Add("C:/MockProtectedMod");
-            HarmonyLib.AccessTools.Field(typeof(AdaptiveBakingSkipList), "rootsInitialized").SetValue(null, true);
+            ProtectedMods.SetProtectedTextureRootsForTests("C:/MockProtectedMod");
 
             var fakeFile = new FakeVirtualFile(@"C:\MockProtectedMod\Textures\Pawn.png");
             Texture2D result = null;
@@ -762,51 +403,7 @@ namespace FasterGameLoading.Tests.TextureDownscaler
             Assert.That(result, Is.Null);
         }
 
-        [Test]
-        public void TryServeFromWeakReferenceCache_WhenTargetCollected_ReturnsFalse()
-        {
-            var tryServe = HarmonyLib.AccessTools.Method(typeof(ModContentLoaderTexture2D_LoadTexture_Patch), "TryServeFromWeakReferenceCache");
-            string path = "test/dead/texture.png";
-            ModContentLoaderTexture2D_LoadTexture_Patch.savedTextures[path] = new System.WeakReference<Texture2D>(null);
 
-            object[] args = new object[] { path, null };
-            bool served = (bool)tryServe.Invoke(null, args);
-
-            Assert.That(served, Is.False);
-            Assert.That(args[1], Is.Null);
-        }
-
-        [Test]
-        public void OnStartupCompleted_WhenCacheHitsGreaterThanZero_LogsMessage()
-        {
-            bool prevVerbose = FasterGameLoadingSettings.VerboseLogging;
-            FasterGameLoadingSettings.VerboseLogging = true;
-            ModContentLoaderTexture2D_LoadTexture_Patch.cacheLoadHits = 5;
-
-            string logged = null;
-            TestSetup.OnLogMessage = text => logged = text;
-
-            Startup.RegisterOnStartupCompleted(() =>
-            {
-                if (ModContentLoaderTexture2D_LoadTexture_Patch.cacheLoadHits > 0)
-                {
-                    FGLLog.Message($"Texture downscale cache hits: {ModContentLoaderTexture2D_LoadTexture_Patch.cacheLoadHits}");
-                }
-            });
-
-            try
-            {
-                var runCallbacks = typeof(Startup).GetMethod("RunStartupCallbacks", BindingFlags.NonPublic | BindingFlags.Static);
-                runCallbacks?.Invoke(null, null);
-                Assert.That(logged, Does.Contain("5"));
-            }
-            finally
-            {
-                TestSetup.OnLogMessage = null;
-                ModContentLoaderTexture2D_LoadTexture_Patch.cacheLoadHits = 0;
-                FasterGameLoadingSettings.VerboseLogging = prevVerbose;
-            }
-        }
 
         [Test]
         public void StartPreloadCachedTextures_WhenFilesExist_LoadsBytesIntoPreloadMap()

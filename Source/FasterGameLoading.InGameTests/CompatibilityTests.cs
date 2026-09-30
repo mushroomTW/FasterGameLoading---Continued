@@ -48,7 +48,7 @@ namespace FasterGameLoading.InGameTests
             lock (ContentLoadProbe.LoadedBeforePatches)
             {
                 failures = ContentLoadProbe.EarlyLoadedMods
-                    .Where(static m => EarlyLoadSkipList.ShouldSkip(m))
+                    .Where(static m => ProtectedMods.ShouldSkipEarlyLoad(m))
                     .Select(static m => m.PackageIdPlayerFacing)
                     .ToList();
             }
@@ -57,7 +57,7 @@ namespace FasterGameLoading.InGameTests
 
         /// <summary>
         /// HAR、Ancot 及其衍生 mod 的貼圖（多遮罩的身體部件）不能進靜態圖集；
-        /// FGL 在載入時把它們登記到 skippedBakingTextures，由 TryInsertStatic 的 prefix 擋下。
+        /// FGL 在載入時把它們登記到 LoadedTextureRegistry 的烘焙排除表，由 TryInsertStatic 的 prefix 擋下。
         /// </summary>
         [Test]
         public static void ProtectedModTexturesStayOutOfStaticAtlases()
@@ -70,7 +70,7 @@ namespace FasterGameLoading.InGameTests
             foreach (var mod in LoadedModManager.RunningMods)
             {
                 // 受保護貼圖刻意不進 FGL 的路徑表，改以 mod 根目錄判斷整個 mod 是否受保護。
-                if (!AdaptiveBakingSkipList.IsProtectedModTexturePath(mod.RootDir.Replace('\\', '/').TrimEnd('/') + "/Textures/probe.png")) continue;
+                if (!ProtectedMods.IsProtectedTexturePath(mod.RootDir.Replace('\\', '/').TrimEnd('/') + "/Textures/probe.png")) continue;
                 protectedMods++;
 
                 foreach (var entry in mod.GetContentHolder<Texture2D>().contentList)
@@ -79,7 +79,7 @@ namespace FasterGameLoading.InGameTests
                     if (texture == null) continue;
                     checkedTextures++;
 
-                    if (!ModContentLoaderTexture2D_LoadTexture_Patch.skippedBakingTextures.ContainsKey(texture))
+                    if (!LoadedTextureRegistry.IsSkippedForBaking(texture))
                     {
                         failures.Add($"{mod.PackageIdPlayerFacing}/{entry.Key}: not registered as skipped");
                     }

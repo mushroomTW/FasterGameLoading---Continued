@@ -18,7 +18,7 @@ namespace FasterGameLoading.Tests.TextureDownscaler
         [TearDown]
         public void TearDown()
         {
-            ModContentLoaderTexture2D_LoadTexture_Patch.savedTextures.Clear();
+            LoadedTextureRegistry.Clear();
         }
 
         [Test]
@@ -53,12 +53,7 @@ namespace FasterGameLoading.Tests.TextureDownscaler
             var texture = Uninitialized<Texture2D>();
             var expectedPath = "Mods/MyMod/Textures/FromSaved.png";
 
-            // SaveTexturePath 同時維護 savedTextures（弱引用字典）與 savedTexturePathsByTexture
-            // （弱鍵反查表）；TryGetSavedTexturePath 實際查詢的是後者。
-            var saveTexturePath = typeof(ModContentLoaderTexture2D_LoadTexture_Patch)
-                .GetMethod("SaveTexturePath", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
-            Assert.That(saveTexturePath, Is.Not.Null);
-            saveTexturePath.Invoke(null, new object[] { expectedPath, texture });
+            LoadedTextureRegistry.Record(expectedPath, texture);
 
             var result = scanner.TryGetTexturePath(texture, out var path);
 
@@ -146,7 +141,7 @@ namespace FasterGameLoading.Tests.TextureDownscaler
         {
             var scanner = new TextureScanner();
             var tex = Uninitialized<Texture2D>();
-            ModContentLoaderTexture2D_LoadTexture_Patch.savedTextures["Mods/MyMod/Tex.png"] = new System.WeakReference<Texture2D>(tex);
+            LoadedTextureRegistry.Record("Mods/MyMod/Tex.png", tex);
 
             var refreshMethod = typeof(TextureScanner).GetMethod("RefreshTexturePathMap",
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);

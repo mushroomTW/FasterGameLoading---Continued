@@ -72,19 +72,19 @@ namespace FasterGameLoading.Tests.Settings
 
         private static void ResetSessionCache()
         {
-            SessionCache.loadedTypesByFullNameSinceLastSession = new ConcurrentDictionary<string, string>(StringComparer.Ordinal);
+            TypeLookupCache.FullNamesFromLastSession = new ConcurrentDictionary<string, string>(StringComparer.Ordinal);
             SessionCache.modsInLastSession = new List<string>();
-            SessionCache.historicalBakeSpeeds = new List<float>();
+            AdaptiveAtlasBaker.BakeSpeedHistory = new List<float>();
             // 預設與本次組件一致，讓只驗證 mod 清單比對的測試不受組件指紋影響。
-            SessionCache.typeCacheAssemblyFingerprint = SessionCache.ComputeCurrentAssemblyFingerprint();
+            TypeLookupCache.PersistedFingerprint = TypeLookupCache.ComputeCurrentFingerprint();
         }
 
         [Test]
         public void Weights_LengthMatchesHistorySize()
         {
-            Assert.That(SessionCache.WEIGHTS.Length, Is.EqualTo(4));
-            Assert.That(SessionCache.WEIGHTS.Length, Is.EqualTo(SessionCache.HISTORY_SIZE));
-            Assert.That(SessionCache.WEIGHTS.Sum(), Is.EqualTo(1.0f).Within(0.001f));
+            Assert.That(AdaptiveAtlasBaker.BakeSpeedWeights.Length, Is.EqualTo(4));
+            Assert.That(AdaptiveAtlasBaker.BakeSpeedWeights.Length, Is.EqualTo(AdaptiveAtlasBaker.BakeSpeedHistorySize));
+            Assert.That(AdaptiveAtlasBaker.BakeSpeedWeights.Sum(), Is.EqualTo(1.0f).Within(0.001f));
         }
 
         [Test]
@@ -94,13 +94,13 @@ namespace FasterGameLoading.Tests.Settings
             mockActiveMods.Add(CreateMockModMetaData("fgl.mod"));
 
             SessionCache.modsInLastSession = new List<string> { "ludeon.rimworld", "fgl.mod" };
-            SessionCache.loadedTypesByFullNameSinceLastSession["typeA"] = "assemblyA";
+            TypeLookupCache.FullNamesFromLastSession["typeA"] = "assemblyA";
 
             Scribe.mode = LoadSaveMode.PostLoadInit;
             SessionCache.ExposeData();
 
-            Assert.That(SessionCache.loadedTypesByFullNameSinceLastSession, Has.Count.EqualTo(1));
-            Assert.That(SessionCache.loadedTypesByFullNameSinceLastSession["typeA"], Is.EqualTo("assemblyA"));
+            Assert.That(TypeLookupCache.FullNamesFromLastSession, Has.Count.EqualTo(1));
+            Assert.That(TypeLookupCache.FullNamesFromLastSession["typeA"], Is.EqualTo("assemblyA"));
         }
 
         [Test]
@@ -110,12 +110,12 @@ namespace FasterGameLoading.Tests.Settings
             mockActiveMods.Add(CreateMockModMetaData("fgl.mod.v2"));
 
             SessionCache.modsInLastSession = new List<string> { "ludeon.rimworld", "fgl.mod.v1" };
-            SessionCache.loadedTypesByFullNameSinceLastSession["typeA"] = "assemblyA";
+            TypeLookupCache.FullNamesFromLastSession["typeA"] = "assemblyA";
 
             Scribe.mode = LoadSaveMode.PostLoadInit;
             SessionCache.ExposeData();
 
-            Assert.That(SessionCache.loadedTypesByFullNameSinceLastSession, Is.Empty);
+            Assert.That(TypeLookupCache.FullNamesFromLastSession, Is.Empty);
         }
 
         [Test]
@@ -125,12 +125,12 @@ namespace FasterGameLoading.Tests.Settings
             mockActiveMods.Add(CreateMockModMetaData("fgl.mod"));
 
             SessionCache.modsInLastSession = new List<string> { "ludeon.rimworld" };
-            SessionCache.loadedTypesByFullNameSinceLastSession["typeA"] = "assemblyA";
+            TypeLookupCache.FullNamesFromLastSession["typeA"] = "assemblyA";
 
             Scribe.mode = LoadSaveMode.PostLoadInit;
             SessionCache.ExposeData();
 
-            Assert.That(SessionCache.loadedTypesByFullNameSinceLastSession, Is.Empty);
+            Assert.That(TypeLookupCache.FullNamesFromLastSession, Is.Empty);
         }
 
         // ── 真實存讀檔循環 ──
@@ -143,7 +143,7 @@ namespace FasterGameLoading.Tests.Settings
         {
             mockActiveMods.Add(CreateMockModMetaData("ludeon.rimworld"));
             SessionCache.modsInLastSession = new List<string> { "ludeon.rimworld" };
-            SessionCache.loadedTypesByFullNameSinceLastSession["ThingDef"] = "Verse.ThingDef";
+            TypeLookupCache.FullNamesFromLastSession["ThingDef"] = "Verse.ThingDef";
             string path = Path.Combine(Path.GetTempPath(), $"FGL_RoundTrip_{Guid.NewGuid():N}.xml");
 
             try
@@ -160,7 +160,7 @@ namespace FasterGameLoading.Tests.Settings
                 }
 
                 ResetSessionCache();
-                SessionCache.typeCacheAssemblyFingerprint = null;
+                TypeLookupCache.PersistedFingerprint = null;
 
                 FasterGameLoadingSettings loaded = null;
                 Scribe.loader.InitLoading(path);
@@ -173,10 +173,10 @@ namespace FasterGameLoading.Tests.Settings
                     Scribe.loader.FinalizeLoading();
                 }
 
-                Assert.That(SessionCache.loadedTypesByFullNameSinceLastSession.TryGetValue("ThingDef", out var fullName), Is.True,
+                Assert.That(TypeLookupCache.FullNamesFromLastSession.TryGetValue("ThingDef", out var fullName), Is.True,
                     "上次 session 存下的型別對照必須在讀檔後還原。");
                 Assert.That(fullName, Is.EqualTo("Verse.ThingDef"));
-                Assert.That(SessionCache.typeCacheAssemblyFingerprint, Is.EqualTo(SessionCache.ComputeCurrentAssemblyFingerprint()));
+                Assert.That(TypeLookupCache.PersistedFingerprint, Is.EqualTo(TypeLookupCache.ComputeCurrentFingerprint()));
             }
             finally
             {
@@ -198,13 +198,13 @@ namespace FasterGameLoading.Tests.Settings
         {
             mockActiveMods.Add(CreateMockModMetaData("ludeon.rimworld"));
             SessionCache.modsInLastSession = new List<string> { "ludeon.rimworld" };
-            SessionCache.loadedTypesByFullNameSinceLastSession["typeA"] = "Old.Namespace.TypeA";
-            SessionCache.typeCacheAssemblyFingerprint = "fingerprint-of-an-older-build";
+            TypeLookupCache.FullNamesFromLastSession["typeA"] = "Old.Namespace.TypeA";
+            TypeLookupCache.PersistedFingerprint = "fingerprint-of-an-older-build";
 
             Scribe.mode = LoadSaveMode.PostLoadInit;
             SessionCache.ExposeData();
 
-            Assert.That(SessionCache.loadedTypesByFullNameSinceLastSession, Is.Empty);
+            Assert.That(TypeLookupCache.FullNamesFromLastSession, Is.Empty);
             Assert.That(SessionCache.modsInLastSession, Is.EqualTo(new[] { "ludeon.rimworld" }),
                 "組件更新只影響型別對照，不應連帶改動 mod 清單記錄。");
         }
@@ -214,13 +214,13 @@ namespace FasterGameLoading.Tests.Settings
         {
             mockActiveMods.Add(CreateMockModMetaData("ludeon.rimworld"));
             SessionCache.modsInLastSession = new List<string> { "ludeon.rimworld" };
-            SessionCache.loadedTypesByFullNameSinceLastSession["typeA"] = "Some.TypeA";
-            SessionCache.typeCacheAssemblyFingerprint = null;
+            TypeLookupCache.FullNamesFromLastSession["typeA"] = "Some.TypeA";
+            TypeLookupCache.PersistedFingerprint = null;
 
             Scribe.mode = LoadSaveMode.PostLoadInit;
             SessionCache.ExposeData();
 
-            Assert.That(SessionCache.loadedTypesByFullNameSinceLastSession, Is.Empty);
+            Assert.That(TypeLookupCache.FullNamesFromLastSession, Is.Empty);
         }
 
         [Test]
@@ -229,10 +229,10 @@ namespace FasterGameLoading.Tests.Settings
             var a = typeof(int).Assembly;
             var b = typeof(SessionCache).Assembly;
 
-            Assert.That(SessionCache.ComputeAssemblyFingerprint(new[] { a, b }),
-                Is.EqualTo(SessionCache.ComputeAssemblyFingerprint(new[] { b, a })));
-            Assert.That(SessionCache.ComputeAssemblyFingerprint(new[] { a }),
-                Is.Not.EqualTo(SessionCache.ComputeAssemblyFingerprint(new[] { a, b })));
+            Assert.That(TypeLookupCache.ComputeAssemblyFingerprint(new[] { a, b }),
+                Is.EqualTo(TypeLookupCache.ComputeAssemblyFingerprint(new[] { b, a })));
+            Assert.That(TypeLookupCache.ComputeAssemblyFingerprint(new[] { a }),
+                Is.Not.EqualTo(TypeLookupCache.ComputeAssemblyFingerprint(new[] { a, b })));
         }
 
         // ── RestoreAfterLoad：舊存檔缺欄位時的補齊行為 ──
@@ -242,14 +242,13 @@ namespace FasterGameLoading.Tests.Settings
         {
             mockActiveMods.Add(CreateMockModMetaData("ludeon.rimworld"));
             SessionCache.modsInLastSession = null;
-            SessionCache.loadedTypesByFullNameSinceLastSession = null;
-            SessionCache.historicalBakeSpeeds = null;
+            TypeLookupCache.FullNamesFromLastSession = null;
 
             InvokeRestoreAfterLoad();
 
-            Assert.That(SessionCache.loadedTypesByFullNameSinceLastSession, Is.Not.Null.And.Empty);
+            // 烘焙速度記錄的空值補齊在 AdaptiveAtlasBaker.ExposeBakeSpeedHistory 讀檔當下處理。
+            Assert.That(TypeLookupCache.FullNamesFromLastSession, Is.Not.Null.And.Empty);
             Assert.That(SessionCache.modsInLastSession, Is.Not.Null.And.Empty);
-            Assert.That(SessionCache.historicalBakeSpeeds, Is.Not.Null.And.Empty);
         }
 
         [Test]

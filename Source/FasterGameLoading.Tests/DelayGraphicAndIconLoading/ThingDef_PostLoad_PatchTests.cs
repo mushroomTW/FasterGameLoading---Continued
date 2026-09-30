@@ -150,9 +150,10 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
             Assert.That(actionExecuted, Is.False);
             Assert.That(delayedActions.GraphicsToLoadCount, Is.EqualTo(1));
 
-            Assert.That(delayedActions.TryDequeueGraphic(out var outDef, out var outAct), Is.True);
-            Assert.That(outDef, Is.SameAs(def));
-            outAct();
+            var loadedDefs = new System.Collections.Generic.List<ThingDef>();
+            var drain = delayedActions.LoadDeferredGraphicsCoroutine(loadedDefs);
+            while (drain.MoveNext()) { }
+            Assert.That(loadedDefs, Is.EqualTo(new[] { def }));
             Assert.That(actionExecuted, Is.True);
         }
 

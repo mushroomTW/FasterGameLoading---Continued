@@ -118,6 +118,8 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
         [Test]
         public void EarlyLoadingComplete_InitialIsFalse_WhenCompletedIsTrue_AndSubsequentUpdateReturnsImmediately()
         {
+            // 也守住「提早載入不等原版 ReloadContentInt 開始」：原版尚未載入任何 mod，第一幀就要把佇列載完，
+            // 否則正式流程會先吃光整個佇列。
             var mod1 = CreateMockModContentPack("test.mod1");
             var mod2 = CreateMockModContentPack("test.mod2");
             SetRunningMods(new List<ModContentPack> { mod1, mod2 });
@@ -139,7 +141,7 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
         [Test]
         public void Update_AfterPlayDataLoaded_CompletesWithoutReloadingMods()
         {
-            // 切換語言時 CacheResetter 會清空 loadedMods；此時 RunningMods 仍是即將被 ClearAllPlayData
+            // 切換語言時 LanguageReloading 會清空 loadedMods；此時 RunningMods 仍是即將被 ClearAllPlayData
             // 銷毀的舊 ModContentPack。若再提早載入，會把所有內容重載一次（大量 duplicate 警告並洩漏貼圖），
             // 還會與事件緒的 ClearDestroy 同時存取同一份內容字典。
             var mod = CreateMockModContentPack("test.mod.already.loaded");

@@ -19,7 +19,7 @@ namespace FasterGameLoading.InGameTests
         public static void DeferredQueuesAreDrained()
         {
             var delayedActions = FasterGameLoadingMod.delayedActions;
-            Assert.That(DelayedActions.AllDeferredVisualsLoaded).Is.True();
+            Assert.That(delayedActions.Phase == DeferredPhase.Completed).Is.True();
             Assert.That(delayedActions.GraphicsToLoadCount).Is.EqualTo(0);
             Assert.That(delayedActions.IconsToLoadCount).Is.EqualTo(0);
         }

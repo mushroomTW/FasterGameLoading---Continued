@@ -17,29 +17,13 @@ namespace FasterGameLoading.Tests.Core
     public class FasterGameLoadingModTests
     {
         private Harmony harmony;
-        private bool? originalImageOptActive;
         private bool originalVerboseLogging;
         private static readonly List<ModMetaData> MockActiveMods = new List<ModMetaData>();
         private static int stubDeletedCount;
 
-        // ImageOptCompat.IsActive 已改為 Utils.IsModActive 的無快取直通，舊的 isActive 反射接縫已不存在；
-        // 改以 Harmony 前綴 stub 控制 Utils.IsModActive 對 ImageOpt packageId 的回傳值。
-        // 此字串須與 ImageOptCompat.IsActive 的呼叫端保持一致。
-        private const string ImageOptPackageId = "dev.soeur.imageopt";
-        private static bool? imageOptActiveOverride;
-
-        private static bool Prefix_ImageOptActiveStub(string packageId, ref bool __result)
-        {
-            if (imageOptActiveOverride is null) return true;
-            if (!packageId.Equals(ImageOptPackageId, StringComparison.OrdinalIgnoreCase)) return true;
-            __result = imageOptActiveOverride.Value;
-            return false;
-        }
-
         [SetUp]
         public void SetUp()
         {
-            originalImageOptActive = Utils.IsModActive(ImageOptPackageId);
             originalVerboseLogging = FasterGameLoadingSettings.VerboseLogging;
             // FGLLog.Message 只在詳細日誌開啟時輸出；本組測試以該輸出當作背景工作的完成訊號。
             FasterGameLoadingSettings.VerboseLogging = true;
@@ -47,12 +31,6 @@ namespace FasterGameLoading.Tests.Core
             stubDeletedCount = 0;
 
             harmony = new Harmony("FasterGameLoading.Tests.Core.FasterGameLoadingModTests");
-
-            // 以 stub 接管 Utils.IsModActive，使各測試能開關 ImageOpt 啟用狀態
-            harmony.Patch(
-                AccessTools.Method(typeof(Utils), nameof(Utils.IsModActive)),
-                prefix: new HarmonyMethod(AccessTools.Method(typeof(FasterGameLoadingModTests), nameof(Prefix_ImageOptActiveStub))));
-            imageOptActiveOverride = null;
 
             // ModsConfig 的靜態建構式在測試環境中被停用，其內部清單為 null，
             // 故啟用中的 Mod 清單必須以 stub 取代。
@@ -69,7 +47,7 @@ namespace FasterGameLoading.Tests.Core
             TestSetup.OnLogMessage = null;
             MockActiveMods.Clear();
             FasterGameLoadingSettings.VerboseLogging = originalVerboseLogging;
-            imageOptActiveOverride = originalImageOptActive;
+            TextureOwnership.OverrideForTests(null);
         }
 
         private static bool Prefix_ActiveModsStub(ref IEnumerable<ModMetaData> __result)
@@ -87,7 +65,7 @@ namespace FasterGameLoading.Tests.Core
         [Test]
         public void StartCleanupInvalidImageOptCaches_DoesNothingWhenImageOptInactive()
         {
-            imageOptActiveOverride = false;
+            TextureOwnership.OverrideForTests(TextureOwner.Fgl);
             PatchCleanup();
             stubDeletedCount = 5;
 
@@ -109,7 +87,7 @@ namespace FasterGameLoading.Tests.Core
             MockActiveMods.Add(null);
             MockActiveMods.Add(meta);
 
-            imageOptActiveOverride = true;
+            TextureOwnership.OverrideForTests(TextureOwner.ImageOpt);
             PatchCleanup();
             stubDeletedCount = 3;
 
@@ -127,7 +105,7 @@ namespace FasterGameLoading.Tests.Core
         [Test]
         public void StartCleanupInvalidImageOptCaches_SwallowsBackgroundFailures()
         {
-            imageOptActiveOverride = true;
+            TextureOwnership.OverrideForTests(TextureOwner.ImageOpt);
             var target = AccessTools.Method(typeof(ImageOptCompat), nameof(ImageOptCompat.CleanupInvalidDdsZstdCaches));
             harmony.Patch(target, prefix: new HarmonyMethod(
                 AccessTools.Method(typeof(FasterGameLoadingModTests), nameof(Prefix_CleanupThrowsStub))));

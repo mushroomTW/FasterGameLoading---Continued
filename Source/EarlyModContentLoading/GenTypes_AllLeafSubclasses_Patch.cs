@@ -17,11 +17,6 @@ namespace FasterGameLoading
         // 使用 ConcurrentDictionary 確保多執行緒下的讀寫安全（Preload 在 Task.Run 背景執行緒中執行）
         public static ConcurrentDictionary<Type, HashSet<Type>> keyValuePairs { get; } = new ConcurrentDictionary<Type, HashSet<Type>>();
 
-        static GenTypes_AllLeafSubclasses_Patch()
-        {
-            CacheResetter.Register(ClearCache);
-        }
-
         public static void ClearCache()
         {
             keyValuePairs.Clear();
@@ -51,13 +46,13 @@ namespace FasterGameLoading
         }
     }
 
-    /// <summary>原版型別快取清除後，同步使葉子子類別快取失效。</summary>
+    /// <summary>原版型別快取清除後（組件載入、語言重載的 ClearDestroy），同步使 FGL 的名稱查詢快取失效。</summary>
     [HarmonyPatch(typeof(GenTypes), nameof(GenTypes.ClearCache))]
     public static class GenTypes_ClearCache_Patch
     {
         public static void Postfix()
         {
-            GenTypes_AllLeafSubclasses_Patch.ClearCache();
+            TypeLookupCache.Invalidate();
         }
     }
 }

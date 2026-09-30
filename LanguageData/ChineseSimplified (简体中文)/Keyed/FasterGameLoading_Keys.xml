@@ -6,6 +6,7 @@
     <FGL_EarlyModContentLoading>提早载入模组内容</FGL_EarlyModContentLoading>
     <FGL_DelayGraphicLoading>延迟图形和图示载入</FGL_DelayGraphicLoading>
     <FGL_StaticAtlasesBaking>自适应图集烘焙</FGL_StaticAtlasesBaking>    
+    <FGL_RequiresRestart>（需重新启动游戏）</FGL_RequiresRestart>
     <FGL_MultiThreading>多线程预载入</FGL_MultiThreading>
     <FGL_TypeLookupCache>类型查询缓存</FGL_TypeLookupCache>
     <FGL_VerboseLogging>启用详细日志</FGL_VerboseLogging>
@@ -22,7 +23,9 @@
         树木 - 256px
         地形 - 1024px</FGL_TextureResizingExplanation>
     <FGL_DownscaleTextures>缩小纹理</FGL_DownscaleTextures>
+    <FGL_DownscaleTexturesUnavailable>Graphics Settings+ 或 Image Opt 正在负责加载纹理，因此无法使用缩小纹理工具。</FGL_DownscaleTexturesUnavailable>
     <FGL_DownscalingTextures>正在缩小纹理</FGL_DownscalingTextures>
+    <FGL_ClearingTextureCache>正在清除纹理缓存</FGL_ClearingTextureCache>
     <FGL_DownscaleTexturesConfirmation>是否执行纹理缩小？缩小后的纹理将单独缓存，不会修改原始模组文件。(需要重新启动一次)</FGL_DownscaleTexturesConfirmation>
     <FGL_ClearTextureCache>清除纹理缓存</FGL_ClearTextureCache>
     <FGL_ClearTextureCacheConfirmation>是否清除所有已缓存的缩小纹理？下次启动时将使用原始纹理。</FGL_ClearTextureCacheConfirmation>

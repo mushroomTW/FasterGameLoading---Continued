@@ -20,6 +20,11 @@ namespace FasterGameLoading
         public IReadOnlyDictionary<string, string> ResizedTextureCache => resizedTextureCache;
         private readonly object cacheLock = new object();
         /// <summary>
+        /// 串行化會動到快取目錄檔案的維護工作：重建、背景清理與清除。
+        /// 背景清理若與重建的目錄升級交錯，會把剛搬進正式目錄、尚未登記的新快取檔當成未引用檔刪掉。
+        /// </summary>
+        private readonly object maintenanceLock = new object();
+        /// <summary>
         /// 每執行緒重用的 MD5 實例。MD5 非執行緒安全，故以 ThreadLocal 隔離；
         /// 重用避免每次 GetCachePath 計算雜湊時都 allocate 新 MD5 與其原生資源。
         /// </summary>
@@ -30,38 +35,35 @@ namespace FasterGameLoading
         /// <summary>紋理快取的根目錄。</summary>
         public string CacheDirectory => baseCacheDir ?? Path.Combine(GenFilePaths.SaveDataFolderPath, FGLConsts.ModName, FGLConsts.TextureCacheDir);
 
-        public string BuildCacheDirectory(string suffix)
+        /// <summary>與正式快取目錄同層的兄弟目錄（重建用的暫存目錄）。</summary>
+        private string BuildSiblingDirectory(string name)
         {
             if (baseCacheDir != null)
             {
-                return Path.Combine(Path.GetDirectoryName(baseCacheDir), suffix);
+                return Path.Combine(Path.GetDirectoryName(baseCacheDir), name);
             }
-            return Path.Combine(GenFilePaths.SaveDataFolderPath, FGLConsts.ModName, suffix);
+            return Path.Combine(GenFilePaths.SaveDataFolderPath, FGLConsts.ModName, name);
         }
-
-        private string activeCacheDirectory;
 
         public TextureCacheManager()
         {
-            activeCacheDirectory = CacheDirectory;
         }
 
         internal TextureCacheManager(string customBaseDir)
         {
             this.baseCacheDir = customBaseDir;
-            activeCacheDirectory = CacheDirectory;
         }
 
         /// <summary>
-        /// 根據原始檔案路徑產生 MD5 快取檔案路徑。
+        /// 根據原始檔案路徑產生正式快取目錄下的 MD5 快取檔案路徑。
         /// 快取鍵結合路徑、檔案大小和最後修改時間，確保原始檔案變更時自動失效。
         /// </summary>
         public string GetCachePath(string originalPath)
         {
-            return ComputeCachePathFromKey(GetCacheKey(originalPath));
+            return ComputeCachePathFromKey(GetCacheKey(originalPath), CacheDirectory);
         }
 
-        private string ComputeCachePathFromKey(string key)
+        private static string ComputeCachePathFromKey(string key, string directory)
         {
             var md5 = md5PerThread.Value;
             var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(key));
@@ -70,7 +72,7 @@ namespace FasterGameLoading
             {
                 sb.Append(b.ToString("x2"));
             }
-            return Path.Combine(activeCacheDirectory, sb.ToString() + ".png");
+            return Path.Combine(directory, sb.ToString() + ".png");
         }
 
         private static string GetCacheKey(string originalPath)
@@ -178,7 +180,7 @@ namespace FasterGameLoading
 
                 // 原始檔案的修改時間比快取新。只有目前路徑、大小和修改時間算出的鍵仍與快取路徑一致時，
                 // 才能更新快取時間；原始檔的大小或修改時間變更會產生不同鍵，使舊快取失效。
-                var currentExpectedPath = ComputeCachePathFromKey(GetCacheKey(originalPath));
+                var currentExpectedPath = GetCachePath(originalPath);
                 if (string.Equals(currentExpectedPath, cachePath, StringComparison.OrdinalIgnoreCase))
                 {
                     File.SetLastWriteTimeUtc(cachePath, originalTime);
@@ -246,62 +248,94 @@ namespace FasterGameLoading
             }
         }
 
-        /// <summary>清除所有紋理快取（檔案 + 記憶體對照表）。</summary>
+        /// <summary>清除所有紋理快取（檔案 + 記憶體對照表）。會等進行中的背景清理結束，主執行緒呼叫端應放在長事件內。</summary>
         public void ClearCache()
         {
-            try
+            lock (maintenanceLock)
             {
-                if (Directory.Exists(CacheDirectory))
+                try
                 {
-                    Directory.Delete(CacheDirectory, recursive: true);
+                    if (Directory.Exists(CacheDirectory))
+                    {
+                        Directory.Delete(CacheDirectory, recursive: true);
+                    }
+                    lock (cacheLock)
+                    {
+                        resizedTextureCache.Clear();
+                    }
+                    FGLLog.Message("Texture cache cleared.");
                 }
-                lock (cacheLock)
+                catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException)
                 {
-                    resizedTextureCache.Clear();
+                    FGLLog.Error("Failed to clear texture cache:", ex);
                 }
-                FGLLog.Message("Texture cache cleared.");
-            }
-            catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException)
-            {
-                FGLLog.Error("Failed to clear texture cache:", ex);
             }
         }
 
-        /// <summary>初始化縮放工作暫存目錄與快取對照表。</summary>
-        public void SetupResizeStagingDirectory(string stagingDirectory)
+        /// <summary>
+        /// 重建期間的寫入區：快取檔寫在暫存目錄，對照項目累積在自己的表內。
+        /// 正式快取目錄與對照表在 <see cref="Rebuild"/> 升級成功前都不會被動到。
+        /// </summary>
+        public sealed class CacheRebuild
         {
-            activeCacheDirectory = stagingDirectory;
-            try
+            internal CacheRebuild(string stagingDirectory)
             {
-                if (Directory.Exists(stagingDirectory))
-                {
-                    Directory.Delete(stagingDirectory, recursive: true);
-                }
-                Directory.CreateDirectory(stagingDirectory);
+                StagingDirectory = stagingDirectory;
             }
-            catch (Exception ex)
+
+            internal string StagingDirectory { get; }
+
+            internal Dictionary<string, string> Entries { get; } = new Dictionary<string, string>(StringComparer.Ordinal);
+
+            /// <summary>原始檔對應的暫存快取檔路徑（檔名與升級後的正式路徑相同）。</summary>
+            public string GetCachePath(string originalPath)
             {
-                FGLLog.Error($"Failed to setup staging directory: {stagingDirectory}", ex);
+                return ComputeCachePathFromKey(GetCacheKey(originalPath), StagingDirectory);
             }
-            lock (cacheLock)
+
+            /// <summary>登記一筆已寫入暫存目錄的快取檔。</summary>
+            public void Add(string originalPath, string cachePath)
             {
-                resizedTextureCache.Clear();
+                Entries[originalPath] = cachePath;
             }
         }
 
-        /// <summary>還原快取狀態到上一次的快取對照表與目錄配置。</summary>
-        // MA0016: 這裡刻意收下具體的 Dictionary。傳入的必定是
-        // GetResizedTextureCacheCopy 產出的私有快照，會直接成為新的內部對照表；
-        // 改收唯讀介面只會逼出一次多餘的複製，且無法防止任何實際存在的誤用。
-#pragma warning disable MA0016
-        public void RestorePreviousCacheState(
-            Dictionary<string, string> previousCacheMap,
-            string previousCacheDirectory,
-            string stagingDirectory)
-#pragma warning restore MA0016
+        /// <summary>
+        /// 以交易方式重建降質快取：<paramref name="populate"/> 把新快取寫進全新的暫存目錄並逐筆登記，
+        /// 結束後整個暫存目錄升級為正式快取，對照表換成本次登記的項目。
+        /// 回傳 true 表示已升級；沒有登記任何項目或升級失敗時回傳 false，
+        /// <paramref name="populate"/> 拋出的例外原樣外傳。兩種失敗都保留原本的快取，並刪除暫存目錄。
+        /// 重建期間正式快取照常可查詢，背景清理與清除會等重建結束才執行。
+        /// 反過來本方法也會等進行中的背景清理結束；主執行緒呼叫端應放在長事件內，等待期間才有載入畫面。
+        /// </summary>
+        public bool Rebuild(Action<CacheRebuild> populate)
         {
-            lock (cacheLock) { resizedTextureCache = previousCacheMap; }
-            activeCacheDirectory = previousCacheDirectory;
+            lock (maintenanceLock)
+            {
+                var staging = BuildSiblingDirectory(FGLConsts.TextureCacheStagingDir);
+                try
+                {
+                    // 上一輪中斷留下的暫存檔必須清空，否則會被誤認為本輪產物而升級為正式快取。
+                    if (Directory.Exists(staging))
+                    {
+                        Directory.Delete(staging, recursive: true);
+                    }
+                    Directory.CreateDirectory(staging);
+
+                    var rebuild = new CacheRebuild(staging);
+                    populate(rebuild);
+                    return rebuild.Entries.Count > 0 && PromoteStaging(staging, rebuild.Entries);
+                }
+                finally
+                {
+                    DeleteStagingDirectory(staging);
+                }
+            }
+        }
+
+        /// <summary>刪除殘留的暫存目錄；升級成功時暫存目錄已被搬走，這裡不做事。</summary>
+        private static void DeleteStagingDirectory(string stagingDirectory)
+        {
             try
             {
                 if (Directory.Exists(stagingDirectory))
@@ -315,14 +349,9 @@ namespace FasterGameLoading
             }
         }
 
-        /// <summary>將暫存目錄替換為正式快取目錄，並重建相對路徑對照表。</summary>
-        public bool ReplaceTextureCacheDirectory(string stagingDirectory)
+        /// <summary>將暫存目錄替換為正式快取目錄，並以重新指向正式目錄的新項目取代對照表。</summary>
+        private bool PromoteStaging(string stagingDirectory, Dictionary<string, string> stagedEntries)
         {
-            if (string.IsNullOrEmpty(stagingDirectory) || !Directory.Exists(stagingDirectory))
-            {
-                return false;
-            }
-
             string backupDirectory = CacheDirectory + "_Backup";
             bool movedPreviousCache = false;
             bool movedStagingCache = false;
@@ -340,7 +369,15 @@ namespace FasterGameLoading
                 Directory.Move(stagingDirectory, CacheDirectory);
                 movedStagingCache = true;
 
-                RebuildCacheMapForActiveDirectory();
+                var promotedMap = new Dictionary<string, string>(StringComparer.Ordinal);
+                foreach (var kvp in stagedEntries)
+                {
+                    promotedMap[kvp.Key] = Path.Combine(CacheDirectory, Path.GetFileName(kvp.Value));
+                }
+                lock (cacheLock)
+                {
+                    resizedTextureCache = promotedMap;
+                }
 
                 if (movedPreviousCache && Directory.Exists(backupDirectory))
                 {
@@ -354,23 +391,6 @@ namespace FasterGameLoading
                 FGLLog.Error("Failed to replace texture cache directory; previous cache was restored.", ex);
                 return false;
             }
-        }
-
-        /// <summary>
-        /// 快取目錄升級成功後，把對照表中的每個快取檔路徑重新指向新的正式目錄。
-        /// </summary>
-        private void RebuildCacheMapForActiveDirectory()
-        {
-            var updatedCacheMap = new Dictionary<string, string>(StringComparer.Ordinal);
-            lock (cacheLock)
-            {
-                foreach (var kvp in resizedTextureCache)
-                {
-                    updatedCacheMap[kvp.Key] = Path.Combine(CacheDirectory, Path.GetFileName(kvp.Value));
-                }
-                resizedTextureCache = updatedCacheMap;
-            }
-            activeCacheDirectory = CacheDirectory;
         }
 
         /// <summary>
@@ -416,8 +436,8 @@ namespace FasterGameLoading
 
         /// <summary>以執行緒安全方式回傳快取對照表的快照副本。</summary>
         // MA0016: 刻意回傳具體的 Dictionary。回傳的是全新的私有副本，
-        // 呼叫端修改它不會影響內部狀態；而 RestorePreviousCacheState 需要以它
-        // 直接成為新的內部對照表，改回唯讀介面只會逼出一次多餘的複製。
+        // 呼叫端修改它不會影響內部狀態；而設定存檔的 Scribe_Collections.Look
+        // 只接受 ref Dictionary，改回唯讀介面只會逼出一次多餘的複製。
 #pragma warning disable MA0016
         public Dictionary<string, string> GetResizedTextureCacheCopy()
 #pragma warning restore MA0016
@@ -429,9 +449,17 @@ namespace FasterGameLoading
         }
 
         /// <summary>
-        /// 清理過期與無效的快取檔案及對照項目。
+        /// 清理過期與無效的快取檔案及對照項目。重建或清除進行中時會等它們結束。
         /// </summary>
         public void CleanupObsoleteCacheFiles()
+        {
+            lock (maintenanceLock)
+            {
+                CleanupObsoleteCacheFilesLocked();
+            }
+        }
+
+        private void CleanupObsoleteCacheFilesLocked()
         {
             try
             {

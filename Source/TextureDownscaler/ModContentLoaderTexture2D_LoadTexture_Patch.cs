@@ -2,7 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Globalization;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using HarmonyLib;
@@ -13,88 +12,13 @@ using Verse;
 namespace FasterGameLoading
 {
     /// <summary>
-    /// 攔截 ModContentLoader&lt;Texture2D&gt;.LoadTexture，提供紋理快取與降質紋理替換。
-    /// 使用 WeakReference 追蹤已載入的紋理，避免強參考導致記憶體洩漏。
+    /// 攔截 ModContentLoader&lt;Texture2D&gt;.LoadTexture：背景執行緒的載入轉交 <see cref="MainThreadTextureLoader"/>，
+    /// 主執行緒的載入先查 <see cref="LoadedTextureRegistry"/> 與降質快取，原始載入的結果登記回 registry。
     /// </summary>
     [HarmonyPatch(typeof(ModContentLoader<Texture2D>), "LoadTexture")]
-    [HarmonyBefore(GraphicsSettingsCompat.HarmonyId)]
+    [HarmonyBefore(TextureOwnership.GraphicsSettingsHarmonyId)]
     public static class ModContentLoaderTexture2D_LoadTexture_Patch
     {
-        private static readonly ConcurrentQueue<LoadRequest> mainThreadLoadRequests = new ConcurrentQueue<LoadRequest>();
-
-        /// <summary>背景執行緒等待主執行緒代為載入貼圖的上限。可於測試中調低。</summary>
-        internal static int mainThreadRedirectTimeoutMs = 10_000;
-
-        private sealed class LoadRequest
-        {
-            private const int Pending = 0;
-            private const int Taken = 1;
-            private const int Cancelled = 2;
-
-            public VirtualFile File;
-            public Texture2D Result;
-            public Exception Exception;
-            public ManualResetEventSlim CompletedEvent = new ManualResetEventSlim(initialState: false);
-            private int state;
-
-            /// <summary>主執行緒取得處理權；請求已被等待端放棄時回傳 false。</summary>
-            public bool TryTake()
-            {
-                return Interlocked.CompareExchange(ref state, Taken, Pending) is Pending;
-            }
-
-            /// <summary>
-            /// 等待端放棄請求；主執行緒已開始處理時回傳 false，
-            /// 呼叫端必須等它完成並接手結果，否則載入出的貼圖會無人持有而洩漏。
-            /// </summary>
-            public bool Cancel()
-            {
-                return Interlocked.CompareExchange(ref state, Cancelled, Pending) is Pending;
-            }
-        }
-
-        public static void ProcessPendingMainThreadRequests()
-        {
-            while (mainThreadLoadRequests.TryDequeue(out var request))
-            {
-                if (!request.TryTake())
-                {
-                    continue;
-                }
-
-                try
-                {
-                    var result = ModContentLoader<Texture2D>.LoadTexture(request.File);
-                    request.Result = result;
-                }
-                catch (Exception ex)
-                {
-                    request.Exception = ex;
-                }
-                finally
-                {
-                    request.CompletedEvent.Set();
-                }
-            }
-        }
-
-        private static bool _draining;
-
-        public static void TryDrainMainThreadRequests()
-        {
-            if (_draining) return;
-            _draining = true;
-            try
-            {
-                ProcessPendingMainThreadRequests();
-            }
-            finally
-            {
-                _draining = false;
-            }
-        }
-
-
         /// <summary>已非同步預載入至記憶體的降質快取紋理位元組數據。</summary>
         public static ConcurrentDictionary<string, byte[]> preloadedCacheBytes { get; } = new ConcurrentDictionary<string, byte[]>(StringComparer.Ordinal);
         /// <summary>主執行緒已取用過的快取檔；預讀端看到就跳過，避免同一檔案讀兩次且預讀結果無人取用。</summary>
@@ -102,22 +26,6 @@ namespace FasterGameLoading
         /// <summary>啟動完成後設為 true，讓仍在執行的預讀迴圈提早結束。</summary>
         private static volatile bool _preloadStopped;
         private static Task _preloadTask = Task.CompletedTask;
-        /// <summary>以 WeakReference 快取已載入的 Texture2D，鍵為完整檔案路徑。</summary>
-        public static ConcurrentDictionary<string, System.WeakReference<Texture2D>> savedTextures { get; } = new ConcurrentDictionary<string, System.WeakReference<Texture2D>>(StringComparer.Ordinal);
-        /// <summary>
-        /// O(1) 反向查找表：Texture2D → 路徑。ConditionalWeakTable 以弱鍵追蹤，Texture2D 被 GC 時自動移除條目，
-        /// 不會強引用留住 Unity 貼圖。
-        /// </summary>
-        private static readonly ConditionalWeakTable<Texture2D, StringHolder> savedTexturePathsByTexture = new ConditionalWeakTable<Texture2D, StringHolder>();
-
-        /// <summary>ConditionalWeakTable 的值必須為 reference type，故以輕量 holder 包裹路徑字串。Value 可變以便同一 Texture2D 路徑變更時覆寫。</summary>
-        private sealed class StringHolder
-        {
-            public string Value;
-            public StringHolder(string value) { Value = value; }
-        }
-        /// <summary>排除烘焙的目標 Mod 紋理快取，用於 O(1) 快速查詢。</summary>
-        public static ConcurrentDictionary<Texture2D, bool> skippedBakingTextures { get; } = new ConcurrentDictionary<Texture2D, bool>();
         /// <summary>紋理快取命中次數。</summary>
         private static int cacheLoadHitsValue;
         public static int cacheLoadHits
@@ -135,24 +43,15 @@ namespace FasterGameLoading
 
         static ModContentLoaderTexture2D_LoadTexture_Patch()
         {
-            CacheResetter.Register(static () =>
-            {
-                savedTextures.Clear();
-                // ConditionalWeakTable 沒有 Clear API，且其條目隨鍵被 GC 自動消失；
-                // 語言切換時舊 Texture2D 通常仍活著，殘留條目只會在後續被新條目覆寫或隨 GC 移除，
-                // 不影響正確性。故此處不另作清理。
-                skippedBakingTextures.Clear();
-                preloadedCacheBytes.Clear();
-            });
+            SessionLifecycle.On(LifecyclePhase.LanguageReloading, static () => preloadedCacheBytes.Clear());
 
-            Startup.RegisterOnStartupCompleted(static () =>
+            SessionLifecycle.On(LifecyclePhase.StartupCompleted, static () =>
             {
                 ReleasePreloadedCacheBytes();
-                if (cacheLoadHits > 0
-                    || cacheLoadFailures > 0
-                    || FasterGameLoadingMod.Instance.CacheManager.CacheCount > 0)
+                int configuredEntries = FasterGameLoadingMod.Instance?.CacheManager?.CacheCount ?? 0;
+                if (cacheLoadHits > 0 || cacheLoadFailures > 0 || configuredEntries > 0)
                 {
-                    FGLLog.Message($"Texture downscale cache hits: {cacheLoadHits.ToString(CultureInfo.InvariantCulture)}, failures: {cacheLoadFailures.ToString(CultureInfo.InvariantCulture)}, configured entries: {FasterGameLoadingMod.Instance.CacheManager.CacheCount.ToString(CultureInfo.InvariantCulture)}");
+                    FGLLog.Message($"Texture downscale cache hits: {cacheLoadHits.ToString(CultureInfo.InvariantCulture)}, failures: {cacheLoadFailures.ToString(CultureInfo.InvariantCulture)}, configured entries: {configuredEntries.ToString(CultureInfo.InvariantCulture)}");
                 }
             });
         }
@@ -165,8 +64,8 @@ namespace FasterGameLoading
             preloadedCacheBytes.Clear();
             _servedCachePaths.Clear();
             _preloadStopped = false;
-            // 這兩個 mod 啟用時 Prefix 一律交給原始流程，預讀的位元組永遠不會被取用。
-            if (ImageOptCompat.IsActive || GraphicsSettingsCompat.IsActive) return;
+            // 外部工具接手貼圖載入時 Prefix 一律交給原始流程，預讀的位元組永遠不會被取用。
+            if (!TextureOwnership.FglOwnsTextureLoading) return;
             var cacheManager = FasterGameLoadingMod.Instance?.CacheManager;
             if (cacheManager == null) return;
 
@@ -235,57 +134,9 @@ namespace FasterGameLoading
             }, TaskScheduler.Default);
         }
 
-        public static void RegisterSkippedBakingTextureIfApplicable(string path, Texture2D tex)
-        {
-            if (tex != null && AdaptiveBakingSkipList.ShouldSkipBaking(path))
-            {
-                skippedBakingTextures[tex] = true;
-            }
-        }
-
-        public static bool TryGetSavedTexturePath(Texture texture, out string fullPath)
-        {
-            if (texture is Texture2D t2d && !ReferenceEquals(t2d, null)
-                && savedTexturePathsByTexture.TryGetValue(t2d, out var holder))
-            {
-                // O(1) 弱鍵查找。ConditionalWeakTable 在 Texture2D 被 GC 時自動清條目。
-                // 非 Texture2D 的 Texture（如 RenderTexture）不會進入此表,視為查無路徑。
-                fullPath = holder.Value;
-                return true;
-            }
-
-            fullPath = null;
-            return false;
-        }
-
-        private static void SaveTexturePath(string fullPath, Texture2D texture)
-        {
-            if (ReferenceEquals(texture, null)) return;
-
-            if (savedTextures.TryGetValue(fullPath, out var oldRef) && oldRef.TryGetTarget(out var oldTexture))
-            {
-                // 同步移除舊紋理在弱鍵表中的條目；舊實體可能已被替換，TryRemove 容錯即可。
-                savedTexturePathsByTexture.Remove(oldTexture);
-            }
-
-            var weakRef = new System.WeakReference<Texture2D>(texture);
-            savedTextures[fullPath] = weakRef;
-            // ConditionalWeakTable.GetValue 在 key 已存在時回傳舊 holder、不呼叫 factory，
-            // 故同一 Texture2D 若以新路徑重新登記，需手動覆寫 holder.Value，否則
-            // TryGetSavedTexturePath 仍回傳舊路徑，導致掃描/縮圖歸因錯誤來源。
-            if (savedTexturePathsByTexture.TryGetValue(texture, out var holder))
-            {
-                holder.Value = fullPath;
-            }
-            else
-            {
-                savedTexturePathsByTexture.GetValue(texture, _ => new StringHolder(fullPath));
-            }
-        }
-
         private static bool TryServeCachedTexture(string fullPath, out Texture2D result)
         {
-            if (AdaptiveBakingSkipList.IsProtectedModTexturePath(fullPath) || GraphicsSettingsCompat.IsActive)
+            if (ProtectedMods.IsProtectedTexturePath(fullPath))
             {
                 result = null;
                 return false;
@@ -297,7 +148,7 @@ namespace FasterGameLoading
 
         public static bool Prefix(VirtualFile file, out bool __state, ref Texture2D __result)
         {
-            if (ImageOptCompat.IsActive || GraphicsSettingsCompat.IsActive)
+            if (!TextureOwnership.FglOwnsTextureLoading)
             {
                 __state = false;
                 return true;
@@ -305,8 +156,9 @@ namespace FasterGameLoading
 
             if (!UnityData.IsInMainThread)
             {
+                // Unity 的資源載入 API 只能在主執行緒呼叫；逾時、失敗一律回傳 null 並跳過原始方法。
                 __state = false;
-                __result = LoadViaMainThreadRedirect(file);
+                __result = MainThreadTextureLoader.Load(file);
                 return false;
             }
 
@@ -322,52 +174,14 @@ namespace FasterGameLoading
             return true;
         }
 
-        /// <summary>
-        /// 非主執行緒時的載入路徑：把請求派送到主執行緒並在此阻塞等待。
-        /// 逾時、失敗或取消一律回傳 null，由呼叫端直接跳過原始方法。
-        /// </summary>
-        private static Texture2D LoadViaMainThreadRedirect(VirtualFile file)
-        {
-            // 當前非主線程，我們無法安全地呼叫 Unity 的資源載入 API。
-            // 將任務派送至主線程執行，並在此處阻塞等待。
-            var request = new LoadRequest { File = file };
-            mainThreadLoadRequests.Enqueue(request);
-
-            // 泵送合約：DelayedActions（MonoBehaviour）的 Update() 每幀在主執行緒呼叫
-            // ProcessPendingMainThreadRequests()，確保此請求在下一幀內被處理。
-            // 參見 Source\DelayGraphicAndIconLoading\DelayedActions.cs:Update()。
-            if (!request.CompletedEvent.Wait(mainThreadRedirectTimeoutMs))
-            {
-                if (request.Cancel())
-                {
-                    FGLLog.Warning($"Timeout waiting for texture loading on main thread: {file.FullPath}");
-                    return null;
-                }
-
-                // 逾時的同時主執行緒已取得處理權：等它完成並接手結果，避免貼圖洩漏。
-                request.CompletedEvent.Wait();
-            }
-
-            if (request.Exception != null)
-            {
-                FGLLog.Warning($"Error loading texture on main thread redirect: {request.Exception.Message}");
-                return null;
-            }
-            return request.Result;
-        }
-
-        /// <summary>本 session 已載入過同一路徑時，直接沿用 WeakReference 快取中的紋理。</summary>
+        /// <summary>本 session 已載入過同一路徑時，直接沿用 registry 中的紋理。</summary>
         private static bool TryServeFromWeakReferenceCache(string fullPath, out Texture2D result)
         {
-            if (savedTextures.TryGetValue(fullPath, out var weakRef) && weakRef.TryGetTarget(out result)
-                // WeakReference 只追蹤 C# 物件：Unity 端已銷毀的貼圖仍取得回來，必須以 Unity 的 null 比較排除。
-                && result != null)
+            if (LoadedTextureRegistry.TryGetTexture(fullPath, out result))
             {
-                RegisterSkippedBakingTextureIfApplicable(fullPath, result);
+                LoadedTextureRegistry.MarkSkipBakingIfProtected(fullPath, result);
                 return true;
             }
-
-            result = null;
             return false;
         }
 
@@ -397,8 +211,8 @@ namespace FasterGameLoading
                     {
                         tex = FinishLoadingLikeVanilla(tex, data, useMipmaps);
                         tex.name = Path.GetFileNameWithoutExtension(fullPath);
-                        SaveTexturePath(fullPath, tex);
-                        RegisterSkippedBakingTextureIfApplicable(fullPath, tex);
+                        LoadedTextureRegistry.Record(fullPath, tex);
+                        LoadedTextureRegistry.MarkSkipBakingIfProtected(fullPath, tex);
                         Interlocked.Increment(ref cacheLoadHitsValue);
                         result = tex;
                         textureAccepted = true;
@@ -481,20 +295,20 @@ namespace FasterGameLoading
         }
 
         /// <summary>
-        /// 載入成功後將紋理加入 WeakReference 快取，供後續查詢使用。
+        /// 原始方法載入成功後將紋理登記到 registry，供後續查詢使用。
         /// </summary>
         public static void Postfix(VirtualFile file, bool __state, Texture2D __result)
         {
             if (__result != null)
             {
-                RegisterSkippedBakingTextureIfApplicable(file.FullPath, __result);
+                LoadedTextureRegistry.MarkSkipBakingIfProtected(file.FullPath, __result);
             }
 
             if (__state && __result != null)
             {
-                if (AdaptiveBakingSkipList.IsProtectedModTexturePath(file.FullPath)) return;
+                if (ProtectedMods.IsProtectedTexturePath(file.FullPath)) return;
 
-                SaveTexturePath(file.FullPath, __result);
+                LoadedTextureRegistry.Record(file.FullPath, __result);
             }
         }
     }

@@ -217,21 +217,17 @@ namespace FasterGameLoading
             }
         }
 
-        /// <summary>從 WeakReference 快取中重新整理紋理路徑對照表。</summary>
+        /// <summary>從已載入貼圖登記重新整理紋理路徑對照表。</summary>
         private void RefreshTexturePathMap()
         {
-            foreach (var kvp in ModContentLoaderTexture2D_LoadTexture_Patch.savedTextures)
+            foreach (var kvp in LoadedTextureRegistry.Snapshot())
             {
-                if (kvp.Value.TryGetTarget(out var tex))
-                {
-                    texturesByPaths[tex] = kvp.Key;
-                }
+                texturesByPaths[kvp.Key] = kvp.Value;
             }
         }
 
         /// <summary>
-        /// 根據 Texture 物件尋找其磁碟路徑。先在本地快取查詢，
-        /// 找不到時遍歷 WeakReference 快取進行 ReferenceEquals 比對。
+        /// 根據 Texture 物件尋找其磁碟路徑。先在本地快取查詢，找不到時查已載入貼圖登記的反向表。
         /// </summary>
         public bool TryGetTexturePath(Texture texture, out string fullPath)
         {
@@ -239,7 +235,7 @@ namespace FasterGameLoading
                 return true;
 
             if (!ReferenceEquals(texture, null)
-                && ModContentLoaderTexture2D_LoadTexture_Patch.TryGetSavedTexturePath(texture, out fullPath))
+                && LoadedTextureRegistry.TryGetPath(texture, out fullPath))
             {
                 texturesByPaths[texture] = fullPath;
                 return true;

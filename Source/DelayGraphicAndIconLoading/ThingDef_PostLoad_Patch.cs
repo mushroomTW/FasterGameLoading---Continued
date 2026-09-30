@@ -17,7 +17,7 @@ namespace FasterGameLoading
         /// <summary>
         /// 決定是否啟用此補丁（當延遲圖形載入設定開啟時）。
         /// </summary>
-        public static bool Prepare() => FasterGameLoadingSettings.DelayGraphicLoading;
+        public static bool Prepare() => DelayedActions.DeferredVisualsEnabled;
 
         /// <summary>
         /// 轉譯器：攔截並修改 ThingDef.PostLoad 中調用 ExecuteWhenFinished 的 IL 代碼，

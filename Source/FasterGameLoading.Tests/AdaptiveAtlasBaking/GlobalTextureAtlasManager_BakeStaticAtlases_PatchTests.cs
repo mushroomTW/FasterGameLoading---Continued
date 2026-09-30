@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Linq;
 using HarmonyLib;
 using NUnit.Framework;
 using Verse;
@@ -8,35 +10,23 @@ namespace FasterGameLoading.Tests.AdaptiveAtlasBaking
     public class GlobalTextureAtlasManager_BakeStaticAtlases_PatchTests
     {
         private static Harmony harmony;
+        private static bool simulatedAdaptiveFailure;
         private bool previousDelay;
         private bool previousStaticBake;
-        private bool previousAllLoaded;
-        private bool previousFailed;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             harmony = new Harmony("FasterGameLoading.Tests.AtlasPatch");
-            var emitMethod = AccessTools.Method(typeof(FGLLog), "Emit");
-            var prefixSkip = AccessTools.Method(typeof(GlobalTextureAtlasManager_BakeStaticAtlases_PatchTests), nameof(PrefixSkip));
-            if (emitMethod != null)
-            {
-                harmony.Patch(emitMethod, prefix: new HarmonyMethod(prefixSkip));
-            }
-
-            var insertVanilla = AccessTools.Method(typeof(AdaptiveAtlasBaker), "InsertVanillaStaticAtlasEntries");
-            if (insertVanilla != null)
-            {
-                harmony.Patch(insertVanilla, prefix: new HarmonyMethod(prefixSkip));
-            }
-
-            var vanillaBake = AccessTools.Method(typeof(GlobalTextureAtlasManager), nameof(GlobalTextureAtlasManager.BakeStaticAtlases));
-            if (vanillaBake != null)
-            {
-                harmony.Patch(vanillaBake, prefix: new HarmonyMethod(prefixSkip));
-            }
+            var prefixSkip = new HarmonyMethod(AccessTools.Method(typeof(GlobalTextureAtlasManager_BakeStaticAtlases_PatchTests), nameof(PrefixSkip)));
+            harmony.Patch(AccessTools.Method(typeof(FGLLog), "Emit"), prefix: prefixSkip);
+            harmony.Patch(AccessTools.Method(typeof(GlobalTextureAtlasManager), nameof(GlobalTextureAtlasManager.BakeStaticAtlases)), prefix: prefixSkip);
+            // 自適應烘焙本身由 AdaptiveAtlasBakerTests 驗證；這裡只模擬它的結果。
+            harmony.Patch(AccessTools.Method(typeof(AdaptiveAtlasBaker), nameof(AdaptiveAtlasBaker.PerformAdaptiveStaticAtlasBake)),
+                prefix: new HarmonyMethod(AccessTools.Method(typeof(GlobalTextureAtlasManager_BakeStaticAtlases_PatchTests), nameof(EmptyBake))));
+            harmony.Patch(AccessTools.PropertyGetter(typeof(AdaptiveAtlasBaker), nameof(AdaptiveAtlasBaker.LastBakeFailed)),
+                prefix: new HarmonyMethod(AccessTools.Method(typeof(GlobalTextureAtlasManager_BakeStaticAtlases_PatchTests), nameof(SimulatedFailure))));
         }
-
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
@@ -44,8 +34,17 @@ namespace FasterGameLoading.Tests.AdaptiveAtlasBaking
             harmony.UnpatchAll("FasterGameLoading.Tests.AtlasPatch");
         }
 
-        private static bool PrefixSkip()
+        private static bool PrefixSkip() => false;
+
+        private static bool EmptyBake(ref IEnumerator __result)
         {
+            __result = Enumerable.Empty<object>().GetEnumerator();
+            return false;
+        }
+
+        private static bool SimulatedFailure(ref bool __result)
+        {
+            __result = simulatedAdaptiveFailure;
             return false;
         }
 
@@ -54,8 +53,7 @@ namespace FasterGameLoading.Tests.AdaptiveAtlasBaking
         {
             previousDelay = FasterGameLoadingSettings.DelayGraphicLoading;
             previousStaticBake = FasterGameLoadingSettings.StaticAtlasesBaking;
-            previousAllLoaded = DelayedActions.AllDeferredVisualsLoaded;
-            previousFailed = DelayedActions.AdaptiveStaticAtlasBakeFailed;
+            SessionLifecycle.Raise(LifecyclePhase.LanguageReloading);
         }
 
         [TearDown]
@@ -63,61 +61,56 @@ namespace FasterGameLoading.Tests.AdaptiveAtlasBaking
         {
             FasterGameLoadingSettings.DelayGraphicLoading = previousDelay;
             FasterGameLoadingSettings.StaticAtlasesBaking = previousStaticBake;
-            DelayedActions.AllDeferredVisualsLoaded = previousAllLoaded;
-            DelayedActions.AdaptiveStaticAtlasBakeFailed = previousFailed;
+            DelayedActions.ReleaseStartupSettingsForTests();
+            SessionLifecycle.Raise(LifecyclePhase.LanguageReloading);
         }
 
-        [Test]
-        public void Prefix_WithoutDelayAndWithoutAdaptiveBakeLetsVanillaRun()
+        private static void CaptureSettings(bool delay, bool adaptive)
         {
-            FasterGameLoadingSettings.DelayGraphicLoading = false;
-            FasterGameLoadingSettings.StaticAtlasesBaking = false;
-
-            Assert.That(GlobalTextureAtlasManager_BakeStaticAtlases_Patch.Prefix(), Is.True);
+            FasterGameLoadingSettings.DelayGraphicLoading = delay;
+            FasterGameLoadingSettings.StaticAtlasesBaking = adaptive;
+            DelayedActions.CaptureStartupSettings();
         }
 
-        [Test]
-        public void Prefix_WithoutDelayAndWithAdaptiveBake_LetsVanillaRun()
+        private static void RunDeferredPipeline()
+        {
+            DelayGraphicAndIconLoading.DelayedActionsTests.RunLikeUnity(new DelayedActions().PerformActions());
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void Prefix_WithoutDeferredVisuals_LetsVanillaRun(bool adaptive)
         {
             // 同步路徑沒有分幀的空間，自適應分批只會把圖集切碎；一律交給原版。
-            FasterGameLoadingSettings.DelayGraphicLoading = false;
-            FasterGameLoadingSettings.StaticAtlasesBaking = true;
+            CaptureSettings(delay: false, adaptive: adaptive);
 
             Assert.That(GlobalTextureAtlasManager_BakeStaticAtlases_Patch.Prefix(), Is.True);
         }
 
         [Test]
-        public void Prefix_WithDeferredVisualsNotLoadedSkipsVanillaBake()
+        public void Prefix_WithDeferredVisuals_SkipsStartupBake()
         {
-            FasterGameLoadingSettings.DelayGraphicLoading = true;
-            DelayedActions.AllDeferredVisualsLoaded = false;
+            CaptureSettings(delay: true, adaptive: true);
 
             Assert.That(GlobalTextureAtlasManager_BakeStaticAtlases_Patch.Prefix(), Is.False);
         }
 
-        [Test]
-        public void Prefix_WithDeferredVisualsLoadedAndAdaptiveBakeDisabledLetsVanillaRun()
-        {
-            FasterGameLoadingSettings.DelayGraphicLoading = true;
-            FasterGameLoadingSettings.StaticAtlasesBaking = false;
-            DelayedActions.AllDeferredVisualsLoaded = true;
-
-            Assert.That(GlobalTextureAtlasManager_BakeStaticAtlases_Patch.Prefix(), Is.True);
-        }
-
         [TestCase(false, false)]
         [TestCase(true, true)]
-        public void Prefix_WithDeferredVisualsAndAdaptiveBakeReturnsFailureFallbackState(
-            bool failed,
-            bool expected)
+        public void Prefix_AfterAdaptiveBake_LetsVanillaRunOnlyAsFailureFallback(bool failed, bool expected)
         {
-            FasterGameLoadingSettings.DelayGraphicLoading = true;
-            FasterGameLoadingSettings.StaticAtlasesBaking = true;
-            DelayedActions.AllDeferredVisualsLoaded = true;
-            DelayedActions.AdaptiveStaticAtlasBakeFailed = failed;
+            CaptureSettings(delay: true, adaptive: true);
+            simulatedAdaptiveFailure = failed;
+            try
+            {
+                RunDeferredPipeline();
+            }
+            finally
+            {
+                simulatedAdaptiveFailure = false;
+            }
 
             Assert.That(GlobalTextureAtlasManager_BakeStaticAtlases_Patch.Prefix(), Is.EqualTo(expected));
         }
     }
 }
-

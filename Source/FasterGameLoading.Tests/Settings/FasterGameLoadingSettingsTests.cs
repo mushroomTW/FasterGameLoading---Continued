@@ -200,10 +200,10 @@ namespace FasterGameLoading.Tests.Settings
             string savePath = System.IO.Path.Combine(tempDir, "settings.xml");
             System.IO.Directory.CreateDirectory(tempDir);
             var originalInstance = FasterGameLoadingMod.Instance;
-            var originalTypes = SessionCache.loadedTypesByFullNameSinceLastSession;
-            var originalFingerprint = SessionCache.typeCacheAssemblyFingerprint;
+            var originalTypes = TypeLookupCache.FullNamesFromLastSession;
+            var originalFingerprint = TypeLookupCache.PersistedFingerprint;
             var originalMods = SessionCache.modsInLastSession;
-            var originalBakeSpeeds = SessionCache.historicalBakeSpeeds;
+            var originalBakeSpeeds = AdaptiveAtlasBaker.BakeSpeedHistory;
             try
             {
                 var mgr = new TextureCacheManager(tempDir);
@@ -217,10 +217,10 @@ namespace FasterGameLoading.Tests.Settings
                     Verse.Scribe.ForceStop();
                 }
                 SetModInstance(originalInstance);
-                SessionCache.loadedTypesByFullNameSinceLastSession = originalTypes;
-                SessionCache.typeCacheAssemblyFingerprint = originalFingerprint;
+                TypeLookupCache.FullNamesFromLastSession = originalTypes;
+                TypeLookupCache.PersistedFingerprint = originalFingerprint;
                 SessionCache.modsInLastSession = originalMods;
-                SessionCache.historicalBakeSpeeds = originalBakeSpeeds;
+                AdaptiveAtlasBaker.BakeSpeedHistory = originalBakeSpeeds;
                 try { System.IO.Directory.Delete(tempDir, true); } catch { }
             }
         }

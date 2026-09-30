@@ -56,7 +56,7 @@ namespace FasterGameLoading.Tests
             // 清理與初始化靜態快取
             GenTypes_GetTypeInAnyAssemblyInt_Patch.ClearCache();
             AccessTools_TypeByName_Patch.cachedResults.Clear();
-            SessionCache.loadedTypesByFullNameSinceLastSession.Clear();
+            TypeLookupCache.FullNamesFromLastSession.Clear();
         }
 
 
@@ -66,7 +66,7 @@ namespace FasterGameLoading.Tests
             // 清理靜態快取
             GenTypes_GetTypeInAnyAssemblyInt_Patch.ClearCache();
             AccessTools_TypeByName_Patch.cachedResults.Clear();
-            SessionCache.loadedTypesByFullNameSinceLastSession.Clear();
+            TypeLookupCache.FullNamesFromLastSession.Clear();
 
             // 清除 AccessTools_AllTypes_Patch 的快取欄位以利後續測試
             var field = typeof(AccessTools_AllTypes_Patch).GetField("allTypesCached", BindingFlags.NonPublic | BindingFlags.Static);
@@ -88,37 +88,7 @@ namespace FasterGameLoading.Tests
             Assert.Contains("ChezhouLib.lib", harmonyAfter.info.after);
         }
 
-        [Test]
-        public void TestEarlyLoadSkipList_AppliesPackageIdSkipRules()
-        {
-            Assert.IsFalse(EarlyLoadSkipList.ShouldSkip("chezhou.chezhoulib.lib"));
-            Assert.IsTrue(EarlyLoadSkipList.ShouldSkip("Ayameduki.SomeMod"));
-            Assert.IsTrue(EarlyLoadSkipList.ShouldSkip("erdelf.HumanoidAlienRaces"));
-            Assert.IsTrue(EarlyLoadSkipList.ShouldSkip("some.race.mod", new FakeModMetaData()));
-        }
 
-        [Test]
-        public void TestTextureReverseCache_DoesNotHoldStrongTextureKeys()
-        {
-            var property = typeof(ModContentLoaderTexture2D_LoadTexture_Patch)
-                .GetProperty("savedTextures", BindingFlags.Public | BindingFlags.Static);
-
-            Assert.IsNotNull(property);
-            Assert.AreEqual(typeof(ConcurrentDictionary<string, System.WeakReference<Texture2D>>), property.PropertyType);
-        }
-
-        private sealed class FakeModMetaData
-        {
-            public List<FakeDependency> modDependencies = new List<FakeDependency>
-            {
-                new FakeDependency { packageId = "erdelf.HumanoidAlienRaces" }
-            };
-        }
-
-        private sealed class FakeDependency
-        {
-            public string packageId;
-        }
 
         [Test]
         public void TestAlienRacesCompat_IsRemoved()
@@ -150,7 +120,7 @@ namespace FasterGameLoading.Tests
             // AccessTools.TypeByName 不得讀取，否則兩套規則的結果會互相污染。
             const string shortName = "MyIntTypeForIsolationTest";
             GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults[shortName] = typeof(int);
-            SessionCache.loadedTypesByFullNameSinceLastSession[shortName] = typeof(int).FullName;
+            TypeLookupCache.FullNamesFromLastSession[shortName] = typeof(int).FullName;
 
             Assert.IsNull(AccessTools.TypeByName(shortName));
             Assert.IsFalse(AccessTools_TypeByName_Patch.cachedResults.ContainsKey(shortName));
@@ -242,25 +212,6 @@ namespace FasterGameLoading.Tests
             }
         }
 
-        [TestCase(false, false)]
-        [TestCase(true, true)]
-        public void TestDelayedActions_ShouldRunDeferredVisualPipeline_FollowsDelayGraphicLoading(
-            bool delayGraphicLoading,
-            bool expected)
-        {
-            bool originalDelayGraphicLoading = FasterGameLoadingSettings.DelayGraphicLoading;
-            try
-            {
-                FasterGameLoadingSettings.DelayGraphicLoading = delayGraphicLoading;
-
-                Assert.AreEqual(expected, DelayedActions.ShouldRunDeferredVisualPipeline());
-            }
-            finally
-            {
-                FasterGameLoadingSettings.DelayGraphicLoading = originalDelayGraphicLoading;
-            }
-        }
-
         [Test]
         public void TestBuildableDef_PostLoad_Patch_PrepareAndTranspilerMatchDeferredQueue()
         {
@@ -299,62 +250,13 @@ namespace FasterGameLoading.Tests
             Assert.AreEqual(executeDelayed, output[1].operand);
         }
 
-        [Test]
-        public void TestTextureReverseCache_UsesWeakReferencesAndSavedPath()
-        {
-            var texture = (Texture2D)FormatterServices.GetUninitializedObject(typeof(Texture2D));
-            const string path = @"C:\Mods\Test\Textures\Thing.png";
-            var saveTexturePath = typeof(ModContentLoaderTexture2D_LoadTexture_Patch)
-                .GetMethod("SaveTexturePath", BindingFlags.NonPublic | BindingFlags.Static);
 
-            try
-            {
-                Assert.IsNotNull(saveTexturePath);
-                saveTexturePath.Invoke(null, new object[] { path, texture });
-
-                Assert.IsTrue(ModContentLoaderTexture2D_LoadTexture_Patch.TryGetSavedTexturePath(texture, out var foundPath));
-                Assert.AreEqual(path, foundPath);
-            }
-            finally
-            {
-                ModContentLoaderTexture2D_LoadTexture_Patch.savedTextures.Clear();
-            }
-        }
-
-        [Test]
-        public void TestAdaptiveBakingSkipList_ProtectsAlienRaceTextureRoots()
-        {
-            var type = typeof(AdaptiveBakingSkipList);
-            var targetMods = (HashSet<string>)type.GetField("targetMods", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
-            Assert.That(targetMods, Does.Contain("erdelf.HumanoidAlienRaces"));
-
-            var roots = (HashSet<string>)type.GetField("targetModRoots", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
-            var rootsInitialized = type.GetField("rootsInitialized", BindingFlags.NonPublic | BindingFlags.Static);
-            var oldRoots = roots.ToList();
-            var oldRootsInitialized = (bool)rootsInitialized.GetValue(null);
-
-            try
-            {
-                roots.Clear();
-                roots.Add("C:/Mods/AlienRaces");
-                rootsInitialized.SetValue(null, true);
-
-                Assert.IsTrue(AdaptiveBakingSkipList.IsProtectedModTexturePath(@"C:\Mods\AlienRaces\Textures\Body.png"));
-                Assert.IsFalse(AdaptiveBakingSkipList.IsProtectedModTexturePath(@"C:\Mods\Other\Textures\Body.png"));
-            }
-            finally
-            {
-                roots.Clear();
-                foreach (var root in oldRoots) roots.Add(root);
-                rootsInitialized.SetValue(null, oldRootsInitialized);
-            }
-        }
 
         [Test]
         public void TestEarlyModContentLoader_UsesImageOptSynchronousScopeWithoutGlobalBypass()
         {
-            var imageOptActiveGetter = typeof(ImageOptCompat)
-                .GetProperty(nameof(ImageOptCompat.IsActive))
+            var imageOptActiveGetter = typeof(TextureOwnership)
+                .GetProperty(nameof(TextureOwnership.Current))
                 .GetGetMethod();
             var enterSyncScope = typeof(ImageOptEarlyLoadCoordinator)
                 .GetMethod("EnterEarlyLoadSyncScope", BindingFlags.NonPublic | BindingFlags.Static);
@@ -377,17 +279,6 @@ namespace FasterGameLoading.Tests
             Assert.IsFalse(
                 Array.Exists(declaredMethods, m => MethodBodyContainsMetadataToken(m, imageOptActiveGetter)),
                 "ImageOpt should not globally disable FGL early content loading.");
-        }
-
-        [Test]
-        public void TestEarlyModContentLoader_DoesNotWaitForVanillaLoadModContent()
-        {
-            var update = typeof(EarlyModContentLoader).GetMethod(nameof(EarlyModContentLoader.Update));
-            var gate = typeof(DelayedActions).GetField("VanillaModContentLoadCompleted");
-
-            Assert.IsFalse(
-                gate != null && MethodBodyContainsMetadataToken(update, gate.MetadataToken),
-                "Early content loading must run before vanilla ReloadContentInt starts, otherwise the normal loader can consume the whole queue first.");
         }
 
         private static bool MethodBodyContainsMetadataToken(MethodInfo method, MethodInfo calledMethod)
@@ -504,9 +395,9 @@ namespace FasterGameLoading.Tests
             var originalEarlyModContentLoading = FasterGameLoadingSettings.earlyModContentLoading;
             var originalStaticAtlasesBaking = FasterGameLoadingSettings.StaticAtlasesBaking;
             var originalEnableMultiThreading = FasterGameLoadingSettings.EnableMultiThreading;
-            var originalTypes = SessionCache.loadedTypesByFullNameSinceLastSession;
+            var originalTypes = TypeLookupCache.FullNamesFromLastSession;
             var originalMods = SessionCache.modsInLastSession;
-            var originalBakeSpeeds = SessionCache.historicalBakeSpeeds;
+            var originalBakeSpeeds = AdaptiveAtlasBaker.BakeSpeedHistory;
 
             try
             {
@@ -516,10 +407,10 @@ namespace FasterGameLoading.Tests
                 FasterGameLoadingSettings.earlyModContentLoading = false;
                 FasterGameLoadingSettings.StaticAtlasesBaking = true;
                 FasterGameLoadingSettings.EnableMultiThreading = false;
-                SessionCache.loadedTypesByFullNameSinceLastSession = new ConcurrentDictionary<string, string>(StringComparer.Ordinal);
-                SessionCache.loadedTypesByFullNameSinceLastSession.TryAdd("type", "System.String");
+                TypeLookupCache.FullNamesFromLastSession = new ConcurrentDictionary<string, string>(StringComparer.Ordinal);
+                TypeLookupCache.FullNamesFromLastSession.TryAdd("type", "System.String");
                 SessionCache.modsInLastSession = new List<string> { "test.mod" };
-                SessionCache.historicalBakeSpeeds = new List<float> { 45f };
+                AdaptiveAtlasBaker.BakeSpeedHistory = new List<float> { 45f };
 
                 new FasterGameLoadingSettings().ExposeData();
 
@@ -528,9 +419,9 @@ namespace FasterGameLoading.Tests
                 Assert.IsFalse(FasterGameLoadingSettings.earlyModContentLoading);
                 Assert.IsTrue(FasterGameLoadingSettings.StaticAtlasesBaking);
                 Assert.IsFalse(FasterGameLoadingSettings.EnableMultiThreading);
-                Assert.That(SessionCache.loadedTypesByFullNameSinceLastSession.Keys, Is.EquivalentTo(ExpectedSessionTypes));
+                Assert.That(TypeLookupCache.FullNamesFromLastSession.Keys, Is.EquivalentTo(ExpectedSessionTypes));
                 Assert.That(SessionCache.modsInLastSession, Is.EqualTo(ExpectedSessionMods));
-                Assert.That(SessionCache.historicalBakeSpeeds, Is.EqualTo(ExpectedSessionBakeSpeeds));
+                Assert.That(AdaptiveAtlasBaker.BakeSpeedHistory, Is.EqualTo(ExpectedSessionBakeSpeeds));
             }
             finally
             {
@@ -540,9 +431,9 @@ namespace FasterGameLoading.Tests
                 FasterGameLoadingSettings.earlyModContentLoading = originalEarlyModContentLoading;
                 FasterGameLoadingSettings.StaticAtlasesBaking = originalStaticAtlasesBaking;
                 FasterGameLoadingSettings.EnableMultiThreading = originalEnableMultiThreading;
-                SessionCache.loadedTypesByFullNameSinceLastSession = originalTypes;
+                TypeLookupCache.FullNamesFromLastSession = originalTypes;
                 SessionCache.modsInLastSession = originalMods;
-                SessionCache.historicalBakeSpeeds = originalBakeSpeeds;
+                AdaptiveAtlasBaker.BakeSpeedHistory = originalBakeSpeeds;
             }
         }
 #pragma warning restore MA0051
@@ -551,17 +442,17 @@ namespace FasterGameLoading.Tests
 #pragma warning disable MA0051 // 涵蓋設定序列化往返之完整驗證，拆分成多個方法會降低可讀性
         public void TestSettingsExposeData_SavesSessionCache()
         {
-            var originalTypes = SessionCache.loadedTypesByFullNameSinceLastSession;
+            var originalTypes = TypeLookupCache.FullNamesFromLastSession;
             var originalMods = SessionCache.modsInLastSession;
-            var originalBakeSpeeds = SessionCache.historicalBakeSpeeds;
+            var originalBakeSpeeds = AdaptiveAtlasBaker.BakeSpeedHistory;
             var savePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"FGL_Settings_{Guid.NewGuid():N}.xml");
 
             try
             {
-                SessionCache.loadedTypesByFullNameSinceLastSession = new ConcurrentDictionary<string, string>(StringComparer.Ordinal);
-                SessionCache.loadedTypesByFullNameSinceLastSession.TryAdd("type", "System.String");
+                TypeLookupCache.FullNamesFromLastSession = new ConcurrentDictionary<string, string>(StringComparer.Ordinal);
+                TypeLookupCache.FullNamesFromLastSession.TryAdd("type", "System.String");
                 SessionCache.modsInLastSession = new List<string> { "test.mod" };
-                SessionCache.historicalBakeSpeeds = new List<float> { 45f };
+                AdaptiveAtlasBaker.BakeSpeedHistory = new List<float> { 45f };
 
                 Scribe.saver.InitSaving(savePath, "settings");
                 try
@@ -587,9 +478,9 @@ namespace FasterGameLoading.Tests
                     Scribe.ForceStop();
                 }
 
-                SessionCache.loadedTypesByFullNameSinceLastSession = originalTypes;
+                TypeLookupCache.FullNamesFromLastSession = originalTypes;
                 SessionCache.modsInLastSession = originalMods;
-                SessionCache.historicalBakeSpeeds = originalBakeSpeeds;
+                AdaptiveAtlasBaker.BakeSpeedHistory = originalBakeSpeeds;
 
                 if (System.IO.File.Exists(savePath))
                 {

@@ -24,7 +24,7 @@ namespace FasterGameLoading
 
         static ImageOptEarlyLoadCoordinator()
         {
-            CacheResetter.Register(ResetScopeState);
+            SessionLifecycle.On(LifecyclePhase.LanguageReloading, ResetScopeState);
         }
 
         internal static bool IsInstalled => installed;
@@ -36,7 +36,7 @@ namespace FasterGameLoading
             if (installAttempted) return;
             installAttempted = true;
 
-            if (Environment.OSVersion.Platform is not PlatformID.Win32NT || !ImageOptCompat.IsActive) return;
+            if (Environment.OSVersion.Platform is not PlatformID.Win32NT || TextureOwnership.Current is not TextureOwner.ImageOpt) return;
 
             try
             {

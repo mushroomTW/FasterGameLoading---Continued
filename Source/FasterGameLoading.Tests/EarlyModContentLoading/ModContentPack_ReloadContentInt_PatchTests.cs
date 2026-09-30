@@ -9,11 +9,11 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
     public class ModContentPack_ReloadContentInt_PatchTests
     {
         private static Harmony harmony;
-        private static bool tryDrainCalled;
+        private static bool drainCalled;
 
-        private static bool MockTryDrainMainThreadRequests()
+        private static bool MockDrain()
         {
-            tryDrainCalled = true;
+            drainCalled = true;
             return false;
         }
 
@@ -24,11 +24,10 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
 
             // 注意：UnityData.IsInMainThread 已由 TestSetup(GlobalSetup) 全域 stub（Prefix_TrueStub 先執行），
             // 測試需透過 TestSetup.IsInMainThreadOverride 控制其回傳值，而非 patch getter。
-            var tryDrainMethod = AccessTools.Method(typeof(ModContentLoaderTexture2D_LoadTexture_Patch), nameof(ModContentLoaderTexture2D_LoadTexture_Patch.TryDrainMainThreadRequests));
-            if (tryDrainMethod != null)
-            {
-                harmony.Patch(tryDrainMethod, prefix: new HarmonyMethod(AccessTools.Method(typeof(ModContentPack_ReloadContentInt_PatchTests), nameof(MockTryDrainMainThreadRequests))));
-            }
+            var drainMethod = AccessTools.Method(typeof(MainThreadTextureLoader), nameof(MainThreadTextureLoader.Drain));
+            // 找不到就直接失敗：否則替身沒裝上、真正的 Drain 照跑，測試會因錯誤的原因失敗或通過。
+            Assert.That(drainMethod, Is.Not.Null, "MainThreadTextureLoader.Drain 不存在，無法替換成測試替身。");
+            harmony.Patch(drainMethod, prefix: new HarmonyMethod(AccessTools.Method(typeof(ModContentPack_ReloadContentInt_PatchTests), nameof(MockDrain))));
         }
 
         [OneTimeTearDown]
@@ -43,7 +42,7 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
         {
             ModContentPack_ReloadContentInt_Patch.loadedMods.Clear();
             TestSetup.IsInMainThreadOverride = () => true;
-            tryDrainCalled = false;
+            drainCalled = false;
         }
 
         [TearDown]
@@ -51,7 +50,7 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
         {
             ModContentPack_ReloadContentInt_Patch.loadedMods.Clear();
             TestSetup.IsInMainThreadOverride = null;
-            tryDrainCalled = false;
+            drainCalled = false;
         }
 
         private static ModContentPack CreateMockMod()
@@ -60,28 +59,28 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
         }
 
         [Test]
-        public void Prefix_WhenInMainThread_CallsTryDrainMainThreadRequests()
+        public void Prefix_WhenInMainThread_DrainsMainThreadTextureLoader()
         {
             TestSetup.IsInMainThreadOverride = () => true;
-            tryDrainCalled = false;
+            drainCalled = false;
             var mod = CreateMockMod();
 
             bool shouldRun = ModContentPack_ReloadContentInt_Patch.Prefix(mod);
 
-            Assert.That(tryDrainCalled, Is.True);
+            Assert.That(drainCalled, Is.True);
             Assert.That(shouldRun, Is.True);
         }
 
         [Test]
-        public void Prefix_WhenNotInMainThread_DoesNotCallTryDrainMainThreadRequests()
+        public void Prefix_WhenNotInMainThread_DoesNotDrainMainThreadTextureLoader()
         {
             TestSetup.IsInMainThreadOverride = () => false;
-            tryDrainCalled = false;
+            drainCalled = false;
             var mod = CreateMockMod();
 
             bool shouldRun = ModContentPack_ReloadContentInt_Patch.Prefix(mod);
 
-            Assert.That(tryDrainCalled, Is.False);
+            Assert.That(drainCalled, Is.False);
             Assert.That(shouldRun, Is.True);
         }
 
@@ -112,13 +111,13 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
         }
 
         [Test]
-        public void CacheResetter_ResetAll_ClearsLoadedMods()
+        public void LanguageReloading_ClearsLoadedMods()
         {
             var mod = CreateMockMod();
             ModContentPack_ReloadContentInt_Patch.Postfix(mod);
             Assert.That(ModContentPack_ReloadContentInt_Patch.loadedMods.Contains(mod), Is.True);
 
-            CacheResetter.ResetAll();
+            SessionLifecycle.Raise(LifecyclePhase.LanguageReloading);
 
             Assert.That(ModContentPack_ReloadContentInt_Patch.loadedMods, Is.Empty);
         }

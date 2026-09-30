@@ -12,7 +12,7 @@ using Verse.Sound;
 namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
 {
     [TestFixture]
-    public class DeferredLoaderTests
+    public class DelayedActionsStageTests
     {
         private static Harmony harmony;
         private static Texture2D mockBadTex;
@@ -45,7 +45,7 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
 #pragma warning disable MA0051 // 需依序初始化多個 Harmony mock patch，拆分成多個方法會降低可讀性
         public void OneTimeSetUp()
         {
-            harmony = new Harmony("FasterGameLoading.Tests.DeferredLoaderTests");
+            harmony = new Harmony("FasterGameLoading.Tests.DelayedActionsStageTests");
 
             mockBadTex = (Texture2D)FormatterServices.GetUninitializedObject(typeof(Texture2D));
             // 使用 BaseContent.BadTex 的真實值（可能是 null 或實際紋理）。
@@ -65,14 +65,14 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
             var isInMainThreadGetter = AccessTools.PropertyGetter(typeof(UnityData), nameof(UnityData.IsInMainThread));
             if (isInMainThreadGetter != null)
             {
-                harmony.Patch(isInMainThreadGetter, prefix: new HarmonyMethod(AccessTools.Method(typeof(DeferredLoaderTests), nameof(MockIsInMainThread))));
+                harmony.Patch(isInMainThreadGetter, prefix: new HarmonyMethod(AccessTools.Method(typeof(DelayedActionsStageTests), nameof(MockIsInMainThread))));
             }
 
             // Patch FGLLog.Emit
             var emitMethod = AccessTools.Method(typeof(FGLLog), "Emit");
             if (emitMethod != null)
             {
-                harmony.Patch(emitMethod, prefix: new HarmonyMethod(AccessTools.Method(typeof(DeferredLoaderTests), nameof(PrefixSkip))));
+                harmony.Patch(emitMethod, prefix: new HarmonyMethod(AccessTools.Method(typeof(DelayedActionsStageTests), nameof(PrefixSkip))));
             }
 
             // Patch PlantProperties.PostLoadSpecial
@@ -80,7 +80,7 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
             var postLoadSpecialMethod = plantPropType != null ? AccessTools.Method(plantPropType, "PostLoadSpecial") : null;
             if (postLoadSpecialMethod != null)
             {
-                harmony.Patch(postLoadSpecialMethod, prefix: new HarmonyMethod(AccessTools.Method(typeof(DeferredLoaderTests), nameof(MockPostLoadSpecial))));
+                harmony.Patch(postLoadSpecialMethod, prefix: new HarmonyMethod(AccessTools.Method(typeof(DelayedActionsStageTests), nameof(MockPostLoadSpecial))));
             }
 
             // Initialize FasterGameLoadingMod.harmony for SoundStarter_Patch.Unpatch()
@@ -92,7 +92,7 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            harmony?.UnpatchAll("FasterGameLoading.Tests.DeferredLoaderTests");
+            harmony?.UnpatchAll("FasterGameLoading.Tests.DelayedActionsStageTests");
         }
 
         [SetUp]
@@ -107,7 +107,6 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
         public void TearDown()
         {
             delayedActions?.ClearQueues();
-            delayedActions?.StopStopwatch();
         }
 
         [Test]
@@ -122,7 +121,7 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
             delayedActions.EnqueueGraphic(def2, () => act2Executed = true);
 
             var loadedDefs = new List<ThingDef>();
-            var coroutine = DeferredLoader.LoadDeferredGraphicsCoroutine(delayedActions, loadedDefs);
+            var coroutine = delayedActions.LoadDeferredGraphicsCoroutine(loadedDefs);
 
             while (coroutine.MoveNext()) { }
 
@@ -143,9 +142,9 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
             delayedActions.EnqueueGraphic(def, () => { });
             delayedActions.EnqueueIcon(def, () => iconActionExecuted = true);
 
-            var graphics = DeferredLoader.LoadDeferredGraphicsCoroutine(delayedActions, new List<ThingDef>());
+            var graphics = delayedActions.LoadDeferredGraphicsCoroutine(new List<ThingDef>());
             while (graphics.MoveNext()) { }
-            var icons = DeferredLoader.LoadDeferredIconsCoroutine(delayedActions);
+            var icons = delayedActions.LoadDeferredIconsCoroutine();
             while (icons.MoveNext()) { }
 
             // 原版圖示回呼（ResolveIcon）還會設定 uiIconColor、uiIconMaterial、uiIconAngle；
@@ -167,7 +166,7 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
             delayedActions.EnqueueGraphic(def3, () => act3Executed = true);
 
             var loadedDefs = new List<ThingDef>();
-            var coroutine = DeferredLoader.LoadDeferredGraphicsCoroutine(delayedActions, loadedDefs);
+            var coroutine = delayedActions.LoadDeferredGraphicsCoroutine(loadedDefs);
 
             Assert.DoesNotThrow(() =>
             {
@@ -195,7 +194,7 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
             delayedActions.EnqueueGraphic(defSuccess, () => { });
 
             var loadedDefs = new List<ThingDef>();
-            var coroutine = DeferredLoader.LoadDeferredGraphicsCoroutine(delayedActions, loadedDefs);
+            var coroutine = delayedActions.LoadDeferredGraphicsCoroutine(loadedDefs);
 
             while (coroutine.MoveNext()) { }
 
@@ -207,7 +206,7 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
             plantField?.SetValue(defFailure, plantPropObj);
 
             delayedActions.EnqueueGraphic(defFailure, () => throw new InvalidOperationException("Failed"));
-            coroutine = DeferredLoader.LoadDeferredGraphicsCoroutine(delayedActions, loadedDefs);
+            coroutine = delayedActions.LoadDeferredGraphicsCoroutine(loadedDefs);
 
             while (coroutine.MoveNext()) { }
 
@@ -230,7 +229,7 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
             delayedActions.EnqueueIcon(defBadTex, () => badTexActionExecuted = true);
             delayedActions.EnqueueIcon(defGoodTex, () => goodTexActionExecuted = true);
 
-            var coroutine = DeferredLoader.LoadDeferredIconsCoroutine(delayedActions);
+            var coroutine = delayedActions.LoadDeferredIconsCoroutine();
             while (coroutine.MoveNext()) { }
 
             Assert.That(badTexActionExecuted, Is.True);
@@ -250,7 +249,7 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
             delayedActions.EnqueueIcon(def1, () => throw new InvalidOperationException("Icon error"));
             delayedActions.EnqueueIcon(def2, () => def2Executed = true);
 
-            var coroutine = DeferredLoader.LoadDeferredIconsCoroutine(delayedActions);
+            var coroutine = delayedActions.LoadDeferredIconsCoroutine();
             Assert.DoesNotThrow(() =>
             {
                 while (coroutine.MoveNext()) { }
@@ -271,7 +270,7 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
             delayedActions.EnqueueSubSound(sound1, () => act1Executed = true);
             delayedActions.EnqueueSubSound(sound2, () => act2Executed = true);
 
-            var coroutine = DeferredLoader.ResolveSubSoundDefsCoroutine(delayedActions);
+            var coroutine = delayedActions.ResolveSubSoundDefsCoroutine();
             while (coroutine.MoveNext()) { }
 
             Assert.That(act1Executed, Is.True);
@@ -289,7 +288,7 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
             delayedActions.EnqueueSubSound(sound1, () => throw new InvalidOperationException("Audio error"));
             delayedActions.EnqueueSubSound(sound2, () => act2Executed = true);
 
-            var coroutine = DeferredLoader.ResolveSubSoundDefsCoroutine(delayedActions);
+            var coroutine = delayedActions.ResolveSubSoundDefsCoroutine();
             Assert.DoesNotThrow(() =>
             {
                 while (coroutine.MoveNext()) { }
@@ -302,7 +301,7 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
         [Test]
         public void UpdateMapMeshForLoadedDefs_WhenCurrentGameNull_RunsSafely()
         {
-            Assert.DoesNotThrow(() => DeferredLoader.UpdateMapMeshForLoadedDefs(new List<ThingDef>()));
+            Assert.DoesNotThrow(() => DelayedActions.UpdateMapMeshForLoadedDefs(new List<ThingDef>()));
         }
 
         [Test]
@@ -315,12 +314,12 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
             delayedActions.EnqueueGraphic(def2, () => { });
 
             var getter = AccessTools.PropertyGetter(typeof(DelayedActions), nameof(DelayedActions.IsOverBudget));
-            var patch = new HarmonyMethod(AccessTools.Method(typeof(DeferredLoaderTests), nameof(MockOverBudgetTrue)));
+            var patch = new HarmonyMethod(AccessTools.Method(typeof(DelayedActionsStageTests), nameof(MockOverBudgetTrue)));
             harmony.Patch(getter, prefix: patch);
 
             try
             {
-                var coroutine = DeferredLoader.LoadDeferredGraphicsCoroutine(delayedActions, new List<ThingDef>());
+                var coroutine = delayedActions.LoadDeferredGraphicsCoroutine(new List<ThingDef>());
                 bool moved = coroutine.MoveNext();
                 Assert.That(moved, Is.True);
                 Assert.That(coroutine.Current, Is.EqualTo(0));
@@ -348,7 +347,7 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
             TestSetup.IsInMainThreadOverride = () => false;
             try
             {
-                var coroutine = DeferredLoader.LoadDeferredIconsCoroutine(delayedActions);
+                var coroutine = delayedActions.LoadDeferredIconsCoroutine();
                 bool moved = coroutine.MoveNext();
 
                 Assert.That(moved, Is.True);
@@ -372,7 +371,7 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
             TestSetup.IsInMainThreadOverride = () => false;
             try
             {
-                var coroutine = DeferredLoader.LoadDeferredGraphicsCoroutine(delayedActions, new List<ThingDef>());
+                var coroutine = delayedActions.LoadDeferredGraphicsCoroutine(new List<ThingDef>());
                 bool moved = coroutine.MoveNext();
 
                 Assert.That(moved, Is.True);
@@ -395,12 +394,12 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
             delayedActions.EnqueueIcon(iconDef2, () => { });
 
             var getter = AccessTools.PropertyGetter(typeof(DelayedActions), nameof(DelayedActions.IsOverBudget));
-            var patch = new HarmonyMethod(AccessTools.Method(typeof(DeferredLoaderTests), nameof(MockOverBudgetTrue)));
+            var patch = new HarmonyMethod(AccessTools.Method(typeof(DelayedActionsStageTests), nameof(MockOverBudgetTrue)));
             harmony.Patch(getter, prefix: patch);
 
             try
             {
-                var coroutine = DeferredLoader.LoadDeferredIconsCoroutine(delayedActions);
+                var coroutine = delayedActions.LoadDeferredIconsCoroutine();
                 bool moved = coroutine.MoveNext();
                 Assert.That(moved, Is.True);
                 Assert.That(coroutine.Current, Is.EqualTo(0));
@@ -421,12 +420,12 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
             delayedActions.EnqueueSubSound(subSound2, () => { });
 
             var getter = AccessTools.PropertyGetter(typeof(DelayedActions), nameof(DelayedActions.IsOverBudget));
-            var patch = new HarmonyMethod(AccessTools.Method(typeof(DeferredLoaderTests), nameof(MockOverBudgetTrue)));
+            var patch = new HarmonyMethod(AccessTools.Method(typeof(DelayedActionsStageTests), nameof(MockOverBudgetTrue)));
             harmony.Patch(getter, prefix: patch);
 
             try
             {
-                var coroutine = DeferredLoader.ResolveSubSoundDefsCoroutine(delayedActions);
+                var coroutine = delayedActions.ResolveSubSoundDefsCoroutine();
                 bool moved = coroutine.MoveNext();
                 Assert.That(moved, Is.True);
                 Assert.That(coroutine.Current, Is.EqualTo(0));
@@ -455,15 +454,15 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
             var gameProp = AccessTools.PropertyGetter(typeof(Current), nameof(Current.Game));
             var mapsProp = AccessTools.PropertyGetter(typeof(Find), nameof(Find.Maps));
 
-            var patchGame = new HarmonyMethod(AccessTools.Method(typeof(DeferredLoaderTests), nameof(MockCurrentGame)));
-            var patchMaps = new HarmonyMethod(AccessTools.Method(typeof(DeferredLoaderTests), nameof(MockFindMapsThrows)));
+            var patchGame = new HarmonyMethod(AccessTools.Method(typeof(DelayedActionsStageTests), nameof(MockCurrentGame)));
+            var patchMaps = new HarmonyMethod(AccessTools.Method(typeof(DelayedActionsStageTests), nameof(MockFindMapsThrows)));
 
             harmony.Patch(gameProp, prefix: patchGame);
             harmony.Patch(mapsProp, prefix: patchMaps);
 
             try
             {
-                Assert.DoesNotThrow(() => DeferredLoader.UpdateMapMeshForLoadedDefs(new List<ThingDef> { CreateMockThingDef("TestA") }));
+                Assert.DoesNotThrow(() => DelayedActions.UpdateMapMeshForLoadedDefs(new List<ThingDef> { CreateMockThingDef("TestA") }));
             }
             finally
             {

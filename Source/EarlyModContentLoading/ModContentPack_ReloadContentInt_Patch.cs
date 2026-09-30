@@ -14,14 +14,14 @@ namespace FasterGameLoading
         internal static readonly HashSet<ModContentPack> loadedMods = new HashSet<ModContentPack>();
         static ModContentPack_ReloadContentInt_Patch()
         {
-            CacheResetter.Register(() => loadedMods.Clear());
+            SessionLifecycle.On(LifecyclePhase.LanguageReloading, () => loadedMods.Clear());
         }
 
         public static bool Prefix(ModContentPack __instance)
         {
             if (UnityData.IsInMainThread)
             {
-                ModContentLoaderTexture2D_LoadTexture_Patch.TryDrainMainThreadRequests();
+                MainThreadTextureLoader.Drain();
             }
             return !loadedMods.Contains(__instance);
         }

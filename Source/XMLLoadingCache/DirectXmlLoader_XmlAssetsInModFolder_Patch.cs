@@ -21,7 +21,7 @@ namespace FasterGameLoading
         public static bool Prefix(ref LoadableXmlAsset[] __result, ModContentPack mod, string folderPath, List<string> foldersToLoadDebug)
 #pragma warning restore MA0016
         {
-            if (mod == null || !FasterGameLoadingSettings.EnableMultiThreading || EarlyLoadSkipList.ShouldSkip(mod))
+            if (mod == null || !FasterGameLoadingSettings.EnableMultiThreading || ProtectedMods.ShouldSkipEarlyLoad(mod))
             {
                 return true;
             }

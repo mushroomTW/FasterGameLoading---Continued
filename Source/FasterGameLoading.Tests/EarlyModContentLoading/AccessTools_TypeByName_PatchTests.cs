@@ -11,7 +11,7 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
         {
             AccessTools_TypeByName_Patch.cachedResults.Clear();
             GenTypes_GetTypeInAnyAssemblyInt_Patch.ClearCache();
-            SessionCache.loadedTypesByFullNameSinceLastSession.Clear();
+            TypeLookupCache.FullNamesFromLastSession.Clear();
         }
 
         [TearDown]
@@ -19,7 +19,7 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
         {
             AccessTools_TypeByName_Patch.cachedResults.Clear();
             GenTypes_GetTypeInAnyAssemblyInt_Patch.ClearCache();
-            SessionCache.loadedTypesByFullNameSinceLastSession.Clear();
+            TypeLookupCache.FullNamesFromLastSession.Clear();
         }
 
         [Test]
@@ -67,7 +67,7 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
         {
             // GenTypes 的快取與跨 session 對照依 GenTypes 的解析規則產生，這裡不得沿用。
             GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults["ShortClass"] = typeof(string);
-            SessionCache.loadedTypesByFullNameSinceLastSession["ShortClass"] = "System.Text.StringBuilder";
+            TypeLookupCache.FullNamesFromLastSession["ShortClass"] = "System.Text.StringBuilder";
 
             Type result = null;
             bool shouldRun = AccessTools_TypeByName_Patch.Prefix(ref result, "ShortClass");
@@ -84,7 +84,7 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
             Assert.That(AccessTools_TypeByName_Patch.cachedResults.TryGetValue("String", out var type), Is.True);
             Assert.That(type, Is.EqualTo(typeof(string)));
             Assert.That(GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults, Is.Empty);
-            Assert.That(SessionCache.loadedTypesByFullNameSinceLastSession, Is.Empty);
+            Assert.That(TypeLookupCache.FullNamesFromLastSession, Is.Empty);
         }
 
         [Test]
@@ -104,11 +104,11 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
         }
 
         [Test]
-        public void CacheResetter_ResetAll_ClearsCache()
+        public void LanguageReloading_ClearsCache()
         {
             AccessTools_TypeByName_Patch.cachedResults["Test"] = typeof(string);
 
-            CacheResetter.ResetAll();
+            SessionLifecycle.Raise(LifecyclePhase.LanguageReloading);
 
             Assert.That(AccessTools_TypeByName_Patch.cachedResults, Is.Empty);
         }

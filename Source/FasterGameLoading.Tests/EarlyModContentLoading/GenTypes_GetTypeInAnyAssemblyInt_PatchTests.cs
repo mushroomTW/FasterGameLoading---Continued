@@ -10,7 +10,7 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
         public void SetUp()
         {
             GenTypes_GetTypeInAnyAssemblyInt_Patch.ClearCache();
-            SessionCache.loadedTypesByFullNameSinceLastSession.Clear();
+            TypeLookupCache.FullNamesFromLastSession.Clear();
         }
 
         [Test]
@@ -35,7 +35,7 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
         public void TearDown()
         {
             GenTypes_GetTypeInAnyAssemblyInt_Patch.ClearCache();
-            SessionCache.loadedTypesByFullNameSinceLastSession.Clear();
+            TypeLookupCache.FullNamesFromLastSession.Clear();
         }
 
         [Test]
@@ -102,12 +102,12 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
         [Test]
         public void WarmupFullNames_IndexesOnlyGivenAssembliesAndKeepsFirstEntry()
         {
-            GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults[typeof(CacheResetter).FullName] = typeof(string);
+            GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults[typeof(SessionLifecycle).FullName] = typeof(string);
 
             GenTypes_GetTypeInAnyAssemblyInt_Patch.WarmupFullNames(new[] { typeof(SessionCache).Assembly });
 
             Assert.That(GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults[typeof(SessionCache).FullName], Is.EqualTo(typeof(SessionCache)));
-            Assert.That(GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults[typeof(CacheResetter).FullName], Is.EqualTo(typeof(string)),
+            Assert.That(GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults[typeof(SessionLifecycle).FullName], Is.EqualTo(typeof(string)),
                 "先登記者優先：搜尋順序較前的組件中的同名型別不得被覆寫。");
             Assert.That(GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults.ContainsKey(typeof(Verse.ThingDef).FullName), Is.False);
         }
@@ -127,7 +127,7 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
                     CreateModWithAssemblies(secondModAssembly),
                 });
 
-                Assert.That(GenTypes_GetTypeInAnyAssemblyInt_Patch.GenTypesSearchAssemblies(),
+                Assert.That(TypeLookupCache.SearchAssemblies(),
                     Is.EqualTo(new[] { typeof(Verse.GenTypes).Assembly, firstModAssembly, secondModAssembly }));
             }
             finally
@@ -149,7 +149,7 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
         [Test]
         public void Prefix_WhenCachedResultsMiss_AndSessionCacheHit_UpdatesTypeNameToFullNameAndReturnsTrue()
         {
-            SessionCache.loadedTypesByFullNameSinceLastSession["ShortType"] = "System.Text.StringBuilder";
+            TypeLookupCache.FullNamesFromLastSession["ShortType"] = "System.Text.StringBuilder";
 
             Type result = null;
             string typeName = "ShortType";
@@ -172,34 +172,34 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
         public void Postfix_WhenSessionMappingIsStale_DropsMappingAndResolvesOriginalName()
         {
             // 上次 session 記錄 ThingDef → 一個已不存在的全名（例如 mod 更新後類別改名）。
-            SessionCache.loadedTypesByFullNameSinceLastSession["ThingDef"] = "Removed.Namespace.ThingDef";
+            TypeLookupCache.FullNamesFromLastSession["ThingDef"] = "Removed.Namespace.ThingDef";
             var state = (originalTypeName: "ThingDef", namespaceIfAmbiguous: null as string, cacheKey: "ThingDef", isCached: false, usedSessionMapping: true);
 
             Type result = null;
             GenTypes_GetTypeInAnyAssemblyInt_Patch.Postfix(ref result, state);
 
             Assert.That(result, Is.EqualTo(typeof(Verse.ThingDef)), "舊對照查不到時必須退回以原名解析，而不是回報找不到型別。");
-            Assert.That(SessionCache.loadedTypesByFullNameSinceLastSession.ContainsKey("ThingDef"), Is.False);
+            Assert.That(TypeLookupCache.FullNamesFromLastSession.ContainsKey("ThingDef"), Is.False);
         }
 
         [Test]
         public void Postfix_WhenOriginalLookupMissesWithoutSessionMapping_DoesNotRetry()
         {
-            SessionCache.loadedTypesByFullNameSinceLastSession["Unrelated"] = "Some.Unrelated";
+            TypeLookupCache.FullNamesFromLastSession["Unrelated"] = "Some.Unrelated";
             var state = (originalTypeName: "ThingDef", namespaceIfAmbiguous: null as string, cacheKey: "ThingDef", isCached: false, usedSessionMapping: false);
 
             Type result = null;
             GenTypes_GetTypeInAnyAssemblyInt_Patch.Postfix(ref result, state);
 
             Assert.That(result, Is.Null);
-            Assert.That(SessionCache.loadedTypesByFullNameSinceLastSession.ContainsKey("Unrelated"), Is.True);
+            Assert.That(TypeLookupCache.FullNamesFromLastSession.ContainsKey("Unrelated"), Is.True);
         }
 
         [Test]
         public void Prefix_WhenCachedResultsMiss_AndSessionCacheHitWithNamespace_UpdatesTypeName()
         {
             var key = GenTypes_GetTypeInAnyAssemblyInt_Patch.MakeCacheKey("MyType", "Verse");
-            SessionCache.loadedTypesByFullNameSinceLastSession[key] = "Verse.MyType";
+            TypeLookupCache.FullNamesFromLastSession[key] = "Verse.MyType";
 
             Type result = null;
             string typeName = "MyType";
@@ -285,12 +285,12 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
         }
 
         [Test]
-        public void CacheResetter_ResetAll_ClearsCache()
+        public void LanguageReloading_ClearsCache()
         {
             GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults["Test"] = typeof(string);
             GenTypes_GetTypeInAnyAssemblyInt_Patch.loadedTypesThisSession["Test"] = "System.String";
 
-            CacheResetter.ResetAll();
+            SessionLifecycle.Raise(LifecyclePhase.LanguageReloading);
 
             Assert.That(GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults, Is.Empty);
             Assert.That(GenTypes_GetTypeInAnyAssemblyInt_Patch.loadedTypesThisSession, Is.Empty);

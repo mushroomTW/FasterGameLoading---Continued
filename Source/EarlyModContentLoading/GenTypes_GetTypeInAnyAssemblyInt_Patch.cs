@@ -27,38 +27,10 @@ namespace FasterGameLoading
         /// </summary>
         private static Func<string, string, Type> resolveUncached;
 
-        static GenTypes_GetTypeInAnyAssemblyInt_Patch()
-        {
-            CacheResetter.Register(ClearCache);
-
-            Startup.RegisterOnStartupCompleted(static () =>
-            {
-                SessionCache.loadedTypesByFullNameSinceLastSession = new ConcurrentDictionary<string, string>(loadedTypesThisSession, StringComparer.Ordinal);
-            });
-        }
-
         public static void ClearCache()
         {
             cachedResults.Clear();
             loadedTypesThisSession.Clear();
-        }
-
-        /// <summary>
-        /// 原版 GenTypes 以名稱查型別時搜尋的組件，依搜尋順序排列：
-        /// 遊戲本體（Assembly-CSharp）在前，接著是各執行中 mod 依載入順序的組件。
-        /// </summary>
-        internal static List<Assembly> GenTypesSearchAssemblies()
-        {
-            var assemblies = new List<Assembly> { typeof(GenTypes).Assembly };
-            foreach (var mod in LoadedModManager.RunningMods)
-            {
-                var loaded = mod?.assemblies?.loadedAssemblies;
-                if (loaded != null)
-                {
-                    assemblies.AddRange(loaded);
-                }
-            }
-            return assemblies;
         }
 
         /// <summary>
@@ -116,7 +88,7 @@ namespace FasterGameLoading
 
             var originalTypeName = typeName;
             bool usedSessionMapping = false;
-            if (SessionCache.loadedTypesByFullNameSinceLastSession.TryGetValue(cacheKey, out var fullName))
+            if (TypeLookupCache.FullNamesFromLastSession.TryGetValue(cacheKey, out var fullName))
             {
                 usedSessionMapping = !string.Equals(fullName, typeName, StringComparison.Ordinal);
                 typeName = fullName;
@@ -134,7 +106,7 @@ namespace FasterGameLoading
             if (__result == null && __state.usedSessionMapping)
             {
                 // 沒有命名空間時 cacheKey 就是原名，因此只需移除這一個鍵。
-                SessionCache.loadedTypesByFullNameSinceLastSession.TryRemove(__state.cacheKey, out _);
+                TypeLookupCache.FullNamesFromLastSession.TryRemove(__state.cacheKey, out _);
                 resolveUncached ??= AccessTools.MethodDelegate<Func<string, string, Type>>(
                     AccessTools.Method(typeof(GenTypes), "GetTypeInAnyAssemblyInt"));
                 // 重新進入本補丁：對照已移除，因此會走原始解析並由內層 Postfix 正常記錄結果。

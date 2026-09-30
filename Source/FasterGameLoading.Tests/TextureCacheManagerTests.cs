@@ -136,19 +136,6 @@ namespace FasterGameLoading.Tests
         }
 
         [Test]
-        public void TestReplaceTextureCacheDirectory_MissingStagingPreservesExistingCache()
-        {
-            Directory.CreateDirectory(manager.CacheDirectory);
-            string retainedFile = Path.Combine(manager.CacheDirectory, "retained.png");
-            File.WriteAllBytes(retainedFile, new byte[] { 1 });
-
-            bool replaced = manager.ReplaceTextureCacheDirectory(Path.Combine(tempDir, "missing-staging"));
-
-            Assert.IsFalse(replaced);
-            Assert.IsTrue(File.Exists(retainedFile));
-        }
-
-        [Test]
         public void TestCleanupObsoleteCacheFiles_RemovesUnreferencedFiles()
         {
             // 1. 建立測試環境：一個存在的原始檔案，一個不存在的原始檔案

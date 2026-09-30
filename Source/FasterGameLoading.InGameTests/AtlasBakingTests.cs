@@ -26,8 +26,8 @@ namespace FasterGameLoading.InGameTests
         [Test]
         public static void AdaptiveBakeDidNotFallBack()
         {
-            // 自適應烘焙沒啟用時此旗標不會被設定，恆為 false。
-            Assert.That(DelayedActions.AdaptiveStaticAtlasBakeFailed).Is.False();
+            // 自適應烘焙沒啟用時不會執行，此值恆為 false。
+            Assert.That(AdaptiveAtlasBaker.LastBakeFailed).Is.False();
         }
 
         /// <summary>同一張貼圖在同一個 group 出現在兩張圖集，代表烘焙跑了兩次。</summary>

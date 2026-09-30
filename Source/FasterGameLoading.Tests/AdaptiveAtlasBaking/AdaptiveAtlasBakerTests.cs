@@ -27,8 +27,6 @@ namespace FasterGameLoading.Tests.AdaptiveAtlasBaking
         private object previousBuildQueueMasks;
         private object previousStaticAtlases;
         private List<float> previousHistoricalBakeSpeeds;
-        private bool previousBakeFailed;
-        private bool previousAllLoaded;
 
         public static class MockTextureHelper
         {
@@ -265,15 +263,12 @@ namespace FasterGameLoading.Tests.AdaptiveAtlasBaking
             previousBuildQueue = BuildQueueField?.GetValue(null);
             previousBuildQueueMasks = BuildQueueMasksField?.GetValue(null);
             previousStaticAtlases = StaticTextureAtlasesField?.GetValue(null);
-            previousHistoricalBakeSpeeds = SessionCache.historicalBakeSpeeds?.ToList();
-            previousBakeFailed = DelayedActions.AdaptiveStaticAtlasBakeFailed;
-            previousAllLoaded = DelayedActions.AllDeferredVisualsLoaded;
+            previousHistoricalBakeSpeeds = AdaptiveAtlasBaker.BakeSpeedHistory?.ToList();
 
             BuildQueueField?.SetValue(null, new Dictionary<TextureAtlasGroupKey, (List<Texture2D>, HashSet<Texture2D>)>());
             BuildQueueMasksField?.SetValue(null, new Dictionary<Texture2D, Texture2D>());
             StaticTextureAtlasesField?.SetValue(null, new List<StaticTextureAtlas>());
-            SessionCache.historicalBakeSpeeds = new List<float>();
-            DelayedActions.AdaptiveStaticAtlasBakeFailed = false;
+            AdaptiveAtlasBaker.BakeSpeedHistory = new List<float>();
         }
 
 
@@ -285,9 +280,7 @@ namespace FasterGameLoading.Tests.AdaptiveAtlasBaking
             BuildQueueField?.SetValue(null, previousBuildQueue);
             BuildQueueMasksField?.SetValue(null, previousBuildQueueMasks);
             StaticTextureAtlasesField?.SetValue(null, previousStaticAtlases);
-            SessionCache.historicalBakeSpeeds = previousHistoricalBakeSpeeds ?? new List<float>();
-            DelayedActions.AdaptiveStaticAtlasBakeFailed = previousBakeFailed;
-            DelayedActions.AllDeferredVisualsLoaded = previousAllLoaded;
+            AdaptiveAtlasBaker.BakeSpeedHistory = previousHistoricalBakeSpeeds ?? new List<float>();
             MockTextureHelper.TextureProps.Clear();
         }
 
@@ -301,37 +294,37 @@ namespace FasterGameLoading.Tests.AdaptiveAtlasBaking
         [Test]
         public void PerformAdaptiveStaticAtlasBake_WithoutHistory_UsesInitialEstimate()
         {
-            SessionCache.historicalBakeSpeeds.Clear();
+            AdaptiveAtlasBaker.BakeSpeedHistory.Clear();
 
             var iterator = AdaptiveAtlasBaker.PerformAdaptiveStaticAtlasBake(delayedActions: null);
             while (iterator.MoveNext()) { }
 
-            Assert.That(SessionCache.historicalBakeSpeeds.Count, Is.EqualTo(1));
-            Assert.That(SessionCache.historicalBakeSpeeds[0], Is.EqualTo(2_000_000f));
+            Assert.That(AdaptiveAtlasBaker.BakeSpeedHistory.Count, Is.EqualTo(1));
+            Assert.That(AdaptiveAtlasBaker.BakeSpeedHistory[0], Is.EqualTo(2_000_000f));
         }
 
         [Test]
         public void PerformAdaptiveStaticAtlasBake_WithHistory_CalculatesWeightedMovingAverage()
         {
             // Initial history with 1,000,000f
-            SessionCache.historicalBakeSpeeds = new List<float> { 1_000_000f };
+            AdaptiveAtlasBaker.BakeSpeedHistory = new List<float> { 1_000_000f };
 
             var iterator = AdaptiveAtlasBaker.PerformAdaptiveStaticAtlasBake(delayedActions: null);
             while (iterator.MoveNext()) { }
 
             // With single history 1,000,000f, weighted average is 1,000,000f * 0.4 / 0.4 = 1,000,000f
-            Assert.That(SessionCache.historicalBakeSpeeds[0], Is.EqualTo(1_000_000f));
+            Assert.That(AdaptiveAtlasBaker.BakeSpeedHistory[0], Is.EqualTo(1_000_000f));
 
             // With 2 history entries: 1,000,000f and 2,000,000f
             // weightedSum = 1,000,000 * 0.4 + 2,000,000 * 0.3 = 1,000,000
             // weightSum = 0.4 + 0.3 = 0.7
             // expected = 1,000,000 / 0.7 = 1428571.4f
-            SessionCache.historicalBakeSpeeds = new List<float> { 1_000_000f, 2_000_000f };
+            AdaptiveAtlasBaker.BakeSpeedHistory = new List<float> { 1_000_000f, 2_000_000f };
             var iterator2 = AdaptiveAtlasBaker.PerformAdaptiveStaticAtlasBake(delayedActions: null);
             while (iterator2.MoveNext()) { }
 
-            float expectedSpeed = (1_000_000f * SessionCache.WEIGHTS[0] + 2_000_000f * SessionCache.WEIGHTS[1]) / (SessionCache.WEIGHTS[0] + SessionCache.WEIGHTS[1]);
-            Assert.That(SessionCache.historicalBakeSpeeds[0], Is.EqualTo(expectedSpeed).Within(1f));
+            float expectedSpeed = (1_000_000f * AdaptiveAtlasBaker.BakeSpeedWeights[0] + 2_000_000f * AdaptiveAtlasBaker.BakeSpeedWeights[1]) / (AdaptiveAtlasBaker.BakeSpeedWeights[0] + AdaptiveAtlasBaker.BakeSpeedWeights[1]);
+            Assert.That(AdaptiveAtlasBaker.BakeSpeedHistory[0], Is.EqualTo(expectedSpeed).Within(1f));
         }
 
         [Test]
@@ -362,7 +355,7 @@ namespace FasterGameLoading.Tests.AdaptiveAtlasBaking
         [Test]
         public void PerformAdaptiveStaticAtlasBake_WithFullHistory_DoesNotExceedHistorySize()
         {
-            SessionCache.historicalBakeSpeeds = new List<float> { 1_500_000f, 1_600_000f, 1_700_000f, 1_800_000f };
+            AdaptiveAtlasBaker.BakeSpeedHistory = new List<float> { 1_500_000f, 1_600_000f, 1_700_000f, 1_800_000f };
 
             var queue = new Dictionary<TextureAtlasGroupKey, (List<Texture2D>, HashSet<Texture2D>)>();
             var key = new TextureAtlasGroupKey { hasMask = true };
@@ -383,7 +376,7 @@ namespace FasterGameLoading.Tests.AdaptiveAtlasBaking
             var iterator = AdaptiveAtlasBaker.PerformAdaptiveStaticAtlasBake(delayedActions: null);
             while (iterator.MoveNext()) { }
 
-            Assert.That(SessionCache.historicalBakeSpeeds.Count, Is.EqualTo(SessionCache.HISTORY_SIZE));
+            Assert.That(AdaptiveAtlasBaker.BakeSpeedHistory.Count, Is.EqualTo(AdaptiveAtlasBaker.BakeSpeedHistorySize));
         }
 
         [Test]
@@ -421,9 +414,9 @@ namespace FasterGameLoading.Tests.AdaptiveAtlasBaking
             var iterator = AdaptiveAtlasBaker.PerformAdaptiveStaticAtlasBake(delayedActions: null);
             while (iterator.MoveNext()) { }
 
-            Assert.That(DelayedActions.AdaptiveStaticAtlasBakeFailed, Is.True);
+            Assert.That(AdaptiveAtlasBaker.LastBakeFailed, Is.True);
             // On early failure, SessionCache speed is not recorded
-            Assert.That(SessionCache.historicalBakeSpeeds.Count, Is.EqualTo(0));
+            Assert.That(AdaptiveAtlasBaker.BakeSpeedHistory.Count, Is.EqualTo(0));
         }
     }
 }

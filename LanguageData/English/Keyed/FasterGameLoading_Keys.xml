@@ -6,6 +6,7 @@
     <FGL_EarlyModContentLoading>Load mod content early</FGL_EarlyModContentLoading>
     <FGL_DelayGraphicLoading>Delay graphic and icon loading</FGL_DelayGraphicLoading>
     <FGL_StaticAtlasesBaking>Adaptive atlas baking</FGL_StaticAtlasesBaking>   
+    <FGL_RequiresRestart>(requires restart)</FGL_RequiresRestart>
     <FGL_MultiThreading>Multi-threaded preloading</FGL_MultiThreading>
     <FGL_TypeLookupCache>Type lookup cache</FGL_TypeLookupCache>
     <FGL_VerboseLogging>Verbose logging</FGL_VerboseLogging>
@@ -22,7 +23,9 @@
         Tree - 256px
         Terrain - 1024px</FGL_TextureResizingExplanation>
     <FGL_DownscaleTextures>Downscale textures</FGL_DownscaleTextures>
+    <FGL_DownscaleTexturesUnavailable>Graphics Settings+ or Image Opt is loading textures, so the downscale tool is unavailable.</FGL_DownscaleTexturesUnavailable>
     <FGL_DownscalingTextures>Downscaling textures</FGL_DownscalingTextures>
+    <FGL_ClearingTextureCache>Clearing texture cache</FGL_ClearingTextureCache>
     <FGL_DownscaleTexturesConfirmation>Perform texture downscaling? Downscaled textures will be cached separately; original mod files will not be modified.(requires restart once)</FGL_DownscaleTexturesConfirmation>
     <FGL_ClearTextureCache>Clear texture cache</FGL_ClearTextureCache>
     <FGL_ClearTextureCacheConfirmation>Clear all cached downscaled textures? Original textures will be used on next startup.</FGL_ClearTextureCacheConfirmation>

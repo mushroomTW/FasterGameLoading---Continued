@@ -1,5 +1,5 @@
 using System;
-using System.Reflection;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using HarmonyLib;
 using NUnit.Framework;
@@ -13,8 +13,17 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
     {
         private Harmony harmony;
         private DelayedActions delayedActions;
+        private bool originalDelay;
+        private bool originalStaticBake;
+        private static int vanillaBakeCalls;
 
         private static bool PrefixSkip() => false;
+
+        private static bool CountVanillaBake()
+        {
+            vanillaBakeCalls++;
+            return false;
+        }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -25,6 +34,10 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
             {
                 harmony.Patch(emitMethod, prefix: new HarmonyMethod(AccessTools.Method(typeof(DelayedActionsTests), nameof(PrefixSkip))));
             }
+            // 原版烘焙需要圖集基礎設施，無頭環境只記錄被呼叫的次數。
+            harmony.Patch(
+                AccessTools.Method(typeof(GlobalTextureAtlasManager), nameof(GlobalTextureAtlasManager.BakeStaticAtlases)),
+                prefix: new HarmonyMethod(AccessTools.Method(typeof(DelayedActionsTests), nameof(CountVanillaBake))));
         }
 
         [OneTimeTearDown]
@@ -37,13 +50,20 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
         public void SetUp()
         {
             delayedActions = new DelayedActions();
+            originalDelay = FasterGameLoadingSettings.DelayGraphicLoading;
+            originalStaticBake = FasterGameLoadingSettings.StaticAtlasesBaking;
+            vanillaBakeCalls = 0;
+            SessionLifecycle.Raise(LifecyclePhase.LanguageReloading);
         }
 
         [TearDown]
         public void TearDown()
         {
             delayedActions?.ClearQueues();
-            delayedActions?.StopStopwatch();
+            FasterGameLoadingSettings.DelayGraphicLoading = originalDelay;
+            FasterGameLoadingSettings.StaticAtlasesBaking = originalStaticBake;
+            DelayedActions.ReleaseStartupSettingsForTests();
+            SessionLifecycle.Raise(LifecyclePhase.LanguageReloading);
         }
 
         private static ThingDef CreateMockThingDef(string name)
@@ -53,183 +73,80 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
             return def;
         }
 
-        [Test]
-        public void EnqueueGraphic_And_TryDequeueGraphic_OperateCorrectlyInFifoOrder()
+        private void RunToCompletion() => RunLikeUnity(delayedActions.PerformActions());
+
+        /// <summary>模擬 Unity 協程：yield 出的 IEnumerator 視為子協程，先跑完再繼續外層。</summary>
+        internal static void RunLikeUnity(System.Collections.IEnumerator coroutine)
         {
-            Assert.That(delayedActions.GraphicsToLoadCount, Is.EqualTo(0));
-            Assert.That(delayedActions.TryDequeueGraphic(out _, out _), Is.False);
+            while (coroutine.MoveNext())
+            {
+                if (coroutine.Current is System.Collections.IEnumerator nested)
+                {
+                    RunLikeUnity(nested);
+                }
+            }
+        }
 
-            var def1 = CreateMockThingDef("TestDef1");
-            var def2 = CreateMockThingDef("TestDef2");
-            bool action1Called = false;
-            bool action2Called = false;
-            Action act1 = () => action1Called = true;
-            Action act2 = () => action2Called = true;
-
-            delayedActions.EnqueueGraphic(def1, act1);
-            delayedActions.EnqueueGraphic(def2, act2);
-
-            Assert.That(delayedActions.GraphicsToLoadCount, Is.EqualTo(2));
-
-            // Dequeue 1
-            Assert.That(delayedActions.TryDequeueGraphic(out var outDef1, out var outAct1), Is.True);
-            Assert.That(outDef1, Is.SameAs(def1));
-            outAct1();
-            Assert.That(action1Called, Is.True);
-            Assert.That(delayedActions.GraphicsToLoadCount, Is.EqualTo(1));
-
-            // Dequeue 2
-            Assert.That(delayedActions.TryDequeueGraphic(out var outDef2, out var outAct2), Is.True);
-            Assert.That(outDef2, Is.SameAs(def2));
-            outAct2();
-            Assert.That(action2Called, Is.True);
-            Assert.That(delayedActions.GraphicsToLoadCount, Is.EqualTo(0));
-
-            // Empty
-            Assert.That(delayedActions.TryDequeueGraphic(out _, out _), Is.False);
+        private void CaptureSettings(bool delay, bool adaptive)
+        {
+            FasterGameLoadingSettings.DelayGraphicLoading = delay;
+            FasterGameLoadingSettings.StaticAtlasesBaking = adaptive;
+            DelayedActions.CaptureStartupSettings();
         }
 
         [Test]
-        public void EnqueueIcon_And_TryDequeueIcon_OperateCorrectlyInFifoOrder()
+        public void DeferredGraphics_RunInEnqueueOrder()
         {
-            Assert.That(delayedActions.IconsToLoadCount, Is.EqualTo(0));
-            Assert.That(delayedActions.TryDequeueIcon(out _, out _), Is.False);
+            var order = new List<string>();
+            delayedActions.EnqueueGraphic(CreateMockThingDef("First"), () => order.Add("First"));
+            delayedActions.EnqueueGraphic(CreateMockThingDef("Second"), () => order.Add("Second"));
 
-            var def1 = CreateMockThingDef("IconDef1");
-            var def2 = CreateMockThingDef("IconDef2");
-            bool act1Called = false;
-            bool act2Called = false;
+            var drain = delayedActions.LoadDeferredGraphicsCoroutine(new List<ThingDef>());
+            while (drain.MoveNext()) { }
 
-            delayedActions.EnqueueIcon(def1, () => act1Called = true);
-            delayedActions.EnqueueIcon(def2, () => act2Called = true);
-
-            Assert.That(delayedActions.IconsToLoadCount, Is.EqualTo(2));
-
-            Assert.That(delayedActions.TryDequeueIcon(out var outDef1, out var outAct1), Is.True);
-            Assert.That(outDef1, Is.SameAs(def1));
-            outAct1();
-            Assert.That(act1Called, Is.True);
-            Assert.That(delayedActions.IconsToLoadCount, Is.EqualTo(1));
-
-            Assert.That(delayedActions.TryDequeueIcon(out var outDef2, out var outAct2), Is.True);
-            Assert.That(outDef2, Is.SameAs(def2));
-            outAct2();
-            Assert.That(act2Called, Is.True);
-            Assert.That(delayedActions.IconsToLoadCount, Is.EqualTo(0));
-
-            Assert.That(delayedActions.TryDequeueIcon(out _, out _), Is.False);
+            Assert.That(order, Is.EqualTo(new[] { "First", "Second" }));
         }
 
         [Test]
-        public void EnqueueSubSound_And_TryDequeueSubSound_OperateCorrectlyInFifoOrder()
+        public void ClearQueues_DropsAllQueuedWorkAndResetsPhase()
         {
-            Assert.That(delayedActions.SubSoundDefToResolveCount, Is.EqualTo(0));
-            Assert.That(delayedActions.TryDequeueSubSound(out _, out _), Is.False);
+            CaptureSettings(delay: false, adaptive: false);
+            RunToCompletion();
+            Assert.That(delayedActions.Phase, Is.EqualTo(DeferredPhase.Completed));
 
-            var sound1 = (SubSoundDef)FormatterServices.GetUninitializedObject(typeof(SubSoundDef));
-            var sound2 = (SubSoundDef)FormatterServices.GetUninitializedObject(typeof(SubSoundDef));
-            bool act1Called = false;
-            bool act2Called = false;
-
-            delayedActions.EnqueueSubSound(sound1, () => act1Called = true);
-            delayedActions.EnqueueSubSound(sound2, () => act2Called = true);
-
-            Assert.That(delayedActions.SubSoundDefToResolveCount, Is.EqualTo(2));
-
-            Assert.That(delayedActions.TryDequeueSubSound(out var outDef1, out var outAct1), Is.True);
-            Assert.That(outDef1, Is.SameAs(sound1));
-            outAct1();
-            Assert.That(act1Called, Is.True);
-            Assert.That(delayedActions.SubSoundDefToResolveCount, Is.EqualTo(1));
-
-            Assert.That(delayedActions.TryDequeueSubSound(out var outDef2, out var outAct2), Is.True);
-            Assert.That(outDef2, Is.SameAs(sound2));
-            outAct2();
-            Assert.That(act2Called, Is.True);
-            Assert.That(delayedActions.SubSoundDefToResolveCount, Is.EqualTo(0));
-
-            Assert.That(delayedActions.TryDequeueSubSound(out _, out _), Is.False);
-        }
-
-        [Test]
-        public void EnqueueMainThreadAction_IgnoresNullAndEnqueuesNonNull()
-        {
-            delayedActions.EnqueueMainThreadAction(action: null);
-
-            bool actionExecuted = false;
-            delayedActions.EnqueueMainThreadAction(() => actionExecuted = true);
-
-            delayedActions.Update();
-            Assert.That(actionExecuted, Is.True);
-        }
-
-        [Test]
-        public void ClearQueues_ClearsAllQueues()
-        {
-            var def = CreateMockThingDef("TestClear");
-            var iconDef = CreateMockThingDef("IconClear");
-            var sound = (SubSoundDef)FormatterServices.GetUninitializedObject(typeof(SubSoundDef));
-            bool mainThreadActionExecuted = false;
-
-            delayedActions.EnqueueGraphic(def, () => { });
-            delayedActions.EnqueueIcon(iconDef, () => { });
-            delayedActions.EnqueueSubSound(sound, () => { });
-            delayedActions.EnqueueMainThreadAction(() => mainThreadActionExecuted = true);
-
-            Assert.That(delayedActions.GraphicsToLoadCount, Is.EqualTo(1));
-            Assert.That(delayedActions.IconsToLoadCount, Is.EqualTo(1));
-            Assert.That(delayedActions.SubSoundDefToResolveCount, Is.EqualTo(1));
+            delayedActions.EnqueueGraphic(CreateMockThingDef("TestClear"), () => { });
+            delayedActions.EnqueueIcon(CreateMockThingDef("IconClear"), () => { });
+            delayedActions.EnqueueSubSound((SubSoundDef)FormatterServices.GetUninitializedObject(typeof(SubSoundDef)), () => { });
 
             delayedActions.ClearQueues();
 
             Assert.That(delayedActions.GraphicsToLoadCount, Is.EqualTo(0));
             Assert.That(delayedActions.IconsToLoadCount, Is.EqualTo(0));
             Assert.That(delayedActions.SubSoundDefToResolveCount, Is.EqualTo(0));
-
-            delayedActions.Update();
-            Assert.That(mainThreadActionExecuted, Is.False);
+            Assert.That(delayedActions.Phase, Is.EqualTo(DeferredPhase.Idle));
         }
 
         [Test]
-        public void Update_DrainsMainThreadActions_AndCatchesExceptionsWithoutAbortingRemainingActions()
+        public void ResolvePendingSubSounds_RunsEveryQueuedSoundAndContinuesPastFailures()
         {
-            bool firstExecuted = false;
-            bool thirdExecuted = false;
+            bool secondRan = false;
+            delayedActions.EnqueueSubSound((SubSoundDef)FormatterServices.GetUninitializedObject(typeof(SubSoundDef)),
+                () => throw new InvalidOperationException("Simulated grain failure"));
+            delayedActions.EnqueueSubSound((SubSoundDef)FormatterServices.GetUninitializedObject(typeof(SubSoundDef)),
+                () => secondRan = true);
 
-            delayedActions.EnqueueMainThreadAction(() => firstExecuted = true);
-            delayedActions.EnqueueMainThreadAction(() => throw new InvalidOperationException("Test exception in main thread action"));
-            delayedActions.EnqueueMainThreadAction(() => thirdExecuted = true);
+            Assert.DoesNotThrow(delayedActions.ResolvePendingSubSounds);
 
-            Assert.DoesNotThrow(() => delayedActions.Update());
-
-            Assert.That(firstExecuted, Is.True);
-            Assert.That(thirdExecuted, Is.True);
+            Assert.That(secondRan, Is.True);
+            Assert.That(delayedActions.SubSoundDefToResolveCount, Is.EqualTo(0));
         }
 
         [Test]
-        public void StopwatchAndBudget_BehaviorOperatesCorrectly()
+        public void Budget_StartsUnderBudgetWithMenuFrameLimit()
         {
-            // Initially false when stopwatch is 0
             Assert.That(delayedActions.IsOverBudget, Is.False);
-
-            delayedActions.StartStopwatch();
-            delayedActions.RestartStopwatch();
-            delayedActions.StopStopwatch();
-
-            // When Current.Game is null in test runner, MaxImpactThisFrame is 0.05f (50ms)
+            // 測試環境沒有 Current.Game，套用主選單的 50ms 上限。
             Assert.That(DelayedActions.MaxImpactThisFrame, Is.EqualTo(0.05f));
-        }
-
-        [Test]
-        public void CacheResetter_ResetsDelayedActionsStaticFlags()
-        {
-            DelayedActions.AllDeferredVisualsLoaded = true;
-            DelayedActions.AdaptiveStaticAtlasBakeFailed = true;
-
-            CacheResetter.ResetAll();
-
-            Assert.That(DelayedActions.AllDeferredVisualsLoaded, Is.False);
-            Assert.That(DelayedActions.AdaptiveStaticAtlasBakeFailed, Is.False);
         }
 
         [Test]
@@ -241,57 +158,82 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
         }
 
         [Test]
-        public void PerformActions_WhenDeferredVisualPipelineDisabled_ResolvesSubSoundsAndMarksLoaded()
+        public void PerformActions_WhenDeferredVisualsDisabled_ResolvesSoundsWithoutBaking()
         {
-            bool originalDelay = FasterGameLoadingSettings.DelayGraphicLoading;
-            bool originalLoaded = DelayedActions.AllDeferredVisualsLoaded;
-            FasterGameLoadingSettings.DelayGraphicLoading = false;
+            CaptureSettings(delay: false, adaptive: false);
+            bool soundResolved = false;
+            delayedActions.EnqueueSubSound((SubSoundDef)FormatterServices.GetUninitializedObject(typeof(SubSoundDef)), () => soundResolved = true);
+
+            RunToCompletion();
+
+            Assert.That(soundResolved, Is.True);
+            Assert.That(vanillaBakeCalls, Is.Zero, "延遲視覺關閉時靜態圖集已在啟動流程由原版烘焙，不可再烘一次。");
+            Assert.That(delayedActions.Phase, Is.EqualTo(DeferredPhase.Completed));
+            Assert.That(DelayedActions.AllowsVanillaStaticBake, Is.True);
+        }
+
+        [Test]
+        public void PerformActions_WhenDeferredVisualsEnabled_LoadsGraphicsThenIconsBeforeBaking()
+        {
+            CaptureSettings(delay: true, adaptive: false);
+            // 圖示只需要剛載入的圖形、與圖集無關，排在烘焙之前，玩家不必等整批圖集烘焙完才看到正確圖示。
+            var enumerator = delayedActions.PerformActions();
             try
             {
-                // DelayGraphicLoading=false 時略過延遲圖形/圖集烘焙管線，直接標記視覺已載入，
-                // 並在 finally 中執行取消 SoundStarter 攔截與清空 savedGraphics（覆蓋 PerformActions 主協程）。
-                var enumerator = delayedActions.PerformActions();
-                while (enumerator.MoveNext()) { }
-
-                Assert.That(DelayedActions.AllDeferredVisualsLoaded, Is.True);
+                Assert.That(enumerator.MoveNext(), Is.True);
+                Assert.That(delayedActions.Phase, Is.EqualTo(DeferredPhase.Graphics));
+                Assert.That(enumerator.Current.GetType().Name, Does.Contain(nameof(DelayedActions.LoadDeferredGraphicsCoroutine)));
+                Assert.That(enumerator.MoveNext(), Is.True);
+                Assert.That(delayedActions.Phase, Is.EqualTo(DeferredPhase.Icons));
+                Assert.That(enumerator.Current.GetType().Name, Does.Contain(nameof(DelayedActions.LoadDeferredIconsCoroutine)));
             }
             finally
             {
-                FasterGameLoadingSettings.DelayGraphicLoading = originalDelay;
-                DelayedActions.AllDeferredVisualsLoaded = originalLoaded;
+                if (enumerator is IDisposable disposable)
+                    disposable.Dispose();
             }
         }
 
         [Test]
-        public void PerformActions_WhenDeferredVisualPipelineEnabled_StartsPipelineAndResolvesWithoutBaking()
+        public void StartupBake_IsHeldUntilDeferredVanillaBakeRuns()
         {
-            bool originalDelay = FasterGameLoadingSettings.DelayGraphicLoading;
-            bool originalLoaded = DelayedActions.AllDeferredVisualsLoaded;
-            FasterGameLoadingSettings.DelayGraphicLoading = true;
-            try
-            {
-                // DelayGraphicLoading=true 時進入延遲視覺管線：先產出延遲圖形協程，接著是延遲圖示協程。
-                // 圖示只需要剛載入的圖形、與圖集無關，排在烘焙之前，玩家不必等整批圖集烘焙完才看到正確圖示。
-                // 烘焙需要遊戲/圖集基礎設施，無頭環境會拋出，故不繼續迭代；finally 區塊會在 Dispose 時安全執行。
-                var enumerator = delayedActions.PerformActions();
-                try
-                {
-                    Assert.That(enumerator.MoveNext(), Is.True);
-                    Assert.That(enumerator.Current.GetType().Name, Does.Contain(nameof(DeferredLoader.LoadDeferredGraphicsCoroutine)));
-                    Assert.That(enumerator.MoveNext(), Is.True);
-                    Assert.That(enumerator.Current.GetType().Name, Does.Contain(nameof(DeferredLoader.LoadDeferredIconsCoroutine)));
-                }
-                finally
-                {
-                    if (enumerator is IDisposable disposable)
-                        disposable.Dispose();
-                }
-            }
-            finally
-            {
-                FasterGameLoadingSettings.DelayGraphicLoading = originalDelay;
-                DelayedActions.AllDeferredVisualsLoaded = originalLoaded;
-            }
+            CaptureSettings(delay: true, adaptive: false);
+            Assert.That(DelayedActions.AllowsVanillaStaticBake, Is.False, "啟動流程那一次烘焙必須延後到延遲圖形載入之後。");
+
+            RunToCompletion();
+
+            Assert.That(vanillaBakeCalls, Is.EqualTo(1));
+            Assert.That(DelayedActions.AllowsVanillaStaticBake, Is.True);
+            Assert.That(delayedActions.Phase, Is.EqualTo(DeferredPhase.Completed));
+        }
+
+        [Test]
+        public void LanguageReload_HoldsStartupBakeAgain()
+        {
+            CaptureSettings(delay: true, adaptive: false);
+            RunToCompletion();
+            Assert.That(DelayedActions.AllowsVanillaStaticBake, Is.True);
+
+            SessionLifecycle.Raise(LifecyclePhase.LanguageReloading);
+
+            Assert.That(DelayedActions.AllowsVanillaStaticBake, Is.False);
+        }
+
+        [Test]
+        public void CapturedSettings_TurningDelayOffMidSession_StillDrainsQueuedGraphics()
+        {
+            // PostLoad 補丁在啟動時依「開啟」套用並持續排入佇列；玩家之後在設定頁關閉，
+            // 管線仍須照定案值執行，否則切換語言後排入的圖形永遠不會載入。
+            CaptureSettings(delay: true, adaptive: false);
+            FasterGameLoadingSettings.DelayGraphicLoading = false;
+            bool graphicLoaded = false;
+            delayedActions.EnqueueGraphic(CreateMockThingDef("QueuedAfterToggle"), () => graphicLoaded = true);
+
+            RunToCompletion();
+
+            Assert.That(ThingDef_PostLoad_Patch.Prepare(), Is.True);
+            Assert.That(graphicLoaded, Is.True);
+            Assert.That(delayedActions.GraphicsToLoadCount, Is.EqualTo(0));
         }
     }
 }

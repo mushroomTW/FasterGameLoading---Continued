@@ -38,6 +38,8 @@ namespace FasterGameLoading
             StartCleanupInvalidImageOptCaches();
 
             harmony = new Harmony("FasterGameLoadingMod");
+            // 補丁的 Prepare 與延遲視覺管線共用同一份定案值，執行期改設定不會讓兩者分歧。
+            DelayedActions.CaptureStartupSettings();
 
             // 背景預載入所有類型，以加速後續的 AccessTools.AllTypes() 呼叫
             AccessTools_AllTypes_Patch.Preload();
@@ -45,13 +47,13 @@ namespace FasterGameLoading
             {
                 // Mod 建構子在載入事件緒上執行：所有 mod 組件都已載入、Def／Patch XML 尚未解析，
                 // 此時預熱才能讓 XML 解析階段大量的完整型別名稱查詢直接命中。
-                GenTypes_GetTypeInAnyAssemblyInt_Patch.WarmupFullNames(GenTypes_GetTypeInAnyAssemblyInt_Patch.GenTypesSearchAssemblies());
+                GenTypes_GetTypeInAnyAssemblyInt_Patch.WarmupFullNames(TypeLookupCache.SearchAssemblies());
             }
             harmony.PatchAll();
             ImageOptEarlyLoadCoordinator.TryInstall();
 
-            // 註冊執行個體層級的快取清理（在語言切換時由 CacheResetter.ResetAll() 觸發）
-            CacheResetter.Register(() =>
+            // 註冊執行個體層級的快取清理（在語言切換時由 SessionLifecycle.Raise(LifecyclePhase.LanguageReloading) 觸發）
+            SessionLifecycle.On(LifecyclePhase.LanguageReloading, () =>
             {
                 if (delayedActions) // 利用 Unity Object 的隱式 bool 轉型檢查，防範 GameObject 銷毀時的異常
                 {
@@ -73,7 +75,7 @@ namespace FasterGameLoading
 
         private static void StartCleanupInvalidImageOptCaches()
         {
-            if (!ImageOptCompat.IsActive) return;
+            if (TextureOwnership.Current is not TextureOwner.ImageOpt) return;
 
             var roots = new List<string>();
             foreach (var mod in ModsConfig.ActiveModsInLoadOrder)

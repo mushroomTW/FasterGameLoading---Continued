@@ -46,7 +46,7 @@ namespace FasterGameLoading.InGameTests
                 .ToList();
             // 快取裡同名只留一個鍵，無法看出撞名；必須回到組件本身列舉。
             var collidingNames = new HashSet<string>(
-                GenTypes_GetTypeInAnyAssemblyInt_Patch.GenTypesSearchAssemblies()
+                TypeLookupCache.SearchAssemblies()
                     .SelectMany(static a => AccessTools.GetTypesFromAssembly(a))
                     .Where(static t => !string.IsNullOrEmpty(t?.FullName))
                     .GroupBy(static t => t.FullName, StringComparer.OrdinalIgnoreCase)
@@ -98,14 +98,14 @@ namespace FasterGameLoading.InGameTests
             const string typeName = "CompProperties_Glower";
             var key = GenTypes_GetTypeInAnyAssemblyInt_Patch.MakeCacheKey(typeName);
             GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults.TryRemove(key, out _);
-            SessionCache.loadedTypesByFullNameSinceLastSession[key] = "FasterGameLoading.InGameTests.Stale." + typeName;
+            TypeLookupCache.FullNamesFromLastSession[key] = "FasterGameLoading.InGameTests.Stale." + typeName;
 
             var resolved = GenTypes.GetTypeInAnyAssemblyInt(typeName, null);
 
             // Assert.That 只接受 IComparable，Type 改以布林比對。
             Assert.That(resolved != null).Is.True();
             Assert.That(resolved == VanillaLookup.GetTypeInAnyAssemblyInt(typeName, null)).Is.True();
-            Assert.That(SessionCache.loadedTypesByFullNameSinceLastSession.ContainsKey(key)).Is.False();
+            Assert.That(TypeLookupCache.FullNamesFromLastSession.ContainsKey(key)).Is.False();
         }
 
         private static bool IsPlainFullNameEntry(string key, Type type)

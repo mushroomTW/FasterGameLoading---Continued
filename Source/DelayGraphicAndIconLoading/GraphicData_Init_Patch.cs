@@ -14,7 +14,7 @@ namespace FasterGameLoading
     [HarmonyPatch(typeof(GraphicData), "Init")]
     public static class GraphicData_Init_Patch
     {
-        public static bool Prepare() => FasterGameLoadingSettings.DelayGraphicLoading;
+        public static bool Prepare() => DelayedActions.DeferredVisualsEnabled;
 
         /// <summary>
         /// 以 texPath 為鍵的快取，值為所有使用該 texPath 的 GraphicData 列表。
@@ -23,7 +23,7 @@ namespace FasterGameLoading
 
         static GraphicData_Init_Patch()
         {
-            CacheResetter.Register(() => savedGraphics.Clear());
+            SessionLifecycle.On(LifecyclePhase.LanguageReloading, () => savedGraphics.Clear());
         }
 
         public static bool Prefix(GraphicData __instance, out bool __state)

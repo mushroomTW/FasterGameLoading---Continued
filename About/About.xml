@@ -6,7 +6,7 @@
     <li>1.6</li>
   </supportedVersions>
   <packageId>Taranchuk.FasterGameLoading</packageId>
-  <modVersion>2026.09.30.1</modVersion>
+  <modVersion>2026.10.01.1</modVersion>
   <description>
 === Does loading take forever? This mod is for you! ===
 
@@ -17,6 +17,9 @@ Sick of staring at the loading screen every time you start RimWorld? This mod cu
 - Early mod content loading: Starts loading pending mod content during idle loading gaps before RimWorld's normal ReloadContentInt pass reaches those mods, beginning only after every mod has finished initializing so their patches apply; stops once play data has loaded. (enabled by default)
 - Multi-threaded preloading: Speeds up XML loading and type resolution by utilizing multiple CPU cores. (enabled by default)
 - Type lookup cache: Warms full type names before XML parsing and remembers resolved names across sessions; invalidates stale assembly mappings. (enabled by default)
+- Trim static atlases: Removes empty rows while preserving pixel positions and aligning every mip level for GPU compression. (enabled by default)
+- Skip duplicate atlas textures: Shares Building textures with Item and Misc when mask states are unambiguous; preserves copies with conflicting mask states. (enabled by default)
+- Faster atlas compression: Uses standard-quality compression on the CPU path; GPU compression is unchanged. (disabled by default)
 - Delay graphic and icon loading: Delays non-essential textures until after entering a game; essential categories are checked after Def references resolve, and RimWorld resolves icons before atlas baking. (disabled by default)
 - Adaptive atlas baking: Used together with delayed graphic loading; bakes the deferred atlases one per frame, sized from your GPU speed but never smaller than 1024x1024, and keeps RimWorld 1.6 vanilla atlas pre-inserts intact. Without delayed graphic loading, vanilla baking is used. (disabled by default)
 - Verbose logging: Outputs debug messages to the console. (disabled by default)

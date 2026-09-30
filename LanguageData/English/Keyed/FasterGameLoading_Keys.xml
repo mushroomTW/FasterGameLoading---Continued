@@ -10,7 +10,7 @@
     <FGL_TrimStaticAtlases>Trim static atlases</FGL_TrimStaticAtlases>
     <FGL_TrimStaticAtlasesTip>Bakes each static atlas only as tall as its textures reach, instead of a power-of-two height that is often half empty. The atlases take less memory and bake faster, and every texture keeps its pixel position. Takes effect after restarting the game.</FGL_TrimStaticAtlasesTip>
     <FGL_DeduplicateStaticAtlases>Skip duplicate atlas textures</FGL_DeduplicateStaticAtlases>
-    <FGL_DeduplicateStaticAtlasesTip>RimWorld bakes a minifiable building's texture into the Building, Item and Misc atlases. Only the Building copy is baked; minified buildings and blueprints draw from it. Takes effect after restarting the game.</FGL_DeduplicateStaticAtlasesTip>
+    <FGL_DeduplicateStaticAtlasesTip>RimWorld bakes a minifiable building's texture into the Building, Item and Misc atlases. Copies share the Building atlas when their mask state is consistent across groups. Textures with conflicting mask states keep their copies to avoid selecting the wrong mask. Takes effect after restarting the game.</FGL_DeduplicateStaticAtlasesTip>
     <FGL_FastStaticAtlasCompression>Faster atlas compression</FGL_FastStaticAtlasCompression>
     <FGL_FastStaticAtlasCompressionTip>Compresses the baked static atlases in Unity's standard mode instead of its high-quality mode, which adds dithering and takes longer. Takes effect after restarting the game.</FGL_FastStaticAtlasCompressionTip>
     <FGL_MultiThreading>Multi-threaded preloading</FGL_MultiThreading>

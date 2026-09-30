@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
@@ -83,6 +83,32 @@ namespace FasterGameLoading.Tests.StaticAtlasOptimizations
 
             Assert.That(queue.ContainsKey(Key(TextureAtlasGroup.Item)), Is.False);
             Assert.That(queue.ContainsKey(Key(TextureAtlasGroup.Building)), Is.True);
+        }
+
+        [TestCase(TextureAtlasGroup.Building, TextureAtlasGroup.Item, false)]
+        [TestCase(TextureAtlasGroup.Building, TextureAtlasGroup.Item, true)]
+        [TestCase(TextureAtlasGroup.Building, TextureAtlasGroup.Misc, false)]
+        [TestCase(TextureAtlasGroup.Building, TextureAtlasGroup.Misc, true)]
+        [TestCase(TextureAtlasGroup.Plant, TextureAtlasGroup.Item, false)]
+        [TestCase(TextureAtlasGroup.Plant, TextureAtlasGroup.Item, true)]
+        [TestCase(TextureAtlasGroup.Plant, TextureAtlasGroup.Misc, false)]
+        [TestCase(TextureAtlasGroup.Plant, TextureAtlasGroup.Misc, true)]
+        public void KeepsCopiesWhoseFallbackCouldSelectAnOppositeMask(
+            TextureAtlasGroup conflictingGroup, TextureAtlasGroup copyGroup, bool masked)
+        {
+            // 相反遮罩的圖集先排入；刪除副本後，原版跨群組查詢會先命中它。
+            var queue = Queue(
+                (Key(conflictingGroup, !masked), new[] { "shared" }),
+                (Key(TextureAtlasGroup.Building, masked), new[] { "shared", "safe" }),
+                (Key(copyGroup, masked), new[] { "shared", "safe" }));
+
+            var removed = StaticAtlasDeduplicator.RemoveCopiesOfBuildingTextures(queue);
+
+            Assert.That(removed, Is.EqualTo(new[] { ("safe", copyGroup) }));
+            Assert.That(queue[Key(copyGroup, masked)].Item1, Is.EqualTo(new[] { "shared" }));
+            Assert.That(queue[Key(copyGroup, masked)].Item2, Is.EquivalentTo(new[] { "shared" }));
+            var resolved = queue.First(pair => pair.Key.group == copyGroup && pair.Value.Item2.Contains("shared"));
+            Assert.That(resolved.Key.hasMask, Is.EqualTo(masked));
         }
 
         [Test]

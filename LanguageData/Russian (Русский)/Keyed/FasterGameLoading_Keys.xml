@@ -10,7 +10,7 @@
     <FGL_TrimStaticAtlases>Обрезать статические атласы</FGL_TrimStaticAtlases>
     <FGL_TrimStaticAtlasesTip>Каждый статический атлас запекается только до той высоты, которую занимают его текстуры, а не до высоты степени двойки, которая часто наполовину пуста. Атласы занимают меньше памяти и запекаются быстрее, а каждая текстура остаётся на своём месте с точностью до пикселя. Вступает в силу после перезапуска игры.</FGL_TrimStaticAtlasesTip>
     <FGL_DeduplicateStaticAtlases>Пропускать повторяющиеся текстуры атласов</FGL_DeduplicateStaticAtlases>
-    <FGL_DeduplicateStaticAtlasesTip>RimWorld запекает текстуру упаковываемого здания в атласы Building, Item и Misc. Запекается только копия в Building; упакованные здания и чертежи рисуются из неё. Вступает в силу после перезапуска игры.</FGL_DeduplicateStaticAtlasesTip>
+    <FGL_DeduplicateStaticAtlasesTip>RimWorld запекает текстуру упаковываемого здания в атласы Building, Item и Misc. Копии используют атлас Building, если состояние маски одинаково во всех группах. При разных состояниях маски копии сохраняются, чтобы не выбрать неправильную маску. Вступает в силу после перезапуска игры.</FGL_DeduplicateStaticAtlasesTip>
     <FGL_FastStaticAtlasCompression>Быстрое сжатие атласов</FGL_FastStaticAtlasCompression>
     <FGL_FastStaticAtlasCompressionTip>Сжимает запечённые статические атласы в стандартном режиме Unity вместо высококачественного, который добавляет дизеринг и работает дольше. Вступает в силу после перезапуска игры.</FGL_FastStaticAtlasCompressionTip>
     <FGL_MultiThreading>Многопоточная предварительная загрузка</FGL_MultiThreading>

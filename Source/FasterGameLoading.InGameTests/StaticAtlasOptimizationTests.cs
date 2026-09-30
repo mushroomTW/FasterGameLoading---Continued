@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -28,11 +28,11 @@ namespace FasterGameLoading.InGameTests
                 atlas.ColorTexture != null && atlas.textures.Count > 0 && !atlas.textures.Contains(atlas.ColorTexture));
 
         /// <summary>
-        /// 裁切開啟時，每張圖集在最上方紋理之上，只保留每層 mipmap 一列空白，加上不到一個 DXT 區塊高度的取整餘量。
+        /// 裁切開啟時，每張圖集在最上方紋理之上，只保留每層 mipmap 一列空白，加上不到一個 GPU 壓縮派送群組的取整餘量。
         /// 同時記下本次載入的圖集總量，方便比較不同設定。
         ///
-        /// With trimming on, each atlas keeps one empty row per mip level above its top texture, plus less than one DXT
-        /// block of rounding. Also logs this load's atlas totals, for comparing settings.
+        /// With trimming on, each atlas keeps one empty row per mip level above its top texture, plus less than one GPU
+        /// compression group of rounding. Also logs this load's atlas totals, for comparing settings.
         /// </summary>
         [Test]
         public static void TrimmedAtlasesEndJustAboveTheirTopTexture()
@@ -50,7 +50,7 @@ namespace FasterGameLoading.InGameTests
                 int usedRows = atlas.tiles.Values.Max(tile => Mathf.RoundToInt(tile.uvRect.yMax * color.height));
                 int lastMip = Math.Max(0, color.mipmapCount - 1);
                 int extraEmptyRows = color.height - usedRows - (1 << lastMip);
-                if (extraEmptyRows >= (4 << lastMip))
+                if (extraEmptyRows >= (8 << lastMip))
                 {
                     failures.Add($"{atlas.groupKey} {color.width}x{color.height}: top texture ends at row {usedRows}, {extraEmptyRows} empty rows more than needed");
                 }
@@ -90,9 +90,8 @@ namespace FasterGameLoading.InGameTests
         }
 
         /// <summary>
-        /// 略過重複紋理開啟時，Building 圖集裡的紋理不會以相同的遮罩狀態再出現在 Item 或 Misc 圖集。
-        /// With duplicate skipping on, no texture in a Building atlas appears again in an Item or Misc atlas with the same
-        /// mask state.
+        /// 略過重複紋理開啟時，遮罩狀態一致的 Building 紋理不會重複烘進 Item 或 Misc。
+        /// 跨圖集存在不同遮罩狀態的主紋理必須保留副本，避免 fallback 取得錯誤遮罩。
         /// </summary>
         [Test]
         public static void BuildingTexturesAreNotAlsoBakedIntoItemOrMisc()
@@ -100,13 +99,20 @@ namespace FasterGameLoading.InGameTests
             if (!FasterGameLoadingSettings.DeduplicateStaticAtlases) return;
 
             var atlases = AtlasBakingTests.CurrentLoadAtlases.ToList();
+            var maskedTextures = new HashSet<Texture2D>(atlases
+                .Where(static atlas => atlas.groupKey.hasMask)
+                .SelectMany(static atlas => atlas.textures));
+            var unmaskedTextures = new HashSet<Texture2D>(atlases
+                .Where(static atlas => !atlas.groupKey.hasMask)
+                .SelectMany(static atlas => atlas.textures));
             var building = new HashSet<(Texture2D, bool)>(atlases
                 .Where(static atlas => atlas.groupKey.group is TextureAtlasGroup.Building)
                 .SelectMany(static atlas => atlas.textures.Select(texture => (texture, atlas.groupKey.hasMask))));
             var failures = atlases
                 .Where(static atlas => atlas.groupKey.group is TextureAtlasGroup.Item or TextureAtlasGroup.Misc)
                 .SelectMany(atlas => atlas.textures
-                    .Where(texture => building.Contains((texture, atlas.groupKey.hasMask)))
+                    .Where(texture => building.Contains((texture, atlas.groupKey.hasMask))
+                        && !(atlas.groupKey.hasMask ? unmaskedTextures : maskedTextures).Contains(texture))
                     .Select(texture => $"{texture.name} in {atlas.groupKey}"))
                 .ToList();
             FglState.AssertNone(failures, "Building textures also baked into an Item or Misc atlas");

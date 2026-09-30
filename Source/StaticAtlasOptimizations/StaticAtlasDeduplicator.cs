@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 using HarmonyLib;
@@ -13,7 +13,7 @@ namespace FasterGameLoading
     /// 它的藍圖 Def 又把同一張紋理排進 Misc，於是同一張紋理被烘焙三次。
     /// 打包後的建築以內層建築的分類（Building）查詢圖集，從不讀取 Item 那一份；
     /// 藍圖以 Misc 查詢，原版 TryGetStaticTile 在 Misc 找不到時會改搜尋所有圖集，於是找到 Building 那一份。
-    /// 因此在烘焙前，從 Item 與 Misc 移除同樣排在 Building 的紋理，並記下被移除的（紋理, 群組）組合，
+    /// 因此在烘焙前，從 Item 與 Misc 移除同樣排在 Building、且各群組遮罩狀態一致的紋理，並記下被移除的（紋理, 群組）組合，
     /// 讓 <see cref="GlobalTextureAtlasManager_TryGetStaticTile_Patch"/> 對這些組合不發出「在其他圖集群組找到」的警告。
     ///
     /// Skips duplicate textures in the static atlases.
@@ -21,7 +21,7 @@ namespace FasterGameLoading
     /// blueprint def queues the same texture in Misc, so the texture is baked three times. A minified building looks
     /// its graphic up under the inner building's category, Building, and never reads the Item copy; a blueprint looks
     /// it up under Misc, and when vanilla TryGetStaticTile finds nothing there it searches every atlas and finds the
-    /// Building copy. So before a bake, the Item and Misc entries of textures also queued for Building are removed,
+    /// Building copy. Item and Misc entries also queued for Building are removed only when mask states are consistent,
     /// and the removed (texture, group) pairs are recorded so that
     /// <see cref="GlobalTextureAtlasManager_TryGetStaticTile_Patch"/> keeps vanilla's "found in another atlas group"
     /// warning quiet for them.
@@ -91,11 +91,13 @@ namespace FasterGameLoading
 
         /// <summary>
         /// 從 Item 與 Misc 群組移除同樣以相同遮罩狀態排在 Building 群組的項目，回傳被移除的組合。
+        /// 若任一群組有同主紋理但不同遮罩狀態，保留副本；原版跨群組查詢不比對遮罩狀態。
         /// 其餘項目在各群組中的順序不變；移除後變空的群組整個刪除（原版不會有空群組，會試著用它烘焙一張空圖集）。
         /// 以泛型實作，單元測試因此不必建立 Texture2D。
         ///
         /// Removes from the Item and Misc groups the entries that are also queued in the Building group with the same
-        /// mask state, and returns the removed pairs. The remaining entries keep their order within each group; a group
+        /// mask state and no conflicting mask states in other groups, and returns the removed pairs.
+        /// The remaining entries keep their order within each group; a group
         /// left empty is removed (vanilla never has an empty group, and would try to bake an empty atlas from one).
         /// Generic so that unit tests need no Texture2D.
         /// </summary>
@@ -110,7 +112,15 @@ namespace FasterGameLoading
                 {
                     continue;
                 }
-                var buildingSet = building.Item2;
+                var buildingSet = new HashSet<T>(building.Item2, building.Item2.Comparer);
+                // fallback 會搜尋所有圖集，不只 Building；任何相反遮罩狀態都可能先被命中。
+                foreach (var queuedGroup in queue)
+                {
+                    if (queuedGroup.Key.hasMask != masked)
+                    {
+                        buildingSet.ExceptWith(queuedGroup.Value.Item2);
+                    }
+                }
                 foreach (var group in CopyGroups)
                 {
                     var key = new TextureAtlasGroupKey { group = group, hasMask = masked };

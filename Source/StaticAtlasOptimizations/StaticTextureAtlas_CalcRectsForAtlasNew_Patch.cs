@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using HarmonyLib;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
@@ -12,7 +12,7 @@ namespace FasterGameLoading
     /// 所以最後一列之上全是空白，大型圖集常有一半是空的；這些空白列照樣要讀回、產生 mipmap 與壓縮。
     /// 打包完成後，以實際用到的高度重新建立顏色紋理，並依新高度換算回傳的 UV 矩形，每張紋理的像素位置不變；
     /// Bake 接著依這些矩形繪製、建立遮罩與網格。
-    /// 高度向上取整到 4 × 2^(mips - 1) 的倍數，讓每一層 mipmap 都是 DXT 需要的 4 的倍數；
+    /// 高度向上取整到 8 × 2^(mips - 1) 的倍數，讓每一層 mipmap 都符合 GPU 壓縮的 8 像素派送邊界；
     /// 最上方的紋理之上，每一層 mipmap 至少保留一列空白（原尺寸 2^(mips - 1) 列）：
     /// 圖集取樣會環繞，上下邊緣的濾波會讀到另一側，原版圖集在那裡一定有空白列，裁切後也保留。
     /// 打包器會遞迴呼叫自己重試，內層的結果經由外層回傳，因此只在最外層處理一次。
@@ -23,8 +23,8 @@ namespace FasterGameLoading
     /// atlases are often half empty; those rows are still read back, mipmapped and compressed.
     /// After packing, this recreates the colour texture at the height actually used and rescales the returned UV
     /// rects to it, so no texture moves by a pixel; Bake then draws, masks and builds meshes from those rects.
-    /// The height is rounded up to a multiple of 4 x 2^(mips - 1), so every mip level stays the multiple of 4 that
-    /// DXT needs, and at least one empty row per mip level (2^(mips - 1) rows at full size) is kept above the top
+    /// The height is rounded up to a multiple of 8 x 2^(mips - 1), so GPU compression covers every mip level,
+    /// and at least one empty row per mip level (2^(mips - 1) rows at full size) is kept above the top
     /// texture: atlas sampling wraps, so filtering at the top and bottom edges reads the opposite edge, where a
     /// vanilla atlas always has empty rows, and a trimmed one keeps them.
     /// The packer calls itself to retry and the inner result returns through the outer call, so only the outermost
@@ -58,7 +58,8 @@ namespace FasterGameLoading
         public static int TrimmedHeight(int usedRows, int mipCount)
         {
             int lastMip = Math.Max(0, mipCount - 1);
-            int step = 4 << lastMip;
+            // FastCompressDXT 使用高度 / 8 的整數派送；只對齊 DXT 的 4 像素會漏寫末端區塊。
+            int step = 8 << lastMip;
             int keptEmptyRows = 1 << lastMip;
             return (usedRows + keptEmptyRows + step - 1) / step * step;
         }

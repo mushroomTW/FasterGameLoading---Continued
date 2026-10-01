@@ -16,7 +16,7 @@ Harmony patch 實際套用結果、延遲圖形／圖示／音效是否全部完
    `dotnet build Source/FasterGameLoading.InGameTests/FasterGameLoading.InGameTests.csproj -c Release`
 2. `run_test_cycle`：`path` 指向 `Source/FasterGameLoading.InGameTests/Mod`，
    `companion_mods` 至少包含 `brrainz.harmony`、`ilyvion.laboratory`、`ilyvion.rimtestredux`、`Taranchuk.FasterGameLoading`。
-   完整覆蓋需要跑以下六組（相容性與地圖相關測試在條件不符時直接略過，不會失敗）：
+   完整覆蓋需要跑以下七組（相容性與地圖相關測試在條件不符時直接略過，不會失敗）：
 
    | 組別 | `seed_config` | `quicktest` | 額外 `companion_mods` | 涵蓋 |
    |---|---|---|---|---|
@@ -26,6 +26,9 @@ Harmony patch 實際套用結果、延遲圖形／圖示／音效是否全部完
    | 相容（HAR 等） | `Profiles/AllOn/` | `false` | `UnlimitedHugs.HugsLib`、`erdelf.HumanoidAlienRaces`、`Ancot.AncotLibrary`、`automatic.bionicicons` | HugsLib 重新導向、排除名單、圖集保護 |
    | 相容（GS+） | 無 | `false` | `Telefonmast.GraphicsSettings` | 降質快取對 Graphics Settings+ 讓開 |
    | 相容（Loading Progress） | 無 | `false` | `ilyvion.LoadingProgress` | Loading Progress 以 packageId 找到 FGL，不再自己重載每個 mod 的內容（`NoModContentWasLoadedTwice`） |
+   | 相容（Hyperdrive） | 無 | `false` | `vopaga.hyperdrive` | FGL 先建構時延後套用 LoadModXML 閘門、保留 Hyperdrive 跨 mod 平行載入、Defs/ 讓出與 Patches/ 維持平行＋語言重載 |
+
+   Hyperdrive 組的 `HyperdriveKeepsParallelModXmlLoading` 會記錄閘門採用延後或立即套用；建構子順序不固定，需從 log 確認該次是否涵蓋延後路徑。單元測試另固定驗證兩種順序。
 
 3. 結果寫在遊戲 log 的 `[RimTest Redux] TESTING START … TESTING END` 之間；失敗項目以 Error 輸出，`list_test_diagnostics` 可直接讀到。
    主選單組別會有兩段結果：第 1 輪（初次載入）與第 2 輪（切換成日文重載後），log 以 `[FGL InGameTests] Round N` 標示；

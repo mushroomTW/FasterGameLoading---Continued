@@ -40,6 +40,36 @@ namespace FasterGameLoading.InGameTests
             }
         }
 
+        /// <summary>
+        /// Hyperdrive 在自己的建構子檢查 LoadModXML 是否已有其他 mod 的 prefix，有就放棄跨 mod 平行解析。
+        /// FGL 先建構時必須等 Hyperdrive 建構完才掛上閘門：兩者的 prefix 都要在 LoadModXML 上，且 FGL 的閘門排最前；
+        /// Defs/ 交給 Hyperdrive 平行處理，FGL 不再於單一 mod 內平行解析，Patches/ 照常平行。
+        /// </summary>
+        [Test]
+        public static void HyperdriveKeepsParallelModXmlLoading()
+        {
+            var hyperdrive = HyperdriveCompat.FindModType();
+            if (hyperdrive == null) return;
+
+            var info = Harmony.GetPatchInfo(AccessTools.Method(typeof(LoadedModManager), nameof(LoadedModManager.LoadModXML)));
+            var owners = info?.Prefixes
+                .OrderByDescending(static p => p.priority)
+                .Select(static p => p.owner)
+                .ToList() ?? new List<string>();
+            var deferred = FglState.HasFglPatch(AccessTools.Constructor(hyperdrive, new[] { typeof(ModContentPack) }));
+            Log.Message($"[FGL InGameTests] Hyperdrive: LoadModXML prefixes = {string.Join(", ", owners)}; FGL gate {(deferred ? "deferred until after Hyperdrive's constructor" : "applied immediately")}.");
+
+            Assert.That(owners.Contains("vopaga.hyperdrive")).Is.True();
+            Assert.That(owners.FirstOrDefault()).Is.EqualTo(FglState.HarmonyId);
+            Assert.That(HyperdriveCompat.ParallelizesModDefs).Is.True();
+
+            if (!FasterGameLoadingSettings.EnableMultiThreading) return;
+            var mod = LoadedModManager.RunningMods.First(static m => !ProtectedMods.ShouldSkipEarlyLoad(m));
+            LoadableXmlAsset[] result = null;
+            Assert.That(DirectXmlLoader_XmlAssetsInModFolder_Patch.Prefix(ref result, mod, "Defs/", null)).Is.True();
+            Assert.That(DirectXmlLoader_XmlAssetsInModFolder_Patch.Prefix(ref result, mod, "Patches/", null)).Is.False();
+        }
+
         /// <summary>HAR、Ayameduki、WRK 及依賴 HAR 的 mod 在排除名單內，內容只能由原版流程載入。</summary>
         [Test]
         public static void SkipListedModsAreNotEarlyLoaded()

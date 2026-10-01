@@ -185,7 +185,7 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
         [Test]
         public void LoadModXML_PatchTargetExists()
         {
-            // 上面的測試直接呼叫 Prefix；這裡確認 [HarmonyPatch] 的目標在目前的遊戲版本仍存在，
+            // 上面的測試直接呼叫 Prefix；這裡確認 HyperdriveCompat.PatchLoadModXML 的目標在目前的遊戲版本仍存在，
             // 否則閘門永遠不會開、提早載入整個失效。
             Assert.That(AccessTools.Method(typeof(LoadedModManager), "LoadModXML"), Is.Not.Null);
         }

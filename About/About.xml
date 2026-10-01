@@ -6,7 +6,7 @@
     <li>1.6</li>
   </supportedVersions>
   <packageId>Taranchuk.FasterGameLoading</packageId>
-  <modVersion>2026.10.01.1</modVersion>
+  <modVersion>2026.10.01.2</modVersion>
   <description>
 === Does loading take forever? This mod is for you! ===
 
@@ -40,6 +40,7 @@ Sick of staring at the loading screen every time you start RimWorld? This mod cu
 - Loading Progress
 - Missile Girl - Performance Mod or DefLoadCache (choose one)
 - Graphics Settings+
+- Hyperdrive (parallel Defs XML loading is left to Hyperdrive)
 
 --- Works best with a lot of mods. Zero impact on gameplay or saves. ---
 

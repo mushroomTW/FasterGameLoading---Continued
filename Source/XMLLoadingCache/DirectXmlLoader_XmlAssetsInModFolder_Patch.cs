@@ -14,6 +14,9 @@ namespace FasterGameLoading
     [HarmonyPatch(typeof(DirectXmlLoader), "XmlAssetsInModFolder")]
     public static class DirectXmlLoader_XmlAssetsInModFolder_Patch
     {
+        /// <summary>原版 ModContentPack.LoadDefs 傳入的資料夾路徑。</summary>
+        internal const string DefsFolderPath = "Defs/";
+
         // MA0016: foldersToLoadDebug 是 Harmony 由原方法注入的參數，型別必須與
         // DirectXmlLoader.XmlAssetsInModFolder 的簽章逐字相符；改成唯讀介面會使
         // Harmony 無法比對而讓整個補丁失效。
@@ -22,6 +25,12 @@ namespace FasterGameLoading
 #pragma warning restore MA0016
         {
             if (mod == null || !FasterGameLoadingSettings.EnableMultiThreading || ProtectedMods.ShouldSkipEarlyLoad(mod))
+            {
+                return true;
+            }
+
+            // Hyperdrive 已跨 mod 平行解析 Defs/，這裡再平行會兩層互搶核心；Patches/ 仍逐 mod 載入，照常平行。
+            if (HyperdriveCompat.ParallelizesModDefs && string.Equals(folderPath, DefsFolderPath, StringComparison.Ordinal))
             {
                 return true;
             }

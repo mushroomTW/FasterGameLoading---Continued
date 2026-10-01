@@ -285,6 +285,23 @@ namespace FasterGameLoading.InGameTests
             FglState.AssertNone(failures, "mod contents loaded before FGL's patches were applied");
         }
 
+        /// <summary>
+        /// 提早載入的閘門（LoadModXML prefix）由 HyperdriveCompat 手動套用，可能延到 Hyperdrive 建構後才掛上；
+        /// 實機上仍須由 FGL 持有且最先執行，否則其他 mod 的 prefix 回傳 false 時閘門不會開。
+        /// </summary>
+        [Test]
+        public static void LoadModXMLGateIsPatchedFirst()
+        {
+            var info = Harmony.GetPatchInfo(AccessTools.Method(typeof(LoadedModManager), nameof(LoadedModManager.LoadModXML)));
+            var priorities = info?.Prefixes
+                .Where(static p => string.Equals(p.owner, FglState.HarmonyId, StringComparison.Ordinal))
+                .Select(static p => p.priority)
+                .ToList() ?? new List<int>();
+            Assert.That(priorities.Count).Is.EqualTo(1);
+            Assert.That(priorities.FirstOrDefault()).Is.EqualTo(Priority.First);
+            Assert.That(HyperdriveCompat.ParallelizesModDefs).Is.EqualTo(HyperdriveCompat.FindModType() != null);
+        }
+
         /// <summary>提早載入延到所有 Mod 建構子之後才開始，但仍須在原版載入前實際載入內容，否則加速效果消失。</summary>
         [Test]
         public static void EarlyLoadingActuallyLoadsModContent()

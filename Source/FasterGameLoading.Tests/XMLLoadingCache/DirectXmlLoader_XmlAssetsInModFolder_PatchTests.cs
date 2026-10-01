@@ -27,6 +27,7 @@ namespace FasterGameLoading.Tests.XMLLoadingCache
         public void TearDown()
         {
             FasterGameLoadingSettings.EnableMultiThreading = origEnableMultiThreading;
+            HyperdriveCompat.ParallelizesModDefs = false;
             try
             {
                 if (Directory.Exists(tempDir)) Directory.Delete(tempDir, recursive: true);
@@ -127,6 +128,41 @@ namespace FasterGameLoading.Tests.XMLLoadingCache
             var names = result.Select(a => a.name).ToList();
             Assert.That(names, Contains.Item("Items.xml"));
             Assert.That(names, Contains.Item("Buildings.xml"));
+        }
+
+        [Test]
+        public void Prefix_WhenHyperdriveParallelizesDefs_LeavesDefsToOriginal()
+        {
+            FasterGameLoadingSettings.EnableMultiThreading = true;
+            HyperdriveCompat.ParallelizesModDefs = true;
+            var mod = CreateMockModContentPack("test.validmod");
+            LoadableXmlAsset[] result = null;
+
+            var ret = DirectXmlLoader_XmlAssetsInModFolder_Patch.Prefix(
+                ref result, mod, "Defs/", foldersToLoadDebug: null);
+
+            Assert.That(ret, Is.True);
+            Assert.That(result, Is.Null);
+        }
+
+        [Test]
+        public void Prefix_WhenHyperdriveParallelizesDefs_StillParsesPatchesInParallel()
+        {
+            // Hyperdrive 只跨 mod 平行化 LoadModXML（Defs/）；Patches/ 仍逐 mod 載入，FGL 照常平行。
+            FasterGameLoadingSettings.EnableMultiThreading = true;
+            HyperdriveCompat.ParallelizesModDefs = true;
+            var mod = CreateMockModContentPack("test.validmod");
+            var modRoot = Path.Combine(tempDir, "PatchesModRoot");
+            var patchesFolder = Path.Combine(modRoot, "Patches");
+            Directory.CreateDirectory(patchesFolder);
+            File.WriteAllText(Path.Combine(patchesFolder, "Patch.xml"), "<Patch></Patch>");
+            LoadableXmlAsset[] result = null;
+
+            var ret = DirectXmlLoader_XmlAssetsInModFolder_Patch.Prefix(
+                ref result, mod, "Patches/", new List<string> { modRoot });
+
+            Assert.That(ret, Is.False);
+            Assert.That(result, Has.Length.EqualTo(1));
         }
     }
 }

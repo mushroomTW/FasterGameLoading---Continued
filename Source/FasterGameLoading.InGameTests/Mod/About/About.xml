@@ -7,11 +7,8 @@
     <li>1.6</li>
   </supportedVersions>
   <description>Development-only RimTest Redux suites for Faster Game Loading. Not for players.</description>
+  <!-- FGL 不列為硬相依：rimworld-mod-mcp 0.1.5 把硬相依當成「排在其後」，與下方 loadBefore 形成循環而拒絕啟動；FGL 一律以 companion_mods 帶入。 -->
   <modDependencies>
-    <li>
-      <packageId>Taranchuk.FasterGameLoading</packageId>
-      <displayName>Faster Game Loading - Continued</displayName>
-    </li>
     <li>
       <packageId>ilyvion.rimtestredux</packageId>
       <displayName>RimTest Redux</displayName>

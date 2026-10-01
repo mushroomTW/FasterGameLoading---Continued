@@ -51,23 +51,29 @@ namespace FasterGameLoading.InGameTests
             var hyperdrive = HyperdriveCompat.FindModType();
             if (hyperdrive == null) return;
 
-            var info = Harmony.GetPatchInfo(AccessTools.Method(typeof(LoadedModManager), nameof(LoadedModManager.LoadModXML)));
-            var owners = info?.Prefixes
-                .OrderByDescending(static p => p.priority)
-                .Select(static p => p.owner)
-                .ToList() ?? new List<string>();
+            var owners = FglState.LoadModXMLPrefixOwnersInRunOrder();
             var deferred = FglState.HasFglPatch(AccessTools.Constructor(hyperdrive, new[] { typeof(ModContentPack) }));
             Log.Message($"[FGL InGameTests] Hyperdrive: LoadModXML prefixes = {string.Join(", ", owners)}; FGL gate {(deferred ? "deferred until after Hyperdrive's constructor" : "applied immediately")}.");
 
-            Assert.That(owners.Contains("vopaga.hyperdrive")).Is.True();
+            Assert.That(owners.Contains(HyperdriveCompat.PackageId)).Is.True();
             Assert.That(owners.FirstOrDefault()).Is.EqualTo(FglState.HarmonyId);
-            Assert.That(HyperdriveCompat.ParallelizesModDefs).Is.True();
 
-            if (!FasterGameLoadingSettings.EnableMultiThreading) return;
-            var mod = LoadedModManager.RunningMods.First(static m => !ProtectedMods.ShouldSkipEarlyLoad(m));
-            LoadableXmlAsset[] result = null;
-            Assert.That(DirectXmlLoader_XmlAssetsInModFolder_Patch.Prefix(ref result, mod, "Defs/", null)).Is.True();
-            Assert.That(DirectXmlLoader_XmlAssetsInModFolder_Patch.Prefix(ref result, mod, "Patches/", null)).Is.False();
+            // 讓出 Defs/ 只在 LoadModXML 期間生效；這裡以實際的 patch 狀態重跑一次偵測，確認 Hyperdrive 會被認出來。
+            HyperdriveCompat.OnLoadModXMLStarting();
+            try
+            {
+                Assert.That(HyperdriveCompat.ParallelizesModDefs).Is.True();
+
+                if (!FasterGameLoadingSettings.EnableMultiThreading) return;
+                var mod = LoadedModManager.RunningMods.First(static m => !ProtectedMods.ShouldSkipEarlyLoad(m));
+                LoadableXmlAsset[] result = null;
+                Assert.That(DirectXmlLoader_XmlAssetsInModFolder_Patch.Prefix(ref result, mod, "Defs/", null)).Is.True();
+                Assert.That(DirectXmlLoader_XmlAssetsInModFolder_Patch.Prefix(ref result, mod, "Patches/", null)).Is.False();
+            }
+            finally
+            {
+                HyperdriveCompat.ParallelizesModDefs = false;
+            }
         }
 
         /// <summary>HAR、Ayameduki、WRK 及依賴 HAR 的 mod 在排除名單內，內容只能由原版流程載入。</summary>

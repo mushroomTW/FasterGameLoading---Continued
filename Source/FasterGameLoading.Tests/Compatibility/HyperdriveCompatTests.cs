@@ -16,11 +16,22 @@ namespace RimWorldHyperdrive
     public class HyperdriveMod : Mod
     {
         internal static bool StoodDown { get; set; }
+        internal static bool ThrowInConstructor { get; set; }
 
         public HyperdriveMod(ModContentPack content) : base(content)
         {
             var info = Harmony.GetPatchInfo(AccessTools.Method(typeof(LoadedModManager), nameof(LoadedModManager.LoadModXML)));
             StoodDown = info != null && info.Prefixes.Any(static p => !string.Equals(p.owner, "vopaga.hyperdrive", StringComparison.Ordinal));
+            if (ThrowInConstructor) throw new InvalidOperationException("simulated Hyperdrive constructor failure");
+        }
+
+        /// <summary>模擬 Hyperdrive 的 LoadModXML prefix：記下當下 FGL 是否讓出 Defs/，並取代原方法。</summary>
+        internal static bool? ParallelizesModDefsDuringLoad { get; set; }
+
+        public static bool LoadModXMLPrefix()
+        {
+            ParallelizesModDefsDuringLoad = FasterGameLoading.HyperdriveCompat.ParallelizesModDefs;
+            return false;
         }
     }
 }
@@ -32,8 +43,10 @@ namespace FasterGameLoading.Tests.Compatibility
     {
         private const string HarmonyId = "FasterGameLoading.Tests.HyperdriveCompatTests";
         private Harmony harmony;
+        private Harmony hyperdriveHarmony;
         private object originalRunningMods;
         private bool originalParallelizesModDefs;
+        private bool originalModClassesCreated;
 
         private static FieldInfo RunningModsField => AccessTools.Field(typeof(LoadedModManager), "runningMods");
         private static Dictionary<Type, Mod> RunningModClasses =>
@@ -44,19 +57,26 @@ namespace FasterGameLoading.Tests.Compatibility
         public void SetUp()
         {
             harmony = new Harmony(HarmonyId);
+            hyperdriveHarmony = new Harmony(HyperdriveCompat.PackageId);
             originalRunningMods = RunningModsField.GetValue(null);
             originalParallelizesModDefs = HyperdriveCompat.ParallelizesModDefs;
+            originalModClassesCreated = EarlyModContentLoader.ModClassesCreated;
             RunningModClasses.Remove(typeof(RimWorldHyperdrive.HyperdriveMod));
             RimWorldHyperdrive.HyperdriveMod.StoodDown = false;
+            RimWorldHyperdrive.HyperdriveMod.ThrowInConstructor = false;
+            RimWorldHyperdrive.HyperdriveMod.ParallelizesModDefsDuringLoad = null;
         }
 
         [TearDown]
         public void TearDown()
         {
             harmony.UnpatchAll(HarmonyId);
+            hyperdriveHarmony.UnpatchAll(HyperdriveCompat.PackageId);
             RunningModsField.SetValue(null, originalRunningMods);
             HyperdriveCompat.ParallelizesModDefs = originalParallelizesModDefs;
+            EarlyModContentLoader.ModClassesCreated = originalModClassesCreated;
             RunningModClasses.Remove(typeof(RimWorldHyperdrive.HyperdriveMod));
+            RimWorldHyperdrive.HyperdriveMod.ThrowInConstructor = false;
         }
 
         private static bool HasFglPrefixOnLoadModXML()
@@ -99,12 +119,26 @@ namespace FasterGameLoading.Tests.Compatibility
         }
 
         [Test]
-        public void Detect_SetsParallelizesModDefsFromHyperdriveType()
+        public void OnLoadModXMLStarting_WhenHyperdriveStoodDown_KeepsDefsParallel()
         {
-            HyperdriveCompat.Detect(typeof(RimWorldHyperdrive.HyperdriveMod));
-            Assert.That(HyperdriveCompat.ParallelizesModDefs, Is.True);
+            // Hyperdrive 已啟用但放棄跨 mod 平行解析時，LoadModXML 上沒有它的 prefix，FGL 不能讓出 Defs/。
+            HyperdriveCompat.ParallelizesModDefs = true;
 
-            HyperdriveCompat.Detect(null);
+            HyperdriveCompat.OnLoadModXMLStarting();
+
+            Assert.That(HyperdriveCompat.ParallelizesModDefs, Is.False);
+        }
+
+        [Test]
+        public void LoadModXML_WithHyperdrivePrefix_LeavesDefsOnlyDuringTheCall()
+        {
+            RunningModsField.SetValue(null, new List<ModContentPack>());
+            HyperdriveCompat.PatchLoadModXML(harmony, hyperdriveModType: null);
+            hyperdriveHarmony.Patch(LoadModXML, prefix: new HarmonyMethod(typeof(RimWorldHyperdrive.HyperdriveMod), nameof(RimWorldHyperdrive.HyperdriveMod.LoadModXMLPrefix)));
+
+            _ = LoadedModManager.LoadModXML();
+
+            Assert.That(RimWorldHyperdrive.HyperdriveMod.ParallelizesModDefsDuringLoad, Is.True);
             Assert.That(HyperdriveCompat.ParallelizesModDefs, Is.False);
         }
 
@@ -138,6 +172,18 @@ namespace FasterGameLoading.Tests.Compatibility
             _ = Activator.CreateInstance(typeof(RimWorldHyperdrive.HyperdriveMod), new object[] { null });
 
             Assert.That(RimWorldHyperdrive.HyperdriveMod.StoodDown, Is.False);
+            Assert.That(HasFglPrefixOnLoadModXML(), Is.True);
+        }
+
+        [Test]
+        public void PatchLoadModXML_WhenHyperdriveConstructorThrows_StillPatches()
+        {
+            // CreateModClasses 會吞掉建構子的例外繼續執行；閘門仍須套用，否則提早載入整個 session 失效。
+            HyperdriveCompat.PatchLoadModXML(harmony, typeof(RimWorldHyperdrive.HyperdriveMod));
+            RimWorldHyperdrive.HyperdriveMod.ThrowInConstructor = true;
+
+            Assert.Throws<TargetInvocationException>(static () => Activator.CreateInstance(typeof(RimWorldHyperdrive.HyperdriveMod), new object[] { null }));
+
             Assert.That(HasFglPrefixOnLoadModXML(), Is.True);
         }
 

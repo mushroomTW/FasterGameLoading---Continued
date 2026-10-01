@@ -39,6 +39,17 @@ namespace FasterGameLoading.InGameTests
             return info != null && info.Owners.Contains(HarmonyId);
         }
 
+        /// <summary>LoadModXML 上各 prefix 的 owner，依 Harmony 的執行順序排列：priority 由高到低，同 priority 依套用先後（index）。</summary>
+        public static List<string> LoadModXMLPrefixOwnersInRunOrder()
+        {
+            var info = Harmony.GetPatchInfo(AccessTools.Method(typeof(LoadedModManager), nameof(LoadedModManager.LoadModXML)));
+            return info?.Prefixes
+                .OrderByDescending(static p => p.priority)
+                .ThenBy(static p => p.index)
+                .Select(static p => p.owner)
+                .ToList() ?? new List<string>();
+        }
+
         /// <summary>
         /// 集合式斷言：逐一檢查大量 Def 後一次回報。失敗時列出總數與前幾筆，
         /// 避免只看到第一個失敗就停下，也避免訊息長到無法閱讀。

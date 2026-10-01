@@ -49,10 +49,8 @@ namespace FasterGameLoading
                 // 此時預熱才能讓 XML 解析階段大量的完整型別名稱查詢直接命中。
                 GenTypes_GetTypeInAnyAssemblyInt_Patch.WarmupFullNames(TypeLookupCache.SearchAssemblies());
             }
-            var hyperdriveModType = HyperdriveCompat.FindModType();
-            HyperdriveCompat.Detect(hyperdriveModType);
             harmony.PatchAll();
-            HyperdriveCompat.PatchLoadModXML(harmony, hyperdriveModType);
+            HyperdriveCompat.PatchLoadModXML(harmony, HyperdriveCompat.FindModType());
             ImageOptEarlyLoadCoordinator.TryInstall();
 
             // 註冊執行個體層級的快取清理（在語言切換時由 SessionLifecycle.Raise(LifecyclePhase.LanguageReloading) 觸發）

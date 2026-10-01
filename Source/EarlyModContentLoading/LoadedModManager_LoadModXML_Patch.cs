@@ -15,6 +15,7 @@ namespace FasterGameLoading
         public static void Prefix()
         {
             EarlyModContentLoader.ModClassesCreated = true;
+            HyperdriveCompat.OnLoadModXMLStarting();
         }
     }
 }

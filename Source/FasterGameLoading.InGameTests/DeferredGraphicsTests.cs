@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using HarmonyLib;
@@ -148,6 +149,9 @@ namespace FasterGameLoading.InGameTests
             {
                 return def.race != null && !def.race.Humanlike && def.race.AnyPawnKind != null;
             }
+            // 圖形本身就是 BadTexture（例如 AOBA Framework 的除錯工具刻意以它為 texPath），圖示也只會是 BadTex。
+            // 比對 texPath 而不讀 MatSingle：部分 mod 的 Graphic 子類別只支援 MatAt，讀 MatSingle 會拋例外。
+            if (string.Equals(def.graphicData?.texPath, BaseContent.BadTexPath, StringComparison.Ordinal)) return false;
             // 原版 BuildableDef.ResolveIcon 的前置條件：有可用圖形、且不是 mote。
             return def.graphic != null && def.graphic != BaseContent.BadGraphic && def.mote == null;
         }

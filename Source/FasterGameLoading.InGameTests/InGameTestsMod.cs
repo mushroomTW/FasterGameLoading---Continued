@@ -82,6 +82,8 @@ namespace FasterGameLoading.InGameTests
                 Log.Error($"[FGL InGameTests] Round {Round}: timed out after {TimeoutSeconds}s waiting for FGL's deferred pipeline; running tests anyway.");
             }
             Log.Message($"[FGL InGameTests] Round {Round}: running suites after {waitingSince.Elapsed.TotalSeconds:F1}s wait. Language: {LanguageDatabase.activeLanguage?.folderName}, quicktest: {FglState.Quicktest}. Settings: {FglState.SettingsProfile}");
+            // 比較不同版本的啟動速度用：自遊戲啟動起算的秒數，減掉上面的等待即為 PlayData 載入完成的時間點。
+            Log.Message($"[FGL InGameTests] Round {Round} timing: realtimeSinceStartup={UnityEngine.Time.realtimeSinceStartup:F1}s, gcCollections={GC.CollectionCount(0)}, {MainThreadFileReadProbe.Summary}, {TypeEnumerationCost.Measure()}");
             Runner.RunAllRegisteredTests();
             StatusExplorer.UpdateAllStatusCounts();
             Viewer.LogTestsResults();

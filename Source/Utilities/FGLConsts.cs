@@ -24,5 +24,8 @@
 
         public const int AccessToolsPreloadDelayMs = 50;
         public const int TexturePreloadDelayMs = 150;
+
+        /// <summary>原始貼圖背景預讀在記憶體中最多暫存的位元組數。</summary>
+        public const long TexturePrefetchBudgetBytes = 256L * 1024 * 1024;
     }
 }

@@ -35,6 +35,8 @@ namespace FasterGameLoading
 
             // 背景預載入已快取的紋理
             ModContentLoaderTexture2D_LoadTexture_Patch.StartPreloadCachedTextures();
+            // 背景依載入順序預讀原始貼圖，主執行緒載入貼圖時不必等磁碟 I/O
+            TexturePrefetcher.Start();
             StartCleanupInvalidImageOptCaches();
 
             harmony = new Harmony("FasterGameLoadingMod");

@@ -47,7 +47,8 @@ namespace FasterGameLoading
                 Type[] types;
                 try
                 {
-                    types = AccessTools.GetTypesFromAssembly(assembly);
+                    // 與 AllTypes 的背景預載共用列舉結果，同一組件不掃第二遍。
+                    types = AssemblyTypesCache.Get(assembly);
                 }
                 catch
                 {

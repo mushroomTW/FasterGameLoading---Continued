@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
 using RimTestRedux;
+using RimWorld.IO;
 using Verse;
 
 namespace FasterGameLoading.InGameTests
@@ -312,6 +313,28 @@ namespace FasterGameLoading.InGameTests
             lock (ContentLoadProbe.LoadedBeforePatches)
             {
                 Assert.That(ContentLoadProbe.EarlyLoads).Is.GreaterThan(0);
+            }
+        }
+
+        /// <summary>
+        /// 背景預讀的原始貼圖要真的被主執行緒取用：執行中的 mod 有 PNG／JPG 貼圖時命中數必須大於 0。
+        /// 預讀只在初次載入執行（語言重載時不再啟動），兩輪看到的都是初次載入的統計；log 記錄命中、自行讀檔與淘汰的數量。
+        /// </summary>
+        [Test]
+        public static void TexturePrefetchServesTexturesFromMemory()
+        {
+            if (!TexturePrefetcher.ShouldRun) return;
+
+            Assert.That(FglState.HasFglPatch(AccessTools.Method(typeof(FilesystemFile), nameof(FilesystemFile.ReadAllBytes)))).Is.True();
+            var run = TexturePrefetcher.LastRun;
+            Assert.That(run != null).Is.True();
+            // 有降質快取的貼圖改讀快取檔，預讀刻意略過，不算在應預讀的數量內。
+            var downscaled = FasterGameLoadingMod.Instance.CacheManager.GetResizedTextureCacheCopy();
+            int textureFiles = LoadedModManager.RunningMods.Sum(m => TexturePrefetcher.TextureFilesInLoadOrder(m).Count(f => !downscaled.ContainsKey(f.FullName)));
+            Log.Message($"[FGL InGameTests] Texture prefetch: {run.Hits} hits ({run.HitBytes} bytes), {run.Misses} read on demand, {run.Evicted} evicted; {textureFiles} PNG/JPG textures in running mods.");
+            if (textureFiles > 0)
+            {
+                Assert.That(run.Hits).Is.GreaterThan(0);
             }
         }
 

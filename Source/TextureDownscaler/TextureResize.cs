@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.ExceptionServices;
+using System.Threading.Tasks;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -37,6 +39,19 @@ namespace FasterGameLoading
             public int originalHeight;
         }
 
+        /// <summary>同時在背景讀取的原圖張數。</summary>
+        private const int OriginalReadAhead = 8;
+
+        /// <summary>主執行緒已縮放完成、正在背景編碼與寫檔的一張紋理。</summary>
+        private sealed class PendingWrite
+        {
+            public TextureResizeCandidate Candidate;
+            public string CachePath;
+            public long SourcePixels;
+            public long DownscaledPixels;
+            public Task Write;
+        }
+
         public TextureResize(TextureCacheManager cacheManager)
         {
             this.cacheManager = cacheManager;
@@ -67,18 +82,7 @@ namespace FasterGameLoading
                 }
 
                 int resizedCount = 0;
-                bool promoted = cacheManager.Rebuild(rebuild =>
-                {
-                    foreach (var entry in texturesToResize)
-                    {
-                        var cachePath = rebuild.GetCachePath(entry.path);
-                        if (ResizeTexture(entry, cachePath))
-                        {
-                            rebuild.Add(entry.path, cachePath);
-                            resizedCount++;
-                        }
-                    }
-                });
+                bool promoted = cacheManager.Rebuild(rebuild => resizedCount = ResizeAll(texturesToResize, rebuild));
 
                 if (promoted)
                 {
@@ -108,9 +112,12 @@ namespace FasterGameLoading
         private List<TextureResizeCandidate> BuildResizeCandidates()
         {
             var texturesToResize = new List<TextureResizeCandidate>();
+            // 不同 Texture 物件可能對應同一個檔案（例如重複載入或語言重載後重建）；同一路徑只處理一次，
+            // 否則背景寫檔會同時寫同一個快取檔與 .tmp 而互相衝突。
+            var seenPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (var texture in scanner.texturesByPaths)
             {
-                if (ProtectedMods.IsProtectedTexturePath(texture.Value)) continue;
+                if (ProtectedMods.IsProtectedTexturePath(texture.Value) || seenPaths.Contains(texture.Value)) continue;
 
                 var sourceWidth = texture.Key.width;
                 var sourceHeight = texture.Key.height;
@@ -120,6 +127,7 @@ namespace FasterGameLoading
                     && TextureResizer.TryGetResizeTarget(texture.Key, value.Key, out var targetSize)
                     && (sourceWidth > targetSize || sourceHeight > targetSize))
                 {
+                    seenPaths.Add(texture.Value);
                     texturesToResize.Add(new TextureResizeCandidate
                     {
                         source = texture.Key,
@@ -134,17 +142,80 @@ namespace FasterGameLoading
         }
 
         /// <summary>
-        /// 執行單一紋理降質：載入原始 PNG → 按比例縮放 → 輸出 PNG 到 <paramref name="cachePath"/>。
+        /// 流水線降質：背景先讀接下來幾張原圖，主執行緒只做解碼、GPU 縮放與讀回像素，PNG 編碼與寫檔交給背景執行緒。
+        /// 結果依候選順序在主執行緒登記到重建交易。任何快取檔寫入失敗時，等所有背景寫入結束後才往外拋，
+        /// 讓 <see cref="TextureCacheManager.Rebuild"/> 放棄整批並保留原本的快取。
+        /// </summary>
+        private int ResizeAll(List<TextureResizeCandidate> candidates, TextureCacheManager.CacheRebuild rebuild)
+        {
+            var reads = new Task<byte[]>[candidates.Count];
+            var writes = new Queue<PendingWrite>();
+            int maxPendingWrites = Math.Max(1, Environment.ProcessorCount - 1) * 2;
+            int resizedCount = 0;
+            Exception fatal = null;
+
+            void Finish(PendingWrite pending)
+            {
+                if (Complete(pending, out var writeFailure))
+                {
+                    rebuild.Add(pending.Candidate.path, pending.CachePath);
+                    resizedCount++;
+                }
+                fatal ??= writeFailure;
+            }
+
+            try
+            {
+                for (int i = 0; i < candidates.Count && fatal == null; i++)
+                {
+                    for (int ahead = i; ahead < Math.Min(candidates.Count, i + OriginalReadAhead); ahead++)
+                    {
+                        if (reads[ahead] != null) continue;
+                        var path = candidates[ahead].path;
+                        reads[ahead] = Task.Run(() => ReadOriginalBytes(path));
+                    }
+
+                    var pending = Render(candidates[i], rebuild.GetCachePath(candidates[i].path), reads[i].Result);
+                    reads[i] = null;
+                    if (pending != null) writes.Enqueue(pending);
+                    while (writes.Count > maxPendingWrites && fatal == null) Finish(writes.Dequeue());
+                }
+            }
+            finally
+            {
+                // 放棄整批時也要等背景寫入結束，否則重建交易清掉暫存目錄後仍有檔案寫進去。
+                while (writes.Count > 0) Finish(writes.Dequeue());
+            }
+
+            if (fatal != null) ExceptionDispatchInfo.Capture(fatal).Throw();
+            return resizedCount;
+        }
+
+        /// <summary>
+        /// 執行單一紋理降質：載入原始 PNG → 按比例縮放 → 輸出 PNG 到 <paramref name="cachePath"/>，步驟與 <see cref="ResizeAll"/> 相同。
         /// 寫入成功才回傳 true，由呼叫端登記快取項目；個別紋理無法處理時回傳 false（略過該張），
         /// 寫入快取檔的 IO 錯誤則往外拋，讓 <see cref="TextureCacheManager.Rebuild"/> 放棄整批並保留原本的快取。
         /// </summary>
         private bool ResizeTexture(TextureResizeCandidate candidate, string cachePath)
         {
+            var pending = Render(candidate, cachePath, ReadOriginalBytes(candidate.path));
+            if (pending == null) return false;
+            if (Complete(pending, out var fatal)) return true;
+            if (fatal != null) ExceptionDispatchInfo.Capture(fatal).Throw();
+            return false;
+        }
+
+        /// <summary>
+        /// 主執行緒上的步驟：解碼原圖（讀不到時改用記憶體中的版本）、換算尺寸、以 GPU 縮放並讀回像素，
+        /// 再把 PNG 編碼與寫檔排到背景執行緒。這張無法處理時回傳 null。
+        /// </summary>
+        private static PendingWrite Render(TextureResizeCandidate candidate, string cachePath, byte[] originalBytes)
+        {
             Texture2D originalTexture = null;
             try
             {
-                var resizeSource = TryLoadOriginalTexture(candidate.path, out originalTexture) ? originalTexture : candidate.source;
-                if (resizeSource == null || resizeSource.width <= 0 || resizeSource.height <= 0) return false;
+                var resizeSource = TryDecodeOriginalTexture(candidate.path, originalBytes, out originalTexture) ? originalTexture : candidate.source;
+                if (resizeSource == null || resizeSource.width <= 0 || resizeSource.height <= 0) return null;
 
                 var sourceWidth = originalTexture != null ? resizeSource.width : candidate.originalWidth;
                 var sourceHeight = originalTexture != null ? resizeSource.height : candidate.originalHeight;
@@ -157,33 +228,57 @@ namespace FasterGameLoading
                 // 將寬高對齊至 4 的倍數，確保 Unity 桌面端 DXT 區塊壓縮 (DXT1/DXT5) 正常運作。
                 newWidth = AlignToBlockSize(newWidth, sourceWidth);
                 newHeight = AlignToBlockSize(newHeight, sourceHeight);
-                IORetryHelper.WriteAllBytesWithRetry(cachePath, TextureResizer.ResizeTextureToPng(resizeSource, newWidth, newHeight));
-                // 寫入成功才計入，摘要的像素節省量只反映實際進入快取的紋理。
-                lastOriginalPixelCount += (long)sourceWidth * sourceHeight;
-                lastDownscaledPixelCount += (long)newWidth * newHeight;
-                return true;
-            }
-            catch (IOException ex)
-            {
-                // 寫入失敗（磁碟已滿、權限不足）代表這批快取不完整：中止整個重建，保留原本的快取，
-                // 否則只寫成功幾張也會取代掉原本完整的快取。
-                FGLLog.Error($"Failed to downscale texture {candidate.path}:", ex);
-                throw;
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                FGLLog.Error($"Failed to downscale texture {candidate.path}:", ex);
-                throw;
+                var pixels = TextureResizer.ReadResizedPixels(resizeSource, newWidth, newHeight);
+                return new PendingWrite
+                {
+                    Candidate = candidate,
+                    CachePath = cachePath,
+                    SourcePixels = (long)sourceWidth * sourceHeight,
+                    DownscaledPixels = (long)newWidth * newHeight,
+                    Write = Task.Run(() => IORetryHelper.WriteAllBytesWithRetry(cachePath, TextureResizer.EncodePng(pixels))),
+                };
             }
             catch (Exception ex)
             {
                 FGLLog.Warning($"Failed to downscale texture {candidate.path}:", ex);
+                return null;
             }
             finally
             {
                 if (originalTexture != null) TextureResizer.DestroyTemporaryUnityObject(originalTexture);
             }
-            return false;
+        }
+
+        /// <summary>
+        /// 等這張的背景編碼與寫檔結束。成功時計入摘要並回傳 true；寫入失敗（磁碟已滿、權限不足）時以
+        /// <paramref name="fatal"/> 回傳例外：這批快取已不完整，呼叫端必須放棄整個重建，
+        /// 否則只寫成功幾張也會取代掉原本完整的快取。其他錯誤只略過這張。
+        /// </summary>
+        private bool Complete(PendingWrite pending, out Exception fatal)
+        {
+            fatal = null;
+            try
+            {
+                pending.Write.Wait();
+            }
+            catch (AggregateException ex)
+            {
+                var error = ex.InnerException ?? ex;
+                if (error is IOException || error is UnauthorizedAccessException)
+                {
+                    FGLLog.Error($"Failed to downscale texture {pending.Candidate.path}:", error);
+                    fatal = error;
+                }
+                else
+                {
+                    FGLLog.Warning($"Failed to downscale texture {pending.Candidate.path}:", error);
+                }
+                return false;
+            }
+            // 寫入成功才計入，摘要的像素節省量只反映實際進入快取的紋理。
+            lastOriginalPixelCount += pending.SourcePixels;
+            lastDownscaledPixelCount += pending.DownscaledPixels;
+            return true;
         }
 
         /// <summary>
@@ -201,14 +296,28 @@ namespace FasterGameLoading
             return aligned > sourceLength ? length & ~3 : aligned;
         }
 
-        /// <summary>嘗試從磁碟載入原始 PNG 紋理。失敗時回傳 false，由呼叫端使用記憶體中的版本。</summary>
-        private static bool TryLoadOriginalTexture(string path, out Texture2D texture)
+        /// <summary>從磁碟讀取原始 PNG，可在背景執行緒呼叫。讀不到時回傳 null，由呼叫端使用記憶體中的版本。</summary>
+        private static byte[] ReadOriginalBytes(string path)
         {
-            texture = null;
             try
             {
-                if (!File.Exists(path)) return false;
-                var data = File.ReadAllBytes(path);
+                return File.Exists(path) ? File.ReadAllBytes(path) : null;
+            }
+            catch (Exception ex)
+            {
+                // 無法從磁碟讀取原始紋理，caller 會改用記憶體中的版本作為 fallback
+                FGLLog.Warning("Cannot load original texture from disk, using in-memory copy:", ex);
+                return null;
+            }
+        }
+
+        /// <summary>在主執行緒解碼 <see cref="ReadOriginalBytes"/> 讀到的原圖。失敗時回傳 false，由呼叫端使用記憶體中的版本。</summary>
+        private static bool TryDecodeOriginalTexture(string path, byte[] data, out Texture2D texture)
+        {
+            texture = null;
+            if (data == null) return false;
+            try
+            {
                 texture = new Texture2D(FGLConsts.PlaceholderTextureSize, FGLConsts.PlaceholderTextureSize, TextureFormat.RGBA32, mipChain: false);
                 if (texture.LoadImage(data) && texture.width > 0 && texture.height > 0)
                 {

@@ -154,6 +154,42 @@ namespace FasterGameLoading.InGameTests
             FglState.AssertNone(failures, "downscaled textures off their source's aspect ratio");
         }
 
+        /// <summary>
+        /// 降質工具在背景執行緒以 EncodeArrayToPNG 編碼讀回的像素；結果必須與同一份像素放進貼圖後以 EncodeToPNG 編碼的位元組完全相同，
+        /// 否則快取檔的列序或色彩格式會與改成流水線之前不同。
+        ///
+        /// The downscaler encodes the read-back pixels with EncodeArrayToPNG on a background thread. The result
+        /// must be byte-for-byte the same as EncodeToPNG on a texture holding the same pixels; otherwise the cache
+        /// files' row order or colour format would differ from before the pipeline.
+        /// </summary>
+        [Test]
+        public static void BackgroundPngEncodingMatchesEncodeToPng()
+        {
+            const int SourceWidth = 96, SourceHeight = 40, Width = 48, Height = 20;
+            var source = new Texture2D(SourceWidth, SourceHeight, TextureFormat.RGBA32, mipChain: false);
+            Texture2D reference = null;
+            try
+            {
+                var pixels = new Color32[SourceWidth * SourceHeight];
+                for (int i = 0; i < pixels.Length; i++) pixels[i] = new Color32((byte)i, (byte)(i / SourceWidth * 6), (byte)(255 - i), (byte)(128 + i % 128));
+                source.SetPixels32(pixels);
+                source.Apply();
+
+                var resized = TextureResizer.ReadResizedPixels(source, Width, Height);
+                var encoded = System.Threading.Tasks.Task.Run(() => TextureResizer.EncodePng(resized)).Result;
+
+                reference = new Texture2D(Width, Height, TextureFormat.RGBA32, mipChain: false);
+                reference.LoadRawTextureData(resized.Rgba);
+                reference.Apply();
+                Assert.That(Convert.ToBase64String(encoded)).Is.EqualTo(Convert.ToBase64String(reference.EncodeToPNG()));
+            }
+            finally
+            {
+                UnityEngine.Object.Destroy(source);
+                if (reference != null) UnityEngine.Object.Destroy(reference);
+            }
+        }
+
         /// <summary>在隔離 session 的存檔資料夾產生一組原始貼圖與降質快取，結束時全部清掉。</summary>
         private sealed class Probe : IDisposable
         {

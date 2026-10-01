@@ -68,6 +68,7 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
             AllTypesCachedField?.SetValue(obj: null, value: null);
             CachedAssembliesCountField?.SetValue(null, 0);
             GenTypes_GetTypeInAnyAssemblyInt_Patch.ClearCache();
+            AssemblyTypesCache.Clear();
         }
 
         [TearDown]
@@ -77,6 +78,7 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
             AllTypesCachedField?.SetValue(obj: null, value: null);
             CachedAssembliesCountField?.SetValue(null, 0);
             GenTypes_GetTypeInAnyAssemblyInt_Patch.ClearCache();
+            AssemblyTypesCache.Clear();
         }
 
         [Test]

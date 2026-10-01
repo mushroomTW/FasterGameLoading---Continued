@@ -34,6 +34,8 @@ Harmony patch 實際套用結果、延遲圖形／圖示／音效是否全部完
    主選單組別會有兩段結果：第 1 輪（初次載入）與第 2 輪（切換成日文重載後），log 以 `[FGL InGameTests] Round N` 標示；
    全部結束時輸出 `[FGL InGameTests] All rounds finished.`。
    `NoModContentWasLoadedTwice` 失敗時先看列出的路徑：mod 自帶同名不同副檔名的檔案（如 `Foo.png` 與 `Foo.jpg`）也會觸發原版的重複警告，與 FGL 無關。
+4. 每輪另輸出 `[FGL InGameTests] Round N timing`：自遊戲啟動起算的秒數、GC 次數、主執行緒等待 `FilesystemFile.ReadAllBytes` 的總時間，以及把所有組件型別再列舉一遍的耗時（`StartupCostProbes.cs`）。
+   總啟動時間受背景負載影響很大，比較 FGL 版本時以這些單一環節的數字為準；只用到新舊版都有的 API，可以換上舊版 FGL 的 DLL 對照。
 
 ## 設計重點
 
@@ -52,3 +54,13 @@ Harmony patch 實際套用結果、延遲圖形／圖示／音效是否全部完
 - Windows 最小 mod 清單：預設設定與 `Profiles/AllOn` 各完成初次載入、日文語言重載兩輪，每輪皆 55/55 通過；兩組皆略過 323 個重複副本。
 - 預設設定產生 8 張烘焙圖集、23.3 Mpx、約 33 MB；全開設定產生 21 張、27.2 Mpx、約 38 MB。自適應分批會影響圖集數量，兩組資料不能當成單一選項的速度比較。
 - 載入仍有語系翻譯警告，語言重載後 log 有 GUI 空紋理訊息；以上通過數只代表測試斷言結果。未量測完整啟動時間，也未驗證所有 mod 清單的影像品質。
+
+## 2026-10-02 平行化驗證
+
+對照組為 `bdd9758`（只換 FGL 的 DLL，測試 mod 相同），額外啟用 8 個貼圖多的 mod：VTEXE、Cinders、Facial Animation、CeleTech MKIII、Dead Man's Switch、Dubs Bad Hygiene、LTO Colony Groups、Show Hair，共 7,297 張 PNG／JPG、262 MiB。OS 檔案快取皆已暖。
+
+- 背景預讀原始貼圖：主執行緒等待 `ReadAllBytes` 由 7,298 次共 2,584 ms 降為 41 ms；7,297 張全部命中，沒有自行讀檔或淘汰。HAR 組（略過名單的 mod 最後才載入）同樣全部命中。冷快取時差距會更大，未量測。
+- 型別列舉只做一次：省下的那一遍（快取已暖）為 114 個組件、36,301 個型別約 40 ms，在背景執行緒上。
+- 降質工具流水線：783 張由 5,674 ms 降為 3,920～4,138 ms，產生的 783 個快取檔與舊版逐位元組相同。
+- 總啟動時間：舊版 58.7～74.1 s、新版 54.7～76.2 s，背景負載造成的雜訊大於差異，無法據此比較。新版 GC 次數多約 10 次（預讀提早配置記憶體）。
+- 完整七組矩陣每輪皆 59/59 通過，無崩潰。上述 8 個 mod 的組合下，AOBA Framework 的除錯工具刻意以 `UI/Misc/BadTexture` 為貼圖，`ThingDefsThatShouldHaveIconsHaveThem` 已排除這種圖形本身就是 BadTex 的 Def。

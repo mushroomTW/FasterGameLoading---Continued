@@ -83,7 +83,7 @@ namespace FasterGameLoading
         }
 
         /// <summary>
-        /// 對快照中的每個組件呼叫 <see cref="AccessTools.GetTypesFromAssembly"/> 並彙整為單一清單。
+        /// 對快照中的每個組件取得型別（經 <see cref="AssemblyTypesCache"/>，與 FullName 預熱共用列舉結果）並彙整為單一清單。
         /// 僅做型別「列舉」，不讀取 type.FullName（名稱解析交由 GenTypes 的預熱流程）。
         /// </summary>
         private static List<Type> BuildTypeList(System.Reflection.Assembly[] assemblies)
@@ -93,7 +93,7 @@ namespace FasterGameLoading
             {
                 try
                 {
-                    list.AddRange(AccessTools.GetTypesFromAssembly(assembly));
+                    list.AddRange(AssemblyTypesCache.Get(assembly));
                 }
                 catch
                 {

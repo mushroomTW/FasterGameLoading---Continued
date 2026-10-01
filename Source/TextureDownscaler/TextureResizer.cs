@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering;
 using Verse;
 
 namespace FasterGameLoading
@@ -72,12 +73,30 @@ namespace FasterGameLoading
             }
         }
 
+        /// <summary>縮放後讀回的像素：RGBA32，列序與 Texture2D 的原始資料相同。</summary>
+        public readonly struct ResizedPixels
+        {
+            public ResizedPixels(byte[] rgba, GraphicsFormat format, int width, int height)
+            {
+                Rgba = rgba;
+                Format = format;
+                Width = width;
+                Height = height;
+            }
+
+            public byte[] Rgba { get; }
+            public GraphicsFormat Format { get; }
+            public int Width { get; }
+            public int Height { get; }
+        }
+
         /// <summary>
-        /// 使用 RenderTexture 將來源紋理縮放到目標尺寸，輸出為 PNG 位元組陣列。
+        /// 使用 RenderTexture 將來源紋理縮放到目標尺寸並讀回像素；只能在主執行緒呼叫。
         /// 雙線性 Blit 每個輸出像素只取樣 2×2 個來源像素，一次縮小超過 2 倍會跳過大部分像素而產生鋸齒；
         /// 因此先逐次減半到目標的 2 倍以內，再做最後一次縮放。
+        /// PNG 編碼另由 <see cref="EncodePng"/> 處理，可移到背景執行緒。
         /// </summary>
-        public static byte[] ResizeTextureToPng(Texture source, int width, int height)
+        public static ResizedPixels ReadResizedPixels(Texture source, int width, int height)
         {
             var previous = RenderTexture.active;
             var renderTexture = RenderTexture.GetTemporary(width, height, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Default);
@@ -109,7 +128,7 @@ namespace FasterGameLoading
                 readable = new Texture2D(width, height, TextureFormat.RGBA32, mipChain: false);
                 readable.ReadPixels(new Rect(0, 0, width, height), 0, 0);
                 readable.Apply(updateMipmaps: false, makeNoLongerReadable: false);
-                return readable.EncodeToPNG();
+                return new ResizedPixels(readable.GetRawTextureData(), readable.graphicsFormat, width, height);
             }
             finally
             {
@@ -118,6 +137,15 @@ namespace FasterGameLoading
                 if (intermediate != null) RenderTexture.ReleaseTemporary(intermediate);
                 if (readable != null) DestroyTemporaryUnityObject(readable);
             }
+        }
+
+        /// <summary>
+        /// 把 <see cref="ReadResizedPixels"/> 的結果編碼成 PNG，與對同一張貼圖呼叫 EncodeToPNG 的結果相同。
+        /// ImageConversion.EncodeArrayToPNG 不碰 Unity 物件，可在任何執行緒呼叫。
+        /// </summary>
+        public static byte[] EncodePng(ResizedPixels pixels)
+        {
+            return ImageConversion.EncodeArrayToPNG(pixels.Rgba, pixels.Format, (uint)pixels.Width, (uint)pixels.Height);
         }
     }
 }

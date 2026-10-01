@@ -299,7 +299,10 @@ namespace FasterGameLoading.InGameTests
                 .ToList() ?? new List<int>();
             Assert.That(priorities.Count).Is.EqualTo(1);
             Assert.That(priorities.FirstOrDefault()).Is.EqualTo(Priority.First);
-            Assert.That(HyperdriveCompat.ParallelizesModDefs).Is.EqualTo(HyperdriveCompat.FindModType() != null);
+            // 直接修改遊戲 DLL 的版本沒有 Mod 類別，須另查 Assembly-CSharp 內的輔助型別。
+            var hasEnginePatch = typeof(LoadedModManager).Assembly.GetType(
+                "Verse.StartupOptimizer.OptimizedModManager", throwOnError: false) != null;
+            Assert.That(HyperdriveCompat.ParallelizesModDefs).Is.EqualTo(HyperdriveCompat.FindModType() != null || hasEnginePatch);
         }
 
         /// <summary>提早載入延到所有 Mod 建構子之後才開始，但仍須在原版載入前實際載入內容，否則加速效果消失。</summary>

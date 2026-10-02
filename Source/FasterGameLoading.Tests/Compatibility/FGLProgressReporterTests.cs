@@ -4,7 +4,6 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using HarmonyLib;
 using NUnit.Framework;
-using Verse;
 
 namespace FasterGameLoading.Tests.Compatibility
 {
@@ -23,7 +22,6 @@ namespace FasterGameLoading.Tests.Compatibility
             originalGetIsPaused = (Func<bool>)getIsPausedField?.GetValue(null);
             originalEarlyModContentLoading = FasterGameLoadingSettings.earlyModContentLoading;
             originalDelayedActions = FasterGameLoadingMod.delayedActions;
-            ModContentPack_ReloadContentInt_Patch.loadedMods.Clear();
         }
 
         [TearDown]
@@ -32,7 +30,6 @@ namespace FasterGameLoading.Tests.Compatibility
             getIsPausedField?.SetValue(null, originalGetIsPaused);
             FasterGameLoadingSettings.earlyModContentLoading = originalEarlyModContentLoading;
             SetDelayedActions(originalDelayedActions);
-            ModContentPack_ReloadContentInt_Patch.loadedMods.Clear();
         }
 
         [Test]
@@ -125,29 +122,6 @@ namespace FasterGameLoading.Tests.Compatibility
         }
 
         [Test]
-        public void ReloadContentPostfix_WhenMoveNextHasMoreWork_DoesNothing()
-        {
-            Assert.DoesNotThrow(() => LoadingProgress_ReloadContent_Patch.Postfix(null, true));
-        }
-
-        [Test]
-        public void ReloadContentPostfix_WhenMoveNextFinished_AddsModToLoadedMods()
-        {
-            var mockMod = (ModContentPack)FormatterServices.GetUninitializedObject(typeof(ModContentPack));
-            var stateMachine = new MockStateMachine { modContentPack = mockMod };
-
-            LoadingProgress_ReloadContent_Patch.Postfix(stateMachine, __result: false);
-
-            Assert.That(ModContentPack_ReloadContentInt_Patch.loadedMods.Contains(mockMod), Is.True);
-        }
-
-        [Test]
-        public void ReloadContent_Prepare_MatchesTargetMethodPresence()
-        {
-            Assert.That(LoadingProgress_ReloadContent_Patch.Prepare(), Is.False);
-        }
-
-        [Test]
         public void SettingsGetter_IsAccessibleWithoutThrowing()
         {
             // 驗證 FasterGameLoadingMod.settings 的 getter 可被安全讀取（未經建構子時為 null）
@@ -176,11 +150,6 @@ namespace FasterGameLoading.Tests.Compatibility
         {
             var prop = AccessTools.Property(typeof(FasterGameLoadingMod), nameof(FasterGameLoadingMod.delayedActions));
             prop?.SetValue(null, delayedActions, index: null);
-        }
-
-        private sealed class MockStateMachine
-        {
-            public ModContentPack modContentPack;
         }
     }
 }

@@ -23,7 +23,7 @@ Harmony patch 實際套用結果、延遲圖形／圖示／音效是否全部完
    | 預設 | 無 | `false` | 無 | 預設設定＋語言重載 |
    | 全開 | `Profiles/AllOn/` | `false` | 無 | 延遲圖形、自適應圖集、較快的圖集壓縮＋語言重載 |
    | 地圖 | 無 | `true` | 無 | World.FinalizeInit 音效路徑、地圖物件圖形 |
-   | 相容（HAR 等） | `Profiles/AllOn/` | `false` | `UnlimitedHugs.HugsLib`、`erdelf.HumanoidAlienRaces`、`Ancot.AncotLibrary`、`automatic.bionicicons` | HugsLib 重新導向、排除名單、圖集保護 |
+   | 相容（HAR 等） | `Profiles/AllOn/` | `false` | `UnlimitedHugs.HugsLib`、`erdelf.HumanoidAlienRaces`、`Ancot.AncotLibrary`、`automatic.bionicicons`、`ancot.kiirorace`、`chezhou.chezhoulib.lib`、`chezhou.race.agrace` | HugsLib 重新導向、HAR 變體掃描延後到所有內容載入後（HAR 與種族 mod 照常提早載入）、ChezhouLib 的 `ReloadAll` 排在 FGL 之後、排除名單、圖集保護 |
    | 相容（GS+） | 無 | `false` | `Telefonmast.GraphicsSettings` | 降質快取對 Graphics Settings+ 讓開 |
    | 相容（Loading Progress） | 無 | `false` | `ilyvion.LoadingProgress` | Loading Progress 以 packageId 找到 FGL，不再自己重載每個 mod 的內容（`NoModContentWasLoadedTwice`） |
    | 相容（Hyperdrive） | 無 | `false` | `vopaga.hyperdrive` | FGL 先建構時延後套用 LoadModXML 閘門、保留 Hyperdrive 跨 mod 平行載入、Defs/ 讓出與 Patches/ 維持平行＋語言重載 |

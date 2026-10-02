@@ -27,10 +27,11 @@ namespace FasterGameLoading.Tests.Compatibility
             SessionLifecycle.Raise(LifecyclePhase.LanguageReloading);
         }
 
-        private static ModContentPack CreateMod(string packageId, string rootDir = null)
+        private static ModContentPack CreateMod(string packageId, string rootDir = null, string packageIdPlayerFacing = null)
         {
             var mod = (ModContentPack)FormatterServices.GetUninitializedObject(typeof(ModContentPack));
             AccessTools.Field(typeof(ModContentPack), "packageIdInt").SetValue(mod, packageId);
+            AccessTools.Field(typeof(ModContentPack), "packageIdPlayerFacingInt").SetValue(mod, packageIdPlayerFacing);
             if (rootDir != null)
             {
                 AccessTools.Field(typeof(ModContentPack), "rootDirInt").SetValue(mod, new System.IO.DirectoryInfo(rootDir));
@@ -120,6 +121,18 @@ namespace FasterGameLoading.Tests.Compatibility
         }
 
         [Test]
+        public void TextureRoots_IncludeSteamSuffixedAndDevHar()
+        {
+            // 本機與 Workshop 副本並存時，Workshop 版的 PackageId 帶 "_steam" 後綴，只有 PackageIdPlayerFacing 不帶。
+            var steamHar = CreateMod("erdelf.humanoidalienraces_steam", @"C:\SteamHar\", "erdelf.HumanoidAlienRaces");
+            var devHar = CreateMod("erdelf.humanoidalienraces.dev", @"C:\DevHar\");
+
+            WithRunningMods(new List<ModContentPack> { steamHar, devHar }, ProtectedMods.InitializeTextureRoots);
+
+            Assert.That(ProtectedMods.GetProtectedTextureRoots(), Is.EquivalentTo(new[] { "C:/SteamHar", "C:/DevHar" }));
+        }
+
+        [Test]
         public void TextureRoots_WhenModRootDirThrows_DoesNotThrow()
         {
             // 不設定 rootDirInt，使 RootDir getter 存取時拋出 NullReferenceException，驗證內部 catch 區塊
@@ -136,6 +149,7 @@ namespace FasterGameLoading.Tests.Compatibility
         [TestCase("wrk.submod", ExpectedResult = true)]
         [TestCase("erdelf.HumanoidAlienRaces", ExpectedResult = true)]
         [TestCase("ERDELF.HUMANOIDALIENRACES", ExpectedResult = true)]
+        [TestCase("erdelf.HumanoidAlienRaces.dev", ExpectedResult = true)]
         [TestCase("chezhou.chezhoulib.lib", ExpectedResult = false)]
         [TestCase("Ludeon.RimWorld", ExpectedResult = false)]
         [TestCase("OskarPotocki.VanillaFactionsExpanded", ExpectedResult = false)]
@@ -150,11 +164,34 @@ namespace FasterGameLoading.Tests.Compatibility
         public void ShouldSkipEarlyLoad_WithHARMetaDataDependency_ReturnsTrue()
         {
             var metaDataWithHar = new MockMetaData(new MockDependency("erdelf.HumanoidAlienRaces"));
+            var metaDataWithDevHar = new MockMetaData(new MockDependency("erdelf.HumanoidAlienRaces.dev"));
             var metaDataWithoutHar = new MockMetaData(new MockDependency("other.dependency"));
 
             Assert.That(ProtectedMods.ShouldSkipEarlyLoad("Custom.RaceMod", metaDataWithHar), Is.True);
+            Assert.That(ProtectedMods.ShouldSkipEarlyLoad("Custom.RaceMod", metaDataWithDevHar), Is.True);
             Assert.That(ProtectedMods.ShouldSkipEarlyLoad("Custom.RaceMod", metaDataWithoutHar), Is.False);
             Assert.That(ProtectedMods.ShouldSkipEarlyLoad("Custom.RaceMod", metaData: null), Is.False);
+        }
+
+        [Test]
+        public void ShouldSkipEarlyLoad_WhenHarGraphicsHookDeferred_DoesNotSkipHar()
+        {
+            var setDefers = AccessTools.PropertySetter(typeof(AlienRaceGraphicsHookGate), nameof(AlienRaceGraphicsHookGate.DefersGraphicsHook));
+            var metaDataWithHar = new MockMetaData(new MockDependency("erdelf.HumanoidAlienRaces"));
+            setDefers.Invoke(null, new object[] { true });
+            try
+            {
+                Assert.That(ProtectedMods.ShouldSkipEarlyLoad("erdelf.HumanoidAlienRaces"), Is.False);
+                Assert.That(ProtectedMods.ShouldSkipEarlyLoad("erdelf.HumanoidAlienRaces.dev"), Is.False);
+                Assert.That(ProtectedMods.ShouldSkipEarlyLoad("Custom.RaceMod", metaDataWithHar), Is.False);
+                // Ayameduki 與 AyaTweaks 不受 HAR 閘門影響。
+                Assert.That(ProtectedMods.ShouldSkipEarlyLoad("Ayameduki.Harpy"), Is.True);
+                Assert.That(ProtectedMods.ShouldSkipEarlyLoad("WRK.RaceMod"), Is.True);
+            }
+            finally
+            {
+                setDefers.Invoke(null, new object[] { false });
+            }
         }
 
         [Test]

@@ -33,13 +33,16 @@ namespace FasterGameLoading
             delayedActions = gameObject.AddComponent<DelayedActions>();
             settings = this.GetSettings<FasterGameLoadingSettings>();
 
+            harmony = new Harmony("FasterGameLoadingMod");
+            // 須在貼圖預讀查詢排除名單之前：HAR 是否讓開取決於這個 patch 是否套用成功。
+            AlienRaceGraphicsHookGate.TryPatch(harmony);
+
             // 背景預載入已快取的紋理
             ModContentLoaderTexture2D_LoadTexture_Patch.StartPreloadCachedTextures();
             // 背景依載入順序預讀原始貼圖，主執行緒載入貼圖時不必等磁碟 I/O
             TexturePrefetcher.Start();
             StartCleanupInvalidImageOptCaches();
 
-            harmony = new Harmony("FasterGameLoadingMod");
             // 補丁的 Prepare 與延遲視覺管線共用同一份定案值，執行期改設定不會讓兩者分歧。
             DelayedActions.CaptureStartupSettings();
 

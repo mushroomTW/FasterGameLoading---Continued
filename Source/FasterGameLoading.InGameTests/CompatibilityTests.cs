@@ -11,7 +11,7 @@ namespace FasterGameLoading.InGameTests
 {
     /// <summary>
     /// 相容性分支只在對應 mod 啟用時才會走到；這些測試在 mod 未啟用時直接略過，
-    /// 需以 companion_mods 帶入 HugsLib、Humanoid Alien Races、Ancot Library 等另跑一輪（見 README）。
+    /// 需以 companion_mods 帶入 HugsLib、Humanoid Alien Races、Ancot Library、ChezhouLib 等另跑一輪（見 README）。
     /// </summary>
     [TestSuite]
     internal static class CompatibilityTests
@@ -38,6 +38,59 @@ namespace FasterGameLoading.InGameTests
                     Assert.That(HugsLibDefsLoadedProbe.OffMainThreadCalls.Count).Is.EqualTo(0);
                 }
             }
+        }
+
+        /// <summary>
+        /// HAR 的 LoadGraphicsHook 以 ContentFinder 計算種族部件的貼圖變體數量，必須等所有 mod 的內容都載入後才執行，
+        /// 否則尚未載入的種族 mod 變體數會被算成 0。FGL 以閘門延後它，HAR 與其衍生因此不必排除在提早載入之外。
+        /// </summary>
+        [Test]
+        public static void HarGraphicsHookRunsAfterAllContentLoaded()
+        {
+            if (!HarGraphicsHookProbe.HarActive) return;
+
+            Assert.That(FglState.HasFglPatch(AlienRaceGraphicsHookGate.TargetMethod())).Is.True();
+            var har = LoadedModManager.RunningMods.First(static m => ModDependencyReflection.IsAlienRaces(m.PackageIdPlayerFacing));
+            Assert.That(ProtectedMods.ShouldSkipEarlyLoad(har)).Is.False();
+
+            List<string> missing;
+            lock (HarGraphicsHookProbe.ModsMissingAtRun)
+            {
+                int round = TestRunDriver.Round;
+                HarGraphicsHookProbe.Runs.TryGetValue(round, out int runs);
+                missing = HarGraphicsHookProbe.ModsMissingAtRun.Where(e => e.round == round).Select(static e => e.packageId).ToList();
+                bool harLoadedEarly;
+                lock (ContentLoadProbe.LoadedBeforePatches)
+                {
+                    harLoadedEarly = ContentLoadProbe.EarlyLoadedMods.Contains(har);
+                }
+                Log.Message($"[FGL InGameTests] HAR LoadGraphicsHook counted variants {runs} time(s) this round; HAR content loaded early: {harLoadedEarly}.");
+                // 語言重載後 HAR 的 Mod.Content 仍是舊的容器，原版 HAR 不會再計算變體，只在初次載入要求一定執行過。
+                if (round == 1) Assert.That(runs).Is.GreaterThan(0);
+            }
+            FglState.AssertNone(missing, "mods whose content was not loaded when HAR counted graphic variants");
+        }
+
+        /// <summary>
+        /// ChezhouLib 的 ReloadAll prefix 取代原方法並回傳 false，Harmony 會略過排在它之後、回傳 bool 的 prefix；
+        /// FGL 防止同一個 handler 重複載入的 prefix 必須排在它前面才會生效。
+        /// </summary>
+        [Test]
+        public static void AssetBundleReloadGuardRunsBeforeChezhouLib()
+        {
+            const string ChezhouLibHarmonyId = "ChezhouLib.lib";
+            var target = AccessTools.Method(typeof(ModAssetBundlesHandler), "ReloadAll");
+            var info = Harmony.GetPatchInfo(target);
+            if (info == null || !info.Prefixes.Any(static p => p.owner == ChezhouLibHarmonyId)) return;
+
+            var prefixes = info.Prefixes.ToArray();
+            var owners = PatchProcessor.GetSortedPatchMethods(target, prefixes)
+                .Select(m => prefixes.First(p => p.PatchMethod == m).owner)
+                .ToList();
+            Log.Message($"[FGL InGameTests] ReloadAll prefixes in run order: {string.Join(", ", owners)}.");
+
+            var fglIndex = owners.IndexOf(FglState.HarmonyId);
+            Assert.That(fglIndex >= 0 && fglIndex < owners.IndexOf(ChezhouLibHarmonyId)).Is.True();
         }
 
         /// <summary>
@@ -76,7 +129,9 @@ namespace FasterGameLoading.InGameTests
             }
         }
 
-        /// <summary>HAR、Ayameduki、WRK 及依賴 HAR 的 mod 在排除名單內，內容只能由原版流程載入。</summary>
+        /// <summary>
+        /// Ayameduki、WRK（以及無法延後 HAR 變體掃描時的 HAR 與其衍生）在排除名單內，內容只能由原版流程載入。
+        /// </summary>
         [Test]
         public static void SkipListedModsAreNotEarlyLoaded()
         {
@@ -157,5 +212,44 @@ namespace FasterGameLoading.InGameTests
                 if (!UnityData.IsInMainThread) OffMainThreadCalls.Add(Thread.CurrentThread.Name ?? "unnamed thread");
             }
         }
+    }
+
+    /// <summary>
+    /// 依輪次記錄 HAR 的 LoadGraphicsHook 真正計算變體（graphicsQueue 由非空變為空）的次數，以及當時還沒載入內容的 mod。
+    /// 被 prefix 略過、或 HAR 自己的貼圖尚未載入而提早返回的呼叫都不算。
+    /// </summary>
+    [HarmonyPatch]
+    internal static class HarGraphicsHookProbe
+    {
+        public static readonly Dictionary<int, int> Runs = new Dictionary<int, int>();
+        public static readonly List<(int round, string packageId)> ModsMissingAtRun = new List<(int, string)>();
+
+        private static readonly MethodBase Target = AccessTools.Method("AlienRace.AlienPartGenerator:LoadGraphicsHook");
+        private static readonly FieldInfo GraphicsQueue = AccessTools.Field("AlienRace.AlienPartGenerator:graphicsQueue");
+
+        public static bool HarActive => Target != null;
+
+        public static bool Prepare() => Target != null && GraphicsQueue != null;
+
+        public static MethodBase TargetMethod() => Target;
+
+        public static void Prefix(out int __state) => __state = QueuedCount();
+
+        public static void Postfix(bool __runOriginal, int __state)
+        {
+            if (!__runOriginal || __state == 0 || QueuedCount() != 0) return;
+            lock (ModsMissingAtRun)
+            {
+                int round = TestRunDriver.Round;
+                Runs.TryGetValue(round, out int runs);
+                Runs[round] = runs + 1;
+                foreach (var mod in LoadedModManager.RunningMods)
+                {
+                    if (!ModContentPack_ReloadContentInt_Patch.loadedMods.Contains(mod)) ModsMissingAtRun.Add((round, mod.PackageIdPlayerFacing));
+                }
+            }
+        }
+
+        private static int QueuedCount() => (GraphicsQueue.GetValue(null) as System.Collections.IEnumerable)?.Cast<object>().Count() ?? 0;
     }
 }

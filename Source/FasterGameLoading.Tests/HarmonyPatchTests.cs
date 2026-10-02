@@ -77,15 +77,18 @@ namespace FasterGameLoading.Tests
         }
 
         [Test]
-        public void TestModAssetBundlesHandler_ReloadAll_Patch_RunsAfterChezhouLib()
+        public void TestModAssetBundlesHandler_ReloadAll_Patch_RunsBeforeChezhouLib()
         {
-            var harmonyAfter = typeof(ModAssetBundlesHandler_ReloadAll_Patch)
-                .GetCustomAttributes(typeof(HarmonyAfter), inherit: false)
-                .Cast<HarmonyAfter>()
+            var patchClass = typeof(ModAssetBundlesHandler_ReloadAll_Patch);
+            var harmonyBefore = patchClass
+                .GetCustomAttributes(typeof(HarmonyBefore), inherit: false)
+                .Cast<HarmonyBefore>()
                 .FirstOrDefault();
 
-            Assert.IsNotNull(harmonyAfter, "ReloadAll patch should declare HarmonyAfter for ChezhouLib.");
-            Assert.Contains("ChezhouLib.lib", harmonyAfter.info.after);
+            // ChezhouLib 的 prefix 回傳 false 後，Harmony 會略過排在後面、回傳 bool 的 prefix。
+            Assert.IsNotNull(harmonyBefore, "ReloadAll patch should declare HarmonyBefore for ChezhouLib.");
+            Assert.Contains("ChezhouLib.lib", harmonyBefore.info.before);
+            Assert.IsEmpty(patchClass.GetCustomAttributes(typeof(HarmonyAfter), inherit: false));
         }
 
 
@@ -95,7 +98,7 @@ namespace FasterGameLoading.Tests
         {
             Assert.IsNull(
                 typeof(FasterGameLoadingMod).Assembly.GetType("FasterGameLoading.AlienRacesCompat"),
-                "HAR 相容性應靠 early-loading skip 保留原生時序，不再用非冪等的事後重掃。");
+                "HAR 相容性應靠延後 LoadGraphicsHook（AlienRaceGraphicsHookGate）保留原生時序，不再用非冪等的事後重掃。");
         }
 
         [Test]

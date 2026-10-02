@@ -80,7 +80,9 @@ Important behavior:
 - [Missile Girl - Performance Mod](https://github.com/ViralReaction/MissileGirl) and [DefLoadCache](https://github.com/FluxxField/rimworld-defload-cache) have no dedicated compatibility code in this mod. They are expected to work alongside Faster Game Loading, but use either Missile Girl or DefLoadCache, not both.
 - [Image Opt](https://steamcommunity.com/sharedfiles/filedetails/?id=3543873568) compatibility is no longer maintained. When Faster Game Loading and Image Opt are enabled together, mods that depend on [Ancot Library](https://steamcommunity.com/sharedfiles/filedetails/?id=2988801276) may encounter graphical loading errors, missing textures, or black textures under some loading conditions. Using both mods together is not recommended.
 - Existing Image Opt safeguards, such as downscaled-texture bypass and invalid `.dds` / `.dds.zstd` cache cleanup, do not guarantee compatibility.
-- HAR and Ancot-related race mods skip some early-loading and atlas-baking paths to reduce bodyAddon, hair, ear, and multi-mask texture issues.
+- [Humanoid Alien Races](https://github.com/erdelf/AlienRaces) counts each race's texture variants as soon as its own textures are loaded. Faster Game Loading holds that count until all mod content has loaded, so variants from race mods that load later are not missed. With this in place, HAR and the race mods that depend on it are loaded early and have their XML parsed in parallel like other mods. If the hook cannot be found or patched, they are excluded from both again.
+- HAR (including its dev build) and Ancot-related race mods are not downscaled and stay out of **Adaptive atlas baking**, to reduce bodyAddon, hair, ear, and multi-mask texture issues. AyaTweaks and Ayameduki mods skip early loading and parallel XML parsing.
+- With [ChezhouLib](https://steamcommunity.com/sharedfiles/filedetails/?id=3595247479), Faster Game Loading's guard against loading the same asset bundles twice runs before ChezhouLib's asset bundle loader.
 
 ## Recommended Settings
 

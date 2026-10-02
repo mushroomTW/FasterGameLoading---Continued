@@ -39,11 +39,11 @@ namespace FasterGameLoading
                 }
                 try
                 {
-                    if (ModsConfig.IsActive(ImageOptPackageId))
+                    if (IsActiveIgnoringSteamSuffix(ImageOptPackageId))
                     {
                         owner = TextureOwner.ImageOpt;
                     }
-                    else if (ModsConfig.IsActive(GraphicsSettingsPackageId))
+                    else if (IsActiveIgnoringSteamSuffix(GraphicsSettingsPackageId))
                     {
                         owner = TextureOwner.GraphicsSettings;
                     }
@@ -61,6 +61,13 @@ namespace FasterGameLoading
                 return owner;
             }
         }
+
+        /// <summary>
+        /// 同一個 mod 同時有本機與 Workshop 副本時，Workshop 版的 PackageId 會帶 "_steam" 後綴，
+        /// ModsConfig.IsActive 的精確比對會漏掉它；改以忽略後綴的查詢判斷。
+        /// </summary>
+        private static bool IsActiveIgnoringSteamSuffix(string packageId)
+            => ModLister.GetActiveModWithIdentifier(packageId, ignorePostfix: true) != null;
 
         /// <summary>FGL 的降質快取、背景預讀與貼圖登記是否生效。</summary>
         public static bool FglOwnsTextureLoading => Current is TextureOwner.Fgl;

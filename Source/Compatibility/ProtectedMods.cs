@@ -8,8 +8,8 @@ namespace FasterGameLoading
     /// FGL 必須讓開的 Mod，分兩種保護：
     /// - 貼圖保護：外星人種族（HAR）、Ancot 函式庫及其衍生，加上 bionic icons。
     ///   它們的 bodyAddon、頭髮、耳朵與多遮罩貼圖不降質、不進 registry，開啟自適應烘焙時也不進靜態圖集。
-    /// - 提早載入保護：HAR 及其衍生、Ayameduki 與 AyaTweaks（WRK.）系列。
-    ///   它們的內容不提早載入，XML 也不平行解析。
+    /// - 提早載入保護：Ayameduki 與 AyaTweaks（WRK.）系列；HAR 及其衍生只在無法延後 HAR 的貼圖變體掃描時
+    ///   （見 <see cref="AlienRaceGraphicsHookGate"/>）才列入。它們的內容不提早載入，XML 也不平行解析。
     /// 判斷結果依 mod 快取，語言切換時重算。
     /// </summary>
     public static class ProtectedMods
@@ -20,6 +20,7 @@ namespace FasterGameLoading
         {
             "automatic.bionicicons",
             ModDependencyReflection.AlienRacesPackageId,
+            ModDependencyReflection.AlienRacesDevPackageId,
             AncotLibraryPackageId,
         };
 
@@ -104,24 +105,28 @@ namespace FasterGameLoading
             if (string.IsNullOrEmpty(packageId)) return false;
             if (packageId.StartsWith("Ayameduki.", StringComparison.OrdinalIgnoreCase)) return true;
             if (packageId.StartsWith("WRK.", StringComparison.OrdinalIgnoreCase)) return true;
-            if (packageId.Equals(ModDependencyReflection.AlienRacesPackageId, StringComparison.OrdinalIgnoreCase)) return true;
-            return ModDependencyReflection.DependsOnAlienRaces(metaData);
+            // HAR 的變體掃描已延後到所有內容載入完成，HAR 與其衍生不必再讓開。
+            if (AlienRaceGraphicsHookGate.DefersGraphicsHook) return false;
+            return ModDependencyReflection.IsAlienRaces(packageId) || ModDependencyReflection.DependsOnAlienRaces(metaData);
         }
 
         /// <summary>
         /// 單一 Mod 是否受貼圖保護：命中名單、為外星人種族衍生、或依賴 Ancot 函式庫。
-        /// RimWorld 的 PackageId 取自 About.xml（小寫化），Steam 版不帶 "_steam" 後綴，故直接比對即可。
+        /// 同一個 mod 同時有本機與 Workshop 副本時，Workshop 版的 PackageId 會帶 "_steam" 後綴，
+        /// 故同時比對不帶後綴的 PackageIdPlayerFacing。
         /// </summary>
         private static bool IsTextureProtected(ModContentPack mod)
         {
             if (mod == null) return false;
 
-            string packageId = mod.PackageId;
-            if (packageId != null && textureProtectedPackageIds.Contains(packageId)) return true;
+            if (IsListedTextureProtected(mod.PackageIdPlayerFacing) || IsListedTextureProtected(mod.PackageId)) return true;
 
             return ModDependencyReflection.DependsOnAlienRaces(mod.ModMetaData)
                 || ModDependencyReflection.DependsOnMod(mod.ModMetaData, AncotLibraryPackageId);
         }
+
+        private static bool IsListedTextureProtected(string packageId)
+            => packageId != null && textureProtectedPackageIds.Contains(packageId);
 
         /// <summary>從執行中的 mod 清單建立受貼圖保護的根目錄；清單尚未建立時下次再試。</summary>
         internal static void InitializeTextureRoots()

@@ -158,7 +158,7 @@ namespace FasterGameLoading.Tests
         }
 
         [Test]
-        public void TestEarlyLoadSyncScope_ResetRestoresOriginalValue()
+        public void TestEarlyLoadSyncScope_DisposeRestoresOriginalValue()
         {
             var started = false;
             ConfigureCoordinator(() => started, value => started = value);
@@ -166,14 +166,14 @@ namespace FasterGameLoading.Tests
             var scope = ImageOptEarlyLoadCoordinator.EnterEarlyLoadSyncScope();
             Assert.IsTrue(started);
 
-            ImageOptEarlyLoadCoordinator.ResetScopeForTests();
+            scope.Dispose();
             Assert.IsFalse(started);
             scope.Dispose();
             Assert.IsFalse(started);
         }
 
         [Test]
-        public void TestInstallFailure_IsFailOpenAndWarnsOnlyOnce()
+        public void TestInstallFailure_IsFailOpenAndWarnsEachTime()
         {
             var warningCalls = 0;
             ImageOptEarlyLoadCoordinator.SetWarningSinkForTests((message, ex) => warningCalls++);
@@ -181,9 +181,7 @@ namespace FasterGameLoading.Tests
             ImageOptEarlyLoadCoordinator.ReportInstallFailureForTests(new MissingMemberException("second"));
 
             Assert.IsFalse(ImageOptEarlyLoadCoordinator.IsInstalled);
-            Assert.IsTrue(ImageOptEarlyLoadCoordinator.WarningLogged);
-            Assert.AreEqual(1, ImageOptEarlyLoadCoordinator.WarningLogCount);
-            Assert.AreEqual(1, warningCalls);
+            Assert.AreEqual(2, warningCalls);
         }
 
         private static void ConfigureCoordinator(Func<bool> getter, Action<bool> setter)

@@ -221,7 +221,7 @@ namespace FasterGameLoading.Tests
         }
 
         [Test]
-        public void ThingsOfDefs_ExtractsMatchingThingsFromListerThings()
+        public void ThingsOfDefs_InlineSelectMany_ExtractsMatchingThingsFromListerThings()
         {
             var defA = Uninitialized<ThingDef>();
             var defB = Uninitialized<ThingDef>();
@@ -247,7 +247,8 @@ namespace FasterGameLoading.Tests
             var listsByDefField = AccessTools.Field(typeof(ListerThings), "listsByDef");
             listsByDefField?.SetValue(lister, listsByDef);
 
-            var result = lister.ThingsOfDefs(new[] { defA, defB, defC });
+            var defs = new[] { defA, defB, defC };
+            var result = defs.SelectMany(def => lister.ThingsOfDef(def) ?? Enumerable.Empty<Thing>()).ToList();
 
             Assert.That(result, Has.Count.EqualTo(3));
             Assert.That(result.Contains(thingA1), Is.True);

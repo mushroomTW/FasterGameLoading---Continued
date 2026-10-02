@@ -28,26 +28,16 @@ namespace FasterGameLoading
             Emit(Log.Message, Prefix + message);
         }
 
-        public static void Warning(string message)
+        public static void Warning(string message, Exception ex = null)
         {
-            Emit(Log.Warning, Prefix + message);
+            Emit(Log.Warning, ex == null ? Prefix + message : Prefix + message + "\n" + ex);
         }
 
-        public static void Warning(string message, Exception ex)
-        {
-            Emit(Log.Warning, Prefix + message + "\n" + ex);
-        }
-
-        public static void Error(string message)
-        {
-            Emit(Log.Error, Prefix + message);
-        }
-
-        public static void Error(string message, Exception ex)
+        public static void Error(string message, Exception ex = null)
         {
             // ex.ToString() 已包含完整的例外訊息與呼叫堆疊，不需再附加 new StackTrace()。
             // 以換行分隔，使「訊息以冒號結尾」時輸出自然（message:\n<例外>），避免「: - Exception:」的彆扭排版。
-            Emit(Log.Error, Prefix + message + "\n" + ex);
+            Emit(Log.Error, ex == null ? Prefix + message : Prefix + message + "\n" + ex);
         }
 
         /// <summary>

@@ -52,25 +52,7 @@ namespace FasterGameLoading
         public static void DestroyTemporaryUnityObject(UnityEngine.Object obj)
         {
             if (obj == null) return;
-            try
-            {
-                UnityEngine.Object.DestroyImmediate(obj);
-            }
-            catch (Exception ex)
-            {
-                if (FasterGameLoadingSettings.VerboseLogging)
-                {
-                    FGLLog.Warning($"DestroyImmediate failed, falling back to Destroy: {ex.Message}");
-                }
-                try
-                {
-                    UnityEngine.Object.Destroy(obj);
-                }
-                catch
-                {
-                    // Ignore double fault
-                }
-            }
+            UnityEngine.Object.DestroyImmediate(obj);
         }
 
         /// <summary>縮放後讀回的像素：RGBA32，列序與 Texture2D 的原始資料相同。</summary>

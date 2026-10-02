@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -83,48 +84,12 @@ namespace FasterGameLoading
         }
 
         // ── 延遲佇列 ──
-        // 三組型別佇列共用同一個私有泛型後端。
-        private sealed class DeferredQueue<TDef>
-        {
-            private readonly Queue<(TDef def, Action run)> queue = new();
+        // 生產者與消費者皆在主執行緒，改用 stdlib ConcurrentQueue 取代手搓 lock 包裝。
+        private readonly ConcurrentQueue<(ThingDef def, Action run)> graphicsToLoad = new();
 
-            public int Count
-            {
-                get { lock (queue) return queue.Count; }
-            }
+        private readonly ConcurrentQueue<(BuildableDef def, Action run)> iconsToLoad = new();
 
-            public void Enqueue(TDef def, Action run)
-            {
-                lock (queue)
-                {
-                    queue.Enqueue((def, run));
-                }
-            }
-
-            public bool TryDequeue(out TDef def, out Action run)
-            {
-                lock (queue)
-                {
-                    if (queue.Count > 0)
-                    {
-                        (def, run) = queue.Dequeue();
-                        return true;
-                    }
-                }
-                def = default;
-                run = default;
-                return false;
-            }
-
-            public void Clear()
-            {
-                lock (queue) queue.Clear();
-            }
-        }
-
-        private readonly DeferredQueue<ThingDef> graphicsToLoad = new();
-        private readonly DeferredQueue<BuildableDef> iconsToLoad = new();
-        private readonly DeferredQueue<SubSoundDef> subSoundDefToResolve = new();
+        private readonly ConcurrentQueue<(SubSoundDef def, Action run)> subSoundDefToResolve = new();
 
         internal int GraphicsToLoadCount => graphicsToLoad.Count;
 
@@ -132,19 +97,24 @@ namespace FasterGameLoading
 
         internal int SubSoundDefToResolveCount => subSoundDefToResolve.Count;
 
-        public void EnqueueGraphic(ThingDef def, Action action) => graphicsToLoad.Enqueue(def, action);
+        public void EnqueueGraphic(ThingDef def, Action action) => graphicsToLoad.Enqueue((def, action));
 
-        public void EnqueueIcon(BuildableDef def, Action action) => iconsToLoad.Enqueue(def, action);
+        public void EnqueueIcon(BuildableDef def, Action action) => iconsToLoad.Enqueue((def, action));
 
-        public void EnqueueSubSound(SubSoundDef def, Action action) => subSoundDefToResolve.Enqueue(def, action);
+        public void EnqueueSubSound(SubSoundDef def, Action action) => subSoundDefToResolve.Enqueue((def, action));
 
         /// <summary>語言切換時丟棄所有尚未執行的延遲動作，並回到尚未開始的階段。</summary>
         public void ClearQueues()
         {
-            graphicsToLoad.Clear();
-            iconsToLoad.Clear();
-            subSoundDefToResolve.Clear();
+            Clear(graphicsToLoad);
+            Clear(iconsToLoad);
+            Clear(subSoundDefToResolve);
             Phase = DeferredPhase.Idle;
+        }
+
+        private static void Clear<T>(ConcurrentQueue<T> queue)
+        {
+            while (queue.TryDequeue(out _)) { }
         }
 
         // ── 提早載入狀態與處理器 ──
@@ -255,10 +225,10 @@ namespace FasterGameLoading
         /// 三個預算協程的共用 driver：外層 while＋預算內批次＋yield＋RestartStopwatch。
         /// 圖形／圖示在非主執行緒時讓出執行權（防禦性保護）；音效解析不碰 Unity 物件，可直接執行。
         /// </summary>
-        private IEnumerator DrainQueue<TDef>(DeferredQueue<TDef> queue, Action<TDef, Action> runOne, bool requireMainThread)
+        private IEnumerator DrainQueue<TDef>(ConcurrentQueue<(TDef def, Action run)> queue, Action<TDef, Action> runOne, bool requireMainThread)
         {
             RestartStopwatch();
-            while (queue.Count > 0)
+            while (!queue.IsEmpty)
             {
                 // 協程只在主執行緒被恢復執行，此檢查僅為防禦性保護。
                 // 若非主執行緒，讓出執行權後由外層 while 重新檢查，不落穿到 Unity 工作。
@@ -267,15 +237,15 @@ namespace FasterGameLoading
                     yield return 0;
                     continue;
                 }
-                while (queue.Count > 0 && !IsOverBudget)
+                while (!queue.IsEmpty && !IsOverBudget)
                 {
-                    if (!queue.TryDequeue(out var def, out var run))
+                    if (!queue.TryDequeue(out var item))
                         break;
 
-                    runOne(def, run);
+                    runOne(item.def, item.run);
                 }
 
-                if (queue.Count > 0)
+                if (!queue.IsEmpty)
                 {
                     yield return 0;
                     RestartStopwatch();
@@ -334,7 +304,15 @@ namespace FasterGameLoading
                     {
                         if (map.mapDrawer.sections != null)
                         {
-                            foreach (var thing in map.listerThings.ThingsOfDefs(loadedDefs))
+                            // 快照語義：先收集再走訪，避免列舉期間 lister 變動；不使用 LINQ（啟動熱路徑 S3267）。
+                            var thingsToDirty = new List<Thing>();
+                            foreach (var def in loadedDefs)
+                            {
+                                var things = map.listerThings.ThingsOfDef(def);
+                                if (things == null) continue;
+                                thingsToDirty.AddRange(things);
+                            }
+                            foreach (var thing in thingsToDirty)
                             {
                                 map.mapDrawer.MapMeshDirty(thing.Position,
                                     MapMeshFlagDefOf.Things | MapMeshFlagDefOf.Buildings);
@@ -407,9 +385,9 @@ namespace FasterGameLoading
         /// </summary>
         internal void ResolvePendingSubSounds()
         {
-            while (subSoundDefToResolve.TryDequeue(out var def, out var run))
+            while (subSoundDefToResolve.TryDequeue(out var item))
             {
-                TryRunSubSoundAction(def, run, logError: true);
+                TryRunSubSoundAction(item.def, item.run, logError: true);
             }
             SoundStarter_Patch.Unpatch();
         }

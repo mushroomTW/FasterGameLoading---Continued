@@ -14,7 +14,6 @@ namespace FasterGameLoading
     public class EarlyModContentLoader
     {
         private Queue<ModContentPack> pendingEarlyLoads;
-        private bool useImageOptSyncScope;
         private int consecutiveTimeouts;
         private int skipFrames;
         private const int TIMEOUT_THRESHOLD = 3;
@@ -153,8 +152,6 @@ namespace FasterGameLoading
         /// <summary>建立本輪待提早載入的 Mod 清單（排除已載入與略過名單中的項目）。</summary>
         private void BuildPendingEarlyLoads()
         {
-            // ImageOpt 整合狀態在 Mod 初始化後不會改變；每輪提早載入只判斷一次。
-            useImageOptSyncScope = ImageOptEarlyLoadCoordinator.IsInstalled;
             var pending = LoadedModManager.RunningMods
                 .Where(static x => !ModContentPack_ReloadContentInt_Patch.loadedMods.Contains(x)
                             && !ProtectedMods.ShouldSkipEarlyLoad(x));
@@ -164,20 +161,12 @@ namespace FasterGameLoading
         /// <summary>
         /// 提早載入單一 Mod 的內容。載入失敗時不加入 loadedMods，讓正式流程可以重試。
         /// </summary>
-        private void LoadOneModContent(ModContentPack modToLoad)
+        private static void LoadOneModContent(ModContentPack modToLoad)
         {
             try
             {
-                if (useImageOptSyncScope)
+                using (ImageOptEarlyLoadCoordinator.EnterEarlyLoadSyncScope())
                 {
-                    using (ImageOptEarlyLoadCoordinator.EnterEarlyLoadSyncScope())
-                    {
-                        InvokeReloadContentInt(modToLoad);
-                    }
-                }
-                else
-                {
-                    // 未啟用 ImageOpt 時維持原始熱路徑，不建立或釋放空 scope。
                     InvokeReloadContentInt(modToLoad);
                 }
                 ModContentPack_ReloadContentInt_Patch.loadedMods.Add(modToLoad);

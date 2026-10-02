@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using RimWorld;
 using Verse;
 
@@ -19,14 +18,6 @@ namespace FasterGameLoading
             if (path == null) return null;
             return path.Replace('\\', '/');
         }
-        /// <summary>
-        /// 根據指定的 ThingDef 集合，從 ListerThings 中取出所有對應的 Thing。
-        /// </summary>
-        public static IReadOnlyList<Thing> ThingsOfDefs(this ListerThings listerThings, IEnumerable<ThingDef> defs)
-        {
-            return defs.SelectMany(def => listerThings.ThingsOfDef(def) ?? Enumerable.Empty<Thing>()).ToList();
-        }
-
         /// <summary>
         /// 回傳不大於輸入值的最大 2 的冪次。
         /// 例如：輸入 1000 → 512，輸入 2048 → 2048。

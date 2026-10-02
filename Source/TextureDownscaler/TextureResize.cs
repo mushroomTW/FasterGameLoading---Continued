@@ -388,18 +388,7 @@ namespace FasterGameLoading
         }
 
         /// <summary>判斷此服裝是否需要以 pack 模式渲染（Utility 層預設為 true）。</summary>
-        public static bool RenderAsPack(ThingDef def)
-        {
-            if (def.apparel.LastLayer.IsUtilityLayer)
-            {
-                if (def.apparel.wornGraphicData != null)
-                {
-                    return def.apparel.wornGraphicData.renderUtilityAsPack;
-                }
-                return true;
-            }
-            return false;
-        }
+        public static bool RenderAsPack(ThingDef def) => def.apparel.LastLayer.IsUtilityLayer && (def.apparel.wornGraphicData?.renderUtilityAsPack ?? true);
 
         // ════════════════════════════════════════════════════════════════
         //  紋理類型判斷

@@ -121,7 +121,7 @@ namespace FasterGameLoading.Tests.Compatibility
         }
 
         [Test]
-        public void ReportInstallFailureForTests_LogsWarningOnlyOnce()
+        public void ReportInstallFailureForTests_LogsWarningEachTime()
         {
             var warningCount = 0;
             ImageOptEarlyLoadCoordinator.SetWarningSinkForTests((msg, ex) => warningCount++);
@@ -130,9 +130,7 @@ namespace FasterGameLoading.Tests.Compatibility
             ImageOptEarlyLoadCoordinator.ReportInstallFailureForTests(new Exception("Error 2"));
 
             Assert.That(ImageOptEarlyLoadCoordinator.IsInstalled, Is.False);
-            Assert.That(ImageOptEarlyLoadCoordinator.WarningLogged, Is.True);
-            Assert.That(ImageOptEarlyLoadCoordinator.WarningLogCount, Is.EqualTo(1));
-            Assert.That(warningCount, Is.EqualTo(1));
+            Assert.That(warningCount, Is.EqualTo(2));
         }
     }
 }

@@ -18,17 +18,12 @@ namespace FasterGameLoading
         /// </summary>
         public static void WriteAllBytesWithRetry(string path, byte[] bytes, int maxRetries = 3, int delayMs = 100)
         {
-            WriteWithRetry(path, tmp => File.WriteAllBytes(tmp, bytes), maxRetries, delayMs);
-        }
-
-        private static void WriteWithRetry(string path, Action<string> writeAction, int maxRetries, int delayMs)
-        {
             string tmp = path + ".tmp";
             for (int i = 0; i < maxRetries; i++)
             {
                 try
                 {
-                    writeAction(tmp);
+                    File.WriteAllBytes(tmp, bytes);
                     MoveOrReplace(tmp, path);
                     return;
                 }
@@ -58,10 +53,7 @@ namespace FasterGameLoading
         {
             try
             {
-                if (File.Exists(path))
-                {
-                    File.Delete(path);
-                }
+                File.Delete(path);
             }
             catch (Exception)
             {

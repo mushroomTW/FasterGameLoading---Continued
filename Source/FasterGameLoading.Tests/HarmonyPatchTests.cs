@@ -276,9 +276,9 @@ namespace FasterGameLoading.Tests
             Assert.IsTrue(
                 Array.Exists(declaredMethods, m => MethodBodyContainsMetadataToken(m, enterSyncScope)),
                 "FGL early content loading should enter the ImageOpt synchronous scope.");
-            Assert.IsTrue(
+            Assert.IsFalse(
                 Array.Exists(declaredMethods, m => MethodBodyContainsMetadataToken(m, imageOptInstalledGetter)),
-                "FGL should cache whether the ImageOpt synchronous scope is required.");
+                "IsInstalled is checked inside EnterEarlyLoadSyncScope; callers must not branch on it.");
             Assert.IsFalse(
                 Array.Exists(declaredMethods, m => MethodBodyContainsMetadataToken(m, imageOptActiveGetter)),
                 "ImageOpt should not globally disable FGL early content loading.");

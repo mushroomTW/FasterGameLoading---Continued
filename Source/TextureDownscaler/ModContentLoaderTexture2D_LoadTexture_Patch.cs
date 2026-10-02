@@ -27,20 +27,12 @@ namespace FasterGameLoading
         /// <summary>啟動完成後設為 true，讓仍在執行的預讀迴圈提早結束。</summary>
         private static volatile bool _preloadStopped;
         private static Task _preloadTask = Task.CompletedTask;
-        /// <summary>紋理快取命中次數。</summary>
-        private static int cacheLoadHitsValue;
-        public static int cacheLoadHits
-        {
-            get => Volatile.Read(ref cacheLoadHitsValue);
-            set => Interlocked.Exchange(ref cacheLoadHitsValue, value);
-        }
-        /// <summary>紋理快取失敗次數。</summary>
-        private static int cacheLoadFailuresValue;
-        public static int cacheLoadFailures
-        {
-            get => Volatile.Read(ref cacheLoadFailuresValue);
-            set => Interlocked.Exchange(ref cacheLoadFailuresValue, value);
-        }
+        /// <summary>紋理快取命中次數。公開供診斷／測試讀寫，寫入請經 Interlocked。</summary>
+#pragma warning disable MA0069
+        public static int cacheLoadHits;
+        /// <summary>紋理快取失敗次數。公開供診斷／測試讀寫，寫入請經 Interlocked。</summary>
+        public static int cacheLoadFailures;
+#pragma warning restore MA0069
 
         static ModContentLoaderTexture2D_LoadTexture_Patch()
         {
@@ -221,7 +213,7 @@ namespace FasterGameLoading
                         tex.name = Path.GetFileNameWithoutExtension(fullPath);
                         LoadedTextureRegistry.Record(fullPath, tex);
                         LoadedTextureRegistry.MarkSkipBakingIfProtected(fullPath, tex);
-                        Interlocked.Increment(ref cacheLoadHitsValue);
+                        Interlocked.Increment(ref cacheLoadHits);
                         result = tex;
                         textureAccepted = true;
                         return true;
@@ -244,7 +236,7 @@ namespace FasterGameLoading
             }
 
             FasterGameLoadingMod.Instance.CacheManager.RemoveCachedTexturePath(fullPath);
-            Interlocked.Increment(ref cacheLoadFailuresValue);
+            Interlocked.Increment(ref cacheLoadFailures);
             return false;
         }
 

@@ -10,6 +10,7 @@ namespace FasterGameLoading
     {
         private const string TextureLoadPatchTypeName = "ImageOpt.TextureLoadPatch";
         private const string StartedFieldName = "Started";
+        private const string FailOpenMessage = "ImageOpt Early Loading synchronization could not be enabled. Early Loading remains active, but ImageOpt missing-ID errors may recur:";
 
         private static Func<bool> getStarted;
         private static Action<bool> setStarted;
@@ -17,19 +18,8 @@ namespace FasterGameLoading
 
         private static bool installed;
         private static bool installAttempted;
-        private static bool warningLogged;
-        private static int warningLogCount;
-        private static int syncScopeDepth;
-        private static bool syncScopeChangedStarted;
-
-        static ImageOptEarlyLoadCoordinator()
-        {
-            SessionLifecycle.On(LifecyclePhase.LanguageReloading, ResetScopeState);
-        }
 
         internal static bool IsInstalled => installed;
-        internal static bool WarningLogged => warningLogged;
-        internal static int WarningLogCount => warningLogCount;
 
         internal static void TryInstall()
         {
@@ -54,85 +44,65 @@ namespace FasterGameLoading
             catch (Exception ex)
             {
                 installed = false;
-                WarnFailOpen(ex);
+                logWarning(FailOpenMessage, ex);
             }
         }
 
         /// <summary>
         /// 讓 FGL 直接觸發的 ReloadContentInt 暫時走 ImageOpt 同步路徑。
+        /// 非重入：正式路徑為單層 using，每個 scope 快照進入時的旗標並在 Dispose 還原。
         /// </summary>
         internal static IDisposable EnterEarlyLoadSyncScope()
         {
-            if (!installed) return new SyncScope();
+            if (!installed || getStarted == null || setStarted == null) return new SyncScope(startedFlagSet: false);
 
-            if (syncScopeDepth++ is 0)
+            bool prior;
+            try
             {
-                syncScopeChangedStarted = !getStarted();
-                if (syncScopeChangedStarted)
-                {
-                    setStarted(true);
-                }
+                prior = getStarted();
+            }
+            catch
+            {
+                return new SyncScope(startedFlagSet: false);
             }
 
-            return new SyncScope();
-        }
+            if (prior) return new SyncScope(startedFlagSet: false);
 
-        // S3398: 此方法目前只被巢狀的 SyncScope.Dispose 呼叫，分析器因此建議搬進去。
-        // 但 Enter/Exit 是一組成對的協定：兩者共同維護 syncScopeDepth 與
-        // syncScopeChangedStarted 這兩個外層靜態狀態，且退出時的還原條件必須對照
-        // 進入時的判斷才讀得懂。把 Exit 搬進 SyncScope 會讓這組協定被拆到兩個型別，
-        // 故維持現狀。
-#pragma warning disable S3398
-        private static void ExitEarlyLoadSyncScope()
-#pragma warning restore S3398
-        {
-            if (syncScopeDepth <= 0) return;
-            if (--syncScopeDepth is not 0) return;
-
-            if (syncScopeChangedStarted)
+            try
             {
-                setStarted(false);
+                setStarted(true);
             }
-            syncScopeChangedStarted = false;
-        }
-
-        private static void WarnFailOpen(Exception ex)
-        {
-            if (warningLogged) return;
-            warningLogged = true;
-            warningLogCount++;
-            logWarning(
-                "ImageOpt Early Loading synchronization could not be enabled. Early Loading remains active, but ImageOpt missing-ID errors may recur:",
-                ex);
-        }
-
-        private static void ResetScopeState()
-        {
-            if (syncScopeDepth > 0 && syncScopeChangedStarted && setStarted != null)
+            catch
             {
+                return new SyncScope(startedFlagSet: false);
+            }
+
+            return new SyncScope(startedFlagSet: true);
+        }
+
+        private sealed class SyncScope : IDisposable
+        {
+            private readonly bool startedFlagSet;
+            private bool disposed;
+
+            public SyncScope(bool startedFlagSet)
+            {
+                this.startedFlagSet = startedFlagSet;
+            }
+
+            public void Dispose()
+            {
+                if (disposed) return;
+                disposed = true;
+                if (!startedFlagSet) return;
                 try
                 {
                     setStarted(false);
                 }
                 catch
                 {
-                    // 還原 ImageOpt 的 started 旗標屬於盡力而為的收尾：ImageOpt 版本異動
-                    // 導致欄位不存在時，setter 會拋例外，但此時已無可還原的狀態，忽略即可。
+                    // 還原旗標屬盡力而為，忽略版本異動導致的例外。
                 }
-            }
-            syncScopeDepth = 0;
-            syncScopeChangedStarted = false;
-        }
-
-        private sealed class SyncScope : IDisposable
-        {
-            private bool disposed;
-
-            public void Dispose()
-            {
-                if (disposed) return;
-                disposed = true;
-                ExitEarlyLoadSyncScope();
             }
         }
 
@@ -145,18 +115,12 @@ namespace FasterGameLoading
             getStarted = startedGetter;
             setStarted = startedSetter;
             installed = enabled;
-            ResetScopeState();
         }
 
         internal static void ReportInstallFailureForTests(Exception ex)
         {
             installed = false;
-            WarnFailOpen(ex);
-        }
-
-        internal static void ResetScopeForTests()
-        {
-            ResetScopeState();
+            logWarning(FailOpenMessage, ex);
         }
 
         internal static void SetWarningSinkForTests(Action<string, Exception> sink)
@@ -167,12 +131,9 @@ namespace FasterGameLoading
         internal static void ResetTestConfiguration()
         {
             installed = false;
-            warningLogged = false;
-            warningLogCount = 0;
             getStarted = null;
             setStarted = null;
             logWarning = (message, ex) => FGLLog.Warning(message, ex);
-            ResetScopeState();
         }
         #endregion
     }

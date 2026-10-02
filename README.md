@@ -59,6 +59,7 @@ Manual tool:
 > Brief startup unresponsiveness can be normal, especially with large mod lists. Startup sound playback is temporarily held until deferred sound definitions finish resolving, then released automatically.
 > **Delay graphic and icon loading** is an advanced option. If you see texture or icon timing issues, disable it first.
 > Downscaled texture cache can be cleared from the mod settings.
+> Translations are provided for English, Simplified Chinese, Traditional Chinese and Russian. Other languages, and keys missing from a translation, fall back to English through RimWorld's own translation lookup, so with Dev Mode on they show RimWorld's pseudo-translated (accented) English, its marker for untranslated text.
 
 ## Compatibility
 

@@ -224,8 +224,10 @@ namespace FasterGameLoading.InGameTests
         public static readonly Dictionary<int, int> Runs = new Dictionary<int, int>();
         public static readonly List<(int round, string packageId)> ModsMissingAtRun = new List<(int, string)>();
 
-        private static readonly MethodBase Target = AccessTools.Method("AlienRace.AlienPartGenerator:LoadGraphicsHook");
-        private static readonly FieldInfo GraphicsQueue = AccessTools.Field("AlienRace.AlienPartGenerator:graphicsQueue");
+        // 沒有 HAR 時 AccessTools.Field("型別:欄位") 會丟 NullReferenceException（而非回傳 null），導致本 mod 建構子失敗、測試不會執行
+        private static readonly System.Type AlienPartGenerator = AccessTools.TypeByName("AlienRace.AlienPartGenerator");
+        private static readonly MethodBase Target = AlienPartGenerator == null ? null : AccessTools.Method(AlienPartGenerator, "LoadGraphicsHook");
+        private static readonly FieldInfo GraphicsQueue = AlienPartGenerator == null ? null : AccessTools.Field(AlienPartGenerator, "graphicsQueue");
 
         public static bool HarActive => Target != null;
 

@@ -15,7 +15,7 @@ namespace FasterGameLoading.InGameTests
     /// </summary>
     internal static class LanguageReload
     {
-        /// <summary>選一個 FGL 沒有提供翻譯的語言，讓第 2 輪同時走 TranslationInjector 的英文退回。</summary>
+        /// <summary>選一個 FGL 沒有提供翻譯的語言，讓第 2 輪同時走原版 Translate() 的英文退回。</summary>
         private const string TargetLanguagePrefix = "Japanese";
 
         public static string FromLanguage { get; private set; }
@@ -82,7 +82,7 @@ namespace FasterGameLoading.InGameTests
             Assert.That(LanguageDatabase.activeLanguage.folderName).Is.EqualTo(LanguageReload.ToLanguage);
         }
 
-        /// <summary>第 2 輪的語言沒有 FGL 翻譯資料夾，TranslationTests 才真的走到英文退回。</summary>
+        /// <summary>第 2 輪的語言沒有 FGL 翻譯資料夾，TranslationTests 才真的走到原版英文退回。</summary>
         [Test]
         public static void ReloadRoundExercisesEnglishFallback()
         {

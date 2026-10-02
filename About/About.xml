@@ -6,7 +6,7 @@
     <li>1.6</li>
   </supportedVersions>
   <packageId>Taranchuk.FasterGameLoading</packageId>
-  <modVersion>2026.10.02.3</modVersion>
+  <modVersion>2026.10.02.4</modVersion>
   <description>
 === Does loading take forever? This mod is for you! ===
 
@@ -33,7 +33,7 @@ Sick of staring at the loading screen every time you start RimWorld? This mod cu
 - FGL's guard against loading the same AssetBundles twice runs before ChezhouLib's AssetBundle loader; otherwise ChezhouLib's loader would skip the guard entirely.
 - Early mod content loading now includes official Core/DLC packs as well as player mods.
 - For Graphics Settings+ (Optimize Texture), the texture downscaler will step aside. (Converting to DDS is actually more efficient and has higher quality than directly downscaled images, so it is recommended to use the texture downscaler only when you cannot use such tools)
-- Image Opt compatibility is no longer maintained. When both mods are enabled together, mods that depend on Ancot Library may show missing or black textures under some loading conditions; the remaining safeguards (downscaled-texture bypass, invalid .dds cache cleanup) do not guarantee compatibility. Using both mods together is not recommended.
+- Image Opt compatibility is no longer maintained. When both mods are enabled together, mods that depend on Ancot Library may show missing or black textures under some loading conditions; the remaining safeguards (downscaled-texture bypass, invalid .dds cache cleanup) do not guarantee compatibility. Using both mods together is not recommended; use Image Opt fork (Steam Workshop id 3781013698) instead, an alternative patched by its author for compatibility with this mod. Load it after this mod.
 
 --- Works well with ---
 

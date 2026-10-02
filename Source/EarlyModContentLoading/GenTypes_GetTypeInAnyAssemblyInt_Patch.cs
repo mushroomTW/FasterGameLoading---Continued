@@ -117,27 +117,32 @@ namespace FasterGameLoading
 
             if (__result != null)
             {
-                var fullName = __result.FullName;
-                if (string.IsNullOrEmpty(fullName))
+                RecordResolvedType(__result, __state.originalTypeName, __state.namespaceIfAmbiguous, __state.cacheKey, __state.isCached);
+            }
+        }
+
+        private static void RecordResolvedType(Type result, string originalTypeName, string namespaceIfAmbiguous, string cacheKey, bool isCached)
+        {
+            var fullName = result.FullName;
+            if (string.IsNullOrEmpty(fullName))
+            {
+                return;
+            }
+            if (!isCached)
+            {
+                cachedResults[cacheKey] = result;
+                if (!string.Equals(fullName, originalTypeName, StringComparison.Ordinal))
                 {
-                    return;
-                }
-                if (!__state.isCached)
-                {
-                    cachedResults[__state.cacheKey] = __result;
-                    if (!string.Equals(fullName, __state.originalTypeName, StringComparison.Ordinal))
+                    cachedResults[MakeCacheKey(fullName, namespaceIfAmbiguous: null)] = result;
+                    if (!string.IsNullOrEmpty(namespaceIfAmbiguous))
                     {
-                        cachedResults[MakeCacheKey(fullName, namespaceIfAmbiguous: null)] = __result;
-                        if (!string.IsNullOrEmpty(__state.namespaceIfAmbiguous))
-                        {
-                            cachedResults[MakeCacheKey(fullName, __state.namespaceIfAmbiguous)] = __result;
-                        }
+                        cachedResults[MakeCacheKey(fullName, namespaceIfAmbiguous)] = result;
                     }
                 }
-                if (!string.Equals(__state.originalTypeName, fullName, StringComparison.Ordinal))
-                {
-                    loadedTypesThisSession[__state.cacheKey] = fullName;
-                }
+            }
+            if (!string.Equals(originalTypeName, fullName, StringComparison.Ordinal))
+            {
+                loadedTypesThisSession[cacheKey] = fullName;
             }
         }
 

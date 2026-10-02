@@ -29,23 +29,43 @@ namespace FasterGameLoading
                 try
                 {
                     writeAction(tmp);
-                    if (File.Exists(path))
-                    {
-                        // .NET 4.7.2 的 File.Move 不支援覆寫，目標存在時以 File.Replace 原子性替換。
-                        File.Replace(tmp, path, destinationBackupFileName: null);
-                    }
-                    else
-                    {
-                        File.Move(tmp, path);
-                    }
+                    MoveOrReplace(tmp, path);
                     return;
                 }
                 catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
                 {
-                    try { if (File.Exists(tmp)) File.Delete(tmp); } catch { }
+                    TryDeleteFile(tmp);
                     if (i == maxRetries - 1) throw;
                     Thread.Sleep(delayMs);
                 }
+            }
+        }
+
+        private static void MoveOrReplace(string tmp, string path)
+        {
+            if (File.Exists(path))
+            {
+                // .NET 4.7.2 的 File.Move 不支援覆寫，目標存在時以 File.Replace 原子性替換。
+                File.Replace(tmp, path, destinationBackupFileName: null);
+            }
+            else
+            {
+                File.Move(tmp, path);
+            }
+        }
+
+        private static void TryDeleteFile(string path)
+        {
+            try
+            {
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+            }
+            catch (Exception)
+            {
+                // 忽略暫存檔刪除失敗的例外，避免遮蔽主要 I/O 例外
             }
         }
     }

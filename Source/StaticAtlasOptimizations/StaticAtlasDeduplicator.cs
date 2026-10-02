@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 using HarmonyLib;
@@ -108,43 +108,67 @@ namespace FasterGameLoading
             var removed = new List<(T item, TextureAtlasGroup group)>();
             foreach (bool masked in MaskStates)
             {
-                if (!queue.TryGetValue(new TextureAtlasGroupKey { group = TextureAtlasGroup.Building, hasMask = masked }, out var building))
+                if (!TryBuildEligibleBuildingSet(queue, masked, out var buildingSet))
                 {
                     continue;
                 }
-                var buildingSet = new HashSet<T>(building.Item2, building.Item2.Comparer);
-                // fallback 會搜尋所有圖集，不只 Building；任何相反遮罩狀態都可能先被命中。
-                foreach (var queuedGroup in queue)
-                {
-                    if (queuedGroup.Key.hasMask != masked)
-                    {
-                        buildingSet.ExceptWith(queuedGroup.Value.Item2);
-                    }
-                }
+
                 foreach (var group in CopyGroups)
                 {
-                    var key = new TextureAtlasGroupKey { group = group, hasMask = masked };
-                    if (!queue.TryGetValue(key, out var entry))
-                    {
-                        continue;
-                    }
-                    var (items, itemSet) = entry;
-                    foreach (T item in items)
-                    {
-                        if (item != null && buildingSet.Contains(item))
-                        {
-                            removed.Add((item, group));
-                            itemSet.Remove(item);
-                        }
-                    }
-                    items.RemoveAll(item => item != null && buildingSet.Contains(item));
-                    if (items.Count is 0)
-                    {
-                        queue.Remove(key);
-                    }
+                    DeduplicateGroup(queue, new TextureAtlasGroupKey { group = group, hasMask = masked }, buildingSet, removed);
                 }
             }
             return removed;
+        }
+
+        private static bool TryBuildEligibleBuildingSet<T>(
+            Dictionary<TextureAtlasGroupKey, (List<T>, HashSet<T>)> queue,
+            bool masked,
+            out HashSet<T> buildingSet)
+            where T : class
+        {
+            if (!queue.TryGetValue(new TextureAtlasGroupKey { group = TextureAtlasGroup.Building, hasMask = masked }, out var building))
+            {
+                buildingSet = null;
+                return false;
+            }
+            buildingSet = new HashSet<T>(building.Item2, building.Item2.Comparer);
+            // fallback 會搜尋所有圖集，不只 Building；任何相反遮罩狀態都可能先被命中。
+            foreach (var queuedGroup in queue)
+            {
+                if (queuedGroup.Key.hasMask != masked)
+                {
+                    buildingSet.ExceptWith(queuedGroup.Value.Item2);
+                }
+            }
+            return true;
+        }
+
+        private static void DeduplicateGroup<T>(
+            Dictionary<TextureAtlasGroupKey, (List<T>, HashSet<T>)> queue,
+            TextureAtlasGroupKey key,
+            HashSet<T> buildingSet,
+            List<(T item, TextureAtlasGroup group)> removed)
+            where T : class
+        {
+            if (!queue.TryGetValue(key, out var entry))
+            {
+                return;
+            }
+            var (items, itemSet) = entry;
+            foreach (T item in items)
+            {
+                if (item != null && buildingSet.Contains(item))
+                {
+                    removed.Add((item, key.group));
+                    itemSet.Remove(item);
+                }
+            }
+            items.RemoveAll(item => item != null && buildingSet.Contains(item));
+            if (items.Count is 0)
+            {
+                queue.Remove(key);
+            }
         }
     }
 }

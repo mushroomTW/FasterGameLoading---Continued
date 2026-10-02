@@ -123,7 +123,9 @@ namespace FasterGameLoading.Tests.TextureDownscaler
             var expected = NewDetachedTexture();
             UseLoader(_ =>
             {
+#pragma warning disable S2925 // 模擬逾時情境的長耗時載入操作
                 Thread.Sleep(TestTimeoutMs + 300);
+#pragma warning restore S2925
                 return expected;
             });
 
@@ -144,7 +146,7 @@ namespace FasterGameLoading.Tests.TextureDownscaler
             });
             var first = Task.Run(() => MainThreadTextureLoader.Load(new FakeVirtualFile("d.png")));
             var second = Task.Run(() => MainThreadTextureLoader.Load(new FakeVirtualFile("e.png")));
-            Assert.That(SpinWait.SpinUntil(() => MainThreadTextureLoader.PendingCount == 2, TimeSpan.FromSeconds(2)), Is.True);
+            Assert.That(SpinWait.SpinUntil(() => MainThreadTextureLoader.PendingCount is 2, TimeSpan.FromSeconds(2)), Is.True);
 
             MainThreadTextureLoader.Drain();
 

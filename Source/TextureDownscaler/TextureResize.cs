@@ -30,7 +30,7 @@ namespace FasterGameLoading
         private long lastDownscaledPixelCount;
 
         /// <summary>單一紋理的縮放候選資訊。</summary>
-        private struct TextureResizeCandidate
+        internal struct TextureResizeCandidate
         {
             public Texture source;
             public string path;
@@ -168,12 +168,7 @@ namespace FasterGameLoading
             {
                 for (int i = 0; i < candidates.Count && fatal == null; i++)
                 {
-                    for (int ahead = i; ahead < Math.Min(candidates.Count, i + OriginalReadAhead); ahead++)
-                    {
-                        if (reads[ahead] != null) continue;
-                        var path = candidates[ahead].path;
-                        reads[ahead] = Task.Run(() => ReadOriginalBytes(path));
-                    }
+                    ScheduleReadsAhead(reads, candidates, i);
 
                     var pending = Render(candidates[i], rebuild.GetCachePath(candidates[i].path), reads[i].Result);
                     reads[i] = null;
@@ -191,12 +186,23 @@ namespace FasterGameLoading
             return resizedCount;
         }
 
+        private static void ScheduleReadsAhead(Task<byte[]>[] reads, List<TextureResizeCandidate> candidates, int startIndex)
+        {
+            for (int ahead = startIndex; ahead < Math.Min(candidates.Count, startIndex + OriginalReadAhead); ahead++)
+            {
+                if (reads[ahead] != null) continue;
+                var path = candidates[ahead].path;
+                reads[ahead] = Task.Run(() => ReadOriginalBytes(path));
+            }
+        }
+
         /// <summary>
         /// 執行單一紋理降質：載入原始 PNG → 按比例縮放 → 輸出 PNG 到 <paramref name="cachePath"/>，步驟與 <see cref="ResizeAll"/> 相同。
+        /// 供遊戲內整合測試（InGameTests）作為單張紋理降質驗證進入點使用。
         /// 寫入成功才回傳 true，由呼叫端登記快取項目；個別紋理無法處理時回傳 false（略過該張），
         /// 寫入快取檔的 IO 錯誤則往外拋，讓 <see cref="TextureCacheManager.Rebuild"/> 放棄整批並保留原本的快取。
         /// </summary>
-        private bool ResizeTexture(TextureResizeCandidate candidate, string cachePath)
+        internal bool ResizeTexture(TextureResizeCandidate candidate, string cachePath)
         {
             var pending = Render(candidate, cachePath, ReadOriginalBytes(candidate.path));
             if (pending == null) return false;
@@ -296,18 +302,18 @@ namespace FasterGameLoading
             return aligned > sourceLength ? length & ~3 : aligned;
         }
 
-        /// <summary>從磁碟讀取原始 PNG，可在背景執行緒呼叫。讀不到時回傳 null，由呼叫端使用記憶體中的版本。</summary>
+        /// <summary>從磁碟讀取原始 PNG，可在背景執行緒呼叫。讀不到時回傳空陣列，由呼叫端使用記憶體中的版本。</summary>
         private static byte[] ReadOriginalBytes(string path)
         {
             try
             {
-                return File.Exists(path) ? File.ReadAllBytes(path) : null;
+                return File.Exists(path) ? File.ReadAllBytes(path) : Array.Empty<byte>();
             }
             catch (Exception ex)
             {
                 // 無法從磁碟讀取原始紋理，caller 會改用記憶體中的版本作為 fallback
                 FGLLog.Warning("Cannot load original texture from disk, using in-memory copy:", ex);
-                return null;
+                return Array.Empty<byte>();
             }
         }
 
@@ -315,7 +321,7 @@ namespace FasterGameLoading
         private static bool TryDecodeOriginalTexture(string path, byte[] data, out Texture2D texture)
         {
             texture = null;
-            if (data == null) return false;
+            if (data == null || data.Length is 0) return false;
             try
             {
                 texture = new Texture2D(FGLConsts.PlaceholderTextureSize, FGLConsts.PlaceholderTextureSize, TextureFormat.RGBA32, mipChain: false);

@@ -116,6 +116,14 @@ namespace FasterGameLoading
                 BuildPendingEarlyLoads();
             }
 
+            if (ProcessPendingEarlyLoads(delayedActions))
+            {
+                EarlyLoadingComplete = true;
+            }
+        }
+
+        private bool ProcessPendingEarlyLoads(DelayedActions delayedActions)
+        {
             delayedActions.RestartStopwatch();
             while (pendingEarlyLoads.Count > 0)
             {
@@ -134,13 +142,12 @@ namespace FasterGameLoading
                         consecutiveTimeouts = 0;
                         skipFrames = SKIP_FRAME_COUNT;
                     }
-                    return;
+                    return false;
                 }
 
                 consecutiveTimeouts = 0;
             }
-
-            EarlyLoadingComplete = true;
+            return true;
         }
 
         /// <summary>建立本輪待提早載入的 Mod 清單（排除已載入與略過名單中的項目）。</summary>

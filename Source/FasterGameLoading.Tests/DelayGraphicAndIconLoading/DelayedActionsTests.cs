@@ -87,7 +87,7 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
             }
         }
 
-        private void CaptureSettings(bool delay, bool adaptive)
+        private static void CaptureSettings(bool delay, bool adaptive)
         {
             FasterGameLoadingSettings.DelayGraphicLoading = delay;
             FasterGameLoadingSettings.StaticAtlasesBaking = adaptive;

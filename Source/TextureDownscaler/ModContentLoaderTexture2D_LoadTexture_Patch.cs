@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Threading;
@@ -74,39 +75,46 @@ namespace FasterGameLoading
 
             if (cacheCopy.Count is 0) return;
 
-            _preloadTask = Task.Run(() =>
+            _preloadTask = Task.Run(() => PreloadTexturesWorker(cacheCopy.Values));
+        }
+
+        private static void PreloadTexturesWorker(ICollection<string> cachePaths)
+        {
+            try
             {
-                try
+                // 延遲 150ms 啟動，避免與啟動時最密集的 XML/Def I/O 爭奪頻寬
+                Thread.Sleep(FGLConsts.TexturePreloadDelayMs);
+                foreach (var cachePath in cachePaths)
                 {
-                    // 延遲 150ms 啟動，避免與啟動時最密集的 XML/Def I/O 爭奪頻寬
-                    Thread.Sleep(FGLConsts.TexturePreloadDelayMs);
-                    foreach (var cachePath in cacheCopy.Values)
+                    if (_preloadStopped) break;
+                    if (string.IsNullOrEmpty(cachePath) || _servedCachePaths.ContainsKey(cachePath)) continue;
+                    TryPreloadSingleCache(cachePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                FGLLog.Warning("Error preloading cached textures:", ex);
+            }
+        }
+
+        private static void TryPreloadSingleCache(string cachePath)
+        {
+            try
+            {
+                if (File.Exists(cachePath))
+                {
+                    var bytes = File.ReadAllBytes(cachePath);
+                    // 讀檔期間主執行緒可能已自行讀取同一檔案，那份就不必保留。
+                    if (!_servedCachePaths.ContainsKey(cachePath))
                     {
-                        if (_preloadStopped) break;
-                        if (string.IsNullOrEmpty(cachePath) || _servedCachePaths.ContainsKey(cachePath)) continue;
-                        try
-                        {
-                            if (File.Exists(cachePath))
-                            {
-                                var bytes = File.ReadAllBytes(cachePath);
-                                // 讀檔期間主執行緒可能已自行讀取同一檔案，那份就不必保留。
-                                if (!_servedCachePaths.ContainsKey(cachePath))
-                                {
-                                    preloadedCacheBytes[cachePath] = bytes;
-                                }
-                            }
-                        }
-                        catch
-                        {
-                            // 忽略個別快取讀取錯誤
-                        }
+                        preloadedCacheBytes[cachePath] = bytes;
                     }
                 }
-                catch (Exception ex)
-                {
-                    FGLLog.Warning("Error preloading cached textures:", ex);
-                }
-            });
+            }
+            catch
+            {
+                // 忽略個別快取讀取錯誤
+            }
         }
 
         /// <summary>

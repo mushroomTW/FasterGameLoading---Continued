@@ -160,3 +160,7 @@ dotnet_diagnostic.MA0002.severity = none
 dotnet_diagnostic.MA0006.severity = none
 dotnet_diagnostic.MA0074.severity = none
 dotnet_diagnostic.MA0076.severity = none
+# CA1861: 建議使用 static readonly 欄位取代常數陣列引數。
+# 測試專案中直接在呼叫處寫入字面常數陣列能提供最佳的上下文與可讀性，
+# 在測試執行中避免微量陣列配置並無效能意義，反而增加宣告跳轉負擔，故於測試專案停用。
+dotnet_diagnostic.CA1861.severity = none

@@ -73,7 +73,9 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
             Assert.That(buffer.WaitForRoom(0, sequence, 10, timeoutMs: 0), Is.False);
 
             var waiting = Task.Run(() => buffer.WaitForRoom(0, sequence, 10, timeoutMs: 5000));
+#pragma warning disable S2925 // 需等待背景任務進入 Monitor.Wait 狀態
             Thread.Sleep(50);
+#pragma warning restore S2925
             Assert.That(waiting.IsCompleted, Is.False);
             Assert.That(buffer.TryTake("a.png", out _), Is.True);
             Assert.That(waiting.Wait(5000) && waiting.Result, Is.True);
@@ -122,7 +124,9 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
             Prefetch(buffer, "a.png", 10);
             Assert.That(buffer.TryRegister("b.png", 0, out var sequence), Is.True);
             var waiting = Task.Run(() => buffer.WaitForRoom(0, sequence, 10, timeoutMs: 5000));
+#pragma warning disable S2925 // 需等待背景任務進入 Monitor.Wait 狀態
             Thread.Sleep(50);
+#pragma warning restore S2925
 
             buffer.Stop();
 

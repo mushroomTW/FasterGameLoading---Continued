@@ -102,7 +102,7 @@ namespace FasterGameLoading
         }
 
         /// <summary>
-        /// 純函式：以與載入順序無關的方式（依字串排序）把組件的 FullName 與 MVID 折成 MD5 十六進位字串。
+        /// 純函式：以與載入順序無關的方式（依字串排序）把組件的 FullName 與 MVID 折成 SHA-256 十六進位字串。
         /// MVID 在每次重新編譯時都會改變，因此能偵測到版本號未變的 mod 更新。
         /// </summary>
         internal static string ComputeAssemblyFingerprint(IEnumerable<Assembly> assemblies)
@@ -113,9 +113,9 @@ namespace FasterGameLoading
                 .Distinct(StringComparer.Ordinal)
                 .OrderBy(static s => s, StringComparer.Ordinal);
 
-            using (var md5 = MD5.Create())
+            using (var sha256 = SHA256.Create())
             {
-                var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(string.Join('\n', entries)));
+                var hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(string.Join('\n', entries)));
                 return string.Concat(hash.Select(static b => b.ToString("x2")));
             }
         }

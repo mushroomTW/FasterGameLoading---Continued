@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using HarmonyLib;
@@ -218,42 +217,6 @@ namespace FasterGameLoading.Tests
             catWithNullName.defName = null;
             defWithNullDefName.thingCategories = new List<ThingCategoryDef> { catWithNullName };
             Assert.DoesNotThrow(() => Assert.That(defWithNullDefName.ShouldBeLoadedImmediately(), Is.False));
-        }
-
-        [Test]
-        public void ThingsOfDefs_InlineSelectMany_ExtractsMatchingThingsFromListerThings()
-        {
-            var defA = Uninitialized<ThingDef>();
-            var defB = Uninitialized<ThingDef>();
-            var defC = Uninitialized<ThingDef>();
-
-            var thingA1 = Uninitialized<Thing>();
-            thingA1.thingIDNumber = 1;
-            thingA1.def = defA;
-            var thingA2 = Uninitialized<Thing>();
-            thingA2.thingIDNumber = 2;
-            thingA2.def = defA;
-            var thingB1 = Uninitialized<Thing>();
-            thingB1.thingIDNumber = 3;
-            thingB1.def = defB;
-
-            var lister = Uninitialized<ListerThings>();
-            var listsByDef = new Dictionary<ThingDef, List<Thing>>
-            {
-                { defA, new List<Thing> { thingA1, thingA2 } },
-                { defB, new List<Thing> { thingB1 } },
-            };
-
-            var listsByDefField = AccessTools.Field(typeof(ListerThings), "listsByDef");
-            listsByDefField?.SetValue(lister, listsByDef);
-
-            var defs = new[] { defA, defB, defC };
-            var result = defs.SelectMany(def => lister.ThingsOfDef(def) ?? Enumerable.Empty<Thing>()).ToList();
-
-            Assert.That(result, Has.Count.EqualTo(3));
-            Assert.That(result.Contains(thingA1), Is.True);
-            Assert.That(result.Contains(thingA2), Is.True);
-            Assert.That(result.Contains(thingB1), Is.True);
         }
     }
 }

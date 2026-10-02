@@ -84,7 +84,8 @@ namespace FasterGameLoading
         }
 
         // ── 延遲佇列 ──
-        // 生產者與消費者皆在主執行緒，改用 stdlib ConcurrentQueue 取代手搓 lock 包裝。
+        // 原版流程中生產者與消費者皆在主執行緒；仍用 ConcurrentQueue 是為防禦其他 mod 在背景執行緒
+        // 觸發 ResolveReferences／PostLoad，成本與原本的 lock 包裝相當，且不必手寫同步。
         private readonly ConcurrentQueue<(ThingDef def, Action run)> graphicsToLoad = new();
 
         private readonly ConcurrentQueue<(BuildableDef def, Action run)> iconsToLoad = new();

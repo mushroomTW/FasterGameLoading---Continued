@@ -52,7 +52,26 @@ namespace FasterGameLoading
         public static void DestroyTemporaryUnityObject(UnityEngine.Object obj)
         {
             if (obj == null) return;
-            UnityEngine.Object.DestroyImmediate(obj);
+            // 呼叫端多在 finally 中釋放：例外不可外漏，否則會蓋掉原本的例外，或越過 Render 的 catch 讓整批降質中止。
+            try
+            {
+                UnityEngine.Object.DestroyImmediate(obj);
+            }
+            catch (Exception ex)
+            {
+                if (FasterGameLoadingSettings.VerboseLogging)
+                {
+                    FGLLog.Warning($"DestroyImmediate failed, falling back to Destroy: {ex.Message}");
+                }
+                try
+                {
+                    UnityEngine.Object.Destroy(obj);
+                }
+                catch
+                {
+                    // 二次失敗只能放棄：此物件僅為暫存資源，洩漏一張的代價遠小於中止整批降質。
+                }
+            }
         }
 
         /// <summary>縮放後讀回的像素：RGBA32，列序與 Texture2D 的原始資料相同。</summary>

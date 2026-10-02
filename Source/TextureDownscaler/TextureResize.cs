@@ -198,7 +198,8 @@ namespace FasterGameLoading
 
         /// <summary>
         /// 執行單一紋理降質：載入原始 PNG → 按比例縮放 → 輸出 PNG 到 <paramref name="cachePath"/>，步驟與 <see cref="ResizeAll"/> 相同。
-        /// 供遊戲內整合測試（InGameTests）作為單張紋理降質驗證進入點使用。
+        /// 主組件內沒有呼叫端，僅供遊戲內整合測試（InGameTests，經 Publicizer 存取）作為單張紋理降質驗證進入點；
+        /// 設為 internal 是為了不被判定為未使用的私有成員（S1144），候選結構也因此需同為 internal。
         /// 寫入成功才回傳 true，由呼叫端登記快取項目；個別紋理無法處理時回傳 false（略過該張），
         /// 寫入快取檔的 IO 錯誤則往外拋，讓 <see cref="TextureCacheManager.Rebuild"/> 放棄整批並保留原本的快取。
         /// </summary>

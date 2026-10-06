@@ -163,6 +163,8 @@ namespace FasterGameLoading.Tests
             var mockList = new List<Type> { typeof(string), typeof(int), typeof(double) };
             fieldCached.SetValue(null, mockList);
             fieldCount.SetValue(null, AppDomain.CurrentDomain.GetAssemblies().Length);
+            typeof(AccessTools_AllTypes_Patch).GetField("cachedDynamicTypeCount", BindingFlags.NonPublic | BindingFlags.Static)
+                .SetValue(null, FasterGameLoading.Tests.EarlyModContentLoading.AccessTools_AllTypes_PatchTests.CurrentDynamicTypeCount());
 
             // 2. 呼叫 AccessTools.AllTypes()
             var result = AccessTools.AllTypes();

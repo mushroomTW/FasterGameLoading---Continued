@@ -90,19 +90,31 @@ namespace FasterGameLoading
 
         private readonly ConcurrentQueue<(BuildableDef def, Action run)> iconsToLoad = new();
 
-        private readonly ConcurrentQueue<(SubSoundDef def, Action run)> subSoundDefToResolve = new();
+        // 音效佇列只決定分幀解析的順序；要執行的動作存在 pendingSubSounds，
+        // 播放請求可能先一步從那裡取走並當場解析（見 ResolveSubSoundNow），佇列輪到時便直接略過。
+        private readonly ConcurrentQueue<SubSoundDef> subSoundDefToResolve = new();
+
+        private readonly ConcurrentDictionary<SubSoundDef, Action> pendingSubSounds = new();
 
         internal int GraphicsToLoadCount => graphicsToLoad.Count;
 
         internal int IconsToLoadCount => iconsToLoad.Count;
 
-        internal int SubSoundDefToResolveCount => subSoundDefToResolve.Count;
+        internal int SubSoundDefToResolveCount => pendingSubSounds.Count;
 
         public void EnqueueGraphic(ThingDef def, Action action) => graphicsToLoad.Enqueue((def, action));
 
         public void EnqueueIcon(BuildableDef def, Action action) => iconsToLoad.Enqueue((def, action));
 
-        public void EnqueueSubSound(SubSoundDef def, Action action) => subSoundDefToResolve.Enqueue((def, action));
+        /// <summary>
+        /// 排入一個 SubSoundDef 的解析動作。同一個 SubSoundDef 重複排入時只保留最後一個動作：
+        /// 原版的回呼每次都會先清空 resolvedGrains 再重建，執行一次與多次結果相同。
+        /// </summary>
+        public void EnqueueSubSound(SubSoundDef def, Action action)
+        {
+            pendingSubSounds[def] = action;
+            subSoundDefToResolve.Enqueue(def);
+        }
 
         /// <summary>語言切換時丟棄所有尚未執行的延遲動作，並回到尚未開始的階段。</summary>
         public void ClearQueues()
@@ -110,6 +122,7 @@ namespace FasterGameLoading
             Clear(graphicsToLoad);
             Clear(iconsToLoad);
             Clear(subSoundDefToResolve);
+            pendingSubSounds.Clear();
             Phase = DeferredPhase.Idle;
         }
 
@@ -141,6 +154,7 @@ namespace FasterGameLoading
             // 在主執行緒排空背景執行緒累積的日誌，避免背景緒直接呼叫非執行緒安全的 Verse.Log
             FGLLog.FlushPending();
             MainThreadTextureLoader.Drain();
+            SessionLifecycle.DrainMainThreadRaises();
         }
 
         public void LateUpdate()
@@ -224,16 +238,16 @@ namespace FasterGameLoading
 
         /// <summary>
         /// 三個預算協程的共用 driver：外層 while＋預算內批次＋yield＋RestartStopwatch。
-        /// 圖形／圖示在非主執行緒時讓出執行權（防禦性保護）；音效解析不碰 Unity 物件，可直接執行。
+        /// 圖形、圖示與音效解析（Resources.LoadAll）都會使用 Unity API，非主執行緒時讓出執行權（防禦性保護）。
         /// </summary>
-        private IEnumerator DrainQueue<TDef>(ConcurrentQueue<(TDef def, Action run)> queue, Action<TDef, Action> runOne, bool requireMainThread)
+        private IEnumerator DrainQueue<T>(ConcurrentQueue<T> queue, Action<T> runOne)
         {
             RestartStopwatch();
             while (!queue.IsEmpty)
             {
                 // 協程只在主執行緒被恢復執行，此檢查僅為防禦性保護。
                 // 若非主執行緒，讓出執行權後由外層 while 重新檢查，不落穿到 Unity 工作。
-                if (requireMainThread && !UnityData.IsInMainThread)
+                if (!UnityData.IsInMainThread)
                 {
                     yield return 0;
                     continue;
@@ -243,7 +257,7 @@ namespace FasterGameLoading
                     if (!queue.TryDequeue(out var item))
                         break;
 
-                    runOne(item.def, item.run);
+                    runOne(item);
                 }
 
                 if (!queue.IsEmpty)
@@ -258,7 +272,7 @@ namespace FasterGameLoading
         internal IEnumerator LoadDeferredGraphicsCoroutine(ICollection<ThingDef> loadedDefs)
         {
             FGLLog.Message($"Starting deferred graphics: {GraphicsToLoadCount.ToString(CultureInfo.InvariantCulture)}");
-            var drain = DrainQueue(graphicsToLoad, (def, run) => LoadOneGraphic(def, run, loadedDefs), requireMainThread: true);
+            var drain = DrainQueue(graphicsToLoad, item => LoadOneGraphic(item.def, item.run, loadedDefs));
             while (drain.MoveNext())
             {
                 yield return drain.Current;
@@ -332,7 +346,7 @@ namespace FasterGameLoading
         internal IEnumerator LoadDeferredIconsCoroutine()
         {
             FGLLog.Message($"Starting deferred icons: {IconsToLoadCount.ToString(CultureInfo.InvariantCulture)}");
-            var drain = DrainQueue(iconsToLoad, static (def, run) => LoadOneIcon(def, run), requireMainThread: true);
+            var drain = DrainQueue(iconsToLoad, static item => LoadOneIcon(item.def, item.run));
             while (drain.MoveNext())
             {
                 yield return drain.Current;
@@ -369,13 +383,12 @@ namespace FasterGameLoading
         internal IEnumerator ResolveSubSoundDefsCoroutine()
         {
             FGLLog.Message($"Starting SubSoundDef resolution: {SubSoundDefToResolveCount.ToString(CultureInfo.InvariantCulture)}");
-            var drain = DrainQueue(subSoundDefToResolve, static (def, run) => TryRunSubSoundAction(def, run, logError: false), requireMainThread: false);
+            var drain = DrainQueue(subSoundDefToResolve, def => TryRunPendingSubSound(def, logError: false));
             while (drain.MoveNext())
             {
                 yield return drain.Current;
             }
-            // 協程已執行完畢，所有延遲的 SubSoundDef 已解析完成，在此時安全取消攔截，
-            // 確保若玩家留在主選單也能正常播放按鈕與背景聲音。
+            // 協程已執行完畢，所有延遲的 SubSoundDef 已解析完成，播放前不必再檢查，在此時取消攔截。
             SoundStarter_Patch.Unpatch();
             FGLLog.Message("SubSoundDef resolution complete");
         }
@@ -386,11 +399,26 @@ namespace FasterGameLoading
         /// </summary>
         internal void ResolvePendingSubSounds()
         {
-            while (subSoundDefToResolve.TryDequeue(out var item))
+            while (subSoundDefToResolve.TryDequeue(out var def))
             {
-                TryRunSubSoundAction(item.def, item.run, logError: true);
+                TryRunPendingSubSound(def, logError: true);
             }
             SoundStarter_Patch.Unpatch();
+        }
+
+        /// <summary>
+        /// 播放前當場解析仍在等待中的 SubSoundDef（由 SoundStarter_Patch 呼叫）；不在等待中的不做任何事。
+        /// 解析會讀取音訊資源（Resources.LoadAll），呼叫端必須確認在主執行緒。
+        /// </summary>
+        internal void ResolveSubSoundNow(SubSoundDef def) => TryRunPendingSubSound(def, logError: false);
+
+        /// <summary>取走並執行 SubSoundDef 尚未執行的解析動作；已被播放請求先行解析的直接略過。</summary>
+        private void TryRunPendingSubSound(SubSoundDef def, bool logError)
+        {
+            if (pendingSubSounds.TryRemove(def, out var run))
+            {
+                TryRunSubSoundAction(def, run, logError);
+            }
         }
 
         /// <summary>執行單一 SubSound 延遲動作；個別例外只記錄不外傳，避免中斷批次流程。</summary>

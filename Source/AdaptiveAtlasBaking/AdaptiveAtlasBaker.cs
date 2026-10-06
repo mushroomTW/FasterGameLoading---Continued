@@ -114,14 +114,14 @@ namespace FasterGameLoading
             // 與原版烘焙前相同，先移除 Item 與 Misc 中也排在 Building 的紋理（見 StaticAtlasDeduplicator）。
             // As before vanilla's bake, first remove the Item and Misc entries of textures also queued for Building (see StaticAtlasDeduplicator).
             StaticAtlasDeduplicator.RemoveDuplicateCopies();
-            var buildQueueSnapshot = GlobalTextureAtlasManager.buildQueue.ToList();
             var atlasesToCommit = new List<StaticTextureAtlas>();
+            // 烘焙期間會讓出幀，其他 mod 可能再向新群組或已處理的群組插入貼圖。
+            // 每輪重新取出尚未處理的項目，直到佇列沒有新項目為止，結尾清空佇列時才不會丟掉未烘焙的請求。
+            var progress = new BakeProgress();
+            List<Texture2D> allTexturesForThisGroup;
 
-            foreach (var kvp in buildQueueSnapshot)
+            while ((allTexturesForThisGroup = TakeUnprocessedTextures(progress, out var key)) != null)
             {
-                var key = kvp.Key;
-                var allTexturesForThisGroup = kvp.Value.Item1.ToList();
-
                 long pixelsInCurrentSlice = 0;
                 var batchForNextBake = new List<(Texture2D main, Texture2D mask)>();
                 var bakedAtlasesForGroup = new List<StaticTextureAtlas>();
@@ -200,9 +200,82 @@ namespace FasterGameLoading
             LastBakeFailed = true;
         }
 
+        /// <summary>TakeUnprocessedTextures 跨呼叫保留的進度。</summary>
+        private sealed class BakeProgress
+        {
+            public readonly Dictionary<TextureAtlasGroupKey, HashSet<Texture2D>> ProcessedByGroup = new();
+
+            /// <summary>已全部標記為已處理的群組；佇列總數改變（有新插入）時清空，重新掃描所有群組。</summary>
+            public readonly HashSet<TextureAtlasGroupKey> FullyScanned = new();
+
+            /// <summary>上次檢查時佇列中的貼圖總數；-1 代表尚未檢查。</summary>
+            public int QueuedCount = -1;
+        }
+
+        /// <summary>
+        /// 依佇列順序找出第一個仍有未處理貼圖的群組，回傳這些貼圖並標記為已處理；全部處理完時回傳 null。
+        /// 佇列只會因其他 mod 插入而變長，因此總數不變時直接略過已掃描完的群組；
+        /// 總數改變時先對新插入的貼圖重做去重（與開始烘焙前相同），再重新掃描所有群組。
+        /// </summary>
+        private static List<Texture2D> TakeUnprocessedTextures(BakeProgress progress, out TextureAtlasGroupKey key)
+        {
+            int queuedCount = CountQueuedTextures();
+            if (queuedCount != progress.QueuedCount)
+            {
+                if (progress.QueuedCount >= 0)
+                {
+                    StaticAtlasDeduplicator.RemoveDuplicateCopies();
+                    queuedCount = CountQueuedTextures();
+                }
+                progress.QueuedCount = queuedCount;
+                progress.FullyScanned.Clear();
+            }
+
+            foreach (var kvp in GlobalTextureAtlasManager.buildQueue)
+            {
+                if (!progress.FullyScanned.Add(kvp.Key))
+                {
+                    continue;
+                }
+                if (!progress.ProcessedByGroup.TryGetValue(kvp.Key, out var processed))
+                {
+                    processed = new HashSet<Texture2D>();
+                    progress.ProcessedByGroup.Add(kvp.Key, processed);
+                }
+
+                List<Texture2D> unprocessed = null;
+                foreach (var texture in kvp.Value.Item1)
+                {
+                    if (processed.Add(texture))
+                    {
+                        (unprocessed ??= new List<Texture2D>()).Add(texture);
+                    }
+                }
+                if (unprocessed != null)
+                {
+                    key = kvp.Key;
+                    return unprocessed;
+                }
+            }
+
+            key = default;
+            return null;
+        }
+
+        private static int CountQueuedTextures()
+        {
+            int count = 0;
+            foreach (var kvp in GlobalTextureAtlasManager.buildQueue)
+            {
+                count += kvp.Value.Item1.Count;
+            }
+            return count;
+        }
+
         /// <summary>
         /// 提交所有烘焙完成的圖集、記錄本次速度供下次啟動參考，
         /// 並清空原始 buildQueue 防止 vanilla 重複處理。
+        /// 呼叫前已確認佇列沒有未處理項目，且兩者之間不讓出幀，因此清空不會丟掉新插入的請求。
         /// </summary>
         private static void CommitBakedAtlases(List<StaticTextureAtlas> atlasesToCommit, float measuredBakeSpeed)
         {

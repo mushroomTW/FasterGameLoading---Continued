@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using HarmonyLib;
 using RimTestRedux;
+using RimWorld;
 using RimWorld.Planet;
 using Verse;
 using Verse.Sound;
@@ -80,6 +81,44 @@ namespace FasterGameLoading.InGameTests
         public static void SubSoundQueueIsDrained()
         {
             Assert.That(FasterGameLoadingMod.delayedActions.SubSoundDefToResolveCount).Is.EqualTo(0);
+        }
+
+        /// <summary>
+        /// 延遲解析尚未跑完時，播放請求要當場解析該 SubSoundDef 再交回原版播放（主選單 UI 音效靠這條路徑）。
+        /// 重建情境：重新套上 SoundStarter 攔截、讓主選單點擊音效經 FGL 的轉譯器重新排入延遲佇列，再對它發出播放請求。
+        /// </summary>
+        [Test]
+        public static void PlayRequestResolvesQueuedSubSoundOnDemand()
+        {
+            var delayedActions = FasterGameLoadingMod.delayedActions;
+            var tryPlay = AccessTools.Method(typeof(SubSoundDef), nameof(SubSoundDef.TryPlay));
+            var sub = SoundDefOf.Click.subSounds[0];
+            int expectedGrains = sub.resolvedGrains.Count;
+            Assert.That(expectedGrains).Is.GreaterThan(0);
+            Assert.That(delayedActions.SubSoundDefToResolveCount).Is.EqualTo(0);
+
+            try
+            {
+                sub.resolvedGrains.Clear();
+                SoundStarter_Patch.ResetUnpatchedStatus();
+                // PatchCategory(string) 取的是呼叫端組件（本測試 mod），必須明確指定 FGL 的組件。
+                FasterGameLoadingMod.harmony.PatchCategory(typeof(FasterGameLoadingMod).Assembly, "SoundStarter");
+                sub.ResolveReferences();
+                Assert.That(delayedActions.SubSoundDefToResolveCount).Is.EqualTo(1);
+                Assert.That(sub.resolvedGrains.Count).Is.EqualTo(0);
+
+                sub.TryPlay(SoundInfo.OnCamera());
+
+                Assert.That(sub.resolvedGrains.Count).Is.EqualTo(expectedGrains);
+                Assert.That(delayedActions.SubSoundDefToResolveCount).Is.EqualTo(0);
+                // 其餘 SubSoundDef 尚未全部解析前，攔截要保留。
+                Assert.That(FglState.HasFglPatch(tryPlay)).Is.True();
+            }
+            finally
+            {
+                // 失敗時也不能讓整個 session 留著攔截，或留下未解析的 SubSoundDef。
+                delayedActions.ResolvePendingSubSounds();
+            }
         }
 
         /// <summary>

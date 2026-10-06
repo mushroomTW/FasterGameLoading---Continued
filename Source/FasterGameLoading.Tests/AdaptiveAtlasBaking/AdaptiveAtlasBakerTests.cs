@@ -210,6 +210,18 @@ namespace FasterGameLoading.Tests.AdaptiveAtlasBaking
             {
                 harmony.Patch(commitBaked, transpiler: new HarmonyMethod(transpilerMethod));
             }
+
+            foreach (var name in new[] { "TakeUnprocessedTextures", "CountQueuedTextures" })
+            {
+                var method = AccessTools.Method(typeof(AdaptiveAtlasBaker), name);
+                if (method != null)
+                {
+                    harmony.Patch(method, transpiler: new HarmonyMethod(transpilerMethod));
+                }
+            }
+            // 烘焙中途重做去重時會讀取被略過貼圖的尺寸，同樣換成模擬值。
+            harmony.Patch(AccessTools.Method(typeof(StaticAtlasDeduplicator), nameof(StaticAtlasDeduplicator.RemoveDuplicateCopies)),
+                transpiler: new HarmonyMethod(transpilerMethod));
         }
 
         [OneTimeTearDown]
@@ -350,6 +362,65 @@ namespace FasterGameLoading.Tests.AdaptiveAtlasBaking
 
             Assert.That(finalQueue.Count, Is.EqualTo(0));
             Assert.That(finalMasks.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void PerformAdaptiveStaticAtlasBake_TexturesInsertedWhileYielding_AreBakedBeforeQueueIsCleared()
+        {
+            var queue = new Dictionary<TextureAtlasGroupKey, (List<Texture2D>, HashSet<Texture2D>)>();
+            var buildingKey = new TextureAtlasGroupKey { group = TextureAtlasGroup.Building, hasMask = false };
+            var miscKey = new TextureAtlasGroupKey { group = TextureAtlasGroup.Misc, hasMask = false };
+            var first = MockTextureHelper.CreateTexture(64, 64, "First");
+            queue[buildingKey] = (new List<Texture2D> { first }, new HashSet<Texture2D> { first });
+            BuildQueueField.SetValue(null, queue);
+
+            var iterator = AdaptiveAtlasBaker.PerformAdaptiveStaticAtlasBake(delayedActions: null);
+            Assert.That(iterator.MoveNext(), Is.True, "第一批烘焙後應讓出一幀。");
+            Assert.That(tryBakeSingleBatchCallCount, Is.EqualTo(1));
+
+            // 讓出幀期間，其他 mod 向已處理的群組與新群組插入貼圖。
+            var lateSame = MockTextureHelper.CreateTexture(64, 64, "LateSame");
+            var lateNew = MockTextureHelper.CreateTexture(64, 64, "LateNew");
+            queue[buildingKey].Item1.Add(lateSame);
+            queue[miscKey] = (new List<Texture2D> { lateNew }, new HashSet<Texture2D> { lateNew });
+
+            while (iterator.MoveNext()) { }
+
+            Assert.That(tryBakeSingleBatchCallCount, Is.EqualTo(3), "新插入的兩張貼圖都必須烘焙，不能在清空佇列時被丟掉。");
+            Assert.That(((IList)StaticTextureAtlasesField.GetValue(null)).Count, Is.EqualTo(3));
+            Assert.That(queue.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void PerformAdaptiveStaticAtlasBake_LateItemCopyOfBuildingTexture_IsDeduplicated()
+        {
+            var queue = new Dictionary<TextureAtlasGroupKey, (List<Texture2D>, HashSet<Texture2D>)>();
+            var buildingKey = new TextureAtlasGroupKey { group = TextureAtlasGroup.Building, hasMask = false };
+            var itemKey = new TextureAtlasGroupKey { group = TextureAtlasGroup.Item, hasMask = false };
+            var first = MockTextureHelper.CreateTexture(64, 64, "First");
+            queue[buildingKey] = (new List<Texture2D> { first }, new HashSet<Texture2D> { first });
+            BuildQueueField.SetValue(null, queue);
+            bool originalDedup = FasterGameLoadingSettings.DeduplicateStaticAtlases;
+            FasterGameLoadingSettings.DeduplicateStaticAtlases = true;
+            try
+            {
+                var iterator = AdaptiveAtlasBaker.PerformAdaptiveStaticAtlasBake(delayedActions: null);
+                Assert.That(iterator.MoveNext(), Is.True);
+
+                // 讓出幀期間，其他 mod 把同一張新貼圖同時排進 Building 與 Item（可打包建築的典型情況）。
+                var late = MockTextureHelper.CreateTexture(64, 64, "Late");
+                queue[buildingKey].Item1.Add(late);
+                queue[buildingKey].Item2.Add(late);
+                queue[itemKey] = (new List<Texture2D> { late }, new HashSet<Texture2D> { late });
+
+                while (iterator.MoveNext()) { }
+
+                Assert.That(tryBakeSingleBatchCallCount, Is.EqualTo(2), "Item 的副本應比照烘焙前的去重被略過，只烘焙 Building 那一份。");
+            }
+            finally
+            {
+                FasterGameLoadingSettings.DeduplicateStaticAtlases = originalDedup;
+            }
         }
 
         [Test]

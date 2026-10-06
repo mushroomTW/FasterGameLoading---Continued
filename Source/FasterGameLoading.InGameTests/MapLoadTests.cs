@@ -35,7 +35,7 @@ namespace FasterGameLoading.InGameTests
         public static void FinalizeInitResolvesQueuedSubSoundsAndReleasesSound()
         {
             var delayedActions = FasterGameLoadingMod.delayedActions;
-            var playOneShot = AccessTools.Method(typeof(SoundStarter), nameof(SoundStarter.PlayOneShot));
+            var tryPlay = AccessTools.Method(typeof(SubSoundDef), nameof(SubSoundDef.TryPlay));
             var sub = DefDatabase<SoundDef>.AllDefsListForReading
                 .Where(static s => s.subSounds != null)
                 .SelectMany(static s => s.subSounds)
@@ -55,13 +55,13 @@ namespace FasterGameLoading.InGameTests
 
                 Assert.That(delayedActions.SubSoundDefToResolveCount).Is.EqualTo(1);
                 Assert.That(sub.resolvedGrains.Count).Is.EqualTo(0);
-                Assert.That(FglState.HasFglPatch(playOneShot)).Is.True();
+                Assert.That(FglState.HasFglPatch(tryPlay)).Is.True();
 
                 World_FinalizeInit_Patch.Postfix();
 
                 Assert.That(delayedActions.SubSoundDefToResolveCount).Is.EqualTo(0);
                 Assert.That(sub.resolvedGrains.Count).Is.EqualTo(expectedGrains);
-                Assert.That(FglState.HasFglPatch(playOneShot)).Is.False();
+                Assert.That(FglState.HasFglPatch(tryPlay)).Is.False();
             }
             finally
             {

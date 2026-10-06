@@ -1,12 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Xml.Linq;
 using Verse;
 
 namespace FasterGameLoading
 {
     /// <summary>
     /// FGL 必須讓開的 Mod，分兩種保護：
-    /// - 貼圖保護：外星人種族（HAR）、Ancot 函式庫及其衍生，加上 bionic icons。
+    /// - 貼圖保護：外星人種族（HAR）、Ancot 函式庫及其衍生，加上 bionic icons；
+    ///   Pumpkin Library 材質包若以 DDS 取代上述 mod 的貼圖，也一併保護。
     ///   它們的 bodyAddon、頭髮、耳朵與多遮罩貼圖不降質、不進 registry，開啟自適應烘焙時也不進靜態圖集。
     /// - 提早載入保護：Ayameduki 與 AyaTweaks（WRK.）系列；HAR 及其衍生只在無法延後 HAR 的貼圖變體掃描時
     ///   （見 <see cref="AlienRaceGraphicsHookGate"/>）才列入。它們的內容不提早載入，XML 也不平行解析。
@@ -15,6 +19,15 @@ namespace FasterGameLoading
     public static class ProtectedMods
     {
         private const string AncotLibraryPackageId = "Ancot.AncotLibrary";
+
+        private static readonly HashSet<string> pumpkinLibraryPackageIds = new(StringComparer.OrdinalIgnoreCase) { "pumpkin.pumpkinlibrary" };
+
+        private static readonly string[] PumpkinSettingsRelativePaths =
+        {
+            "TextureOverrideSettings.xml",
+            Path.Combine("1.6", "Modules", "TextureOverride", "TextureOverrideSettings.xml"),
+            Path.Combine("Modules", "TextureOverride", "TextureOverrideSettings.xml"),
+        };
 
         private static readonly HashSet<string> textureProtectedPackageIds = new(StringComparer.OrdinalIgnoreCase)
         {
@@ -119,14 +132,16 @@ namespace FasterGameLoading
         {
             if (mod == null) return false;
 
-            if (IsListedTextureProtected(mod.PackageIdPlayerFacing) || IsListedTextureProtected(mod.PackageId)) return true;
+            if (MatchesAny(mod, textureProtectedPackageIds)) return true;
 
             return ModDependencyReflection.DependsOnAlienRaces(mod.ModMetaData)
                 || ModDependencyReflection.DependsOnMod(mod.ModMetaData, AncotLibraryPackageId);
         }
 
-        private static bool IsListedTextureProtected(string packageId)
-            => packageId != null && textureProtectedPackageIds.Contains(packageId);
+        /// <summary>mod 的 PackageIdPlayerFacing 或 PackageId 是否在集合中；Workshop 副本的 PackageId 可能帶 "_steam" 後綴，故兩者都比對。</summary>
+        private static bool MatchesAny(ModContentPack mod, HashSet<string> packageIds)
+            => (mod.PackageIdPlayerFacing != null && packageIds.Contains(mod.PackageIdPlayerFacing))
+                || (mod.PackageId != null && packageIds.Contains(mod.PackageId));
 
         /// <summary>從執行中的 mod 清單建立受貼圖保護的根目錄；清單尚未建立時下次再試。</summary>
         internal static void InitializeTextureRoots()
@@ -135,23 +150,35 @@ namespace FasterGameLoading
             var mods = LoadedModManager.RunningMods;
             if (mods == null) return;
 
+            // 讀檔與解析放在鎖外，不拖住同時查詢貼圖路徑的其他執行緒。
+            var pumpkinOverride = ReadPumpkinTextureOverride(mods);
+
             lock (rootsLock)
             {
                 if (rootsInitialized) return;
                 try
                 {
                     bool hasAny = false;
+                    bool anyPumpkinTargetProtected = false;
                     foreach (var mod in mods)
                     {
                         hasAny = true;
                         if (IsTextureProtected(mod))
                         {
-                            if (string.IsNullOrEmpty(mod.RootDir)) continue;
-                            protectedTextureRoots.Add(mod.RootDir.Replace('\\', '/').TrimEnd('/'));
+                            anyPumpkinTargetProtected |= pumpkinOverride != null && MatchesAny(mod, pumpkinOverride.Targets);
+                            AddProtectedTextureRoot(mod);
                         }
                     }
 
                     if (!hasAny) return; // 載入列表尚未初始化完畢（空集合），下次再來
+
+                    if (anyPumpkinTargetProtected)
+                    {
+                        foreach (var mod in mods)
+                        {
+                            if (MatchesAny(mod, pumpkinOverride.Providers)) AddProtectedTextureRoot(mod);
+                        }
+                    }
 
                     // 迴圈順利完成後才標記初始化，避免例外導致半初始化狀態被永久鎖定
                     rootsInitialized = true;
@@ -162,6 +189,66 @@ namespace FasterGameLoading
                 }
             }
         }
+
+        private static void AddProtectedTextureRoot(ModContentPack mod)
+        {
+            if (string.IsNullOrEmpty(mod.RootDir)) return;
+            protectedTextureRoots.Add(mod.RootDir.Replace('\\', '/').TrimEnd('/'));
+        }
+
+        private sealed class PumpkinTextureOverride
+        {
+            internal PumpkinTextureOverride(HashSet<string> targets, HashSet<string> providers)
+            {
+                Targets = targets;
+                Providers = providers;
+            }
+
+            internal HashSet<string> Targets { get; }
+            internal HashSet<string> Providers { get; }
+        }
+
+        /// <summary>
+        /// 讀取 Pumpkin Library TextureOverride 的 target 與 provider（材質包）清單。
+        /// TextureOverride 會移除 target 中有同路徑 .dds 的原圖，改顯示 provider 的 DDS；它對每個 target 都掃描全部 provider，
+        /// 兩份清單沒有一對一配對，所以任一 target 受貼圖保護時，全部 provider 都要保護。
+        /// 設定檔的搜尋順序與 Pumpkin 的 TextureOverrideSettings.TryLoad 相同。
+        /// Pumpkin 未啟用、TextureOverride 模組未經 LoadFolders 載入、找不到或無法解析設定檔時回傳 null。
+        /// </summary>
+        private static PumpkinTextureOverride ReadPumpkinTextureOverride(IEnumerable<ModContentPack> mods)
+        {
+            string settingsPath = null;
+            try
+            {
+                var pumpkin = mods.FirstOrDefault(static mod => MatchesAny(mod, pumpkinLibraryPackageIds));
+                if (pumpkin == null || string.IsNullOrEmpty(pumpkin.RootDir) || !IsPumpkinTextureOverrideLoaded(pumpkin)) return null;
+
+                settingsPath = PumpkinSettingsRelativePaths
+                    .Select(relativePath => Path.Combine(pumpkin.RootDir, relativePath))
+                    .FirstOrDefault(File.Exists);
+                if (settingsPath == null) return null;
+
+                var root = XDocument.Load(settingsPath).Root;
+                if (root == null) return null;
+                return new PumpkinTextureOverride(
+                    new HashSet<string>(ReadPumpkinIds(root, "targetMods"), StringComparer.OrdinalIgnoreCase),
+                    new HashSet<string>(ReadPumpkinIds(root, "providerMods"), StringComparer.OrdinalIgnoreCase));
+            }
+            catch (Exception ex)
+            {
+                FGLLog.Warning($"Could not read Pumpkin Library texture override settings: {settingsPath}", ex);
+                return null;
+            }
+        }
+
+        /// <summary>TextureOverride 模組由 Pumpkin 的 LoadFolders.xml 依 IfModActive 條件載入；沒載入時 Pumpkin 不會取代任何原圖。</summary>
+        private static bool IsPumpkinTextureOverrideLoaded(ModContentPack pumpkin)
+            => pumpkin.foldersToLoadDescendingOrder?.Any(static folder => folder != null
+                && folder.Replace('\\', '/').TrimEnd('/').EndsWith("/Modules/TextureOverride", StringComparison.OrdinalIgnoreCase)) is true;
+
+        private static IEnumerable<string> ReadPumpkinIds(XElement root, string listName)
+            => root.Element(listName)?.Elements("li").Select(static li => li.Value.Trim()).Where(static id => id.Length > 0)
+                ?? Enumerable.Empty<string>();
 
         /// <summary>目前已建立的受貼圖保護根目錄快照（正斜線、無結尾斜線）。</summary>
         internal static IReadOnlyCollection<string> GetProtectedTextureRoots()

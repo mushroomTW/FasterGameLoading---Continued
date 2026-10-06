@@ -141,6 +141,165 @@ namespace FasterGameLoading.Tests.Compatibility
             WithRunningMods(new List<ModContentPack> { har }, () => Assert.DoesNotThrow(ProtectedMods.InitializeTextureRoots));
         }
 
+        // ── Pumpkin Library 材質包 ──
+
+        private const string PumpkinModuleSettingsDir = @"1.6\Modules\TextureOverride";
+
+        private static string CreatePumpkinRoot(string settingsXml, string settingsDir = PumpkinModuleSettingsDir)
+        {
+            var root = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "FGLPumpkinTest_" + System.Guid.NewGuid().ToString("N"));
+            WritePumpkinSettings(root, settingsDir, settingsXml);
+            return root;
+        }
+
+        private static void WritePumpkinSettings(string root, string settingsDir, string settingsXml)
+        {
+            var dir = System.IO.Path.Combine(root, settingsDir);
+            System.IO.Directory.CreateDirectory(dir);
+            System.IO.File.WriteAllText(System.IO.Path.Combine(dir, "TextureOverrideSettings.xml"), settingsXml);
+        }
+
+        /// <summary>建立 Pumpkin Library；<paramref name="textureOverrideLoaded"/> 模擬 LoadFolders.xml 是否載入了 TextureOverride 模組。</summary>
+        private static ModContentPack CreatePumpkinMod(string rootDir, bool textureOverrideLoaded = true, string packageId = "pumpkin.pumpkinlibrary", string packageIdPlayerFacing = null)
+        {
+            var mod = CreateMod(packageId, rootDir, packageIdPlayerFacing);
+            var folders = new List<string> { System.IO.Path.Combine(rootDir, "1.6") };
+            if (textureOverrideLoaded) folders.Insert(0, System.IO.Path.Combine(rootDir, PumpkinModuleSettingsDir));
+            mod.foldersToLoadDescendingOrder = folders;
+            return mod;
+        }
+
+        private static string PumpkinSettings(string target, string provider)
+            => $"<TextureOverrideSettings><targetMods><li>{target}</li></targetMods>"
+                + $"<providerMods><li>{provider}</li><li>pumpkin.notrunning</li></providerMods></TextureOverrideSettings>";
+
+        private static readonly string PumpkinSettingsTargetingHar = PumpkinSettings("erdelf.HumanoidAlienRaces", "Pumpkin.HarDdsPack");
+
+        [Test]
+        public void TextureRoots_IncludePumpkinProvidersOfProtectedTargets()
+        {
+            var pumpkinRoot = CreatePumpkinRoot(PumpkinSettingsTargetingHar);
+            try
+            {
+                var pumpkin = CreatePumpkinMod(pumpkinRoot);
+                var har = CreateMod("erdelf.humanoidalienraces", @"C:\HarRoot\");
+                var provider = CreateMod("pumpkin.harddspack", @"C:\DdsPackRoot\");
+                var other = CreateMod("some.other.mod", @"C:\OtherModRoot\");
+
+                WithRunningMods(new List<ModContentPack> { pumpkin, har, provider, other }, ProtectedMods.InitializeTextureRoots);
+
+                Assert.That(ProtectedMods.GetProtectedTextureRoots(), Is.EquivalentTo(new[] { "C:/HarRoot", "C:/DdsPackRoot" }));
+            }
+            finally
+            {
+                System.IO.Directory.Delete(pumpkinRoot, recursive: true);
+            }
+        }
+
+        [Test]
+        public void TextureRoots_ExcludePumpkinProvidersWhenNoTargetIsProtected()
+        {
+            var pumpkinRoot = CreatePumpkinRoot(PumpkinSettings("some.other.mod", "pumpkin.harddspack"));
+            try
+            {
+                var pumpkin = CreatePumpkinMod(pumpkinRoot);
+                var target = CreateMod("some.other.mod", @"C:\OtherModRoot\");
+                var provider = CreateMod("pumpkin.harddspack", @"C:\DdsPackRoot\");
+
+                WithRunningMods(new List<ModContentPack> { pumpkin, target, provider }, ProtectedMods.InitializeTextureRoots);
+
+                Assert.That(ProtectedMods.GetProtectedTextureRoots(), Is.Empty);
+            }
+            finally
+            {
+                System.IO.Directory.Delete(pumpkinRoot, recursive: true);
+            }
+        }
+
+        [Test]
+        public void TextureRoots_WhenPumpkinSettingsAreInvalid_KeepOtherRoots()
+        {
+            var pumpkinRoot = CreatePumpkinRoot("<TextureOverrideSettings><targetMods>");
+            try
+            {
+                var pumpkin = CreatePumpkinMod(pumpkinRoot);
+                var har = CreateMod("erdelf.humanoidalienraces", @"C:\HarRoot\");
+                var provider = CreateMod("pumpkin.harddspack", @"C:\DdsPackRoot\");
+
+                WithRunningMods(new List<ModContentPack> { pumpkin, har, provider }, ProtectedMods.InitializeTextureRoots);
+
+                Assert.That(ProtectedMods.GetProtectedTextureRoots(), Is.EquivalentTo(new[] { "C:/HarRoot" }));
+            }
+            finally
+            {
+                System.IO.Directory.Delete(pumpkinRoot, recursive: true);
+            }
+        }
+
+        [Test]
+        public void TextureRoots_ExcludePumpkinProvidersWhenTextureOverrideIsNotLoaded()
+        {
+            var pumpkinRoot = CreatePumpkinRoot(PumpkinSettingsTargetingHar);
+            try
+            {
+                var pumpkin = CreatePumpkinMod(pumpkinRoot, textureOverrideLoaded: false);
+                var har = CreateMod("erdelf.humanoidalienraces", @"C:\HarRoot\");
+                var provider = CreateMod("pumpkin.harddspack", @"C:\DdsPackRoot\");
+
+                WithRunningMods(new List<ModContentPack> { pumpkin, har, provider }, ProtectedMods.InitializeTextureRoots);
+
+                Assert.That(ProtectedMods.GetProtectedTextureRoots(), Is.EquivalentTo(new[] { "C:/HarRoot" }));
+            }
+            finally
+            {
+                System.IO.Directory.Delete(pumpkinRoot, recursive: true);
+            }
+        }
+
+        [Test]
+        public void TextureRoots_MatchSteamSuffixedPumpkinAndProviderCopies()
+        {
+            // 本機與 Workshop 副本並存時，Workshop 版的 PackageId 帶 "_steam" 後綴，只有 PackageIdPlayerFacing 與設定檔相符。
+            var pumpkinRoot = CreatePumpkinRoot(PumpkinSettingsTargetingHar);
+            try
+            {
+                var pumpkin = CreatePumpkinMod(pumpkinRoot, packageId: "pumpkin.pumpkinlibrary_steam", packageIdPlayerFacing: "pumpkin.pumpkinlibrary");
+                var har = CreateMod("erdelf.humanoidalienraces", @"C:\HarRoot\");
+                var provider = CreateMod("pumpkin.harddspack_steam", @"C:\DdsPackRoot\", "Pumpkin.HarDdsPack");
+
+                WithRunningMods(new List<ModContentPack> { pumpkin, har, provider }, ProtectedMods.InitializeTextureRoots);
+
+                Assert.That(ProtectedMods.GetProtectedTextureRoots(), Is.EquivalentTo(new[] { "C:/HarRoot", "C:/DdsPackRoot" }));
+            }
+            finally
+            {
+                System.IO.Directory.Delete(pumpkinRoot, recursive: true);
+            }
+        }
+
+        [Test]
+        public void TextureRoots_PreferRootLevelPumpkinSettingsLikePumpkin()
+        {
+            // Pumpkin 先找 mod 根目錄的設定檔，找到就不看 1.6/Modules/TextureOverride 下的那份。
+            var pumpkinRoot = CreatePumpkinRoot(PumpkinSettings("some.other.mod", "pumpkin.otherpack"));
+            try
+            {
+                WritePumpkinSettings(pumpkinRoot, string.Empty, PumpkinSettingsTargetingHar);
+                var pumpkin = CreatePumpkinMod(pumpkinRoot);
+                var har = CreateMod("erdelf.humanoidalienraces", @"C:\HarRoot\");
+                var provider = CreateMod("pumpkin.harddspack", @"C:\DdsPackRoot\");
+                var otherProvider = CreateMod("pumpkin.otherpack", @"C:\OtherPackRoot\");
+
+                WithRunningMods(new List<ModContentPack> { pumpkin, har, provider, otherProvider }, ProtectedMods.InitializeTextureRoots);
+
+                Assert.That(ProtectedMods.GetProtectedTextureRoots(), Is.EquivalentTo(new[] { "C:/HarRoot", "C:/DdsPackRoot" }));
+            }
+            finally
+            {
+                System.IO.Directory.Delete(pumpkinRoot, recursive: true);
+            }
+        }
+
         // ── 提早載入保護 ──
 
         [TestCase("Ayameduki.Harpy", ExpectedResult = true)]

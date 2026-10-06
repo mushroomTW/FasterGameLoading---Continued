@@ -31,6 +31,13 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
         private static FieldInfo CachedAssembliesCountField =>
             AccessTools.Field(typeof(AccessTools_AllTypes_Patch), "cachedAssembliesCount");
 
+        private static FieldInfo CachedDynamicTypeCountField =>
+            AccessTools.Field(typeof(AccessTools_AllTypes_Patch), "cachedDynamicTypeCount");
+
+        internal static int CurrentDynamicTypeCount() =>
+            (int)AccessTools.Method(typeof(AccessTools_AllTypes_Patch), "CountDynamicTypes")
+                .Invoke(null, new object[] { AppDomain.CurrentDomain.GetAssemblies() });
+
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
@@ -89,6 +96,7 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
 
             AllTypesCachedField.SetValue(null, fakeTypes);
             CachedAssembliesCountField.SetValue(null, currentAssemblyCount);
+            CachedDynamicTypeCountField.SetValue(null, CurrentDynamicTypeCount());
 
             IEnumerable<Type> result = null;
             bool shouldRunOriginal = AccessTools_AllTypes_Patch.Prefix(ref result);
@@ -117,6 +125,37 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
             // Assembly count may increase during test run (flaky); use >= to allow for concurrent loads
             Assert.That(cachedCount, Is.GreaterThanOrEqualTo(AppDomain.CurrentDomain.GetAssemblies().Length - 1));
             Assert.That(result, Is.SameAs(cached));
+        }
+
+        [Test]
+        public void Prefix_WhenSameDynamicAssemblyDefinesNewType_InvalidatesCache()
+        {
+            var assembly = System.Reflection.Emit.AssemblyBuilder.DefineDynamicAssembly(
+                new AssemblyName("FglAllTypesDynamicGrowth"), System.Reflection.Emit.AssemblyBuilderAccess.Run);
+            var module = assembly.DefineDynamicModule("FglAllTypesDynamicGrowth");
+            module.DefineType("FglDynamicGrowth.A", TypeAttributes.Public).CreateType();
+
+            // 首次建立清單時列舉型別可能載入其他組件，使組件數改變而重建；重複呼叫到快取穩定命中為止。
+            IEnumerable<Type> result = null;
+            IEnumerable<Type> previous;
+            int attempts = 0;
+            do
+            {
+                previous = result;
+                AccessTools_AllTypes_Patch.Prefix(ref result);
+            }
+            while (!ReferenceEquals(previous, result) && ++attempts < 10);
+            Assert.That(result, Is.SameAs(previous), "快取應已穩定命中，否則無法驗證動態型別的失效判斷。");
+            Assert.That(result.Any(static t => t.FullName == "FglDynamicGrowth.A"), Is.True);
+            int assemblyCount = AppDomain.CurrentDomain.GetAssemblies().Length;
+
+            // 同一動態組件新增型別：組件數不變，快取仍須失效。
+            module.DefineType("FglDynamicGrowth.B", TypeAttributes.Public).CreateType();
+            Assert.That(AppDomain.CurrentDomain.GetAssemblies().Length, Is.EqualTo(assemblyCount));
+
+            AccessTools_AllTypes_Patch.Prefix(ref result);
+            Assert.That(result.Any(static t => t.FullName == "FglDynamicGrowth.B"), Is.True,
+                "原版 AllTypes 每次重新列舉會找到 B，快取不得回傳缺少 B 的舊清單。");
         }
 
         [Test]

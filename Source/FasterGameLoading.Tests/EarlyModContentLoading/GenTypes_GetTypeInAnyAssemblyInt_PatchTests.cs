@@ -113,6 +113,76 @@ namespace FasterGameLoading.Tests.EarlyModContentLoading
         }
 
         [Test]
+        public void WarmupFullNames_CrossAssemblyCaseCollision_FallsBackToVanillaFirstMatch()
+        {
+            var first = DefineTypes("FglCaseFirst", "AuditCase.widget", "AuditCase.Other");
+            var second = DefineTypes("FglCaseSecond", "AuditCase.Widget");
+
+            GenTypes_GetTypeInAnyAssemblyInt_Patch.WarmupFullNames(new[] { first, second });
+
+            Type result = null;
+            string typeName = "AuditCase.Widget";
+            bool shouldRunOriginal = GenTypes_GetTypeInAnyAssemblyInt_Patch.Prefix(ref result, out _, ref typeName, "Verse");
+
+            // 原版依組件順序以 ignoreCase: true 查詢，會先找到較前組件的 AuditCase.widget。
+            Assert.That(VanillaIgnoreCaseSearch(typeName, first, second).Assembly.GetName().Name, Is.EqualTo("FglCaseFirst"));
+            Assert.That(shouldRunOriginal, Is.True, "大小寫碰撞的名稱必須交回原版解析，不得回傳大小寫完全相符的較後組件型別。");
+            Assert.That(result, Is.Null);
+            Assert.That(GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults.ContainsKey("AuditCase.widget"), Is.False);
+            Assert.That(GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults["AuditCase.Other"], Is.EqualTo(first.GetType("AuditCase.Other")),
+                "沒有碰撞的名稱仍應預熱。");
+        }
+
+        [Test]
+        public void WarmupFullNames_SameAssemblyCaseAmbiguity_IsNotWarmed()
+        {
+            var assembly = DefineTypes("FglCaseSame", "Amb.Case", "Amb.case");
+
+            GenTypes_GetTypeInAnyAssemblyInt_Patch.WarmupFullNames(new[] { assembly });
+
+            Assert.That(GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults.ContainsKey("Amb.Case"), Is.False);
+            Assert.That(GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults.ContainsKey("Amb.case"), Is.False);
+        }
+
+        [Test]
+        public void WarmupFullNames_ExactDuplicateAcrossAssemblies_KeepsFirstLikeVanilla()
+        {
+            var first = DefineTypes("FglDupFirst", "Dup.Same");
+            var second = DefineTypes("FglDupSecond", "Dup.Same");
+
+            GenTypes_GetTypeInAnyAssemblyInt_Patch.WarmupFullNames(new[] { first, second });
+
+            Assert.That(GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults["Dup.Same"], Is.EqualTo(VanillaIgnoreCaseSearch("Dup.Same", first, second)));
+            Assert.That(GenTypes_GetTypeInAnyAssemblyInt_Patch.cachedResults["Dup.Same"].Assembly.GetName().Name, Is.EqualTo("FglDupFirst"));
+        }
+
+        private static System.Reflection.Assembly DefineTypes(string assemblyName, params string[] typeNames)
+        {
+            var assembly = System.Reflection.Emit.AssemblyBuilder.DefineDynamicAssembly(
+                new System.Reflection.AssemblyName(assemblyName), System.Reflection.Emit.AssemblyBuilderAccess.Run);
+            var module = assembly.DefineDynamicModule(assemblyName);
+            foreach (var typeName in typeNames)
+            {
+                module.DefineType(typeName, System.Reflection.TypeAttributes.Public).CreateType();
+            }
+            return assembly;
+        }
+
+        /// <summary>與原版 GenTypes.GetTypeInAnyAssemblyRaw 相同：依組件順序以 ignoreCase: true 查詢，先找到者勝出。</summary>
+        private static Type VanillaIgnoreCaseSearch(string typeName, params System.Reflection.Assembly[] assembliesInSearchOrder)
+        {
+            foreach (var assembly in assembliesInSearchOrder)
+            {
+                var type = assembly.GetType(typeName, throwOnError: false, ignoreCase: true);
+                if (type != null)
+                {
+                    return type;
+                }
+            }
+            return null;
+        }
+
+        [Test]
         public void GenTypesSearchAssemblies_ListsGameAssemblyThenRunningModsInLoadOrder()
         {
             var runningModsField = HarmonyLib.AccessTools.Field(typeof(Verse.LoadedModManager), "runningMods");

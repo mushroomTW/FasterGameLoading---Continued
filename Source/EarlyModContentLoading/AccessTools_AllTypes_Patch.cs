@@ -20,6 +20,8 @@ namespace FasterGameLoading
         private static volatile List<Type> allTypesCached;
         private static readonly object typesLock = new();
         private static volatile int cachedAssembliesCount = 0;
+        /// <summary>建立快取時所有動態組件的型別總數；同一動態組件新增型別不會改變組件數，需另外比對。</summary>
+        private static volatile int cachedDynamicTypeCount = 0;
 
         /// <summary>
         /// 在背景執行緒中預先載入所有型別。
@@ -31,10 +33,12 @@ namespace FasterGameLoading
             // GetAssemblies() 本身每次即回傳全新陣列快照，無需再包一層 ToArray。
             var assembliesSnapshot = AppDomain.CurrentDomain.GetAssemblies();
             int snapshotCount = assembliesSnapshot.Length;
+            // 先計數再列舉：期間新增的動態型別若已列入清單，下次比對只會多重建一次，不會漏項。
+            int dynamicTypeCount = CountDynamicTypes(assembliesSnapshot);
 
             if (!FasterGameLoadingSettings.EnableMultiThreading)
             {
-                EnumerateTypesOnMainThread(assembliesSnapshot, snapshotCount);
+                EnumerateTypesOnMainThread(assembliesSnapshot, snapshotCount, dynamicTypeCount);
                 return;
             }
 
@@ -50,19 +54,19 @@ namespace FasterGameLoading
             // 型別名稱處理曾引發 MakeGenericType 崩潰，名稱解析確為此處最脆弱的環節。
             //
             // FullName 預熱由 GenTypes_GetTypeInAnyAssemblyInt_Patch.WarmupFullNames 在 Mod 建構子（載入事件緒）完成。
-            EnumerateTypesInBackground(assembliesSnapshot, snapshotCount);
+            EnumerateTypesInBackground(assembliesSnapshot, snapshotCount, dynamicTypeCount);
         }
 
         /// <summary>
         /// 關閉多執行緒時，在當前執行緒列舉型別；FullName 由 Mod 建構子另行預熱。
         /// </summary>
-        private static void EnumerateTypesOnMainThread(Assembly[] assembliesSnapshot, int snapshotCount)
+        private static void EnumerateTypesOnMainThread(Assembly[] assembliesSnapshot, int snapshotCount, int dynamicTypeCount)
         {
-            StoreTypes(BuildTypeList(assembliesSnapshot), snapshotCount);
+            StoreTypes(BuildTypeList(assembliesSnapshot), snapshotCount, dynamicTypeCount);
         }
 
         /// <summary>背景緒僅做型別「列舉」，不讀取 FullName（原因見 Preload 的說明）。</summary>
-        private static void EnumerateTypesInBackground(Assembly[] assembliesSnapshot, int snapshotCount)
+        private static void EnumerateTypesInBackground(Assembly[] assembliesSnapshot, int snapshotCount, int dynamicTypeCount)
         {
             Task.Run(() =>
             {
@@ -73,7 +77,7 @@ namespace FasterGameLoading
                     // 稍微延遲 50 毫秒，避開啟動時的併發載入高峰
                     System.Threading.Thread.Sleep(FGLConsts.AccessToolsPreloadDelayMs);
 
-                    StoreTypes(BuildTypeList(assembliesSnapshot), snapshotCount);
+                    StoreTypes(BuildTypeList(assembliesSnapshot), snapshotCount, dynamicTypeCount);
                 }
                 catch (Exception ex)
                 {
@@ -104,20 +108,43 @@ namespace FasterGameLoading
         }
 
         /// <summary>
+        /// 動態組件的型別總數。<see cref="AssemblyTypesCache"/> 對動態組件每次重新列舉，型別只增不減，
+        /// 因此總數不變即代表動態型別集合不變；一般固定組件不列入，維持快取命中成本。
+        /// </summary>
+        private static int CountDynamicTypes(Assembly[] assemblies)
+        {
+            int count = 0;
+            foreach (var assembly in assemblies)
+            {
+                if (!assembly.IsDynamic) continue;
+                try
+                {
+                    count += AssemblyTypesCache.Get(assembly).Length;
+                }
+                catch
+                {
+                    // 與 BuildTypeList 相同：忽略個別組件型別讀取失敗
+                }
+            }
+            return count;
+        }
+
+        /// <summary>
         /// 列舉＋lock＋賦值的共用後端：三處快取寫入（主執行緒列舉、背景列舉、快取失效重建）皆經由此處。
         /// </summary>
-        private static void StoreTypes(List<Type> types, int assembliesCount)
+        private static void StoreTypes(List<Type> types, int assembliesCount, int dynamicTypeCount)
         {
             lock (typesLock)
             {
                 allTypesCached = types;
                 cachedAssembliesCount = assembliesCount;
+                cachedDynamicTypeCount = dynamicTypeCount;
             }
         }
 
         /// <summary>
-        /// 前置攔截：如果已經有全類型快取且組件數量一致，則直接回傳快取結果並跳過原方法。
-        /// 若組件數量改變（例如在加載期新加載了其他 Mod 的 DLL），則判定快取失效並重新載入。
+        /// 前置攔截：如果已經有全類型快取且組件數量與動態型別數量一致，則直接回傳快取結果並跳過原方法。
+        /// 若組件數量改變（例如在加載期新加載了其他 Mod 的 DLL），或既有動態組件新增了型別，則判定快取失效並重新載入。
         /// </summary>
         /// <remarks>
         /// 快取失效策略假設：RimWorld 啟動期間 AppDomain 的組件集合只會增加（不會移除），
@@ -128,10 +155,11 @@ namespace FasterGameLoading
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             int currentCount = assemblies.Length;
+            int currentDynamicTypeCount = CountDynamicTypes(assemblies);
 
             // double-checked locking
             var cached = allTypesCached;
-            if (cached != null && cachedAssembliesCount == currentCount)
+            if (cached != null && cachedAssembliesCount == currentCount && cachedDynamicTypeCount == currentDynamicTypeCount)
             {
                 __result = cached;
                 return false;
@@ -139,12 +167,12 @@ namespace FasterGameLoading
             lock (typesLock)
             {
                 cached = allTypesCached;
-                if (cached != null && cachedAssembliesCount == currentCount)
+                if (cached != null && cachedAssembliesCount == currentCount && cachedDynamicTypeCount == currentDynamicTypeCount)
                 {
                     __result = cached;
                     return false;
                 }
-                StoreTypes(BuildTypeList(assemblies), currentCount);
+                StoreTypes(BuildTypeList(assemblies), currentCount, currentDynamicTypeCount);
                 __result = allTypesCached;
                 return false;
             }

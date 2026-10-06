@@ -24,6 +24,19 @@ namespace FasterGameLoading
         public static void Prefix()
         {
             SessionLifecycle.Raise(LifecyclePhase.LanguageReloading);
+            PlayDataLoader_ClearAllPlayData_Patch.MarkResetBySelectLanguage();
+        }
+
+        /// <summary>
+        /// 其他 mod 的前置處理取消原版（例如 HugsLib 改為重新啟動）時，不會排入 ClearAllPlayData，
+        /// 撤銷標記，避免之後無關的清除（例如載入失敗的自動恢復）被誤判為這次語言切換而略過重置。
+        /// </summary>
+        public static void Postfix(bool __runOriginal)
+        {
+            if (!__runOriginal)
+            {
+                PlayDataLoader_ClearAllPlayData_Patch.ClearResetBySelectLanguage();
+            }
         }
     }
 }

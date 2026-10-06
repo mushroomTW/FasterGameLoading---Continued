@@ -22,31 +22,44 @@ All options live in `Options → Mod options → Faster Game Loading - Continued
 
 ```mermaid
 graph TD
-    A[Game startup] --> B[Assemblies and type reflection]
-    B --> C[Mod content loading]
-    C --> D[XML / Defs loading]
-    D --> G[Main menu]
-    G --> H[Texture loading]
-    H --> I[Downscaled texture cache]
-    H --> J[Static atlas baking]
-    J --> K[Adaptive atlas baking]
-    G --> L[Delay graphic and icon loading]
+    A[Game startup] --> B[Load assemblies]
+    B --> C[Mod constructors<br/>warm type lookup cache]
+    C --> D[XML / Defs<br/>loading thread]
+    C --> E[Load mod content early<br/>main thread, overlaps XML / Defs]
+    D --> F[Remaining mod content<br/>uses the downscaled texture cache if built]
+    E --> F
+    F --> G[Graphics and icons resolved<br/>sound definitions queued]
+    G --> H[Static constructors]
+    H --> I[Static atlas baking<br/>trim and skip duplicates]
+    I --> J[Main menu]
+    I --> K[Deferred coroutine starts<br/>does not wait for a save]
+    K --> L[Remaining sound definitions resolved<br/>a sound played earlier resolves on demand]
+    G -. Delay graphic loading on .-> M[Non-essential graphics<br/>and icons queued]
+    H -. Delay graphic loading on .-> N[Startup atlas baking skipped]
+    K -. Delay graphic loading on .-> O[Queued graphics and icons,<br/>then adaptive or vanilla atlas baking]
+    O -.-> L
 ```
+
+With the default settings, mod content, graphics, icons and static atlases are ready before the main menu; only sound definitions finish after it. The deferred coroutine is started by a startup callback, so it runs while the main menu is shown instead of waiting for a save to load. The downscaled texture cache is built manually with the **Downscale textures** tool and used by later startups.
 
 ## Features
 
 Enabled by default:
 
-- **Load mod content early**: Processes pending mod content during idle loading gaps before RimWorld's normal `ReloadContentInt` pass reaches those mods. It starts only after every mod constructor has run (at `LoadModXML`), so FGL's and other mods' Harmony patches already apply to early-loaded content. It stops once `PlayDataLoader.Loaded` is true and does not restart on language changes. Texture byte preloading is skipped when Graphics Settings+ or Image Opt is active; bytes already read on the main thread are not prefetched again.
+- **Load mod content early**: Processes pending mod content during idle loading gaps before RimWorld's normal `ReloadContentInt` pass reaches those mods. It starts only after every mod constructor has run (at `LoadModXML`), so FGL's and other mods' Harmony patches already apply to early-loaded content. It stops once `PlayDataLoader.Loaded` is true and does not restart on language changes. The frame budget is checked between mods, so one large mod can still take a long frame. Texture byte preloading is skipped when Graphics Settings+ or Image Opt is active; bytes already read on the main thread are not prefetched again.
 - **Multi-threaded preloading**: Loads XML assets in parallel while preserving RimWorld's original load-folder override order. With Hyperdrive, `Defs/` XML loading is left to Hyperdrive. A background thread also reads original texture files into memory in the order mods load them, holding at most 256 MB at a time, so the main thread does not wait on disk reads while loading textures. Files the main thread skips are released, and the rest is freed when startup finishes. This is skipped when Graphics Settings+ or Image Opt loads textures.
-- **Type lookup cache**: Warms full type names before XML parsing and remembers resolved names across sessions. It follows RimWorld's assembly search order, refreshes when the mod list or any game/mod assembly changes, and falls back to RimWorld's lookup for stale entries. Harmony `AccessTools.TypeByName` keeps a separate per-session cache. Each assembly's types are listed once and shared with the `AccessTools.AllTypes` cache. Changes take effect after restarting the game.
+- **Type lookup cache**: Warms full type names before XML parsing and remembers resolved names across sessions. It follows RimWorld's assembly search order; full names that differ only in letter case are left to RimWorld's case-insensitive lookup so the same type is chosen. It refreshes when the mod list or any game/mod assembly changes, and falls back to RimWorld's lookup for stale entries. Harmony `AccessTools.TypeByName` keeps a separate per-session cache. Each assembly's types are listed once and shared with the `AccessTools.AllTypes` cache, which is rebuilt when an assembly is added or a dynamic assembly defines new types. Changes take effect after restarting the game.
 - **Trim static atlases**: RimWorld packs each static atlas into a power-of-two height and doubles that height when the first attempt does not fit, so large atlases are often half empty rows. Each atlas keeps one empty row per mipmap level, with its height rounded up so every mip level is a multiple of 8 pixels for GPU compression. Every texture keeps its pixel position. Applies to RimWorld's baking and to **Adaptive atlas baking**. Changes take effect after restarting the game.
 - **Skip duplicate atlas textures**: RimWorld queues a minifiable building's texture for the Building, Item and Misc atlases. Item and Misc copies are skipped when the texture is also queued for Building and its mask state is consistent across all queued groups. Copies with conflicting mask states are preserved so cross-group lookup cannot select the wrong mask. RimWorld's "found in another atlas group" warning is silenced for removed copies only. Changes take effect after restarting the game.
 
+Always on (no setting):
+
+- **Deferred sound resolution**: RimWorld's sound definition (`SubSoundDef`) resolution is queued and finished by the deferred coroutine after the main menu appears, even when **Delay graphic and icon loading** is off. A sound requested before its definition is resolved (for example a main-menu hover or click) is resolved on the spot and then played, so main-menu UI sounds work from the start; UI sounds take well under a millisecond each, while a sound with long clips (such as Anomaly ambience) can take up to about 200 ms; vanilla spends that same time before the main menu. Requests made off the main thread, or for sounds whose definitions are not queued yet (for example during a language-switch reload), are skipped, as before. With **Delay graphic and icon loading** on, the remaining sounds resolve after the deferred graphics, icons and atlas baking. Entering a world resolves any remaining sounds immediately.
+
 Disabled by default:
 
-- **Delay graphic and icon loading**: Moves some non-essential visual and icon work to batched processing after entering the game. Essential categories such as furniture are chosen after Def references resolve. RimWorld's `ResolveIcon` handles icons before deferred atlas baking. Changes take effect after restarting the game.
-- **Adaptive atlas baking**: Only takes effect together with **Delay graphic and icon loading**. The deferred static atlases are baked one atlas per frame, sized from the measured GPU speed but never smaller than 1024×1024 pixels, so rendering still benefits from batching. Without delayed loading, RimWorld's original baking is used. Known risky race/multi-mask textures are kept out of static atlases. Changes take effect after restarting the game.
+- **Delay graphic and icon loading**: Moves some non-essential visual and icon work to batched processing after the startup callbacks; it begins while the main menu is shown, without waiting for a save to load. Essential categories such as furniture are chosen after Def references resolve. RimWorld's `ResolveIcon` handles icons before deferred atlas baking. Changes take effect after restarting the game.
+- **Adaptive atlas baking**: Only takes effect together with **Delay graphic and icon loading**. The deferred static atlases are baked one atlas per frame. Each batch targets an amount of pixels sized from the measured GPU speed, at least 1024×1024 pixels' worth, so rendering still benefits from batching; the last batch of a group may be smaller, and a batch with a single texture uses that texture directly, so individual atlases can be smaller than 1024×1024. The 8 ms per-atlas target is not a hard cap: one large atlas can still take longer in a single frame. Textures queued by other mods while baking is in progress are baked too. Without delayed loading, RimWorld's original baking is used. Known risky race/multi-mask textures are kept out of static atlases. Changes take effect after restarting the game.
 - **Faster atlas compression**: On the CPU path, compresses the baked static atlases with `Texture2D.Compress(highQuality: false)` instead of `true`. The high-quality mode adds dithering and takes longer. GPU compression is unchanged. Changes take effect after restarting the game.
 - **Verbose logging**: Prints debugging messages.
 
@@ -56,7 +69,7 @@ Manual tool:
 - **Clear texture cache**: Shows a loading screen while it removes cached downscaled textures, so original textures are used on the next startup.
 
 > [!NOTE]
-> Brief startup unresponsiveness can be normal, especially with large mod lists. Startup sound playback is temporarily held until deferred sound definitions finish resolving, then released automatically.
+> Brief startup unresponsiveness can be normal, especially with large mod lists. Sound definitions that are not resolved yet are resolved when a sound first plays, so the main menu is not silent.
 > **Delay graphic and icon loading** is an advanced option. If you see texture or icon timing issues, disable it first.
 > Downscaled texture cache can be cleared from the mod settings.
 > Translations are provided for English, Simplified Chinese, Traditional Chinese and Russian. Other languages, and keys missing from a translation, fall back to English through RimWorld's own translation lookup, so with Dev Mode on they show RimWorld's pseudo-translated (accented) English, its marker for untranslated text.

@@ -172,6 +172,67 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
             Assert.That(DelayedActions.AllowsVanillaStaticBake, Is.True);
         }
 
+        /// <summary>以假時鐘的時間軸執行 <paramref name="body"/>，並在主選單已出現（時間 1）後開始。</summary>
+        private static void WithTimelineAfterMainMenu(Action<StartupTimeline, Action<double>> body)
+        {
+            double now = 0;
+            var timeline = new StartupTimeline(() => now);
+            timeline.Observe(mainMenuShown: true, playing: false);
+            now = 1;
+            timeline.Observe(mainMenuShown: true, playing: false);
+            var previous = StartupTimeline.Instance;
+            StartupTimeline.Instance = timeline;
+            try
+            {
+                body(timeline, t => now = t);
+            }
+            finally
+            {
+                StartupTimeline.Instance = previous;
+            }
+        }
+
+        [Test]
+        public void PerformActions_MarksVisualsReadyBeforeSoundsAndAllReadyAfterThem()
+        {
+            CaptureSettings(delay: false, adaptive: false);
+            WithTimelineAfterMainMenu((timeline, setNow) =>
+            {
+                setNow(3);
+                // 音效解析要花時間：解析期間時鐘前進到 5。
+                delayedActions.EnqueueSubSound((SubSoundDef)FormatterServices.GetUninitializedObject(typeof(SubSoundDef)), () => setNow(5));
+
+                RunToCompletion();
+
+                Assert.That(timeline.Observe(mainMenuShown: true, playing: false),
+                    Does.Contain("visuals ready +2.0 s, all deferred work done +4.0 s."));
+            });
+        }
+
+        [Test]
+        public void ReportStartupTiming_WithVerboseLoggingOff_StillConsumesTheSummary()
+        {
+            // 啟動後才開啟詳細日誌時不能再輸出：那時才記下的主選單時間會讓摘要變成假的 +0.0 s。
+            bool originalVerbose = FasterGameLoadingSettings.VerboseLogging;
+            FasterGameLoadingSettings.VerboseLogging = false;
+            try
+            {
+                WithTimelineAfterMainMenu((timeline, setNow) =>
+                {
+                    timeline.MarkVisualsReady();
+                    timeline.MarkAllReady();
+
+                    DelayedActions.ReportStartupTiming();
+
+                    Assert.That(timeline.Pending, Is.False);
+                });
+            }
+            finally
+            {
+                FasterGameLoadingSettings.VerboseLogging = originalVerbose;
+            }
+        }
+
         [Test]
         public void PerformActions_WhenDeferredVisualsEnabled_LoadsGraphicsThenIconsBeforeBaking()
         {

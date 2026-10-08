@@ -155,6 +155,19 @@ namespace FasterGameLoading
             FGLLog.FlushPending();
             MainThreadTextureLoader.Drain();
             SessionLifecycle.DrainMainThreadRaises();
+            ReportStartupTiming();
+        }
+
+        /// <summary>
+        /// 初次啟動的延遲管線完成後產生一次啟動時間摘要，開啟詳細日誌時才寫進 log。
+        /// 不論日誌開關都要觀察，主選單時間才是真的出現時間；啟動後才開啟詳細日誌時不輸出。
+        /// </summary>
+        internal static void ReportStartupTiming()
+        {
+            var timeline = StartupTimeline.Instance;
+            if (!timeline.Pending) return;
+            var summary = timeline.Observe(StartupTimeline.MainMenuShown, Current.ProgramState is ProgramState.Playing);
+            if (summary != null && FasterGameLoadingSettings.VerboseLogging) FGLLog.Message(summary);
         }
 
         public void LateUpdate()
@@ -188,8 +201,10 @@ namespace FasterGameLoading
                     UpdateMapMeshForLoadedDefs(loadedDefs);
                 }
                 Phase = DeferredPhase.Sounds;
+                StartupTimeline.Instance.MarkVisualsReady();
                 yield return ResolveSubSoundDefsCoroutine();
                 Phase = DeferredPhase.Completed;
+                StartupTimeline.Instance.MarkAllReady();
             }
             finally
             {

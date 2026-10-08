@@ -12,7 +12,7 @@ namespace FasterGameLoading
 {
     /// <summary>
     /// 自適應靜態圖集烘焙 — 根據 GPU 烘焙速度動態調整批次大小，
-    /// 以「每個 slice 約 8ms」為目標，避免單幀卡頓。
+    /// 以「每個 slice 約 8ms」為目標決定圖集大小；同一幀在時間預算內可接連烘焙多張，用完預算才讓出。
     /// 使用加權移動平均追蹤歷史烘焙速度，並在每 slice 後即時調整。
     /// </summary>
     public static class AdaptiveAtlasBaker
@@ -73,7 +73,7 @@ namespace FasterGameLoading
         /// <summary>
         /// 自適應靜態圖集烘焙主協程。
         /// </summary>
-        /// <param name="delayedActions">延遲動作管理器實例，主要用來回報或獲取狀態。</param>
+        /// <param name="delayedActions">延遲動作管理器實例，提供每幀的時間預算。</param>
         // MA0051（方法過長）與 S3776（認知複雜度）：速度估算、失敗收尾與提交階段
         // 都已抽出（見下方三個方法），剩下的本體是一段以 yield 分段的線性敘事：
         // 逐 group 累積批次、滿一個 slice 就烘焙並讓出一幀。
@@ -89,6 +89,8 @@ namespace FasterGameLoading
         {
             FGLLog.Message("Starting adaptive static atlas bake");
             LastBakeFailed = false;
+            // 每幀以時間預算決定何時讓出，而不是每烘一張就讓出。開始時不重設計時器：
+            // 前一階段可能已在同一幀用掉大半預算，烘焙只能用剩下的部分。
 
             // 每個 slice 就是一張圖集，slice 大小直接決定圖集大小與數量。
             // 沿用原作（Taranchuk）的參數：小於 1024×1024 的圖集對繪製批次合併幾乎沒有幫助，
@@ -147,7 +149,11 @@ namespace FasterGameLoading
                             yield break;
                         }
 
-                        yield return null;
+                        if (ShouldYieldAfterBatch(delayedActions))
+                        {
+                            yield return null;
+                            delayedActions?.RestartStopwatch();
+                        }
                         batchForNextBake.Clear();
                         pixelsInCurrentSlice = 0;
                     }
@@ -162,7 +168,11 @@ namespace FasterGameLoading
                         AbortBake(atlasesToCommit, bakedAtlasesForGroup);
                         yield break;
                     }
-                    yield return null;
+                    if (ShouldYieldAfterBatch(delayedActions))
+                    {
+                        yield return null;
+                        delayedActions?.RestartStopwatch();
+                    }
                 }
 
                 // 將此 group 的所有烘焙結果放入全域清單
@@ -172,6 +182,13 @@ namespace FasterGameLoading
             CommitBakedAtlases(atlasesToCommit, state.MeasuredBakeSpeed);
             FGLLog.Message("Adaptive static atlas bake complete");
         }
+
+        /// <summary>
+        /// 烘完一張圖集後是否讓出一幀：本幀時間預算（主選單 50ms、遊戲中 8ms）用完才讓出，
+        /// 預算內接著烘下一張。沒有延遲動作管理器時（只發生在單元測試）每張都讓出。
+        /// </summary>
+        private static bool ShouldYieldAfterBatch(DelayedActions delayedActions)
+            => delayedActions == null || delayedActions.IsOverBudget;
 
         /// <summary>
         /// 以歷史記錄的加權移動平均推估本次的起始烘焙速度（像素／秒）；

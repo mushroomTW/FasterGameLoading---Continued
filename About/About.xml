@@ -6,7 +6,7 @@
     <li>1.6</li>
   </supportedVersions>
   <packageId>Taranchuk.FasterGameLoading</packageId>
-  <modVersion>2026.10.06.2</modVersion>
+  <modVersion>2026.10.08.5</modVersion>
   <description>
 === Does loading take forever? This mod is for you! ===
 
@@ -21,8 +21,8 @@ Sick of staring at the loading screen every time you start RimWorld? This mod cu
 - Skip duplicate atlas textures: Shares Building textures with Item and Misc when mask states are unambiguous; preserves copies with conflicting mask states. (enabled by default)
 - Faster atlas compression: Uses standard-quality compression on the CPU path; GPU compression is unchanged. (disabled by default)
 - Delay graphic and icon loading: Delays non-essential textures until after the startup callbacks, processing them while the main menu is shown without waiting for a save; essential categories are checked after Def references resolve, and RimWorld resolves icons before atlas baking. (disabled by default)
-- Adaptive atlas baking: Used together with delayed graphic loading; bakes the deferred atlases one per frame; each batch targets at least 1024x1024 pixels' worth, sized from your GPU speed (the last batch of a group and single-texture batches can be smaller, and one large atlas can still take a long frame), bakes textures queued by other mods during baking, and keeps RimWorld 1.6 vanilla atlas pre-inserts intact. Without delayed graphic loading, vanilla baking is used. (disabled by default)
-- Verbose logging: Outputs debug messages to the console. (disabled by default)
+- Adaptive atlas baking: Used together with delayed graphic loading; bakes the deferred atlases several per frame within the frame's time budget (50 ms on the main menu); each batch targets at least 1024x1024 pixels' worth, sized from your GPU speed (the last batch of a group and single-texture batches can be smaller, and one large atlas can still take a long frame), bakes textures queued by other mods during baking, and keeps RimWorld 1.6 vanilla atlas pre-inserts intact. Without delayed graphic loading, vanilla baking is used. (disabled by default)
+- Verbose logging: Outputs debug messages to the console, including, when it is on at launch, one "Startup timing" line after startup with how long after the main menu appeared the deferred visuals and all deferred work became ready. (disabled by default)
 - Texture downscaler: Runs behind a loading screen and saves reduced copies of high-resolution textures in a separate cache. Original files remain untouched; cache entries for active mods survive mod-list changes, and UI textures retain their no-mipmap behavior. (manual tool)
 
 --- Things to know ---

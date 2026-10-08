@@ -471,6 +471,81 @@ namespace FasterGameLoading.Tests.AdaptiveAtlasBaking
             Assert.That(tryBakeSingleBatchCallCount, Is.EqualTo(1));
         }
 
+        private static bool mockOverBudget;
+
+        private static bool MockIsOverBudget(ref bool __result)
+        {
+            __result = mockOverBudget;
+            return false;
+        }
+
+        /// <summary>排入兩個群組各一張貼圖，烘焙時各烘一張圖集。</summary>
+        private static void QueueTwoSingleTextureGroups()
+        {
+            var queue = new Dictionary<TextureAtlasGroupKey, (List<Texture2D>, HashSet<Texture2D>)>();
+            var buildingKey = new TextureAtlasGroupKey { group = TextureAtlasGroup.Building, hasMask = false };
+            var miscKey = new TextureAtlasGroupKey { group = TextureAtlasGroup.Misc, hasMask = false };
+            var first = MockTextureHelper.CreateTexture(64, 64, "BudgetFirst");
+            var second = MockTextureHelper.CreateTexture(64, 64, "BudgetSecond");
+            queue[buildingKey] = (new List<Texture2D> { first }, new HashSet<Texture2D> { first });
+            queue[miscKey] = (new List<Texture2D> { second }, new HashSet<Texture2D> { second });
+            BuildQueueField.SetValue(null, queue);
+        }
+
+        /// <summary>兩張圖集的烘焙，在指定的預算狀態下跑到第一次讓出幀為止。</summary>
+        private void RunTwoAtlasBakeUntilFirstYield(bool overBudget, out bool yielded)
+        {
+            QueueTwoSingleTextureGroups();
+            var getter = AccessTools.PropertyGetter(typeof(DelayedActions), nameof(DelayedActions.IsOverBudget));
+            var patch = new HarmonyMethod(AccessTools.Method(typeof(AdaptiveAtlasBakerTests), nameof(MockIsOverBudget)));
+            mockOverBudget = overBudget;
+            harmony.Patch(getter, prefix: patch);
+            try
+            {
+                var iterator = AdaptiveAtlasBaker.PerformAdaptiveStaticAtlasBake(new DelayedActions());
+                yielded = iterator.MoveNext();
+            }
+            finally
+            {
+                harmony.Unpatch(getter, patch.method);
+            }
+        }
+
+        [Test]
+        public void PerformAdaptiveStaticAtlasBake_UnderFrameBudget_BakesSeveralAtlasesInOneFrame()
+        {
+            RunTwoAtlasBakeUntilFirstYield(overBudget: false, out bool yielded);
+
+            Assert.That(yielded, Is.False, "預算內不應每烘一張就讓出一幀。");
+            Assert.That(tryBakeSingleBatchCallCount, Is.EqualTo(2));
+            Assert.That(((IList)StaticTextureAtlasesField.GetValue(null)).Count, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void PerformAdaptiveStaticAtlasBake_OverFrameBudget_YieldsAfterEachAtlas()
+        {
+            RunTwoAtlasBakeUntilFirstYield(overBudget: true, out bool yielded);
+
+            Assert.That(yielded, Is.True, "超出本幀預算時應讓出一幀。");
+            Assert.That(tryBakeSingleBatchCallCount, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void PerformAdaptiveStaticAtlasBake_UsesRemainingFrameBudgetAndRestartsAfterYield()
+        {
+            QueueTwoSingleTextureGroups();
+            var delayedActions = new DelayedActions();
+            delayedActions.RestartStopwatch();
+            // 前一階段已在同一幀用完 50ms 預算。
+            System.Threading.Thread.Sleep(60);
+            var iterator = AdaptiveAtlasBaker.PerformAdaptiveStaticAtlasBake(delayedActions);
+
+            Assert.That(iterator.MoveNext(), Is.True, "烘焙應沿用本幀剩下的預算，烘完第一張就讓出。");
+            Assert.That(tryBakeSingleBatchCallCount, Is.EqualTo(1));
+            Assert.That(iterator.MoveNext(), Is.False, "讓出後的新一幀應重新計算預算，烘完剩下的圖集。");
+            Assert.That(tryBakeSingleBatchCallCount, Is.EqualTo(2));
+        }
+
         [Test]
         public void PerformAdaptiveStaticAtlasBake_WhenBatchBakeFails_MarksFailedAndEarlyExits()
         {

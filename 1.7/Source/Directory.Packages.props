@@ -5,7 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Krafs.Publicizer" Version="2.3.2" />
-    <PackageVersion Include="Krafs.Rimworld.Ref" Version="1.7.4982-unstable" />
+    <PackageVersion Include="Krafs.Rimworld.Ref" Version="1.7.4995-unstable" />
     <PackageVersion Include="Meziantou.Analyzer" Version="3.0.205" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
     <PackageVersion Include="NUnit" Version="4.6.1" />

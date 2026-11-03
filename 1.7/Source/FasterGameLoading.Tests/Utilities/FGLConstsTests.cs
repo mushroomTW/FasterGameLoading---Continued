@@ -13,7 +13,6 @@ public class FGLConstsTests
         Assert.That(FGLConsts.ModName, Is.EqualTo("FasterGameLoading"));
         Assert.That(FGLConsts.TextureCacheDir, Is.EqualTo("TextureCache"));
         Assert.That(FGLConsts.TextureCacheStagingDir, Is.EqualTo("TextureCache_New"));
-        Assert.That(FGLConsts.UIDirSlash, Is.EqualTo("/UI/"));
         Assert.That(FGLConsts.TexturesDirName, Is.EqualTo("Textures"));
     }
 

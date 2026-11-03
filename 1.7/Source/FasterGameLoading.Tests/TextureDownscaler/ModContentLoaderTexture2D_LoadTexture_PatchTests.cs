@@ -15,20 +15,19 @@ using HarmonyLib;
 namespace FasterGameLoading.Tests.TextureDownscaler;
 /// <summary>
 /// ModContentLoaderTexture2D_LoadTexture_Patch 的 headless 測試：背景轉交、registry 命中、
-/// 相容性短路、Postfix 登記與背景預讀。佇列與登記本身另見
+/// 相容性短路、降質快取命中與 Postfix 登記。佇列與登記本身另見
 /// MainThreadTextureLoaderTests、LoadedTextureRegistryTests。
 /// </summary>
 [TestFixture]
 public class ModContentLoaderTexture2D_LoadTexture_PatchTests
 {
-    private static readonly Type PatchType = typeof(ModContentLoaderTexture2D_LoadTexture_Patch);
-
     private string tempDir;
     private FasterGameLoadingMod originalInstance;
     private bool originalStaticAtlasesBaking;
     private bool originalVerboseLogging;
     private int originalRedirectTimeoutMs;
     private Func<VirtualFile, Texture2D> originalMainThreadLoad;
+    private Func<string, Texture2D> originalLoadCacheFile;
 
     // 測試用的轉交逾時；正式值為 10 秒，會讓「泵送從未執行」的測試空等太久。
     private const int TestRedirectTimeoutMs = 1000;
@@ -69,6 +68,7 @@ public class ModContentLoaderTexture2D_LoadTexture_PatchTests
         originalInstance = FasterGameLoadingMod.Instance;
         originalRedirectTimeoutMs = MainThreadTextureLoader.RedirectTimeoutMs;
         originalMainThreadLoad = MainThreadTextureLoader.LoadOnMainThread;
+        originalLoadCacheFile = ModContentLoaderTexture2D_LoadTexture_Patch.LoadCacheFile;
         MainThreadTextureLoader.RedirectTimeoutMs = TestRedirectTimeoutMs;
 
         // 預設由 FGL 負責載入貼圖，否則 Prefix 會在第一個分支就短路。
@@ -89,6 +89,7 @@ public class ModContentLoaderTexture2D_LoadTexture_PatchTests
         MainThreadTextureLoader.Drain();
         MainThreadTextureLoader.RedirectTimeoutMs = originalRedirectTimeoutMs;
         MainThreadTextureLoader.LoadOnMainThread = originalMainThreadLoad;
+        ModContentLoaderTexture2D_LoadTexture_Patch.LoadCacheFile = originalLoadCacheFile;
         ClearPatchState();
         SessionLifecycle.Raise(LifecyclePhase.LanguageReloading);
 
@@ -106,7 +107,7 @@ public class ModContentLoaderTexture2D_LoadTexture_PatchTests
         }
         catch (IOException)
         {
-            // 背景預載入工作可能仍持有檔案控制代碼；殘留暫存目錄不影響斷言結果。
+            // 防毒軟體等外部程序可能仍持有檔案控制代碼；殘留暫存目錄不影響斷言結果。
         }
     }
 
@@ -181,12 +182,6 @@ public class ModContentLoaderTexture2D_LoadTexture_PatchTests
         Assert.That(result, Is.SameAs(cached));
     }
 
-    // 註：Prefix 的降質快取分支（TryServeFromDownscaleCache）在此環境下無法測試。
-    // 該方法本體含 Texture2D 建構式、LoadImage、Compress、Apply 等 Unity ECall，
-    // 而測試環境已由 TestSetup 掛上 MonoMod 的 JIT hook；JIT 該方法時 CLR 會拋出
-    // 「ECall methods must be packaged into a system module」而非在呼叫時才失敗，
-    // 因此連「進入方法後立刻回傳 false」的路徑也無法執行。
-
     // ── Postfix ──
 
     [Test]
@@ -242,130 +237,100 @@ public class ModContentLoaderTexture2D_LoadTexture_PatchTests
             new FakeVirtualFile(Path.Combine(tempDir, "none.png")), __state: true, __result: null));
     }
 
-    // ── 背景預載入 ──
+    // ── Prefix：降質快取命中 ──
 
-    [Test]
-    public void StartPreloadCachedTextures_ReadsCacheFilesIntoMemory()
+    // 只含 PNG 簽章與 IHDR 尺寸的最小檔頭，足以通過 PngUtils 的標頭檢查。
+    private static byte[] PngHeader(int width, int height)
     {
-        string originalPath = Path.Combine(tempDir, "Textures", "pre.png");
-        string cachePath = Path.Combine(tempDir, "pre_cache.png");
-        var payload = new byte[] { 9, 8, 7, 6 };
-        File.WriteAllBytes(cachePath, payload);
-
-        FasterGameLoadingMod.Instance.CacheManager.SetCacheEntry(originalPath, cachePath);
-
-        ModContentLoaderTexture2D_LoadTexture_Patch.StartPreloadCachedTextures();
-
-        // 預載入刻意延遲 TexturePreloadDelayMs 才開始，避免與啟動期 XML I/O 爭頻寬。
-        SpinWait.SpinUntil(
-            () => ModContentLoaderTexture2D_LoadTexture_Patch.preloadedCacheBytes.ContainsKey(cachePath),
-            TimeSpan.FromSeconds(5));
-
-        Assert.That(
-            ModContentLoaderTexture2D_LoadTexture_Patch.preloadedCacheBytes.TryGetValue(cachePath, out var loaded),
-            Is.True);
-        Assert.That(loaded, Is.EqualTo(payload));
+        var header = new byte[24];
+        new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A }.CopyTo(header, 0);
+        System.Buffers.Binary.BinaryPrimitives.WriteInt32BigEndian(header.AsSpan(16, 4), width);
+        System.Buffers.Binary.BinaryPrimitives.WriteInt32BigEndian(header.AsSpan(20, 4), height);
+        return header;
     }
 
-    [Test]
-    public void StartPreloadCachedTextures_EmptyCacheStartsNoBackgroundWork()
-    {
-        ModContentLoaderTexture2D_LoadTexture_Patch.preloadedCacheBytes["stale"] = [1];
-
-        ModContentLoaderTexture2D_LoadTexture_Patch.StartPreloadCachedTextures();
-
-        Assert.That(ModContentLoaderTexture2D_LoadTexture_Patch.preloadedCacheBytes, Is.Empty,
-            "即使沒有快取項目也必須先清空舊的預載入位元組，避免沿用上個 session 的內容。");
-    }
-
-    [Test]
-    public void StartPreloadCachedTextures_WithoutModInstanceDoesNotThrow()
-    {
-        SetModInstance(null);
-
-        Assert.DoesNotThrow(ModContentLoaderTexture2D_LoadTexture_Patch.StartPreloadCachedTextures);
-    }
-
-    [Test]
-    public void StartPreloadCachedTextures_WhenGraphicsSettingsActive_SkipsPreload()
-    {
-        string cachePath = WriteCacheEntry("gs_cache.png");
-        TextureOwnership.OverrideForTests(TextureOwner.GraphicsSettings);
-
-        ModContentLoaderTexture2D_LoadTexture_Patch.StartPreloadCachedTextures();
-        WaitForPreloadTask();
-
-        // GS+ 啟用時 Prefix 一律交給原始流程，預讀的位元組永遠不會被取用，只會佔住記憶體到遊戲結束。
-        Assert.That(ModContentLoaderTexture2D_LoadTexture_Patch.preloadedCacheBytes.ContainsKey(cachePath), Is.False);
-    }
-
-    [Test]
-    public void TakeCachedTextureBytes_PrefersPreloadedBytes()
-    {
-        string cachePath = Path.Combine(tempDir, "missing_on_disk.png");
-        var preloaded = new byte[] { 4, 2 };
-        ModContentLoaderTexture2D_LoadTexture_Patch.preloadedCacheBytes[cachePath] = preloaded;
-
-        var data = ModContentLoaderTexture2D_LoadTexture_Patch.TakeCachedTextureBytes(cachePath);
-
-        Assert.That(data, Is.SameAs(preloaded));
-        Assert.That(ModContentLoaderTexture2D_LoadTexture_Patch.preloadedCacheBytes.ContainsKey(cachePath), Is.False);
-    }
-
-    [Test]
-    public void TakeCachedTextureBytes_BeforePreloaderReachesFile_PreloaderSkipsIt()
-    {
-        string cachePath = WriteCacheEntry("raced_cache.png");
-
-        ModContentLoaderTexture2D_LoadTexture_Patch.StartPreloadCachedTextures();
-        // 預讀會先延遲 TexturePreloadDelayMs；在這之前主執行緒已自行讀取這個檔案。
-        var data = ModContentLoaderTexture2D_LoadTexture_Patch.TakeCachedTextureBytes(cachePath);
-        WaitForPreloadTask();
-
-        Assert.That(data, Is.EqualTo(new byte[] { 9, 8, 7 }));
-        Assert.That(ModContentLoaderTexture2D_LoadTexture_Patch.preloadedCacheBytes.ContainsKey(cachePath), Is.False,
-            "主執行緒已讀過的檔案不得再被預讀留在記憶體裡。");
-    }
-
-    [Test]
-    public void ReleasePreloadedCacheBytes_StopsPreloadAndDropsLeftovers()
-    {
-        WriteCacheEntry("left_cache.png");
-        ModContentLoaderTexture2D_LoadTexture_Patch.preloadedCacheBytes["stale"] = [1];
-
-        ModContentLoaderTexture2D_LoadTexture_Patch.StartPreloadCachedTextures();
-        ModContentLoaderTexture2D_LoadTexture_Patch.ReleasePreloadedCacheBytes();
-        WaitForPreloadTask();
-
-        Assert.That(
-            SpinWait.SpinUntil(() => ModContentLoaderTexture2D_LoadTexture_Patch.preloadedCacheBytes.IsEmpty, TimeSpan.FromSeconds(2)),
-            Is.True,
-            "啟動完成後，未被取用的預讀位元組（含仍在執行的預讀迴圈稍後寫入的）都必須釋放。");
-    }
-
-    // 建立一筆降質快取項目與其快取檔，回傳快取檔路徑。
-    private string WriteCacheEntry(string cacheFileName)
+    // 建立一筆降質快取項目與其快取檔，回傳原始貼圖路徑。
+    private string WriteCacheEntry(string cacheFileName, byte[] contents)
     {
         string cachePath = Path.Combine(tempDir, cacheFileName);
-        File.WriteAllBytes(cachePath, [9, 8, 7]);
-        FasterGameLoadingMod.Instance.CacheManager.SetCacheEntry(Path.Combine(tempDir, "Textures", cacheFileName), cachePath);
-        return cachePath;
+        File.WriteAllBytes(cachePath, contents);
+        string originalPath = Path.Combine(tempDir, "Textures", cacheFileName);
+        FasterGameLoadingMod.Instance.CacheManager.SetCacheEntry(originalPath, cachePath);
+        return originalPath;
     }
 
-    private static void WaitForPreloadTask()
+    [Test]
+    public void Prefix_DownscaleCacheHit_LoadsCacheFileThroughVanillaFileLoader()
     {
-        var task = (Task)PatchType.GetField("_preloadTask", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
-        Assert.That(task.Wait(TimeSpan.FromSeconds(5)), Is.True);
+        TestSetup.IsInMainThreadOverride = () => true;
+        string originalPath = WriteCacheEntry("hit_cache.png", PngHeader(64, 32));
+        string loadedFrom = null;
+        var expected = NewDetachedTexture();
+        ModContentLoaderTexture2D_LoadTexture_Patch.LoadCacheFile = path =>
+        {
+            loadedFrom = path;
+            return expected;
+        };
+        int hitsBefore = ModContentLoaderTexture2D_LoadTexture_Patch.CacheLoadHits;
+
+        Texture2D result = null;
+        bool runOriginal = ModContentLoaderTexture2D_LoadTexture_Patch.Prefix(new FakeVirtualFile(originalPath), out _, ref result);
+
+        Assert.That(runOriginal, Is.False);
+        Assert.That(result, Is.SameAs(expected));
+        Assert.That(loadedFrom, Is.EqualTo(Path.Combine(tempDir, "hit_cache.png")),
+            "快取檔必須以檔案路徑交給原版載入，貼圖才帶有來源路徑，1.7 圖集才能使用磁碟快取。");
+        Assert.That(ModContentLoaderTexture2D_LoadTexture_Patch.CacheLoadHits, Is.EqualTo(hitsBefore + 1));
+        Assert.That(LoadedTextureRegistry.TryGetPath(expected, out var recorded), Is.True);
+        Assert.That(recorded, Is.EqualTo(originalPath));
     }
+
+    [Test]
+    public void Prefix_DownscaleCacheWithInvalidPngHeader_DropsEntryAndRunsOriginal()
+    {
+        TestSetup.IsInMainThreadOverride = () => true;
+        string originalPath = WriteCacheEntry("broken_cache.png", [9, 8, 7]);
+        bool loaderCalled = false;
+        ModContentLoaderTexture2D_LoadTexture_Patch.LoadCacheFile = _ =>
+        {
+            loaderCalled = true;
+            return NewDetachedTexture();
+        };
+        int failuresBefore = ModContentLoaderTexture2D_LoadTexture_Patch.CacheLoadFailures;
+
+        Texture2D result = null;
+        bool runOriginal = ModContentLoaderTexture2D_LoadTexture_Patch.Prefix(new FakeVirtualFile(originalPath), out bool state, ref result);
+
+        Assert.That(runOriginal, Is.True);
+        Assert.That(state, Is.True);
+        Assert.That(result, Is.Null);
+        Assert.That(loaderCalled, Is.False, "1.7 的檔案載入延後才解碼，壞檔必須在交給它之前就被擋下。");
+        Assert.That(ModContentLoaderTexture2D_LoadTexture_Patch.CacheLoadFailures, Is.EqualTo(failuresBefore + 1));
+        Assert.That(FasterGameLoadingMod.Instance.CacheManager.TryGetCachedTexturePath(originalPath, out _), Is.False);
+    }
+
+    [Test]
+    public void Prefix_DownscaleCacheLoaderThrows_DropsEntryAndRunsOriginal()
+    {
+        TestSetup.IsInMainThreadOverride = () => true;
+        string originalPath = WriteCacheEntry("throw_cache.png", PngHeader(16, 16));
+        ModContentLoaderTexture2D_LoadTexture_Patch.LoadCacheFile = _ => throw new IOException("locked");
+
+        Texture2D result = null;
+        bool runOriginal = ModContentLoaderTexture2D_LoadTexture_Patch.Prefix(new FakeVirtualFile(originalPath), out _, ref result);
+
+        Assert.That(runOriginal, Is.True);
+        Assert.That(result, Is.Null);
+        Assert.That(FasterGameLoadingMod.Instance.CacheManager.TryGetCachedTexturePath(originalPath, out _), Is.False);
+    }
+
 
     // ── 測試輔助 ──
 
     private static void ClearPatchState()
     {
         LoadedTextureRegistry.Clear();
-        ModContentLoaderTexture2D_LoadTexture_Patch.preloadedCacheBytes.Clear();
     }
-
 
     private static FasterGameLoadingMod CreateModWithCacheManager(TextureCacheManager cacheManager)
     {
@@ -400,36 +365,5 @@ public class ModContentLoaderTexture2D_LoadTexture_PatchTests
         Assert.That(runOriginal, Is.True);
         Assert.That(__state, Is.True);
         Assert.That(result, Is.Null);
-    }
-
-
-
-    [Test]
-    public void StartPreloadCachedTextures_WhenFilesExist_LoadsBytesIntoPreloadMap()
-    {
-        var mod = (FasterGameLoadingMod)FormatterServices.GetUninitializedObject(typeof(FasterGameLoadingMod));
-        var mgr = new TextureCacheManager(tempDir);
-        string sampleFile = Path.Combine(tempDir, "preloaded.png");
-        File.WriteAllBytes(sampleFile, [1, 2, 3, 4]);
-        mgr.SetCacheEntry("test_key", sampleFile);
-
-        AccessTools.PropertySetter(typeof(FasterGameLoadingMod), nameof(FasterGameLoadingMod.CacheManager))
-            ?.Invoke(mod, new object[] { mgr });
-        AccessTools.PropertySetter(typeof(FasterGameLoadingMod), nameof(FasterGameLoadingMod.Instance))
-            ?.Invoke(null, new object[] { mod });
-
-        try
-        {
-            ModContentLoaderTexture2D_LoadTexture_Patch.StartPreloadCachedTextures();
-            SpinWait.SpinUntil(() => ModContentLoaderTexture2D_LoadTexture_Patch.preloadedCacheBytes.ContainsKey(sampleFile), TimeSpan.FromSeconds(3));
-
-            Assert.That(ModContentLoaderTexture2D_LoadTexture_Patch.preloadedCacheBytes, Does.ContainKey(sampleFile));
-        }
-        finally
-        {
-            ModContentLoaderTexture2D_LoadTexture_Patch.preloadedCacheBytes.Clear();
-            AccessTools.PropertySetter(typeof(FasterGameLoadingMod), nameof(FasterGameLoadingMod.Instance))
-                ?.Invoke(null, new object[] { null });
-        }
     }
 }

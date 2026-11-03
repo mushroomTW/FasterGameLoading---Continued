@@ -57,12 +57,12 @@ graph TD
 
 預設關閉：
 
-- **延遲圖形和圖示載入**：把部分非必要的圖形與圖示工作移到啟動回呼之後分批處理；它在顯示主選單時就開始，不必等待讀取存檔。略過啟動圖集烘焙時，仍會在主選單前完成 RimWorld 1.7 延遲的紋理上傳；已排入圖集的來源紋理維持未駐留，等需要時才載入。佇列中的圖形與圖示完成後，再執行 RimWorld 原本的圖集烘焙、壓縮、磁碟快取與來源紋理釋放。家具等必要類別會在 Def 參照解析後才決定。RimWorld 的 `ResolveIcon` 會在延後的圖集烘焙之前處理圖示。若某個 Def 的圖形在排入佇列後被其他模組改寫（例如 Bionic Icons 在靜態建構子把部位圖形換成共用外框加各部位遮罩），延後流程仍會建立新圖形，但不把它插入靜態圖集，與原版一致：改寫後的圖形在原版本來就沒進圖集，這也避免 RimWorld 的「同一張貼圖搭配兩個不同遮罩」圖集錯誤。此選項繼續預設關閉：主選單可以提早出現，但延後工作可能造成選單後的長幀與記憶體用量增加。變更後需重新啟動遊戲才生效。
+- **延遲圖形和圖示載入**：把部分非必要的圖形與圖示工作移到啟動回呼之後分批處理；它在顯示主選單時就開始，不必等待讀取存檔。略過啟動圖集烘焙時，仍會在主選單前完成 RimWorld 1.7 延遲的紋理上傳；已排入圖集的來源紋理與其遮罩維持未駐留，等需要時才載入（RimWorld 以 `-noEvictAtlasSources` 啟動時除外）；佇列中圖形的紋理匯入設定（`borderMipMaps`、`uncompressed`）會先登記，這些紋理因此以與原版相同的設定上傳。佇列中的圖形與圖示完成後，再執行 RimWorld 原本的圖集烘焙、壓縮、磁碟快取與來源紋理釋放。家具等必要類別會在 Def 參照解析後才決定。RimWorld 的 `ResolveIcon` 會在延後的圖集烘焙之前處理圖示。若某個 Def 的圖形在排入佇列後被其他模組改寫（例如 Bionic Icons 在靜態建構子把部位圖形換成共用外框加各部位遮罩），延後流程仍會建立新圖形，但不把它插入靜態圖集，與原版一致：改寫後的圖形在原版本來就沒進圖集，這也避免 RimWorld 的「同一張貼圖搭配兩個不同遮罩」圖集錯誤。此選項繼續預設關閉：主選單可以提早出現，但延後工作可能造成選單後的長幀與記憶體用量增加。變更後需重新啟動遊戲才生效。
 - **啟用詳細日誌**：輸出除錯訊息。若遊戲啟動時就已開啟，第一次啟動後還會記錄主選單出現後，延後的視覺內容與全部延後工作各自多久後完成（主選單前就完成的工作記為 +0.0 s），例如 `[FasterGameLoading] Startup timing after the main menu appeared: visuals ready +0.6 s, all deferred work done +3.0 s.` 也會記錄音效預熱解碼了多少個原版音檔、花了多久，以及失敗幾個。不包含到主選單為止的載入時間。遊戲不經主選單直接進入地圖時不會記錄，切換語言也不會再記錄一次。
 
 手動工具：
 
-- **縮小紋理**：顯示載入畫面，把高解析度紋理縮小後存進獨立的快取（分多次減半以避免鋸齒）。原始模組檔案永遠不會被修改，快取的紋理沿用 RimWorld 的過濾、mipmap 與壓縮流程。`/UI/` 下的紋理保持不產生 mipmap。原始檔的讀取，以及快取 PNG 的編碼與寫入都在背景執行緒進行；只有解碼與 GPU 縮放在主執行緒執行。背景編碼的 PNG 會維持與 RimWorld 貼圖編碼相同的像素列方向。模組清單變更時，仍在使用中的模組的快取項目會保留。重建時要等每個新檔案都就位才取代舊快取；任何快取檔寫入失敗，或完全沒有寫入任何檔案時，保留舊快取。如果已經在用 Graphics Settings+ 或 RimSort Optimize Texture，通常不需要這項工具。由 Graphics Settings+ 或 Image Opt 載入紋理時無法使用此工具，按鈕也會隱藏。
+- **縮小紋理**：顯示載入畫面，把高解析度紋理縮小後存進獨立的快取（分多次減半以避免鋸齒）。原始模組檔案永遠不會被修改。快取的紋理經由 RimWorld 1.7 自己的紋理檔載入流程載入，與原始檔走同一條路徑，因此有相同的過濾、mipmap 與壓縮，也會使用它的壓縮紋理快取；包含這些紋理的圖集仍能從 RimWorld 的圖集磁碟快取載入。原始檔的讀取，以及快取 PNG 的編碼與寫入都在背景執行緒進行；只有解碼與 GPU 縮放在主執行緒執行。背景編碼的 PNG 會維持與 RimWorld 貼圖編碼相同的像素列方向。模組清單變更時，仍在使用中的模組的快取項目會保留。重建時要等每個新檔案都就位才取代舊快取；任何快取檔寫入失敗，或完全沒有寫入任何檔案時，保留舊快取。如果已經在用 Graphics Settings+ 或 RimSort Optimize Texture，通常不需要這項工具。由 Graphics Settings+ 或 Image Opt 載入紋理時無法使用此工具，按鈕也會隱藏。
 - **清除紋理快取**：顯示載入畫面並移除已快取的縮小紋理，下次啟動改用原始紋理。
 
 > [!NOTE]
@@ -151,7 +151,7 @@ graph TD
 
 1.7 的原始碼位於 `1.7/Source/`，建置後的 DLL 輸出到 `1.7/Assemblies/`。它最初複製自 1.6 的原始碼，之後分開維護；功能資料夾與 1.6 相同（`Core/`、`Settings/`、`XMLLoadingCache/`、`EarlyModContentLoading/`、`TextureDownscaler/`、`AdaptiveAtlasBaking/`、`StaticAtlasOptimizations/`、`DelayGraphicAndIconLoading/`、`DelaySoundLoading/`、`Compatibility/`、`Language/` 與 `Utilities/`），NUnit 測試位於 `FasterGameLoading.Tests/`。
 
-1.7 版以 .NET 10 為目標，使用目前的 C# 語言功能與 .NET 10 API 撰寫，所以無法為 1.6 編譯。RimWorld 1.7 現在提供 `Krafs.Rimworld.Ref` NuGet 參考套件（1.7.4982-unstable），因此建置遊戲組件（`Assembly-CSharp.dll`、`UnityStubs.dll`、`Waylith.dll` 等）不再需要本機的 RimWorld 安裝；只有 Harmony 工作坊項目中的 1.7 版 `0Harmony.dll` 仍直接參考。請在儲存庫根目錄執行：
+1.7 版以 .NET 10 為目標，使用目前的 C# 語言功能與 .NET 10 API 撰寫，所以無法為 1.6 編譯。RimWorld 1.7 現在提供 `Krafs.Rimworld.Ref` NuGet 參考套件（1.7.4995-unstable），因此建置遊戲組件（`Assembly-CSharp.dll`、`UnityStubs.dll`、`Waylith.dll` 等）不再需要本機的 RimWorld 安裝；只有 Harmony 工作坊項目中的 1.7 版 `0Harmony.dll` 仍直接參考。請在儲存庫根目錄執行：
 
 ```bash
 dotnet build 1.7/Source/FasterGameLoading.csproj -c Release

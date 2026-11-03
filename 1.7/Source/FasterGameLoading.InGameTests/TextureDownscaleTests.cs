@@ -10,7 +10,7 @@ using Waylith.Utils;
 namespace FasterGameLoading.InGameTests
 {
     /// <summary>
-    /// 降質快取在真實 Unity 上的載入結果：LoadImage、mipmap、壓縮都只能在遊戲內驗證。
+    /// 降質快取在真實引擎上的載入結果：檔案載入、mipmap、壓縮與來源路徑都只能在遊戲內驗證。
     /// 不依賴事先跑過降質工具：測試自己產生「原始貼圖」與「降質快取」兩張 PNG，登記到 FGL 的快取對照表，
     /// 再透過原版 ModContentLoader&lt;Texture2D&gt;.LoadTexture（FGL 的 patch 所在）載入。
     /// 縮放本身另由 <see cref="DownscaledTextureKeepsSourceAspectRatio"/> 經降質工具的 ResizeTexture 產生快取。
@@ -62,8 +62,8 @@ namespace FasterGameLoading.InGameTests
         }
 
         /// <summary>
-        /// 降質快取載入的貼圖要與原版載入同一張 PNG 的結果一致（格式、濾波、mipmap；壓縮後的濾波設定也以原版為準）。
-        /// 唯一刻意的差異：/UI/ 底下的貼圖不產生 mipmap，縮小顯示時才不會糊。
+        /// 降質快取載入的貼圖要與原版載入同一張 PNG 的結果一致（格式、濾波、mipmap；壓縮後的濾波設定也以原版為準），
+        /// 並帶有來源路徑：1.7 原版圖集以它計算磁碟快取鍵，缺少時含這張貼圖的圖集每次啟動都要重新烘焙。
         /// </summary>
         [Test]
         public static void CachedTextureIsServedLikeVanilla()
@@ -91,7 +91,8 @@ namespace FasterGameLoading.InGameTests
                 Expect.AreEqual(vanilla.format.ToString(), texture.format.ToString());
                 Expect.AreEqual(vanilla.filterMode.ToString(), texture.filterMode.ToString());
                 Expect.AreEqual(vanilla.anisoLevel, texture.anisoLevel);
-                Expect.AreEqual(isUi ? 1 : vanilla.mipmapCount, texture.mipmapCount);
+                Expect.AreEqual(vanilla.mipmapCount, texture.mipmapCount);
+                Expect.IsTrue(texture.CoreTexture?.SourcePath != null);
 
                 // 同一路徑再載入一次要沿用同一個實體，不能重新讀檔。
                 Expect.IsTrue(ReferenceEquals(probe.Load(), texture));

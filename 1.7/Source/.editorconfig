@@ -55,28 +55,16 @@ dotnet_diagnostic.MA0134.severity = none
 # 且測試專案中的斷言委派加上 static 亦增加排版噪音，故全專案停用。
 dotnet_diagnostic.MA0217.severity = none
 
-# ── 目標框架限制：net472 沒有規則建議的多載 ──
-# MA0106: ConcurrentDictionary.GetOrAdd<TArg> 的 factoryArgument 多載
-#         自 .NET Core 2.0 起才有，net472 不存在。
-dotnet_diagnostic.MA0106.severity = none
-# MA0109: net472 無 Span<T> / Memory<T>；為此新增無人呼叫的多載只是死碼。
+# ── 與本專案設計相牴觸的規則 ──
+# MA0109: 建議為陣列參數另加 Span<T> / Memory<T> 多載。命中處是 Harmony 依原方法回傳值注入的
+# Postfix 參數（StaticTextureAtlas_CalcRectsForAtlasNew_Patch），以及呼叫端只持有陣列的
+# TextureResizer、IORetryHelper.WriteAllBytesWithRetry；為此新增無人呼叫的多載只是死碼。
 dotnet_diagnostic.MA0109.severity = none
-# MA0001: 命中處是 IndexOf(char)，net472 沒有帶 StringComparison 的 char 多載；
-#         char 比對本即 ordinal，語意上也不需要。
-dotnet_diagnostic.MA0001.severity = none
-# S6610: net472 無 StartsWith(char) / EndsWith(char) 多載。
-dotnet_diagnostic.S6610.severity = none
-
-# ── 其餘與本專案設計相牴觸的規則 ──
 # MA0025: 命中處是 RedirectHugslibToMainThread 的 HarmonyReversePatch stub，
 # 其方法本體會被 Harmony 於執行期整個換掉，throw 只是佔位。下游的 catch 明確
 # 捕捉 NotImplementedException 作為「stub 未能綁定」的訊號，改成
 # NotSupportedException 會讓該 catch 失效。
 dotnet_diagnostic.MA0025.severity = none
-# MA0138: XmlChangeDetector.StartScanAsync 為公開互通面，Async 後綴描述的是它
-# 啟動了一項非同步工作。改名會破壞相容性，且無法真的改成回傳 Task ——
-# 呼叫端是 Mod 建構式這類必須同步回傳的進入點。
-dotnet_diagnostic.MA0138.severity = none
 # MA0182: internal 型別未被實體化。兩類命中都不成立：
 # (1) Harmony 補丁類別由 PatchAll 於執行期以特性掃描探索並反射呼叫，
 #     分析器看不到任何呼叫端；
@@ -84,21 +72,16 @@ dotnet_diagnostic.MA0138.severity = none
 #     (IgnoresAccessChecksToAttribute.cs)，非本倉庫原始碼，無法修改。
 dotnet_diagnostic.MA0182.severity = none
 # S3963: 建議把靜態建構式改為欄位初始化。
-# 本專案的五個靜態建構式（Utils、ImageOptCompat、GraphicsSettingsCompat、
-# FGLProgressReporter、AdaptiveBakingSkipList）做的是 CacheResetter.Register(...)
-# 這個副作用而非欄位初始化。改成欄位初始化會讓型別帶上 beforefieldinit，
-# 型別初始化時機不再保證發生於首次成員存取前，語言切換時的快取重置註冊
-# 可能根本不執行。
+# 本專案的靜態建構式（例如 DelayedActions、StaticAtlasDeduplicator、TypeLookupCache）
+# 做的是 SessionLifecycle.On(...) 這個副作用而非欄位初始化。改成欄位初始化會讓型別帶上
+# beforefieldinit，型別初始化時機不再保證發生於首次成員存取前，語言切換時的快取重置
+# 登記可能根本不執行。
 dotnet_diagnostic.S3963.severity = none
 # S3267: 建議把迴圈改寫為 LINQ Where。
-# 命中處全在啟動熱路徑（Startup.Postfix 的 mod 清單、BakingSkipList 的比對、
-# XmlChangeDetector 的掃描）。改用 LINQ 是淨增配置，與本模組的目的相反 ——
+# 命中處全在啟動熱路徑（Startup.Postfix 的 mod 清單、IsCommonFurniture 的分類比對）。
+# 改用 LINQ 是淨增配置，與本模組的目的相反 ——
 # Startup.cs 內既有註解「使用 loop 避免 LINQ 分配」即為此。
 dotnet_diagnostic.S3267.severity = none
-# S1075: XmlChangeDetector 以硬編的 "/" 組出快取鍵用的相對路徑。
-# 這正是刻意的：該鍵必須跨平台穩定，改用 Path.DirectorySeparatorChar 會讓
-# Windows 與 Linux 產生不同的雜湊而使快取整批失效。
-dotnet_diagnostic.S1075.severity = none
 
 # ── C# 代碼風格偏好 (Code Style Preferences) ──
 # using 排序：System 命名空間置頂並按字母排序

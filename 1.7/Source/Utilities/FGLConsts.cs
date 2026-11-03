@@ -17,7 +17,6 @@ public static class FGLConsts
     public const string TypeCacheAssemblyFingerprintKey = "typeCacheAssemblyFingerprint";
     public const string ModsInLastSessionKey = "modsInLastSession";
 
-    public const string UIDirSlash = "/UI/";
     public const string TexturesDirName = "Textures";
 
     public const int AccessToolsPreloadDelayMs = 50;

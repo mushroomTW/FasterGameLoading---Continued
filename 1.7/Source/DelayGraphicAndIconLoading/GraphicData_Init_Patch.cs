@@ -99,6 +99,10 @@ public static class GraphicData_Init_Patch
             current.renderQueue == other.renderQueue &&
             current.addTopAltitudeBias == other.addTopAltitudeBias &&
             current.ignoreThingDrawColor == other.ignoreThingDrawColor &&
+            // 1.7 的 Init 依這三個欄位設定貼圖重複模式與匯入設定；共用時會略過 Init，必須一致才能共用。
+            current.textureRepeats == other.textureRepeats &&
+            current.borderMipMaps == other.borderMipMaps &&
+            current.uncompressed == other.uncompressed &&
             current.maxSnS == other.maxSnS &&
             current.offsetSnS == other.offsetSnS &&
             string.Equals(current.cornerOverlayPath, other.cornerOverlayPath, StringComparison.Ordinal) &&

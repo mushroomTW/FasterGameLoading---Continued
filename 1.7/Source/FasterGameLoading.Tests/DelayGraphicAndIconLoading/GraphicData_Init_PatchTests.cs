@@ -84,6 +84,10 @@ public class GraphicData_Init_PatchTests
         yield return new TestCaseData((System.Action<GraphicData>)(d => d.damageData = (DamageGraphicData)FormatterServices.GetUninitializedObject(typeof(DamageGraphicData)))).SetName("{m}(damageData)");
         yield return new TestCaseData((System.Action<GraphicData>)(d => d.attachments = new List<GraphicData>())).SetName("{m}(attachments)");
         yield return new TestCaseData((System.Action<GraphicData>)(d => d.attachPoints = new List<RimWorld.AttachPoint>())).SetName("{m}(attachPoints)");
+        // 1.7 的 Init 依這些欄位設定貼圖重複模式與匯入設定，共用會略過 Init。
+        yield return new TestCaseData((System.Action<GraphicData>)(d => d.textureRepeats = true)).SetName("{m}(textureRepeats)");
+        yield return new TestCaseData((System.Action<GraphicData>)(d => d.borderMipMaps = true)).SetName("{m}(borderMipMaps)");
+        yield return new TestCaseData((System.Action<GraphicData>)(d => d.uncompressed = true)).SetName("{m}(uncompressed)");
     }
 
     [TestCaseSource(nameof(FieldsThatPreventSharing))]

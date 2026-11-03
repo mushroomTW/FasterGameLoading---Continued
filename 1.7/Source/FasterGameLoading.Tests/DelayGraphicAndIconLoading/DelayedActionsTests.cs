@@ -311,4 +311,24 @@ public class DelayedActionsTests
         Assert.That(graphicLoaded, Is.True);
         Assert.That(delayedActions.GraphicsToLoadCount, Is.EqualTo(0));
     }
+
+    // 延遲模式提前上傳貼圖前補登記的匯入設定，要與原版 GraphicData.Init 登記的效果相同。
+    [Test]
+    public void RegisterTextureImportSettings_RegistersBorderMipMapsLikeGraphicDataInit()
+    {
+        string texPath = "FglTests/Border_" + Guid.NewGuid().ToString("N");
+
+        DelayedActions.RegisterTextureImportSettings(new GraphicData { texPath = texPath, borderMipMaps = true });
+
+        var wantsBorderMipMaps = Waylith.Rendering.GpuTextureService.WantsBorderMipMaps;
+        Assert.That(wantsBorderMipMaps, Is.Not.Null);
+        Assert.That(wantsBorderMipMaps("C:/Mods/Sample/Textures/" + texPath + ".png"), Is.True);
+    }
+
+    [Test]
+    public void RegisterTextureImportSettings_IgnoresNullAndUnflaggedData()
+    {
+        Assert.DoesNotThrow(() => DelayedActions.RegisterTextureImportSettings(null));
+        Assert.DoesNotThrow(() => DelayedActions.RegisterTextureImportSettings(new GraphicData { texPath = "FglTests/Plain" }));
+    }
 }

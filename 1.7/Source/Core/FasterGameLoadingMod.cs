@@ -37,8 +37,6 @@ public class FasterGameLoadingMod : Mod
         // 須在貼圖預讀查詢排除名單之前：HAR 是否讓開取決於這個 patch 是否套用成功。
         AlienRaceGraphicsHookGate.TryPatch(harmony);
 
-        // 背景預載入已快取的紋理
-        ModContentLoaderTexture2D_LoadTexture_Patch.StartPreloadCachedTextures();
         // 背景預先解碼原版音效，主執行緒解析音效時直接命中快取
         CoreSoundPrewarmer.Start();
         StartCleanupInvalidImageOptCaches();

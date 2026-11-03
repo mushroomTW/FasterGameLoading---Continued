@@ -116,6 +116,28 @@ public class DelayedActions : MonoBehaviour
     public void EnqueueIcon(BuildableDef def, Action action) => iconsToLoad.Enqueue((def, action));
 
     /// <summary>
+    /// 把延遲圖形佇列中各 GraphicData 的貼圖匯入設定（1.7 的 borderMipMaps、uncompressed）先登記給引擎。
+    /// 原版在 GraphicData.Init 登記，引擎在解碼、上傳貼圖時才讀取；延遲載入讓 Init 晚於啟動時的貼圖上傳，
+    /// 因此必須在提前結束延遲上傳（見 <see cref="GlobalTextureAtlasManager_BakeStaticAtlases_Patch"/>）之前補上，貼圖才會以原版的設定上傳。
+    /// 之後 Init 再登記一次沒有副作用：引擎以清單去重。
+    /// </summary>
+    internal void RegisterQueuedTextureImportSettings()
+    {
+        foreach (var graphic in graphicsToLoad)
+        {
+            RegisterTextureImportSettings(graphic.Def?.graphicData);
+        }
+    }
+
+    // 與原版 GraphicData.Init 相同的貼圖匯入設定登記。
+    internal static void RegisterTextureImportSettings(GraphicData data)
+    {
+        if (data == null) return;
+        if (data.borderMipMaps) UnityStubs.ImportDefaults.BorderMipMaps(data.texPath);
+        if (data.uncompressed) UnityStubs.ImportDefaults.Uncompressed(data.texPath);
+    }
+
+    /// <summary>
     /// 排入一個 SubSoundDef 的解析動作。同一個 SubSoundDef 重複排入時只保留最後一個動作：
     /// 原版的回呼每次都會先清空 resolvedGrains 再重建，執行一次與多次結果相同。
     /// </summary>
@@ -219,12 +241,23 @@ public class DelayedActions : MonoBehaviour
         }
     }
 
-    // 執行靜態圖集烘焙：一律交給原版 BakeStaticAtlases（1.7 不使用自適應烘焙，見 <see cref="AdaptiveBakingEnabled"/>）。
+    /// <summary>
+    /// 執行靜態圖集烘焙：一律交給原版 BakeStaticAtlases（1.7 不使用自適應烘焙，見 <see cref="AdaptiveBakingEnabled"/>）。
+    /// 例外只記錄不外傳：協程一旦拋出就整個結束，之後的音效解析與啟動計時都不會執行。
+    /// </summary>
     private static void BakeDeferredAtlases()
     {
         FGLLog.Message("Starting deferred vanilla static atlas baking");
         AtlasBakeDiagnostics.LogPotentialMaskIssues("deferred vanilla");
-        BakeStaticAtlasesWithVanilla();
+        try
+        {
+            BakeStaticAtlasesWithVanilla();
+        }
+        catch (Exception ex)
+        {
+            FGLLog.Error("Deferred vanilla static atlas baking failed:", ex);
+            return;
+        }
         FGLLog.Message("Deferred vanilla static atlas baking complete");
     }
 

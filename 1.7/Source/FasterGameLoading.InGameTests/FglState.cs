@@ -13,20 +13,18 @@ namespace FasterGameLoading.InGameTests
         public const string HarmonyId = "FasterGameLoadingMod";
 
         /// <summary>
-        /// 第 <paramref name="round"/> 次載入的 DelayedActions.PerformActions 主協程是否已整個跑完（含圖集烘焙與音效解析）。
+        /// 第 <paramref name="round"/> 次載入的 DelayedActions.PerformActions 主協程是否已整個跑完（含音效解析）。
         /// 切換語言重載會再跑一次 CallAll 與整條延遲管線，因此先確認已啟動到第幾輪；
-        /// Phase 只反映最近一次啟動的協程（語言切換時重置為 Idle），先前被 StopAllCoroutines 中斷的不影響判斷。
+        /// DeferredWorkCompleted 只反映最近一次啟動的協程（語言切換時重置），先前被 StopAllCoroutines 中斷的不影響判斷。
         /// </summary>
         public static bool DeferredPipelineFinished(int round)
-            => PerformActionsTracker.Started >= round && FasterGameLoadingMod.delayedActions.Phase == DeferredPhase.Completed;
+            => PerformActionsTracker.Started >= round && FasterGameLoadingMod.delayedActions.DeferredWorkCompleted;
 
         // 以 -quicktest 啟動：跳過主選單直接生成地圖。
         public static bool Quicktest => GenCommandLine.CommandLineArgPassed("quicktest");
 
         public static string SettingsProfile =>
-            $"delayGraphicLoading={FasterGameLoadingSettings.DelayGraphicLoading}, "
-            + $"staticAtlasesBaking={FasterGameLoadingSettings.StaticAtlasesBaking}, "
-            + $"earlyModContentLoading={FasterGameLoadingSettings.earlyModContentLoading}, "
+            $"earlyModContentLoading={FasterGameLoadingSettings.earlyModContentLoading}, "
             + $"typeLookupCache={FasterGameLoadingSettings.TypeLookupCache}, "
             + $"enableMultiThreading={FasterGameLoadingSettings.EnableMultiThreading}, "
             + $"trimStaticAtlases={FasterGameLoadingSettings.TrimStaticAtlases}, "
@@ -67,7 +65,7 @@ namespace FasterGameLoading.InGameTests
         }
     }
 
-    // 計算 PerformActions 主協程被啟動的次數，用來對應第幾輪載入；完成與否看 <see cref="DelayedActions.Phase"/>。
+    // 計算 PerformActions 主協程被啟動的次數，用來對應第幾輪載入；完成與否看 <see cref="DelayedActions.DeferredWorkCompleted"/>。
     [HarmonyPatch(typeof(DelayedActions), nameof(DelayedActions.PerformActions))]
     internal static class PerformActionsTracker
     {

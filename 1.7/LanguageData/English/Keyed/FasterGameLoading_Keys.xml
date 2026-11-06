@@ -4,8 +4,6 @@
 
     <!-- Settings -->
     <FGL_EarlyModContentLoading>Load mod content early</FGL_EarlyModContentLoading>
-    <FGL_DelayGraphicLoading>Delay graphic and icon loading</FGL_DelayGraphicLoading>
-    <FGL_RequiresRestart>(requires restart)</FGL_RequiresRestart>
     <FGL_TrimStaticAtlases>Trim static atlases</FGL_TrimStaticAtlases>
     <FGL_TrimStaticAtlasesTip>Bakes each static atlas only as tall as its textures reach, instead of a power-of-two height that is often half empty. The atlases take less memory and bake faster, and every texture keeps its pixel position. Takes effect after restarting the game.</FGL_TrimStaticAtlasesTip>
     <FGL_DeduplicateStaticAtlases>Skip duplicate atlas textures</FGL_DeduplicateStaticAtlases>

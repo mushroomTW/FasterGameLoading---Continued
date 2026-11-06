@@ -218,46 +218,6 @@ public class HarmonyPatchTests
     }
 
     [Test]
-    public void TestBuildableDef_PostLoad_Patch_PrepareAndTranspilerMatchDeferredQueue()
-    {
-        var patchType = typeof(ThingDef_PostLoad_Patch).Assembly.GetType("FasterGameLoading.BuildableDef_PostLoad_Patch");
-        Assert.IsNotNull(patchType, "BuildableDef.PostLoad patch should feed the deferred icon queue.");
-
-        var prepare = patchType.GetMethod("Prepare", BindingFlags.Public | BindingFlags.Static);
-        Assert.IsNotNull(prepare);
-
-        bool originalDelayGraphicLoading = FasterGameLoadingSettings.DelayGraphicLoading;
-        try
-        {
-            FasterGameLoadingSettings.DelayGraphicLoading = false;
-            Assert.IsFalse((bool)prepare.Invoke(null, null));
-
-            FasterGameLoadingSettings.DelayGraphicLoading = true;
-            Assert.IsTrue((bool)prepare.Invoke(null, null));
-        }
-        finally
-        {
-            FasterGameLoadingSettings.DelayGraphicLoading = originalDelayGraphicLoading;
-        }
-
-        var transpiler = patchType.GetMethod("Transpiler", BindingFlags.Public | BindingFlags.Static);
-        var executeDelayed = AccessTools.Method(patchType, "ExecuteDelayed");
-        Assert.IsNotNull(transpiler);
-        Assert.IsNotNull(executeDelayed);
-
-        var executeWhenFinished = AccessTools.Method(typeof(LongEventHandler), nameof(LongEventHandler.ExecuteWhenFinished));
-        var input = new[] { new CodeInstruction(OpCodes.Call, executeWhenFinished) };
-        var output = ((IEnumerable<CodeInstruction>)transpiler.Invoke(null, new object[] { input })).ToList();
-
-        Assert.AreEqual(2, output.Count);
-        Assert.AreEqual(OpCodes.Ldarg_0, output[0].opcode);
-        Assert.AreEqual(OpCodes.Call, output[1].opcode);
-        Assert.AreEqual(executeDelayed, output[1].operand);
-    }
-
-
-
-    [Test]
     public void TestEarlyModContentLoader_UsesImageOptSynchronousScopeWithoutGlobalBypass()
     {
         var imageOptActiveGetter = typeof(TextureOwnership)
@@ -396,9 +356,7 @@ public class HarmonyPatchTests
     {
         var originalScribeMode = Scribe.mode;
         var originalVerboseLogging = FasterGameLoadingSettings.VerboseLogging;
-        var originalDelayGraphicLoading = FasterGameLoadingSettings.DelayGraphicLoading;
         var originalEarlyModContentLoading = FasterGameLoadingSettings.earlyModContentLoading;
-        var originalStaticAtlasesBaking = FasterGameLoadingSettings.StaticAtlasesBaking;
         var originalEnableMultiThreading = FasterGameLoadingSettings.EnableMultiThreading;
         var originalTypes = TypeLookupCache.FullNamesFromLastSession;
         var originalMods = SessionCache.modsInLastSession;
@@ -408,9 +366,7 @@ public class HarmonyPatchTests
         {
             Scribe.mode = LoadSaveMode.Inactive;
             FasterGameLoadingSettings.VerboseLogging = true;
-            FasterGameLoadingSettings.DelayGraphicLoading = true;
             FasterGameLoadingSettings.earlyModContentLoading = false;
-            FasterGameLoadingSettings.StaticAtlasesBaking = true;
             FasterGameLoadingSettings.EnableMultiThreading = false;
             TypeLookupCache.FullNamesFromLastSession = new ConcurrentDictionary<string, string>(StringComparer.Ordinal);
             TypeLookupCache.FullNamesFromLastSession.TryAdd("type", "System.String");
@@ -420,9 +376,7 @@ public class HarmonyPatchTests
             new FasterGameLoadingSettings().ExposeData();
 
             Assert.IsTrue(FasterGameLoadingSettings.VerboseLogging);
-            Assert.IsTrue(FasterGameLoadingSettings.DelayGraphicLoading);
             Assert.IsFalse(FasterGameLoadingSettings.earlyModContentLoading);
-            Assert.IsTrue(FasterGameLoadingSettings.StaticAtlasesBaking);
             Assert.IsFalse(FasterGameLoadingSettings.EnableMultiThreading);
             Assert.That(TypeLookupCache.FullNamesFromLastSession.Keys, Is.EquivalentTo(ExpectedSessionTypes));
             Assert.That(SessionCache.modsInLastSession, Is.EqualTo(ExpectedSessionMods));
@@ -432,9 +386,7 @@ public class HarmonyPatchTests
         {
             Scribe.mode = originalScribeMode;
             FasterGameLoadingSettings.VerboseLogging = originalVerboseLogging;
-            FasterGameLoadingSettings.DelayGraphicLoading = originalDelayGraphicLoading;
             FasterGameLoadingSettings.earlyModContentLoading = originalEarlyModContentLoading;
-            FasterGameLoadingSettings.StaticAtlasesBaking = originalStaticAtlasesBaking;
             FasterGameLoadingSettings.EnableMultiThreading = originalEnableMultiThreading;
             TypeLookupCache.FullNamesFromLastSession = originalTypes;
             SessionCache.modsInLastSession = originalMods;

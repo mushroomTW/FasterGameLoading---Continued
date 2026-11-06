@@ -10,20 +10,16 @@ namespace FasterGameLoading.Tests.Compatibility;
 [TestFixture]
 public class ProtectedModsTests
 {
-    private bool previousStaticAtlasesBaking;
 
     [SetUp]
     public void SetUp()
     {
-        previousStaticAtlasesBaking = FasterGameLoadingSettings.StaticAtlasesBaking;
         SessionLifecycle.Raise(LifecyclePhase.LanguageReloading);
     }
 
     [TearDown]
     public void TearDown()
     {
-        FasterGameLoadingSettings.StaticAtlasesBaking = previousStaticAtlasesBaking;
-        DelayedActions.ReleaseStartupSettingsForTests();
         SessionLifecycle.Raise(LifecyclePhase.LanguageReloading);
     }
 
@@ -106,20 +102,6 @@ public class ProtectedModsTests
         Assert.That(ProtectedMods.IsProtectedTexturePath("C:/Mods/A/x.png"), Is.True);
         Assert.That(ProtectedMods.IsProtectedTexturePath("C:/Mods/B/x.png"), Is.True);
         Assert.That(ProtectedMods.IsProtectedTexturePath("C:/Mods/C/x.png"), Is.False);
-    }
-
-    [Test]
-    public void ShouldSkipBaking_OnlyAppliesWhenAdaptiveBakingIsEnabled()
-    {
-        ProtectedMods.SetProtectedTextureRootsForTests("C:/Mods/TargetMod");
-
-        // 1.7 恆為關閉，即使設定值開啟也一樣。
-        FasterGameLoadingSettings.StaticAtlasesBaking = true;
-        Assert.That(ProtectedMods.ShouldSkipBaking("C:/Mods/TargetMod/Textures/Body.png"), Is.False);
-
-        DelayedActions.SetAdaptiveBakingForTests(true);
-        Assert.That(ProtectedMods.ShouldSkipBaking("C:/Mods/TargetMod/Textures/Body.png"), Is.True);
-        Assert.That(ProtectedMods.ShouldSkipBaking("C:/Mods/OtherMod/Textures/Body.png"), Is.False);
     }
 
     [Test]
@@ -401,34 +383,6 @@ public class ProtectedModsTests
 
         Assert.That(ProtectedMods.ShouldSkipEarlyLoad(skipped), Is.True);
         Assert.That(ProtectedMods.ShouldSkipEarlyLoad(normal), Is.False);
-    }
-
-    // ── TryInsertStatic 補丁 ──
-
-    [Test]
-    public void BakingPatch_Prepare_FollowsAdaptiveBaking()
-    {
-        // 1.7 恆為關閉，即使設定值開啟也一樣。
-        FasterGameLoadingSettings.StaticAtlasesBaking = true;
-        Assert.That(AdaptiveBakingSkipList.Prepare(), Is.False);
-
-        DelayedActions.SetAdaptiveBakingForTests(true);
-        Assert.That(AdaptiveBakingSkipList.Prepare(), Is.True);
-    }
-
-    [Test]
-    public void BakingPatch_Prefix_BlocksTexturesMarkedForSkipping()
-    {
-        var tex1 = (Texture2D)FormatterServices.GetUninitializedObject(typeof(Texture2D));
-        var tex2 = (Texture2D)FormatterServices.GetUninitializedObject(typeof(Texture2D));
-        ProtectedMods.SetProtectedTextureRootsForTests("C:/Mods/TargetMod");
-        DelayedActions.SetAdaptiveBakingForTests(true);
-        LoadedTextureRegistry.MarkSkipBakingIfProtected("C:/Mods/TargetMod/Textures/Body.png", tex1);
-
-        Assert.That(AdaptiveBakingSkipList.Prefix(TextureAtlasGroup.Building, tex1, mask: null), Is.False);
-        Assert.That(AdaptiveBakingSkipList.Prefix(TextureAtlasGroup.Building, texture: null, mask: tex1), Is.False);
-        Assert.That(AdaptiveBakingSkipList.Prefix(TextureAtlasGroup.Building, tex2, mask: null), Is.True);
-        Assert.That(AdaptiveBakingSkipList.Prefix(TextureAtlasGroup.Building, texture: null, mask: null), Is.True);
     }
 
     private sealed class MockMetaData

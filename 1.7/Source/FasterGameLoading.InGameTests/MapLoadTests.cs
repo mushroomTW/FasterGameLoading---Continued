@@ -10,8 +10,8 @@ using Verse.Sound;
 namespace FasterGameLoading.InGameTests
 {
     /// <summary>
-    /// 進入地圖相關的路徑：World.FinalizeInit 會把尚未解析的 SubSoundDef 全部解析完，
-    /// 延遲圖形也必須在第一批物件生成時就緒。需要地圖的測試只在 quicktest 回合執行，主選單回合直接略過。
+    /// 進入地圖相關的路徑：World.FinalizeInit 會把尚未解析的 SubSoundDef 全部解析完。
+    /// 需要地圖的測試只在 quicktest 回合執行，主選單回合直接略過。
     /// </summary>
     [TestFixture(TestType.Playing)]
     internal class MapLoadTests

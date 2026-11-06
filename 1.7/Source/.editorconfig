@@ -60,10 +60,8 @@ dotnet_diagnostic.MA0217.severity = none
 # Postfix 參數（StaticTextureAtlas_CalcRectsForAtlasNew_Patch），以及呼叫端只持有陣列的
 # TextureResizer、IORetryHelper.WriteAllBytesWithRetry；為此新增無人呼叫的多載只是死碼。
 dotnet_diagnostic.MA0109.severity = none
-# MA0025: 命中處是 RedirectHugslibToMainThread 的 HarmonyReversePatch stub，
-# 其方法本體會被 Harmony 於執行期整個換掉，throw 只是佔位。下游的 catch 明確
-# 捕捉 NotImplementedException 作為「stub 未能綁定」的訊號，改成
-# NotSupportedException 會讓該 catch 失效。
+# MA0025: 命中處是遊戲內測試的 HarmonyReversePatch stub，
+# 其方法本體會被 Harmony 於執行期整個換掉，throw 只是佔位。
 dotnet_diagnostic.MA0025.severity = none
 # MA0182: internal 型別未被實體化。兩類命中都不成立：
 # (1) Harmony 補丁類別由 PatchAll 於執行期以特性掃描探索並反射呼叫，
@@ -72,7 +70,7 @@ dotnet_diagnostic.MA0025.severity = none
 #     (IgnoresAccessChecksToAttribute.cs)，非本倉庫原始碼，無法修改。
 dotnet_diagnostic.MA0182.severity = none
 # S3963: 建議把靜態建構式改為欄位初始化。
-# 本專案的靜態建構式（例如 DelayedActions、StaticAtlasDeduplicator、TypeLookupCache）
+# 本專案的靜態建構式（例如 StaticAtlasDeduplicator、TypeLookupCache）
 # 做的是 SessionLifecycle.On(...) 這個副作用而非欄位初始化。改成欄位初始化會讓型別帶上
 # beforefieldinit，型別初始化時機不再保證發生於首次成員存取前，語言切換時的快取重置
 # 登記可能根本不執行。

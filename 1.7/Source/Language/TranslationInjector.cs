@@ -39,7 +39,7 @@ internal static class TranslationInjector
 
             InjectInto(LanguageDatabase.activeLanguage, LanguageDatabase.defaultLanguage, languageDataDir);
         }
-        // 刻意拆成兩個 catch 而非 catch-when：Harmony 無法 patch 含例外篩選器的方法（遊戲內 Mono 與測試皆然）
+        // 刻意拆成兩個 catch 而非 catch-when：Harmony 無法 patch 含例外篩選器的方法
         catch (IOException ex)
         {
             FGLLog.Error("Error injecting translations:", ex);

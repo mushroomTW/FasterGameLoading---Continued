@@ -65,7 +65,7 @@ public static class ModContentLoaderTexture2D_LoadTexture_Patch
             return false;
         }
 
-        return TryServeFromWeakReferenceCache(fullPath, out result)
+        return LoadedTextureRegistry.TryGetTexture(fullPath, out result)
             || TryServeFromDownscaleCache(fullPath, out result);
     }
 
@@ -97,17 +97,6 @@ public static class ModContentLoaderTexture2D_LoadTexture_Patch
         return true;
     }
 
-    // 本 session 已載入過同一路徑時，直接沿用 registry 中的紋理。
-    private static bool TryServeFromWeakReferenceCache(string fullPath, out Texture2D result)
-    {
-        if (LoadedTextureRegistry.TryGetTexture(fullPath, out result))
-        {
-            LoadedTextureRegistry.MarkSkipBakingIfProtected(fullPath, result);
-            return true;
-        }
-        return false;
-    }
-
     /// <summary>
     /// 嘗試以磁碟上的降質快取取代原始紋理，載入流程與原版載入原始檔相同（見 <see cref="LoadCacheFile"/>）。
     /// 1.7 的 LoadFromFile 只讀中繼資料、像素延後才解碼，壞檔不會在這裡失敗，
@@ -135,7 +124,6 @@ public static class ModContentLoaderTexture2D_LoadTexture_Patch
                     tex.wrapMode = TextureWrapMode.Clamp;
                 }
                 LoadedTextureRegistry.Record(fullPath, tex);
-                LoadedTextureRegistry.MarkSkipBakingIfProtected(fullPath, tex);
                 Interlocked.Increment(ref cacheLoadHits);
                 result = tex;
                 return true;
@@ -157,11 +145,6 @@ public static class ModContentLoaderTexture2D_LoadTexture_Patch
     // 原始方法載入成功後將紋理登記到 registry，供後續查詢使用。
     public static void Postfix(VirtualFile file, bool __state, Texture2D __result)
     {
-        if (__result != null)
-        {
-            LoadedTextureRegistry.MarkSkipBakingIfProtected(file.FullPath, __result);
-        }
-
         if (__state && __result != null)
         {
             if (ProtectedMods.IsProtectedTexturePath(file.FullPath)) return;

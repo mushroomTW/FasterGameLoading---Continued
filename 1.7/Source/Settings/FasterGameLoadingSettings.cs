@@ -14,9 +14,6 @@ public class FasterGameLoadingSettings : ModSettings
     public static bool VerboseLogging { get; set; }
 
 
-    // 延遲非必要圖形/圖示載入（預設關閉）
-    public static bool DelayGraphicLoading { get; set; }
-
     /// <summary>
     /// 提早載入 Mod 內容（預設開啟）
     ///
@@ -31,9 +28,6 @@ public class FasterGameLoadingSettings : ModSettings
 #pragma warning disable MA0069, S1104
     public static bool earlyModContentLoading = true;
 #pragma warning restore MA0069, S1104
-
-    // 自適應靜態圖集烘焙（預設關閉）。僅 1.6 使用；1.7 只存讀此值，不顯示也不生效。
-    public static bool StaticAtlasesBaking { get; set; }
 
     // 把靜態圖集裁到實際用到的高度（預設開啟）；重新啟動遊戲後生效。
     public static bool TrimStaticAtlases { get; set; } = true;
@@ -82,17 +76,11 @@ public class FasterGameLoadingSettings : ModSettings
         var typeLookupCache = TypeLookupCache;
         ls.CheckboxLabeled("FGL_TypeLookupCache".Translate(), ref typeLookupCache);
         TypeLookupCache = typeLookupCache;
-        var delayGraphicLoading = DelayGraphicLoading;
-        // 延遲載入在 Mod 建構子定案（DelayedActions.CaptureStartupSettings），改了要重開遊戲才生效。
-        ls.CheckboxLabeled("FGL_DelayGraphicLoading".Translate() + " " + "FGL_RequiresRestart".Translate(), ref delayGraphicLoading);
-        DelayGraphicLoading = delayGraphicLoading;
     }
 
     // 圖集烘焙與詳細日誌開關。
     private static void DrawDiagnosticsOptions(Listing_Standard ls)
     {
-        // 1.7 不使用自適應烘焙，選項不顯示：它會繞過 1.7 原版烘焙的 EndDeferredLoading、圖集壓縮、圖集磁碟快取與來源紋理釋放。
-        // 設定值照常存讀，切回 1.6 時保留；DelayedActions.AdaptiveBakingEnabled 在 1.7 恆為 false。
         var trimStaticAtlases = TrimStaticAtlases;
         ls.CheckboxLabeled("FGL_TrimStaticAtlases".Translate(), ref trimStaticAtlases, "FGL_TrimStaticAtlasesTip".Translate());
         TrimStaticAtlases = trimStaticAtlases;
@@ -166,9 +154,6 @@ public class FasterGameLoadingSettings : ModSettings
         base.ExposeData();
 
         // 使用者設定
-        var staticAtlasesBaking = StaticAtlasesBaking;
-        Scribe_Values.Look(ref staticAtlasesBaking, "StaticAtlasesBaking", defaultValue: false);
-        StaticAtlasesBaking = staticAtlasesBaking;
         var trimStaticAtlases = TrimStaticAtlases;
         Scribe_Values.Look(ref trimStaticAtlases, "trimStaticAtlases", defaultValue: true);
         TrimStaticAtlases = trimStaticAtlases;
@@ -178,9 +163,6 @@ public class FasterGameLoadingSettings : ModSettings
         var fastStaticAtlasCompression = FastStaticAtlasCompression;
         Scribe_Values.Look(ref fastStaticAtlasCompression, "fastStaticAtlasCompression", defaultValue: false);
         FastStaticAtlasCompression = fastStaticAtlasCompression;
-        var delayGraphicLoading = DelayGraphicLoading;
-        Scribe_Values.Look(ref delayGraphicLoading, "delayGraphicLoading", defaultValue: false);
-        DelayGraphicLoading = delayGraphicLoading;
         Scribe_Values.Look(ref earlyModContentLoading, "earlyModContentLoading", defaultValue: true);
         var enableMultiThreading = EnableMultiThreading;
         Scribe_Values.Look(ref enableMultiThreading, "enableMultiThreading", defaultValue: true);

@@ -23,7 +23,6 @@ public class ModContentLoaderTexture2D_LoadTexture_PatchTests
 {
     private string tempDir;
     private FasterGameLoadingMod originalInstance;
-    private bool originalStaticAtlasesBaking;
     private bool originalVerboseLogging;
     private int originalRedirectTimeoutMs;
     private Func<VirtualFile, Texture2D> originalMainThreadLoad;
@@ -63,7 +62,6 @@ public class ModContentLoaderTexture2D_LoadTexture_PatchTests
         tempDir = Path.Combine(Path.GetTempPath(), "FGLLoadTexTest_" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(tempDir);
 
-        originalStaticAtlasesBaking = FasterGameLoadingSettings.StaticAtlasesBaking;
         originalVerboseLogging = FasterGameLoadingSettings.VerboseLogging;
         originalInstance = FasterGameLoadingMod.Instance;
         originalRedirectTimeoutMs = MainThreadTextureLoader.RedirectTimeoutMs;
@@ -73,7 +71,6 @@ public class ModContentLoaderTexture2D_LoadTexture_PatchTests
 
         // 預設由 FGL 負責載入貼圖，否則 Prefix 會在第一個分支就短路。
         TextureOwnership.OverrideForTests(TextureOwner.Fgl);
-        FasterGameLoadingSettings.StaticAtlasesBaking = false;
         FasterGameLoadingSettings.VerboseLogging = false;
 
         SetModInstance(CreateModWithCacheManager(new TextureCacheManager(tempDir)));
@@ -94,7 +91,6 @@ public class ModContentLoaderTexture2D_LoadTexture_PatchTests
         SessionLifecycle.Raise(LifecyclePhase.LanguageReloading);
 
         SetModInstance(originalInstance);
-        FasterGameLoadingSettings.StaticAtlasesBaking = originalStaticAtlasesBaking;
         FasterGameLoadingSettings.VerboseLogging = originalVerboseLogging;
         TextureOwnership.OverrideForTests(null);
 

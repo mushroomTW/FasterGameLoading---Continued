@@ -34,15 +34,12 @@ public class FasterGameLoadingMod : Mod
         settings = this.GetSettings<FasterGameLoadingSettings>();
 
         harmony = new Harmony("FasterGameLoadingMod");
-        // 須在貼圖預讀查詢排除名單之前：HAR 是否讓開取決於這個 patch 是否套用成功。
+        // 須在查詢提早載入排除名單之前：HAR 是否讓開取決於這個 patch 是否套用成功。
         AlienRaceGraphicsHookGate.TryPatch(harmony);
 
         // 背景預先解碼原版音效，主執行緒解析音效時直接命中快取
         CoreSoundPrewarmer.Start();
         StartCleanupInvalidImageOptCaches();
-
-        // 補丁的 Prepare 與延遲視覺管線共用同一份定案值，執行期改設定不會讓兩者分歧。
-        DelayedActions.CaptureStartupSettings();
 
         // 背景預載入所有類型，以加速後續的 AccessTools.AllTypes() 呼叫
         AccessTools_AllTypes_Patch.Preload();

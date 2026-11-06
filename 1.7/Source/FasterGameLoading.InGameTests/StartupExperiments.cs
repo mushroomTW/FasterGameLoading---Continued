@@ -234,9 +234,6 @@ namespace FasterGameLoading.InGameTests
         private static int mainMenuCompletedFrame = -1;
         private static long mainMenuTimestamp;
 
-        public static bool VisualsReadyRecorded { get; private set; }
-        public static int VisualsReadyFrame { get; private set; } = -1;
-        public static long VisualsReadyTimestamp { get; private set; }
 
         public static bool AllDoneRecorded { get; private set; }
         public static int AllDoneFrame { get; private set; } = -1;
@@ -250,17 +247,6 @@ namespace FasterGameLoading.InGameTests
         private static int lastSampledFrame = -1;
         private static int frameSampleStartFrame = -1;
         private static int frameSampleEndFrame = -1;
-
-        // Hook: StartupTimeline.MarkVisualsReady 高精度捕捉
-        [HarmonyPatch(typeof(StartupTimeline), nameof(StartupTimeline.MarkVisualsReady))]
-        [HarmonyPostfix]
-        public static void MarkVisualsReadyPostfix()
-        {
-            if (!StartupExperiments.StartupOnly || VisualsReadyRecorded) return;
-            VisualsReadyRecorded = true;
-            VisualsReadyFrame = Time.frameCount;
-            VisualsReadyTimestamp = Stopwatch.GetTimestamp();
-        }
 
         // Hook: StartupTimeline.MarkAllReady 高精度捕捉
         [HarmonyPatch(typeof(StartupTimeline), nameof(StartupTimeline.MarkAllReady))]
@@ -327,23 +313,7 @@ namespace FasterGameLoading.InGameTests
             long startTs = StartupExperiments.ObservationStartTimestamp;
 
             double mainMenuMs = mainMenuTimestamp > 0 ? (mainMenuTimestamp - startTs) * 1000.0 / freq : 0;
-            double visualsReadyMs = VisualsReadyTimestamp > 0 ? (VisualsReadyTimestamp - startTs) * 1000.0 / freq : mainMenuMs;
-            double allDoneMs = AllDoneTimestamp > 0 ? (AllDoneTimestamp - startTs) * 1000.0 / freq : visualsReadyMs;
-
-            bool visualsClamped = false;
-            double mainMenuToVisualsSec = 0;
-            if (VisualsReadyTimestamp > 0 && mainMenuTimestamp > 0)
-            {
-                if (VisualsReadyTimestamp < mainMenuTimestamp)
-                {
-                    visualsClamped = true;
-                    mainMenuToVisualsSec = 0;
-                }
-                else
-                {
-                    mainMenuToVisualsSec = (VisualsReadyTimestamp - mainMenuTimestamp) / freq;
-                }
-            }
+            double allDoneMs = AllDoneTimestamp > 0 ? (AllDoneTimestamp - startTs) * 1000.0 / freq : mainMenuMs;
 
             bool allDoneClamped = false;
             double mainMenuToAllDoneSec = 0;
@@ -390,13 +360,9 @@ namespace FasterGameLoading.InGameTests
                 StopwatchFrequency = (long)freq,
                 FirstMainMenuFrame = mainMenuCompletedFrame,
                 FirstMainMenuMs = Math.Round(mainMenuMs, 2),
-                VisualsReadyFrame = VisualsReadyFrame,
-                VisualsReadyMs = Math.Round(visualsReadyMs, 2),
-                VisualsReadyClampedToZero = visualsClamped,
                 AllDeferredWorkDoneFrame = AllDoneFrame,
                 AllDeferredWorkDoneMs = Math.Round(allDoneMs, 2),
                 AllDoneClampedToZero = allDoneClamped,
-                MainMenuToVisualsReadySec = Math.Round(mainMenuToVisualsSec, 3),
                 MainMenuToAllDoneSec = Math.Round(mainMenuToAllDoneSec, 3),
                 MainMenuFrameSummary = frameSummary,
                 MainThreadFileRead = MainThreadFileReadProbe.Summary,
@@ -625,15 +591,6 @@ namespace FasterGameLoading.InGameTests
         [JsonPropertyName("mainMenuMs")]
         public double FirstMainMenuMs { get; set; }
 
-        [JsonPropertyName("visualsReadyFrame")]
-        public int VisualsReadyFrame { get; set; }
-
-        [JsonPropertyName("visualsReadyMs")]
-        public double VisualsReadyMs { get; set; }
-
-        [JsonPropertyName("visualsReadyClampedToZero")]
-        public bool VisualsReadyClampedToZero { get; set; }
-
         [JsonPropertyName("allDeferredWorkDoneFrame")]
         public int AllDeferredWorkDoneFrame { get; set; }
 
@@ -642,9 +599,6 @@ namespace FasterGameLoading.InGameTests
 
         [JsonPropertyName("allDoneClampedToZero")]
         public bool AllDoneClampedToZero { get; set; }
-
-        [JsonPropertyName("mainMenuToVisualsReadySec")]
-        public double MainMenuToVisualsReadySec { get; set; }
 
         [JsonPropertyName("mainMenuToAllDoneSec")]
         public double MainMenuToAllDoneSec { get; set; }

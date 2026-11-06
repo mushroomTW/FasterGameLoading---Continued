@@ -447,9 +447,6 @@ namespace FasterGameLoading.InGameTests
     {
         public static bool Prepare() => StartupExperiments.DiagnosticsEnabled;
 
-        public static PhaseTimingStats Graphics { get; } = new("Graphics");
-        public static PhaseTimingStats Icons { get; } = new("Icons");
-        public static PhaseTimingStats AtlasBake { get; } = new("AtlasBake");
         public static PhaseTimingStats Sounds { get; } = new("Sounds");
 
         private sealed class TimedEnumerator : IEnumerator, IDisposable
@@ -507,52 +504,6 @@ namespace FasterGameLoading.InGameTests
             }
         }
 
-        [HarmonyPatch(typeof(DelayedActions), nameof(DelayedActions.LoadDeferredGraphicsCoroutine))]
-        [HarmonyPostfix]
-        public static void GraphicsCoroutinePostfix(ref IEnumerator __result)
-        {
-            if (StartupExperiments.DiagnosticsEnabled && __result != null)
-            {
-                __result = new TimedEnumerator(__result, Graphics);
-            }
-        }
-
-        [HarmonyPatch(typeof(DelayedActions), nameof(DelayedActions.LoadDeferredIconsCoroutine))]
-        [HarmonyPostfix]
-        public static void IconsCoroutinePostfix(ref IEnumerator __result)
-        {
-            if (StartupExperiments.DiagnosticsEnabled && __result != null)
-            {
-                __result = new TimedEnumerator(__result, Icons);
-            }
-        }
-
-        [HarmonyPatch(typeof(DelayedActions), "BakeDeferredAtlases")]
-        [HarmonyPrefix]
-        [HarmonyPriority(Priority.First)]
-        public static void AtlasBakePrefix()
-        {
-            if (StartupExperiments.DiagnosticsEnabled)
-            {
-                AtlasBake.WallStartTimestamp = Stopwatch.GetTimestamp();
-            }
-        }
-
-        [HarmonyPatch(typeof(DelayedActions), "BakeDeferredAtlases")]
-        [HarmonyFinalizer]
-        public static Exception AtlasBakeFinalizer(Exception __exception)
-        {
-            if (StartupExperiments.DiagnosticsEnabled)
-            {
-                long end = Stopwatch.GetTimestamp();
-                AtlasBake.WallEndTimestamp = end;
-                AtlasBake.MoveNextExecutionTicks = end - AtlasBake.WallStartTimestamp;
-                AtlasBake.MaxSingleWorkItemTicks = AtlasBake.MoveNextExecutionTicks;
-                AtlasBake.ItemCount = 1;
-            }
-            return __exception;
-        }
-
         [HarmonyPatch(typeof(DelayedActions), nameof(DelayedActions.ResolveSubSoundDefsCoroutine))]
         [HarmonyPostfix]
         public static void SoundsCoroutinePostfix(ref IEnumerator __result)
@@ -561,46 +512,6 @@ namespace FasterGameLoading.InGameTests
             {
                 __result = new TimedEnumerator(__result, Sounds);
             }
-        }
-
-        [HarmonyPatch(typeof(DelayedActions), "LoadOneGraphic")]
-        [HarmonyPrefix]
-        [HarmonyPriority(Priority.First)]
-        public static void LoadOneGraphicPrefix(out long __state)
-        {
-            __state = StartupExperiments.DiagnosticsEnabled ? Stopwatch.GetTimestamp() : 0;
-        }
-
-        [HarmonyPatch(typeof(DelayedActions), "LoadOneGraphic")]
-        [HarmonyFinalizer]
-        public static Exception LoadOneGraphicFinalizer(long __state, Exception __exception)
-        {
-            if (__state > 0)
-            {
-                long elapsed = Stopwatch.GetTimestamp() - __state;
-                Graphics.RecordWorkItem(elapsed);
-            }
-            return __exception;
-        }
-
-        [HarmonyPatch(typeof(DelayedActions), "LoadOneIcon")]
-        [HarmonyPrefix]
-        [HarmonyPriority(Priority.First)]
-        public static void LoadOneIconPrefix(out long __state)
-        {
-            __state = StartupExperiments.DiagnosticsEnabled ? Stopwatch.GetTimestamp() : 0;
-        }
-
-        [HarmonyPatch(typeof(DelayedActions), "LoadOneIcon")]
-        [HarmonyFinalizer]
-        public static Exception LoadOneIconFinalizer(long __state, Exception __exception)
-        {
-            if (__state > 0)
-            {
-                long elapsed = Stopwatch.GetTimestamp() - __state;
-                Icons.RecordWorkItem(elapsed);
-            }
-            return __exception;
         }
 
         [HarmonyPatch(typeof(DelayedActions), "TryRunPendingSubSound")]
@@ -642,9 +553,6 @@ namespace FasterGameLoading.InGameTests
 
             return new
             {
-                graphics = formatPhase(Graphics),
-                icons = formatPhase(Icons),
-                atlasBake = formatPhase(AtlasBake),
                 sounds = formatPhase(Sounds),
             };
         }

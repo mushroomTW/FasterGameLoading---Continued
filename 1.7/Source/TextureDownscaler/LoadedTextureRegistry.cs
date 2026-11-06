@@ -7,9 +7,9 @@ using UnityEngine;
 namespace FasterGameLoading;
 
 /// <summary>
-/// 本 session 已載入的 Mod 貼圖登記：路徑 ↔ 貼圖雙向查詢，以及排除靜態圖集烘焙的貼圖實體。
-/// 由 LoadTexture 補丁寫入；降質工具的掃描與烘焙排除名單只透過這裡讀取。
-/// 路徑 ↔ 貼圖以弱參照持有，不會留住 Unity 貼圖；排除烘焙的名單則是強參照，直到語言切換才清空。
+/// 本 session 已載入的 Mod 貼圖登記：路徑 ↔ 貼圖雙向查詢。
+/// 由 LoadTexture 補丁寫入；降質工具的掃描只透過這裡讀取。
+/// 路徑 ↔ 貼圖以弱參照持有，不會留住 Unity 貼圖。
 /// </summary>
 public static class LoadedTextureRegistry
 {
@@ -21,12 +21,6 @@ public static class LoadedTextureRegistry
     /// 值必須為 reference type，故以可變 holder 包裹路徑，同一貼圖換路徑時就地覆寫。
     /// </summary>
     private static readonly ConditionalWeakTable<Texture2D, StringHolder> pathsByTexture = new();
-
-    /// <summary>
-    /// 排除靜態圖集烘焙的貼圖實體。以強參照為鍵：只收受保護 Mod 的貼圖，數量有限，
-    /// 但被替換或銷毀的貼圖仍會留在這裡，直到語言切換時 <see cref="Clear"/>。
-    /// </summary>
-    private static readonly ConcurrentDictionary<Texture2D, bool> skippedForBaking = new();
 
     private sealed class StringHolder
     {
@@ -45,7 +39,6 @@ public static class LoadedTextureRegistry
         texturesByPath.Clear();
         // ConditionalWeakTable 沒有 Clear API，且其條目隨鍵被 GC 自動消失；
         // 語言切換時舊貼圖通常仍活著，殘留條目只會在後續被新條目覆寫或隨 GC 移除，不影響正確性。
-        skippedForBaking.Clear();
     }
 
     // 登記 <paramref name="fullPath"/> 目前對應的貼圖；同一路徑的舊貼圖會從反向查找表移除。
@@ -115,21 +108,5 @@ public static class LoadedTextureRegistry
     public static void Forget(string fullPath)
     {
         texturesByPath.TryRemove(fullPath, out _);
-    }
-
-    // 貼圖屬於排除烘焙的目標 Mod 時，登記它不進入靜態圖集。
-    public static void MarkSkipBakingIfProtected(string fullPath, Texture2D texture)
-    {
-        if (texture != null && ProtectedMods.ShouldSkipBaking(fullPath))
-        {
-            skippedForBaking[texture] = true;
-        }
-    }
-
-    // 貼圖是否已登記為排除靜態圖集烘焙。
-    public static bool IsSkippedForBaking(Texture2D texture)
-    {
-        // ConcurrentDictionary.ContainsKey(null) 會拋例外，故 null 先短路。
-        return texture != null && skippedForBaking.ContainsKey(texture);
     }
 }

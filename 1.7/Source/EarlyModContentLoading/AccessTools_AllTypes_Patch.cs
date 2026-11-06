@@ -51,8 +51,7 @@ public static class AccessTools_AllTypes_Patch
         // 在此大量解析型別名稱，剛好與主執行緒的型別解析（例如某些 Mod 透過
         // System.Xml.Serialization.XmlSerializer → Assembly.GetType 載入設定）並行，
         // 可能在 Mono 內部 class-init 狀態上競爭而導致原生崩潰（Assembly.GetType /
-        // InternalGetType 的 Access Violation）。本檔案下方 WarmupTypeCache 的註解亦記載過
-        // 型別名稱處理曾引發 MakeGenericType 崩潰，名稱解析確為此處最脆弱的環節。
+        // InternalGetType 的 Access Violation）。
         // 1.7 改在 .NET 10（Waylith）上執行，此風險尚未在 1.7 上重新驗證，因此行為維持與 1.6 相同、不在背景緒讀取 FullName。
         //
         // FullName 預熱由 GenTypes_GetTypeInAnyAssemblyInt_Patch.WarmupFullNames 在 Mod 建構子（載入事件緒）完成。

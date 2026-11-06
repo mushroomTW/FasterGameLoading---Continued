@@ -33,10 +33,6 @@ graph TD
     I --> K[Deferred coroutine starts<br/>does not wait for a save]
     K --> L[Remaining sound definitions resolved<br/>a sound played earlier resolves on demand]
     S -.-> L
-    G -. Delay graphic loading on .-> M[Non-essential graphics<br/>and icons queued]
-    H -. Delay graphic loading on .-> N[Startup atlas baking skipped;<br/>finish deferred texture uploads]
-    K -. Delay graphic loading on .-> O[Queued graphics and icons,<br/>then vanilla atlas baking]
-    O -.-> L
 ```
 
 With the default settings, mod content, graphics, icons and static atlases are ready before the main menu; only sound definitions finish after it, and because the vanilla sound files were already decoded in the background, they finish almost immediately. The deferred coroutine is started by a startup callback, so it runs while the main menu is shown instead of waiting for a save to load. The downscaled texture cache is built manually with the **Downscale textures** tool and used by later startups.
@@ -53,12 +49,11 @@ Enabled by default:
 
 Always on (no setting):
 
-- **Deferred sound resolution**: RimWorld's sound definition (`SubSoundDef`) resolution is queued and finished by the deferred coroutine after the main menu appears, even when **Delay graphic and icon loading** is off. A sound requested before its definition is resolved (for example a main-menu hover or click) is resolved on the spot and then played, so main-menu UI sounds work from the start. Requests made off the main thread, or for sounds whose definitions are not queued yet (for example during a language-switch reload), are skipped, as before. With **Delay graphic and icon loading** on, the remaining sounds resolve after the deferred graphics, icons and atlas baking. Entering a world resolves any remaining sounds immediately.
+- **Deferred sound resolution**: RimWorld's sound definition (`SubSoundDef`) resolution is queued and finished by the deferred coroutine after the main menu appears. A sound requested before its definition is resolved (for example a main-menu hover or click) is resolved on the spot and then played, so main-menu UI sounds work from the start. Requests made off the main thread, or for sounds whose definitions are not queued yet (for example during a language-switch reload), are skipped, as before. With **Delay graphic and icon loading** on, the remaining sounds resolve after the deferred graphics, icons and atlas baking. Entering a world resolves any remaining sounds immediately.
 
 Disabled by default:
 
-- **Delay graphic and icon loading**: Moves some non-essential visual and icon work to batched processing after the startup callbacks; it begins while the main menu is shown, without waiting for a save to load. When startup atlas baking is skipped, RimWorld 1.7's deferred texture uploads are still finished before the main menu; textures already queued as atlas sources, and their masks, stay evicted until needed (unless RimWorld runs with `-noEvictAtlasSources`), and texture import settings of queued graphics (`borderMipMaps`, `uncompressed`) are registered first so those textures upload as in vanilla. Queued graphics and icons then finish, followed by RimWorld's own atlas baking, compression, disk caching and source-texture eviction. Essential categories such as furniture are chosen after Def references resolve. RimWorld's `ResolveIcon` handles icons before deferred atlas baking. If a mod rewrites a Def's graphic after it was queued (for example Bionic Icons replacing part graphics with a shared frame and per-part masks in a static constructor), the deferred pass still builds the new graphic but leaves it out of the static atlas, as in vanilla, where the rewritten graphic was never inserted; this also prevents RimWorld's "same texture with 2 different masks" atlas error. This option stays disabled by default: the main menu can appear sooner, but the deferred work can cause a long frame afterward and increase memory use. Changes take effect after restarting the game.
-- **Verbose logging**: Prints debugging messages. If it is already on when the game starts, after the first startup it also logs how long after the main menu appeared the deferred visuals and all deferred work became ready (work finished before the main menu counts as +0.0 s), for example `[FasterGameLoading] Startup timing after the main menu appeared: visuals ready +0.6 s, all deferred work done +3.0 s.` It also logs how many vanilla sound files the prewarm decoded, how long it took and how many failed. Loading time up to the main menu is not included. Nothing is logged when the game goes straight into a map without the main menu, and language switches do not log it again.
+- **Verbose logging**: Prints debugging messages. If it is already on when the game starts, after the first startup it also logs how long after the main menu appeared all deferred work became ready (work finished before the main menu counts as +0.0 s), for example `[FasterGameLoading] Startup timing after the main menu appeared: all deferred work done +3.0 s.` It also logs how many vanilla sound files the prewarm decoded, how long it took and how many failed. Loading time up to the main menu is not included. Nothing is logged when the game goes straight into a map without the main menu, and language switches do not log it again.
 
 Manual tool:
 
@@ -67,25 +62,25 @@ Manual tool:
 
 > [!NOTE]
 > Brief startup unresponsiveness can be normal, especially with large mod lists. Sound definitions that are not resolved yet are resolved when a sound first plays, so the main menu is not silent.
-> **Delay graphic and icon loading** is an advanced option. If you see texture or icon timing issues, disable it first.
 > Downscaled texture cache can be cleared from the mod settings.
 > Translations are provided for English, Simplified Chinese, Traditional Chinese and Russian. Other languages, and keys missing from a translation, fall back to English through RimWorld's own translation lookup, so with Dev Mode on they show RimWorld's pseudo-translated (accented) English, its marker for untranslated text.
 
 ## Measured Startup Time
 
-Measured on RimWorld 1.7 with only the Core game active (3 runs each, seconds from process start; "after the main menu" is the deferred work logged by **Verbose logging**):
+Measured on RimWorld 1.7.4998 with 33 mods (Core, 5 DLCs, Harmony, Loading Progress and Vanilla Expanded mods). 3 runs each, seconds as reported by Loading Progress, which starts counting at its first loading screen; "after the main menu" is the deferred work logged by **Verbose logging**. Unless noted, the engine's texture caches were warm, which is what players normally see. The runs were not interleaved and the machine drifted by about 1.5 seconds, so differences under that size are not conclusions.
 
-| Setup | To the main menu | After the main menu | Total |
-| --- | --- | --- | --- |
-| Vanilla | 16.8 | — | 16.8 |
-| Default settings, without the sound prewarm | 13.3 | +3.8 | 17.1 |
-| Default settings, with the sound prewarm | 14.1 | +0.0 | 14.1 |
+| Setup | To the main menu | After the main menu |
+| --- | --- | --- |
+| Without Faster Game Loading | 18.7–19.1 | — |
+| Default settings | 14.6–15.6 | +0.0 |
+| Early mod content loading off | 16.2–18.1 | +0.0 |
+| Multithreaded preloading off (also disables the sound prewarm) | 16.3–16.9 | +2.0–2.4 |
 
-Without the prewarm, deferring sound resolution only moved the decoding to after the main menu. With it, sounds are ready when the main menu appears and total startup is about 3 seconds shorter. Reaching the main menu takes slightly longer because the prewarm shares the CPU with startup. This Core-only comparison does not establish the full-startup gain for larger mod lists.
+Default settings with cold engine caches (first start, 1 run) took 24.3 seconds. With only Core active, default settings took about 5.8 seconds warm and 8.4 seconds cold. Your times depend on your mod list and hardware.
 
-Earlier exploratory runs of delayed graphics with the 1.7 texture-upload fix reached the main menu in 16.60–16.77 seconds from the FGL constructor, compared with 18.78–19.44 seconds with delayed graphics off. They also recorded a 1.10–1.20-second frame after the menu and about 130 MB more managed memory. These use a different timer from the Core-only table and do not establish a reduction in total startup time; the post-menu work must also be counted.
+RimWorld 1.7 uploads textures on demand, so the former **Delay graphic and icon loading** option had nothing left to gain and was removed: with it on, the same list reached the main menu at 15.8–16.5 seconds with the queued work still finishing before the menu. Moving the atlas bake behind the main menu was worse, at 19.7–21.5 seconds followed by a 3.5–4.8-second freeze, compared with 15.6–16.2 seconds and no freeze without it.
 
-On 2026-10-16, moving full-type-name warmup to the background was compared with synchronous warmup on RimWorld 1.7.4980 rev60, with Core, Harmony, VEF, VTEXE, Loading Progress, FGL and the test bridge. After warmup, three interleaved runs per variant gave main-menu medians of 8.793 seconds (synchronous) and 8.817 seconds (background), measured by Loading Progress from its first loading-window draw. FGL's post-menu work was +0.0 seconds in every run. The background runs ranged from 8.335 to 9.465 seconds, so this small mod list did not demonstrate a benefit from background type warmup. These timings use another starting point and cannot be directly compared with the earlier tables.
+2026-10-16, moving full-type-name warmup to the background was compared with synchronous warmup on RimWorld 1.7.4980 rev60, with Core, Harmony, VEF, VTEXE, Loading Progress, FGL and the test bridge. After warmup, three interleaved runs per variant gave main-menu medians of 8.793 seconds (synchronous) and 8.817 seconds (background), measured by Loading Progress from its first loading-window draw. FGL's post-menu work was +0.0 seconds in every run. The background runs ranged from 8.335 to 9.465 seconds, so this small mod list did not demonstrate a benefit from background type warmup. These timings use another starting point and cannot be directly compared with the earlier tables.
 
 Synchronous type warmup is retained so the cache is ready before XML parsing, without an additional background task or concurrent merge and cleanup behavior.
 
@@ -104,7 +99,7 @@ Symbols: `T` = types in all loaded assemblies, `A` = active assemblies, `U` = di
 | Trim static atlases | `O(P)`, with heights padded to a power of two | `O(P′)`, up to about half the rows removed | Smaller input |
 | Skip duplicate atlas textures | a minifiable building's texture baked up to 3 times | baked once in Building | Smaller input |
 | Downscale textures (manual) | full-size decode and upload | each halving step leaves 1/4 of the pixels | Smaller input |
-| Deferred sounds, delayed graphics and atlas baking | done before the main menu | same work, done after the main menu appears | Off the path to the main menu |
+| Deferred sounds | done before the main menu | same work, done after the main menu appears | Off the path to the main menu |
 
 These bounds explain where the savings come from; they do not predict seconds, which depend on how large `T`, `U`, `W`, `P` and `S` are for a given mod list. RimWorld already caches resolved type names within a session and resolves the ignored-namespace short names through an exact-case dictionary, so only the lookups that miss those reach the slow path. Deferred work still has to finish; to measure total startup time, add the `Startup timing after the main menu appeared` line from **Verbose logging** to the time it takes to reach the main menu.
 
@@ -133,7 +128,6 @@ Important behavior:
 - [Image Opt fork](https://steamcommunity.com/sharedfiles/filedetails/?id=3781013698) is an alternative to Image Opt, patched by its author for compatibility with Faster Game Loading. Load it after Faster Game Loading.
 - [Humanoid Alien Races](https://github.com/erdelf/AlienRaces) scans queued races' texture variants once its own textures are loaded. Faster Game Loading holds that scan until Def reference resolution and all mod content loading have finished. This prevents the scan from enumerating HAR's pending-race set while background reference resolution is still adding races, which can cause `Collection was modified`, and keeps variants from later-loaded race mods from being missed. HAR and its dependent race mods can still load content early and parse XML in parallel. If the hook cannot be found or patched, they are excluded from both again.
 - HAR (including its dev build) and Ancot-related race mods are not downscaled, to reduce bodyAddon, hair, ear, and multi-mask texture issues. The same applies to [Pumpkin Library](https://steamcommunity.com/sharedfiles/filedetails/?id=3790461769) DDS texture packs that replace those mods' textures, as listed in Pumpkin Library's `TextureOverrideSettings.xml`. AyaTweaks and Ayameduki mods skip early loading and parallel XML parsing.
-- Mods that rewrite `GraphicData` or `Def.graphic` from a static constructor, such as [Bionic Icons](https://steamcommunity.com/sharedfiles/filedetails/?id=1677616980), work with **Delay graphic and icon loading**: a graphic that changed after it was queued is still built, but is not inserted into the static atlas, matching vanilla and avoiding RimWorld's "same texture with 2 different masks" atlas error. The change is detected through `texPath`, `maskPath`, `graphicClass`, `shaderType` and `Def.graphic`; a mod that swaps only the private `cachedGraphic` through reflection, leaving those untouched, is not covered.
 - With [ChezhouLib](https://steamcommunity.com/sharedfiles/filedetails/?id=3595247479), Faster Game Loading's guard against loading the same asset bundles twice runs before ChezhouLib's asset bundle loader.
 
 ## Recommended Settings
@@ -145,7 +139,6 @@ If loading is still slow:
 1. Keep **Load mod content early**, **Multi-threaded preloading**, and **Type lookup cache** enabled.
 2. For large texture-heavy mod lists, prefer Graphics Settings+ or RimSort Optimize Texture. Image Opt compatibility is no longer maintained; use [Image Opt fork](https://steamcommunity.com/sharedfiles/filedetails/?id=3781013698) instead.
 3. If you do not use an external texture tool, consider FGL's **Downscale textures** tool.
-4. Enable **Delay graphic and icon loading** only if you are willing to troubleshoot compatibility issues.
 
 ## Building from Source
 

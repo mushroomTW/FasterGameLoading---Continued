@@ -6,9 +6,7 @@ namespace FasterGameLoading.Tests.Settings;
 public class FasterGameLoadingSettingsTests
 {
     private bool origVerboseLogging;
-    private bool origDelayGraphicLoading;
     private bool origEarlyModContentLoading;
-    private bool origStaticAtlasesBaking;
     private bool origEnableMultiThreading;
     private bool origTypeLookupCache;
     private bool origTrimStaticAtlases;
@@ -19,9 +17,7 @@ public class FasterGameLoadingSettingsTests
     public void SetUp()
     {
         origVerboseLogging = FasterGameLoadingSettings.VerboseLogging;
-        origDelayGraphicLoading = FasterGameLoadingSettings.DelayGraphicLoading;
         origEarlyModContentLoading = FasterGameLoadingSettings.earlyModContentLoading;
-        origStaticAtlasesBaking = FasterGameLoadingSettings.StaticAtlasesBaking;
         origEnableMultiThreading = FasterGameLoadingSettings.EnableMultiThreading;
         origTypeLookupCache = FasterGameLoadingSettings.TypeLookupCache;
         origTrimStaticAtlases = FasterGameLoadingSettings.TrimStaticAtlases;
@@ -33,9 +29,7 @@ public class FasterGameLoadingSettingsTests
     public void TearDown()
     {
         FasterGameLoadingSettings.VerboseLogging = origVerboseLogging;
-        FasterGameLoadingSettings.DelayGraphicLoading = origDelayGraphicLoading;
         FasterGameLoadingSettings.earlyModContentLoading = origEarlyModContentLoading;
-        FasterGameLoadingSettings.StaticAtlasesBaking = origStaticAtlasesBaking;
         FasterGameLoadingSettings.EnableMultiThreading = origEnableMultiThreading;
         FasterGameLoadingSettings.TypeLookupCache = origTypeLookupCache;
         FasterGameLoadingSettings.TrimStaticAtlases = origTrimStaticAtlases;
@@ -102,16 +96,6 @@ public class FasterGameLoadingSettingsTests
     }
 
     [Test]
-    public void DelayGraphicLoading_PropertyGetSet()
-    {
-        FasterGameLoadingSettings.DelayGraphicLoading = true;
-        Assert.That(FasterGameLoadingSettings.DelayGraphicLoading, Is.True);
-
-        FasterGameLoadingSettings.DelayGraphicLoading = false;
-        Assert.That(FasterGameLoadingSettings.DelayGraphicLoading, Is.False);
-    }
-
-    [Test]
     public void EarlyModContentLoading_FieldGetSet()
     {
         FasterGameLoadingSettings.earlyModContentLoading = true;
@@ -119,16 +103,6 @@ public class FasterGameLoadingSettingsTests
 
         FasterGameLoadingSettings.earlyModContentLoading = false;
         Assert.That(FasterGameLoadingSettings.earlyModContentLoading, Is.False);
-    }
-
-    [Test]
-    public void StaticAtlasesBaking_PropertyGetSet()
-    {
-        FasterGameLoadingSettings.StaticAtlasesBaking = true;
-        Assert.That(FasterGameLoadingSettings.StaticAtlasesBaking, Is.True);
-
-        FasterGameLoadingSettings.StaticAtlasesBaking = false;
-        Assert.That(FasterGameLoadingSettings.StaticAtlasesBaking, Is.False);
     }
 
     [Test]

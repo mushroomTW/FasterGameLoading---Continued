@@ -4,8 +4,6 @@
 
     <!-- Settings -->
     <FGL_EarlyModContentLoading>提早载入模组内容</FGL_EarlyModContentLoading>
-    <FGL_DelayGraphicLoading>延迟图形和图示载入</FGL_DelayGraphicLoading>
-    <FGL_RequiresRestart>（需重新启动游戏）</FGL_RequiresRestart>
     <FGL_TrimStaticAtlases>裁剪静态图集</FGL_TrimStaticAtlases>
     <FGL_TrimStaticAtlasesTip>每张静态图集只烘焙到纹理实际用到的高度，不再使用常有一半空白的 2 的幂高度。图集占用的内存更少、烘焙更快，每张纹理的像素位置不变。重新启动游戏后生效。</FGL_TrimStaticAtlasesTip>
     <FGL_DeduplicateStaticAtlases>跳过重复的图集纹理</FGL_DeduplicateStaticAtlases>

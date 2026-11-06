@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <SettingsBlock>
 	<ModSettings Class="FasterGameLoading.FasterGameLoadingSettings">
-		<delayGraphicLoading>True</delayGraphicLoading>
 		<trimStaticAtlases>True</trimStaticAtlases>
 		<deduplicateStaticAtlases>True</deduplicateStaticAtlases>
+		<fastStaticAtlasCompression>True</fastStaticAtlasCompression>
+		<verboseLogging>True</verboseLogging>
 	</ModSettings>
 </SettingsBlock>

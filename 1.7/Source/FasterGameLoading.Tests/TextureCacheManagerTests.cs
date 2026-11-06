@@ -77,16 +77,13 @@ public class TextureCacheManagerTests
     public void TestTryGetCachedTexturePath_FreshCache_ReturnsTrue()
     {
         string originalPath = Path.Combine(tempDir, "original.png");
-        string cachePath = Path.Combine(tempDir, "cached_dxt.png");
         var baseTime = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         File.WriteAllBytes(originalPath, [1]);
-        File.WriteAllBytes(cachePath, [2]);
-
-        // 確保快取檔案的修改時間大於等於原始檔案
         File.SetLastWriteTimeUtc(originalPath, baseTime);
-        File.SetLastWriteTimeUtc(cachePath, baseTime.AddMinutes(1));
 
+        // 快取檔名由原始檔目前的路徑、大小與修改時間算出。
+        string cachePath = WriteCacheFileFor(originalPath);
         manager.SetCacheEntry(originalPath, cachePath);
 
         bool success = manager.TryGetCachedTexturePath(originalPath, out string resolvedPath);
@@ -96,21 +93,32 @@ public class TextureCacheManagerTests
         Assert.AreEqual(1, manager.CacheCount);
     }
 
-    [Test]
-    public void TestTryGetCachedTexturePath_StaleCache_ReturnsFalseAndRemovesEntry()
+    // 依原始檔目前的身分寫出快取檔，回傳快取路徑。
+    private string WriteCacheFileFor(string originalPath)
+    {
+        string cachePath = manager.GetCachePath(originalPath);
+        Directory.CreateDirectory(Path.GetDirectoryName(cachePath));
+        File.WriteAllBytes(cachePath, [2]);
+        return cachePath;
+    }
+
+    // 不論原始檔的修改時間往前或往後、大小是否改變，都要作廢；往前（更舊）是只比時間先後會漏掉的情況。
+    [TestCase(1, 1)]
+    [TestCase(-1, 1)]
+    [TestCase(-1, 2)]
+    [TestCase(0, 2)]
+    public void TestTryGetCachedTexturePath_StaleCache_ReturnsFalseAndRemovesEntry(int minutesShift, int newLength)
     {
         string originalPath = Path.Combine(tempDir, "original.png");
-        string cachePath = Path.Combine(tempDir, "cached_dxt.png");
         var baseTime = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         File.WriteAllBytes(originalPath, [1]);
-        File.WriteAllBytes(cachePath, [2]);
-
-        // 故意使原始檔案比快取檔案更新，模擬快取過期
-        File.SetLastWriteTimeUtc(originalPath, baseTime.AddMinutes(1));
-        File.SetLastWriteTimeUtc(cachePath, baseTime);
-
+        File.SetLastWriteTimeUtc(originalPath, baseTime);
+        string cachePath = WriteCacheFileFor(originalPath);
         manager.SetCacheEntry(originalPath, cachePath);
+
+        File.WriteAllBytes(originalPath, new byte[newLength]);
+        File.SetLastWriteTimeUtc(originalPath, baseTime.AddMinutes(minutesShift));
 
         bool success = manager.TryGetCachedTexturePath(originalPath, out string resolvedPath);
 

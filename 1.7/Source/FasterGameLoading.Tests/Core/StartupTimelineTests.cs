@@ -23,13 +23,12 @@ public class StartupTimelineTests
         var timeline = NewTimeline();
         Assert.That(ShowMainMenu(timeline, 48.4, 49.8), Is.Null, "延遲工作尚未完成。");
         now = 50.6;
-        timeline.MarkVisualsReady();
         now = 52.8;
         timeline.MarkAllReady();
         now = 52.9;
         var line = timeline.Observe(mainMenuShown: true, playing: false);
 
-        Assert.That(line, Is.EqualTo("Startup timing after the main menu appeared: visuals ready +0.8 s, all deferred work done +3.0 s."));
+        Assert.That(line, Is.EqualTo("Startup timing after the main menu appeared: all deferred work done +3.0 s."));
         Assert.That(timeline.Pending, Is.False);
         Assert.That(timeline.Observe(mainMenuShown: true, playing: false), Is.Null, "只輸出一次。");
     }
@@ -37,15 +36,14 @@ public class StartupTimelineTests
     [Test]
     public void Observe_WorkDoneBeforeMainMenu_CountsAsZero()
     {
-        // 延遲圖形關閉時管線一開始就進入音效階段，早於主選單；以主選單為下限。
+        // 延後協程可能早於主選單就跑完；以主選單為下限。
         var timeline = NewTimeline();
         now = 40;
-        timeline.MarkVisualsReady();
         timeline.MarkAllReady();
         Assert.That(timeline.Observe(mainMenuShown: false, playing: false), Is.Null);
 
         Assert.That(ShowMainMenu(timeline, 40.5, 41),
-            Is.EqualTo("Startup timing after the main menu appeared: visuals ready +0.0 s, all deferred work done +0.0 s."));
+            Is.EqualTo("Startup timing after the main menu appeared: all deferred work done +0.0 s."));
     }
 
     [Test]
@@ -57,11 +55,10 @@ public class StartupTimelineTests
         now = 11;
         Assert.That(timeline.Observe(mainMenuShown: false, playing: false), Is.Null);
         now = 12;
-        timeline.MarkVisualsReady();
         timeline.MarkAllReady();
         now = 17;
 
-        Assert.That(timeline.Observe(mainMenuShown: false, playing: false), Does.Contain("visuals ready +2.0 s, all deferred work done +2.0 s."));
+        Assert.That(timeline.Observe(mainMenuShown: false, playing: false), Does.Contain("all deferred work done +2.0 s."));
     }
 
     [Test]
@@ -70,7 +67,6 @@ public class StartupTimelineTests
         // -quicktest 等直接進入地圖：沒有主選單可以比較，不輸出也不再觀察。
         var timeline = NewTimeline();
         now = 30;
-        timeline.MarkVisualsReady();
         timeline.MarkAllReady();
         now = 45;
 
@@ -86,13 +82,11 @@ public class StartupTimelineTests
         ShowMainMenu(timeline, 9.5, 10);
         now = 11;
         timeline.Observe(mainMenuShown: false, playing: false);
-        timeline.MarkVisualsReady();
         now = 12;
         timeline.MarkAllReady();
         now = 20;
-        timeline.MarkVisualsReady();
         timeline.MarkAllReady();
 
-        Assert.That(timeline.Observe(mainMenuShown: false, playing: false), Does.Contain("visuals ready +1.0 s, all deferred work done +2.0 s."));
+        Assert.That(timeline.Observe(mainMenuShown: false, playing: false), Does.Contain("all deferred work done +2.0 s."));
     }
 }

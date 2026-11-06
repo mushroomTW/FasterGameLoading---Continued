@@ -38,17 +38,6 @@ namespace FasterGameLoading.InGameTests
             FglState.AssertNone(failures, "patch state mismatches");
         }
 
-        [Test]
-        public static void DelayGraphicPatchesFollowSetting()
-        {
-            bool expected = FasterGameLoadingSettings.DelayGraphicLoading;
-            var failures = new List<string>();
-            Check(failures, AccessTools.Method(typeof(ThingDef), nameof(ThingDef.PostLoad)), expected);
-            Check(failures, AccessTools.Method(typeof(BuildableDef), nameof(BuildableDef.PostLoad)), expected);
-            Check(failures, AccessTools.Method(typeof(GraphicData), nameof(GraphicData.Init)), expected);
-            FglState.AssertNone(failures, "patch state mismatches");
-        }
-
         // 音效解析完成後，SoundStarter 類別的攔截必須全部解除，否則整個 session 沒有聲音。
         [Test]
         public static void SoundStarterInterceptionIsRemoved()

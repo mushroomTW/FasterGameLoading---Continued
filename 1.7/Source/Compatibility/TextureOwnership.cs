@@ -69,7 +69,7 @@ public static class TextureOwnership
     private static bool IsActiveIgnoringSteamSuffix(string packageId)
         => ModLister.GetActiveModWithIdentifier(packageId, ignorePostfix: true) != null;
 
-    // FGL 的降質快取、背景預讀與貼圖登記是否生效。
+    // FGL 的降質快取與貼圖登記是否生效。
     public static bool FglOwnsTextureLoading => Current is TextureOwner.Fgl;
 
     // 測試用：直接指定擁有者；傳 null 回到自動偵測。

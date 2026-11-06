@@ -21,7 +21,6 @@ public class LoadedTextureRegistryTests
     [TearDown]
     public void TearDown()
     {
-        DelayedActions.ReleaseStartupSettingsForTests();
         SessionLifecycle.Raise(LifecyclePhase.LanguageReloading);
     }
 
@@ -84,26 +83,6 @@ public class LoadedTextureRegistryTests
         LoadedTextureRegistry.Forget("gone.png");
 
         Assert.That(LoadedTextureRegistry.Snapshot(), Is.Empty);
-    }
-
-    [Test]
-    public void MarkSkipBakingIfProtected_OnlyMarksProtectedModTexturesWhenAdaptiveBakingIsOn()
-    {
-        ProtectedMods.SetProtectedTextureRootsForTests("C:/Mods/TargetMod");
-        var protectedTexture = NewDetachedTexture();
-        var otherTexture = NewDetachedTexture();
-
-        // 1.7 恆為關閉：不標記。
-        LoadedTextureRegistry.MarkSkipBakingIfProtected("C:/Mods/TargetMod/Textures/Alien/head.png", protectedTexture);
-        Assert.That(LoadedTextureRegistry.IsSkippedForBaking(protectedTexture), Is.False);
-
-        DelayedActions.SetAdaptiveBakingForTests(true);
-        LoadedTextureRegistry.MarkSkipBakingIfProtected("C:/Mods/TargetMod/Textures/Alien/head.png", protectedTexture);
-        LoadedTextureRegistry.MarkSkipBakingIfProtected("C:/Mods/OtherMod/Textures/rock.png", otherTexture);
-
-        Assert.That(LoadedTextureRegistry.IsSkippedForBaking(protectedTexture), Is.True);
-        Assert.That(LoadedTextureRegistry.IsSkippedForBaking(otherTexture), Is.False);
-        Assert.That(LoadedTextureRegistry.IsSkippedForBaking(null), Is.False);
     }
 
     [Test]

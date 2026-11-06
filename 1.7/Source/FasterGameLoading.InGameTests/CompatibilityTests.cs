@@ -19,27 +19,15 @@ namespace FasterGameLoading.InGameTests
         public CompatibilityTests() { }
 
         /// <summary>
-        /// 開啟延遲圖形時，FGL 把 HugsLib 的 OnDefsLoaded 改到主執行緒、等長事件結束後才執行；
-        /// 它仍必須執行（HugsLib 子 mod 的 DefsLoaded 靠它），而且只能在主執行緒。
+        /// HugsLib 的 OnDefsLoaded 必須執行（HugsLib 子 mod 的 DefsLoaded 靠它）。
         /// </summary>
         [Test]
-        public static void HugsLibDefsLoadedRunsOnMainThread()
+        public static void HugsLibDefsLoadedRuns()
         {
             if (!HugsLibDefsLoadedProbe.HugsLibActive) return;
 
-            if (FasterGameLoadingSettings.DelayGraphicLoading)
-            {
-                Expect.IsTrue(FglState.HasFglPatch(RedirectHugslibToMainThread.targetMethod), "HugsLib OnDefsLoaded redirect patch was not applied");
-            }
-            lock (HugsLibDefsLoadedProbe.OffMainThreadCalls)
-            {
-                Log.Message($"[FGL InGameTests] HugsLib OnDefsLoaded ran {HugsLibDefsLoadedProbe.Calls} time(s), {HugsLibDefsLoadedProbe.OffMainThreadCalls.Count} off the main thread.");
-                Expect.GreaterThan(HugsLibDefsLoadedProbe.Calls, 0, "HugsLib OnDefsLoaded was never called");
-                if (FasterGameLoadingSettings.DelayGraphicLoading)
-                {
-                    Expect.AreEqual(HugsLibDefsLoadedProbe.OffMainThreadCalls.Count, 0, "HugsLib OnDefsLoaded ran off the main thread");
-                }
-            }
+            Log.Message($"[FGL InGameTests] HugsLib OnDefsLoaded ran {HugsLibDefsLoadedProbe.Calls} time(s).");
+            Expect.GreaterThan(HugsLibDefsLoadedProbe.Calls, 0, "HugsLib OnDefsLoaded was never called");
         }
 
         /// <summary>
@@ -145,56 +133,15 @@ namespace FasterGameLoading.InGameTests
             }
             FglState.AssertNone(failures, "skip-listed mods loaded early");
         }
-
-        /// <summary>
-        /// HAR、Ancot 及其衍生 mod 的貼圖（多遮罩的身體部件）不能進靜態圖集；
-        /// FGL 在載入時把它們登記到 LoadedTextureRegistry 的烘焙排除表，由 TryInsertStatic 的 prefix 擋下。
-        /// </summary>
-        [Test]
-        public static void ProtectedModTexturesStayOutOfStaticAtlases()
-        {
-            if (!FasterGameLoadingSettings.StaticAtlasesBaking) return;
-
-            var atlased = new HashSet<Texture2D>(GlobalTextureAtlasManager.staticTextureAtlases.SelectMany(static a => a.textures));
-            var failures = new List<string>();
-            int protectedMods = 0, checkedTextures = 0;
-            foreach (var mod in LoadedModManager.RunningMods)
-            {
-                // 受保護貼圖刻意不進 FGL 的路徑表，改以 mod 根目錄判斷整個 mod 是否受保護。
-                if (!ProtectedMods.IsProtectedTexturePath(mod.RootDir.Replace('\\', '/').TrimEnd('/') + "/Textures/probe.png")) continue;
-                protectedMods++;
-
-                foreach (var entry in mod.GetContentHolder<Texture2D>().contentList)
-                {
-                    var texture = entry.Value;
-                    if (texture == null) continue;
-                    checkedTextures++;
-
-                    if (!LoadedTextureRegistry.IsSkippedForBaking(texture))
-                    {
-                        failures.Add($"{mod.PackageIdPlayerFacing}/{entry.Key}: not registered as skipped");
-                    }
-                    else if (atlased.Contains(texture))
-                    {
-                        failures.Add($"{mod.PackageIdPlayerFacing}/{entry.Key}: baked into a static atlas");
-                    }
-                }
-            }
-            // 未帶入 HAR／Ancot 等 mod 時這裡是 0，測試等同略過；log 讓相容性回合能確認真的檢查到貼圖。
-            Log.Message($"[FGL InGameTests] Protected-texture check covered {checkedTextures} textures from {protectedMods} protected mods.");
-            FglState.AssertNone(failures, "protected mod texture problems");
-        }
     }
 
     /// <summary>
-    /// 記錄 HugsLib 的 OnDefsLoaded 實際執行的次數與執行緒。掛在它第一個呼叫的 UtilityWorldObjectManager.OnDefsLoaded：
-    /// 不掛 OnDefsLoaded 本身，FGL 以 prefix 攔下後改由 reverse patch 副本執行，原方法的 patch 不會觸發。
+    /// 記錄 HugsLib 的 OnDefsLoaded 實際執行的次數。掛在它第一個呼叫的 UtilityWorldObjectManager.OnDefsLoaded。
     /// </summary>
     [HarmonyPatch]
     internal static class HugsLibDefsLoadedProbe
     {
         public static int Calls;
-        public static readonly List<string> OffMainThreadCalls = new List<string>();
 
         private static readonly MethodBase Target = AccessTools.Method("HugsLib.Utils.UtilityWorldObjectManager:OnDefsLoaded");
 
@@ -204,14 +151,7 @@ namespace FasterGameLoading.InGameTests
 
         public static MethodBase TargetMethod() => Target;
 
-        public static void Prefix()
-        {
-            lock (OffMainThreadCalls)
-            {
-                Calls++;
-                if (!UnityData.IsInMainThread) OffMainThreadCalls.Add(Thread.CurrentThread.Name ?? "unnamed thread");
-            }
-        }
+        public static void Prefix() => Interlocked.Increment(ref Calls);
     }
 
     /// <summary>

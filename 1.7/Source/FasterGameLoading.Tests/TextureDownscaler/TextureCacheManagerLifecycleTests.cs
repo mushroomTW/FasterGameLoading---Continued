@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using HarmonyLib;
 using NUnit.Framework;
 
 namespace FasterGameLoading.Tests.TextureDownscaler;
@@ -71,8 +72,42 @@ public class TextureCacheManagerLifecycleTests
         Assert.That(resolved, Is.EqualTo(cachePath));
     }
 
+    private static bool FileKeyUnavailable(ref bool __result, ref string key)
+    {
+        key = null;
+        __result = false;
+        return false;
+    }
+
     [Test]
-    public void TryGetCachedTexturePath_NewerOriginalWithSameIdentityRefreshesCacheTimestamp()
+    public void TryGetCachedTexturePath_UnreadableOriginalFileInfoKeepsCacheEntry()
+    {
+        string originalPath = Path.Combine(rootDir, "locked.png");
+        string cachePath = Path.Combine(rootDir, "locked_cache.png");
+        File.WriteAllBytes(originalPath, [1]);
+        File.WriteAllBytes(cachePath, [1]);
+        manager.SetCacheEntry(originalPath, cachePath);
+
+        var harmony = new Harmony("FasterGameLoading.Tests.TextureCacheManagerLifecycleTests");
+        var target = AccessTools.Method(typeof(TextureCacheManager), "TryGetFileCacheKey");
+        harmony.Patch(target, prefix: new HarmonyMethod(AccessTools.Method(typeof(TextureCacheManagerLifecycleTests), nameof(FileKeyUnavailable))));
+        try
+        {
+            // 暫時讀不到原始檔資訊：不能當成過期而丟掉仍然有效的項目。
+            Assert.That(manager.TryGetCachedTexturePath(originalPath, out string resolved), Is.True);
+            Assert.That(resolved, Is.EqualTo(cachePath));
+        }
+        finally
+        {
+            harmony.UnpatchAll(harmony.Id);
+        }
+
+        // 讀得到時，這個檔名與快取鍵不符，確實會判定為過期；上面保留項目不是因為檔名碰巧相符。
+        Assert.That(manager.TryGetCachedTexturePath(originalPath, out _), Is.False);
+    }
+
+    [Test]
+    public void TryGetCachedTexturePath_CacheOlderThanOriginalWithSameIdentityStaysValid()
     {
         Directory.CreateDirectory(cacheDir);
         string originalPath = Path.Combine(rootDir, "same-length.png");
@@ -81,7 +116,7 @@ public class TextureCacheManagerLifecycleTests
         File.WriteAllBytes(originalPath, [1, 2, 3]);
         File.SetLastWriteTimeUtc(originalPath, baseTime);
 
-        // 快取路徑必須是由目前檔案身分推導出的雜湊路徑，才會命中「內容未變」的快速通道。
+        // 有效與否只看檔案身分：快取檔時間比原始檔舊（例如被還原工具改過時間）不代表內容過期。
         string cachePath = manager.GetCachePath(originalPath);
         File.WriteAllBytes(cachePath, [9]);
         File.SetLastWriteTimeUtc(cachePath, baseTime.AddMinutes(-5));
@@ -89,8 +124,19 @@ public class TextureCacheManagerLifecycleTests
 
         Assert.That(manager.TryGetCachedTexturePath(originalPath, out string resolved), Is.True);
         Assert.That(resolved, Is.EqualTo(cachePath));
-        Assert.That(File.GetLastWriteTimeUtc(cachePath), Is.EqualTo(baseTime),
-            "檔案身分未變時應把快取檔的時間戳對齊原始檔，而不是重新降質一次。");
+    }
+
+    [Test]
+    public void TryGetCachedTexturePath_SameFileNameWithDifferentSlashesStaysValid()
+    {
+        Directory.CreateDirectory(cacheDir);
+        string originalPath = Path.Combine(rootDir, "slashes.png");
+        File.WriteAllBytes(originalPath, [1]);
+        string cachePath = manager.GetCachePath(originalPath);
+        File.WriteAllBytes(cachePath, [9]);
+        manager.SetCacheEntry(originalPath, cachePath.Replace('\\', '/'));
+
+        Assert.That(manager.TryGetCachedTexturePath(originalPath, out _), Is.True);
     }
 
     // ── 對照表操作 ──

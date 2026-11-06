@@ -37,7 +37,7 @@ internal static class AlienRaceGraphicsHookGate
     internal static MethodBase TargetMethod() => target;
 
     /// <summary>
-    /// 在 FGL 建構子中、貼圖預讀查詢排除名單之前套用。不放進 PatchAll：第三方方法 patch 失敗時，
+    /// 在 FGL 建構子中、查詢提早載入排除名單之前套用。不放進 PatchAll：第三方方法 patch 失敗時，
     /// 只讓 HAR 回到排除名單，不會中斷 FGL 其餘補丁的套用。
     /// </summary>
     internal static void TryPatch(Harmony harmony)

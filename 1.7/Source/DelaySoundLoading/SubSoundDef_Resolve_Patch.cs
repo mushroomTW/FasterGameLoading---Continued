@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection.Emit;
 using HarmonyLib;
 using Verse;
 using Verse.Sound;
@@ -20,7 +21,23 @@ static class SubSoundDef_ResolvePatch
     [HarmonyPatch(typeof(SubSoundDef), "ResolveReferences")]
     [HarmonyTranspiler]
     static IEnumerable<CodeInstruction> LateExecute(IEnumerable<CodeInstruction> codeInstructions)
-        => ThingDef_PostLoad_Patch.SwapExecuteWhenFinished(codeInstructions, AccessTools.Method(typeof(SubSoundDef_ResolvePatch), nameof(ExecuteDelayed)));
+    {
+        var execute = AccessTools.Method(typeof(LongEventHandler), nameof(LongEventHandler.ExecuteWhenFinished));
+        var executeDelayed = AccessTools.Method(typeof(SubSoundDef_ResolvePatch), nameof(ExecuteDelayed));
+        foreach (var code in codeInstructions)
+        {
+            if (code.Calls(execute))
+            {
+                // 將 ExecuteWhenFinished(action) 替換為 ExecuteDelayed(action, this)
+                yield return new CodeInstruction(OpCodes.Ldarg_0);
+                yield return new CodeInstruction(OpCodes.Call, executeDelayed);
+            }
+            else
+            {
+                yield return code;
+            }
+        }
+    }
 
     // 將音效解析動作排入延遲佇列，之後由 DelayedActions 的協程批次處理。
     static void ExecuteDelayed(Action action, SubSoundDef def)

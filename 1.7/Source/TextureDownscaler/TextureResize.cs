@@ -112,7 +112,7 @@ public class TextureResize
         var seenPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var texture in scanner.texturesByPaths)
         {
-            if (ProtectedMods.IsProtectedTexturePath(texture.Value) || seenPaths.Contains(texture.Value)) continue;
+            if (ProtectedMods.IsProtectedTexturePath(texture.Value) || seenPaths.Contains(texture.Value) || !CanServeFromCache(texture.Value)) continue;
 
             var sourceWidth = texture.Key.width;
             var sourceHeight = texture.Key.height;
@@ -134,6 +134,21 @@ public class TextureResize
             }
         }
         return texturesToResize;
+    }
+
+    /// <summary>
+    /// 原始貼圖能否改由降質快取提供：
+    /// - 官方內容與其他打包在 Assets.zip 的貼圖不在磁碟上，快取鍵無法驗證，啟動後的清理也會把項目當成原始檔已刪除而移除；
+    ///   官方貼圖也不在降質範圍內。
+    /// - 原版以來源路徑結尾比對 GraphicData 的 borderMipMaps 與 uncompressed，快取檔路徑比對不到，降質版會失去這兩項設定。
+    ///   降質在遊戲內執行，此時 GraphicData 都已登記完畢。
+    /// </summary>
+    internal static bool CanServeFromCache(string path)
+    {
+        if (UnityStubs.ImportDefaults.IsOfficial(path) || !File.Exists(path)) return false;
+        var fullPath = Path.GetFullPath(path);
+        return Waylith.Rendering.GpuTextureService.WantsBorderMipMaps?.Invoke(fullPath) is not true
+            && Waylith.Graphics.Textures.TextureCompressionSettings.KeepRaw?.Invoke(fullPath) is not true;
     }
 
     /// <summary>

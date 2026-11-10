@@ -65,8 +65,9 @@ public static class ModContentLoaderTexture2D_LoadTexture_Patch
             return false;
         }
 
+        // 官方貼圖不由降質快取提供：舊版可能留下這類項目（見 TextureResize.CanServeFromCache），啟動後的清理會移除它們。
         return LoadedTextureRegistry.TryGetTexture(fullPath, out result)
-            || TryServeFromDownscaleCache(fullPath, out result);
+            || (!UnityStubs.ImportDefaults.IsOfficial(fullPath) && TryServeFromDownscaleCache(fullPath, out result));
     }
 
     public static bool Prefix(VirtualFile file, out bool __state, ref Texture2D __result)
@@ -118,11 +119,6 @@ public static class ModContentLoaderTexture2D_LoadTexture_Patch
             if (tex != null)
             {
                 tex.name = Path.GetFileNameWithoutExtension(fullPath);
-                // 原版 LoadFromFile 只對官方內容強制 Clamp；快取檔不在官方目錄，依原始路徑補上。
-                if (UnityStubs.ImportDefaults.IsOfficial(fullPath))
-                {
-                    tex.wrapMode = TextureWrapMode.Clamp;
-                }
                 LoadedTextureRegistry.Record(fullPath, tex);
                 Interlocked.Increment(ref cacheLoadHits);
                 result = tex;

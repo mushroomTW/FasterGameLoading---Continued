@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <ModMetaData>
   <name>Faster Game Loading - Continued</name>
   <author>綠菇</author>
@@ -7,7 +7,7 @@
     <li>1.7</li>
   </supportedVersions>
   <packageId>Taranchuk.FasterGameLoading</packageId>
-  <modVersion>2026.11.10.1</modVersion>
+  <modVersion>2026.11.11.1</modVersion>
   <description><![CDATA[
 <size=18><b><color=#7FD4FF>Does loading take forever? This mod is for you!</color></b></size>
 
@@ -35,7 +35,7 @@ All options are in Options > Mod options > Faster Game Loading - Continued. Most
 
 <size=15><b><color=#FFD866>Texture tools (manual)</color></b></size>
 
-- <b><color=#9FE89F>Downscale textures</color></b>: Creates smaller copies of high-resolution textures in a separate cache, used from the next startup. Target sizes: Building, Pawn and Tree 256px; Apparel, Weapon, Item and Plant 128px; Terrain 1024px. Original mod files are never modified. Hidden while Graphics Settings+ or Image Opt loads textures; converting to DDS with those tools is faster and gives better quality, so use this only when you cannot use them.
+- <b><color=#9FE89F>Downscale textures</color></b>: Creates smaller copies of high-resolution textures in a separate cache, used from the next startup. Target sizes: Building, Pawn and Tree 256px; Apparel, Weapon, Item and Plant 128px; Terrain 1024px. Original mod files are never modified. Official and Assets.zip-packed textures are skipped. Hidden while Graphics Settings+ or Image Opt loads textures; converting to DDS with those tools is faster and gives better quality, so use this only when you cannot use them.
 - <b><color=#9FE89F>Clear texture cache</color></b>: Removes the downscaled copies, so original textures are used on the next startup.
 
 <size=15><b><color=#FFD866>Always on</color></b></size>

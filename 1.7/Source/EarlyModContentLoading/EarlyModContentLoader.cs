@@ -46,7 +46,7 @@ public class EarlyModContentLoader
 
     static EarlyModContentLoader()
     {
-        // 重載流程（切換語言）會重建 mod 類別；重置後等下一次 LoadModXML 才再開放。
+        // PlayData 重載（切換語言或載入失敗後恢復）會重建 mod 類別；重置後等下一次 LoadModXML 才再開放。
         SessionLifecycle.On(LifecyclePhase.LanguageReloading, static () => ModClassesCreated = false);
     }
 
@@ -59,6 +59,15 @@ public class EarlyModContentLoader
 
     // 取得 Mod 內容提早載入是否已完成。
     public bool EarlyLoadingComplete { get; private set; }
+
+    // PlayData 重載前丟棄舊 ModContentPack，讓新的載入輪次依目前的 RunningMods 建立佇列。
+    internal void ClearPendingLoads()
+    {
+        pendingEarlyLoads?.Clear();
+        pendingEarlyLoads = null;
+        consecutiveTimeouts = 0;
+        skipFrames = 0;
+    }
 
     // 每幀執行，利用空閒時間預先載入尚未處理的 Mod 內容。
     // 參數 delayedActions：延遲動作管理器的實例，用於確認時間預算。

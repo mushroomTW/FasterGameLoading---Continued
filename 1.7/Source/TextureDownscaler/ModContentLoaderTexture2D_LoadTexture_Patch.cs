@@ -65,9 +65,8 @@ public static class ModContentLoaderTexture2D_LoadTexture_Patch
             return false;
         }
 
-        // 官方貼圖不由降質快取提供：舊版可能留下這類項目（見 TextureResize.CanServeFromCache），啟動後的清理會移除它們。
         return LoadedTextureRegistry.TryGetTexture(fullPath, out result)
-            || (!UnityStubs.ImportDefaults.IsOfficial(fullPath) && TryServeFromDownscaleCache(fullPath, out result));
+            || TryServeFromDownscaleCache(fullPath, out result);
     }
 
     public static bool Prefix(VirtualFile file, out bool __state, ref Texture2D __result)
@@ -107,6 +106,12 @@ public static class ModContentLoaderTexture2D_LoadTexture_Patch
     {
         result = null;
         if (!FasterGameLoadingMod.Instance.CacheManager.TryGetCachedTexturePath(fullPath, out var cachePath))
+        {
+            return false;
+        }
+
+        // 官方貼圖不由降質快取提供；只在對照表有項目時才做官方路徑檢查。
+        if (UnityStubs.ImportDefaults.IsOfficial(fullPath))
         {
             return false;
         }

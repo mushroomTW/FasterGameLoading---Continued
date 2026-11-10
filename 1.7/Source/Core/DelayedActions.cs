@@ -43,11 +43,12 @@ public class DelayedActions : MonoBehaviour
         subSoundDefToResolve.Enqueue(def);
     }
 
-    // 語言切換時丟棄所有尚未執行的延遲動作，並回到尚未完成的狀態。
+    // PlayData 重載時丟棄尚未執行的延遲動作與舊 ModContentPack 佇列。
     public void ClearQueues()
     {
         subSoundDefToResolve.Clear();
         pendingSubSounds.Clear();
+        earlyModContentLoader.ClearPendingLoads();
         DeferredWorkCompleted = false;
     }
 

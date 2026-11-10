@@ -7,7 +7,7 @@
     <li>1.7</li>
   </supportedVersions>
   <packageId>Taranchuk.FasterGameLoading</packageId>
-  <modVersion>2026.11.06.1</modVersion>
+  <modVersion>2026.11.10.1</modVersion>
   <description><![CDATA[
 <size=18><b><color=#7FD4FF>Does loading take forever? This mod is for you!</color></b></size>
 
@@ -23,7 +23,7 @@ All options are in Options > Mod options > Faster Game Loading - Continued. Most
 
 <size=15><b><color=#FFD866>Graphics and atlases</color></b></size>
 
-- <b><color=#9FE89F>Delay graphic and icon loading</color></b> (disabled by default, requires restart): Moves non-essential graphics and icons to after the main menu appears; they are processed while the main menu is shown, without waiting for a save. Essential categories such as furniture still load first. On RimWorld 1.7, deferred texture uploads finish before the menu even when startup atlas baking is skipped; RimWorld's own atlas baking, compression, disk caching and source-texture eviction run after the queued graphics and icons. The menu can appear sooner, but the deferred work can cause a long frame afterward and increase memory use. If another mod rewrites a graphic after it was queued (for example Bionic Icons), it is built normally but kept out of the static atlas, as in vanilla, which also avoids atlas mask conflicts. <color=#FFB060>Advanced option: if you see missing or late textures, turn this off first.</color>
+- <b><color=#9FE89F>Delay graphic and icon loading</color></b> (disabled by default, RimWorld 1.6 only, requires restart): Moves non-essential graphics and icons to after the main menu appears; they are processed while the main menu is shown, without waiting for a save. Essential categories such as furniture still load first. (Removed on RimWorld 1.7, which streams and uploads textures on demand natively.) If another mod rewrites a graphic after it was queued (for example Bionic Icons), it is built normally but kept out of the static atlas, as in vanilla, which also avoids atlas mask conflicts. <color=#FFB060>Advanced option: if you see missing or late textures, turn this off first.</color>
 - <b><color=#9FE89F>Adaptive atlas baking</color></b> (disabled by default, RimWorld 1.6 only, requires restart): Only works together with Delay graphic and icon loading. Bakes the deferred static atlases on the main menu, several per frame within a 50 ms frame budget, in batches sized to your GPU's speed (at least 1024x1024 pixels' worth). One large atlas can still take a long frame. Without delayed loading, RimWorld's own baking is used.
 - <b><color=#9FE89F>Trim static atlases</color></b> (enabled by default): RimWorld rounds each static atlas up to a power-of-two height, which often leaves half of it empty. This bakes each atlas only as tall as its textures need, so atlases use less memory and bake faster when RimWorld has to build them from scratch (RimWorld 1.7 loads already-built atlases from its own disk cache on later runs). Every texture keeps its pixel position.
 - <b><color=#9FE89F>Skip duplicate atlas textures</color></b> (enabled by default): RimWorld bakes a minifiable building's texture into the Building, Item and Misc atlases. The Item and Misc copies are skipped and the Building copy is shared, unless their mask states conflict.
@@ -31,7 +31,7 @@ All options are in Options > Mod options > Faster Game Loading - Continued. Most
 
 <size=15><b><color=#FFD866>Diagnostics</color></b></size>
 
-- <b><color=#9FE89F>Verbose logging</color></b> (disabled by default): Writes debug messages to the log. If it is on when the game starts, one "Startup timing" line also reports how long after the main menu appeared the deferred visuals and all deferred work finished.
+- <b><color=#9FE89F>Verbose logging</color></b> (disabled by default): Writes debug messages to the log. If it is on when the game starts, one "Startup timing" line also reports how long after the main menu appeared all deferred work finished.
 
 <size=15><b><color=#FFD866>Texture tools (manual)</color></b></size>
 

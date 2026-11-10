@@ -12,8 +12,9 @@ RimWorld 1.7 改用新引擎（Waylith，執行於 .NET 10），不再使用 Uni
 
 - **原版音效預熱**（新增，屬於 **多執行緒預載入**）：見[功能](#功能)。
 - **紋理預讀** 不使用；RimWorld 1.7 用自己的預取器讀取紋理。
+- **延遲圖形和圖示載入** 已移除；RimWorld 1.7 本身即按需上傳紋理，實測延遲圖形載入沒有啟動效益，且會造成主選單後的卡頓。
 - **較快的圖集壓縮** 無法使用；RimWorld 1.7 沒有對應的壓縮步驟，它的 `Compress` 也沒有品質開關，所以這個選項會隱藏。已儲存的設定值會保留，切回 1.6 時仍然有效。
-- **自適應圖集烘焙** 無法使用（僅限 RimWorld 1.6）；它會繞過 RimWorld 1.7 自身烘焙的載入收尾步驟、圖集壓縮、磁碟圖集快取與來源紋理釋放，所以這個選項會隱藏，包含開啟 **延遲圖形和圖示載入** 時，一律使用 RimWorld 的烘焙。已儲存的設定值會保留，切回 1.6 時仍然有效。
+- **自適應圖集烘焙** 無法使用（僅限 RimWorld 1.6）；它會繞過 RimWorld 1.7 自身烘焙的載入收尾步驟、圖集壓縮、磁碟圖集快取與來源紋理釋放，所以這個選項會隱藏，一律使用 RimWorld 的烘焙。已儲存的設定值會保留，切回 1.6 時仍然有效。
 
 ## 啟動流程
 
@@ -49,7 +50,7 @@ graph TD
 
 一律開啟（沒有設定項）：
 
-- **延後解析音效**：RimWorld 的音效定義（`SubSoundDef`）解析會排入佇列，在主選單出現後由延後協程完成。音效定義尚未解析前就被要求播放的音效（例如主選單的滑過或點擊）會當場解析再播放，所以主選單的介面音效一開始就能使用。在主執行緒以外發出的請求，或音效定義尚未排入佇列（例如切換語言重新載入期間）的請求，會照舊略過。開啟 **延遲圖形和圖示載入** 時，其餘音效會在延後的圖形、圖示與圖集烘焙之後解析。進入世界時，剩下的音效會立即解析。
+- **延後解析音效**：RimWorld 的音效定義（`SubSoundDef`）解析會排入佇列，在主選單出現後由延後協程完成。音效定義尚未解析前就被要求播放的音效（例如主選單的滑過或點擊）會當場解析再播放，所以主選單的介面音效一開始就能使用。在主執行緒以外發出的請求，或音效定義尚未排入佇列（例如切換語言重新載入期間）的請求，會照舊略過。進入世界時，剩下的音效會立即解析。
 
 預設關閉：
 
@@ -142,7 +143,7 @@ RimWorld 1.7 的紋理按需上傳，原本的 **延遲圖形和圖示載入** �
 
 ## 從原始碼建置
 
-1.7 的原始碼位於 `1.7/Source/`，建置後的 DLL 輸出到 `1.7/Assemblies/`。它最初複製自 1.6 的原始碼，之後分開維護；功能資料夾與 1.6 相同（`Core/`、`Settings/`、`XMLLoadingCache/`、`EarlyModContentLoading/`、`TextureDownscaler/`、`AdaptiveAtlasBaking/`、`StaticAtlasOptimizations/`、`DelayGraphicAndIconLoading/`、`DelaySoundLoading/`、`Compatibility/`、`Language/` 與 `Utilities/`），NUnit 測試位於 `FasterGameLoading.Tests/`。
+1.7 的原始碼位於 `1.7/Source/`，建置後的 DLL 輸出到 `1.7/Assemblies/`。它最初複製自 1.6 的原始碼，之後分開維護；原始碼目錄包含 `Core/`、`Settings/`、`XMLLoadingCache/`、`EarlyModContentLoading/`、`TextureDownscaler/`、`StaticAtlasOptimizations/`、`DelaySoundLoading/`、`Compatibility/`、`Language/` 與 `Utilities/`（1.6 專屬的 `AdaptiveAtlasBaking/` 與 `DelayGraphicAndIconLoading/` 已於 1.7 移除），NUnit 單元測試位於 `FasterGameLoading.Tests/`，遊戲內整合測試位於 `FasterGameLoading.InGameTests/`。
 
 1.7 版以 .NET 10 為目標，使用目前的 C# 語言功能與 .NET 10 API 撰寫，所以無法為 1.6 編譯。RimWorld 1.7 現在提供 `Krafs.Rimworld.Ref` NuGet 參考套件（1.7.4995-unstable），因此建置遊戲組件（`Assembly-CSharp.dll`、`UnityStubs.dll`、`Waylith.dll` 等）不再需要本機的 RimWorld 安裝；只有 Harmony 工作坊項目中的 1.7 版 `0Harmony.dll` 仍直接參考。請在儲存庫根目錄執行：
 

@@ -50,7 +50,7 @@ Smoke Test 的 `Mod/Configs/SmokeTestConfig.xml` 只允許兩種模組相依宣�
 
 ## 遷移取捨
 
-原有的遊戲內斷言與有效案例已改用 DevTools fixture／`Expect`；NUnit 專案沒有遷移。舊版自動觸發 RimTest Redux runner 及其結果視窗已刪除，改由 DevTools Test Explorer／CLI 執行；語言重載改為先手動切換語言再跑第 2 輪。只有兩個 1.6 專屬案例無法對應 1.7 功能而移除：`AdaptiveBakeDidNotFallBack` 依賴 1.7 不存在的 `AdaptiveAtlasBaker`；`TexturePrefetchServesTexturesFromMemory` 依賴 1.7 不使用的 FGL `TexturePrefetcher`。相關的 1.7「全開」設定也移除了自適應烘焙與快速圖集壓縮選項。
+原有的遊戲內斷言與有效案例已改用 DevTools fixture／`Expect`；NUnit 專案沒有遷移。舊版自動觸發 RimTest Redux runner 及其結果視窗已刪除，改由 DevTools Test Explorer／CLI 執行；語言重載改為先手動切換語言再跑第 2 輪。無法對應 1.7 功能的案例均已移除：`AdaptiveBakeDidNotFallBack`（依賴 1.7 不存在的 `AdaptiveAtlasBaker`）、`TexturePrefetchServesTexturesFromMemory`（依賴 1.7 不使用的 FGL `TexturePrefetcher`），以及隨 1.7 移除延遲圖形載入而刪除的 `DeferredGraphicsTests`。相關的 1.7「全開」設定也移除了延遲圖形、自適應烘焙與快速圖集壓縮選項。
 
 ## Benchmark 與啟動速度
 

@@ -45,7 +45,7 @@ FasterGameLoading/
 ├── 1.7/                           # RimWorld 1.7 (.NET 10)
 │   ├── Assemblies/                # Compiled DLL
 │   ├── LanguageData/              # Translation XML files (EN, zh-TW, zh-CN, RU)
-│   ├── Source/                    # Source for 1.7, copied from 1.6 and adapted
+│   ├── Source/                    # Source for 1.7 (independently maintained)
 │   ├── README.md                  # Documentation for 1.7 (English)
 │   └── README.zh-TW.md            # Documentation for 1.7 (Traditional Chinese)
 ├── SteamDescriptions/             # Steam Workshop description sources
@@ -56,7 +56,7 @@ FasterGameLoading/
 
 RimWorld picks `1.6/` or `1.7/` by the running version, so each build writes its DLL to the `Assemblies/` folder next to its `Source/`. Build and test commands are in each version's README.
 
-Each build loads only its own `LanguageData/` folder; the 1.7 translations omit adaptive atlas baking and faster atlas compression, which are only available in 1.6.
+Each build loads only its own `LanguageData/` folder; the 1.7 translations omit delaying graphic and icon loading, adaptive atlas baking, and faster atlas compression, which are only available in 1.6.
 
 ## Credits and License
 

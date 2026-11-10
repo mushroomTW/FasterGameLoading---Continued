@@ -12,8 +12,9 @@ RimWorld 1.7 runs on a new engine (Waylith on .NET 10) instead of Unity and Mono
 
 - **Vanilla sound prewarm** (new, part of **Multi-threaded preloading**): see [Features](#features).
 - **Texture read-ahead** is not used; RimWorld 1.7 reads textures with its own prefetcher.
+- **Delay graphic and icon loading** is removed; RimWorld 1.7 uploads textures on demand natively, so deferring graphics yields no startup benefit and causes post-menu frame drops.
 - **Faster atlas compression** is not available; RimWorld 1.7 has no matching compression step and its `Compress` has no quality switch, so the option is hidden. Its saved value is kept for when you switch back to 1.6.
-- **Adaptive atlas baking** is not available (RimWorld 1.6 only); it would bypass the end-of-load step, atlas compression, the on-disk atlas cache and source-texture eviction of RimWorld 1.7's own baking, so the option is hidden and RimWorld's baking always runs, including under **Delay graphic and icon loading**. Its saved value is kept for when you switch back to 1.6.
+- **Adaptive atlas baking** is not available (RimWorld 1.6 only); it would bypass the end-of-load step, atlas compression, the on-disk atlas cache and source-texture eviction of RimWorld 1.7's own baking, so the option is hidden and RimWorld's baking always runs. Its saved value is kept for when you switch back to 1.6.
 
 ## Startup Flow
 
@@ -49,7 +50,7 @@ Enabled by default:
 
 Always on (no setting):
 
-- **Deferred sound resolution**: RimWorld's sound definition (`SubSoundDef`) resolution is queued and finished by the deferred coroutine after the main menu appears. A sound requested before its definition is resolved (for example a main-menu hover or click) is resolved on the spot and then played, so main-menu UI sounds work from the start. Requests made off the main thread, or for sounds whose definitions are not queued yet (for example during a language-switch reload), are skipped, as before. With **Delay graphic and icon loading** on, the remaining sounds resolve after the deferred graphics, icons and atlas baking. Entering a world resolves any remaining sounds immediately.
+- **Deferred sound resolution**: RimWorld's sound definition (`SubSoundDef`) resolution is queued and finished by the deferred coroutine after the main menu appears. A sound requested before its definition is resolved (for example a main-menu hover or click) is resolved on the spot and then played, so main-menu UI sounds work from the start. Requests made off the main thread, or for sounds whose definitions are not queued yet (for example during a language-switch reload), are skipped, as before. Entering a world resolves any remaining sounds immediately.
 
 Disabled by default:
 
@@ -142,7 +143,7 @@ If loading is still slow:
 
 ## Building from Source
 
-The 1.7 source lives in `1.7/Source/` and the build writes its DLL to `1.7/Assemblies/`. It started as a copy of the 1.6 source and is maintained separately; feature folders are the same as in 1.6 (`Core/`, `Settings/`, `XMLLoadingCache/`, `EarlyModContentLoading/`, `TextureDownscaler/`, `AdaptiveAtlasBaking/`, `StaticAtlasOptimizations/`, `DelayGraphicAndIconLoading/`, `DelaySoundLoading/`, `Compatibility/`, `Language/` and `Utilities/`), with NUnit tests in `FasterGameLoading.Tests/`.
+The 1.7 source lives in `1.7/Source/` and the build writes its DLL to `1.7/Assemblies/`. It started as a copy of the 1.6 source and is maintained separately; source folders include `Core/`, `Settings/`, `XMLLoadingCache/`, `EarlyModContentLoading/`, `TextureDownscaler/`, `StaticAtlasOptimizations/`, `DelaySoundLoading/`, `Compatibility/`, `Language/` and `Utilities/` (1.6-only folders `AdaptiveAtlasBaking/` and `DelayGraphicAndIconLoading/` are removed), with NUnit unit tests in `FasterGameLoading.Tests/` and in-game integration tests in `FasterGameLoading.InGameTests/`.
 
 The 1.7 build targets .NET 10 and is written with current C# language features and .NET 10 APIs, so it does not compile for 1.6. RimWorld 1.7 now ships the `Krafs.Rimworld.Ref` NuGet reference package (1.7.4995-unstable), so the build no longer needs a local RimWorld installation for the game assemblies (`Assembly-CSharp.dll`, `UnityStubs.dll`, `Waylith.dll` and friends); only the 1.7 `0Harmony.dll` from the Harmony Workshop item is still referenced directly. Run these from the repository root:
 

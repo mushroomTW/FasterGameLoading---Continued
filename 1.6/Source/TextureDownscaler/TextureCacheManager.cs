@@ -112,8 +112,8 @@ namespace FasterGameLoading
 
         /// <summary>
         /// 嘗試取得指定原始路徑對應的快取紋理路徑。
-        /// 自動檢查快取是否過期（原始檔案比快取檔案新時視為失效）。
-        /// 磁碟 I/O（包括 SetLastWriteTimeUtc）在鎖定範圍外執行，避免阻塞並發紋理載入。
+        /// 自動檢查快取是否過期（原始檔案的大小或修改時間變更時視為失效）。
+        /// 磁碟 I/O 在鎖定範圍外執行，避免阻塞並發紋理載入。
         /// </summary>
         public bool TryGetCachedTexturePath(string originalPath, out string cachePath)
         {
@@ -131,7 +131,7 @@ namespace FasterGameLoading
                 return false;
             }
 
-            // 第二步：在鎖外執行磁碟 I/O（存在性檢查 + 時間更新）
+            // 第二步：在鎖外執行磁碟 I/O（存在性檢查 + 快取鍵核對）
             bool fresh = IsManagedCacheFile(candidatePath) && File.Exists(candidatePath) && IsCacheFresh(originalPath, candidatePath);
 
             if (fresh)
@@ -156,45 +156,17 @@ namespace FasterGameLoading
         }
 
         /// <summary>
-        /// 檢查快取是否仍對應目前原始檔案；若原始檔較新，重新核對包含大小與修改時間的快取鍵。
+        /// 檢查快取是否仍對應目前原始檔案：快取檔名由路徑、大小與修改時間算出，三者任一變更都會得到不同路徑。
+        /// 不比較兩邊的修改時間先後：換成修改時間較舊的原始檔時，時間比較會誤判快取仍然有效。
+        /// 只比對檔名：資料夾由 <see cref="IsManagedCacheFile"/> 把關，路徑的斜線寫法不影響身分。
+        /// 原始檔已不存在時視為有效，由 <see cref="CleanupObsoleteCacheFiles"/> 統一處理；
+        /// 無法讀取原始檔資訊時 <see cref="GetCacheKey"/> 改用純路徑，與快取檔名不符而視為失效。
         /// 此方法在 cacheLock 鎖定範圍外呼叫，可安全執行阻塞式磁碟 I/O。
         /// </summary>
         private bool IsCacheFresh(string originalPath, string cachePath)
         {
-            try
-            {
-                if (!File.Exists(originalPath))
-                {
-                    return true;
-                }
-
-                var originalTime = File.GetLastWriteTimeUtc(originalPath);
-                var cacheTime = File.GetLastWriteTimeUtc(cachePath);
-
-                if (cacheTime >= originalTime)
-                {
-                    return true;
-                }
-
-                // 原始檔案的修改時間比快取新。只有目前路徑、大小和修改時間算出的鍵仍與快取路徑一致時，
-                // 才能更新快取時間；原始檔的大小或修改時間變更會產生不同鍵，使舊快取失效。
-                var currentExpectedPath = GetCachePath(originalPath);
-                if (string.Equals(currentExpectedPath, cachePath, StringComparison.OrdinalIgnoreCase))
-                {
-                    File.SetLastWriteTimeUtc(cachePath, originalTime);
-                    return true;
-                }
-
-                return false;
-            }
-            catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException)
-            {
-                if (FasterGameLoadingSettings.VerboseLogging)
-                {
-                    FGLLog.Warning($"{ex.GetType().Name} checking cache freshness for: {originalPath} and {cachePath}", ex);
-                }
-                return false;
-            }
+            return !File.Exists(originalPath)
+                || string.Equals(Path.GetFileName(GetCachePath(originalPath)), Path.GetFileName(cachePath), StringComparison.OrdinalIgnoreCase);
         }
 
         // 移除指定原始路徑的快取項目。

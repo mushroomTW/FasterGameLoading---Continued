@@ -30,6 +30,7 @@ namespace FasterGameLoading
 
 
         // 掃描所有 PawnKindDef 的種族紋理與生命階段圖形。
+        // 種族 Def 沒有 graphicData，drawSize 總和 ≤ 8 的條件改在這裡依生命階段的 drawSize 檢查。
         private void ScanPawnTextures()
         {
             foreach (var pawnKind in DefDatabase<PawnKindDef>.AllDefs)
@@ -40,10 +41,10 @@ namespace FasterGameLoading
 
                 foreach (var lifeStage in pawnKind.lifeStages)
                 {
-                    if (lifeStage.bodyGraphicData != null)
+                    if (lifeStage.bodyGraphicData != null && IsSmallDrawSize(lifeStage.bodyGraphicData))
                     {
                         AddEntry(pawnKind.race, lifeStage.bodyGraphicData.Graphic);
-                        if (lifeStage.dessicatedBodyGraphicData != null)
+                        if (lifeStage.dessicatedBodyGraphicData != null && IsSmallDrawSize(lifeStage.dessicatedBodyGraphicData))
                         {
                             AddEntry(pawnKind.race, lifeStage.dessicatedBodyGraphicData.Graphic);
                         }
@@ -51,6 +52,8 @@ namespace FasterGameLoading
                 }
             }
         }
+
+        private static bool IsSmallDrawSize(GraphicData data) => data.drawSize.x + data.drawSize.y <= 8;
 
         // 掃描所有 StyleCategoryDef 的外觀圖形。
         private void ScanStyleTextures()

@@ -73,7 +73,7 @@ namespace FasterGameLoading.Tests.TextureDownscaler
         }
 
         [Test]
-        public void TryGetCachedTexturePath_NewerOriginalWithSameIdentityRefreshesCacheTimestamp()
+        public void TryGetCachedTexturePath_NewerOriginalWithSameIdentityStillHits()
         {
             Directory.CreateDirectory(cacheDir);
             string originalPath = Path.Combine(rootDir, "same-length.png");
@@ -82,7 +82,7 @@ namespace FasterGameLoading.Tests.TextureDownscaler
             File.WriteAllBytes(originalPath, new byte[] { 1, 2, 3 });
             File.SetLastWriteTimeUtc(originalPath, baseTime);
 
-            // 快取路徑必須是由目前檔案身分推導出的雜湊路徑，才會命中「內容未變」的快速通道。
+            // 快取檔比原始檔舊不代表失效：只要由目前檔案身分推導出的雜湊路徑相同，就應命中而不重新降質。
             string cachePath = manager.GetCachePath(originalPath);
             File.WriteAllBytes(cachePath, new byte[] { 9 });
             File.SetLastWriteTimeUtc(cachePath, baseTime.AddMinutes(-5));
@@ -90,8 +90,6 @@ namespace FasterGameLoading.Tests.TextureDownscaler
 
             Assert.That(manager.TryGetCachedTexturePath(originalPath, out string resolved), Is.True);
             Assert.That(resolved, Is.EqualTo(cachePath));
-            Assert.That(File.GetLastWriteTimeUtc(cachePath), Is.EqualTo(baseTime),
-                "檔案身分未變時應把快取檔的時間戳對齊原始檔，而不是重新降質一次。");
         }
 
         // ── 對照表操作 ──

@@ -107,6 +107,7 @@ graph TD
 - [Humanoid Alien Races](https://github.com/erdelf/AlienRaces) 會在每個種族自己的紋理載入後立即統計該種族的紋理變體。Faster Game Loading 會把這次統計延到所有模組內容載入完成後，避免漏掉之後才載入的種族模組的變體。有了這項處理，HAR 與依賴它的種族模組也能像其他模組一樣提早載入並平行解析 XML。若找不到或無法補丁這個掛鉤，它們會再次被排除在這兩項功能之外。
 - HAR（包括其開發版）與 Ancot 相關的種族模組不會被縮小紋理，也不參與 **自適應圖集烘焙**，以減少 bodyAddon、頭髮、耳朵與多遮罩紋理的問題。[Pumpkin Library](https://steamcommunity.com/sharedfiles/filedetails/?id=3790461769) 在 `TextureOverrideSettings.xml` 中列出、用來取代這些模組紋理的 DDS 紋理包也同樣處理。AyaTweaks 與 Ayameduki 系列模組不提早載入，也不平行解析 XML。
 - 搭配 [ChezhouLib](https://steamcommunity.com/sharedfiles/filedetails/?id=3595247479) 時，Faster Game Loading 防止重複載入同一組 asset bundle 的防護會在 ChezhouLib 的 asset bundle 載入器之前執行。
+- 在靜態建構子改寫 `GraphicData` 或 `Def.graphic` 的模組（例如 [Bionic Icons](https://steamcommunity.com/sharedfiles/filedetails/?id=1677616980)）可搭配 **延遲圖形和圖示載入** 使用：排入佇列後才被改寫的圖形仍會建立，但不會插入靜態圖集，與原版一致，也避免 RimWorld 的「同一張貼圖搭配兩個不同遮罩」圖集錯誤。改寫是透過 `texPath`、`maskPath`、`graphicClass`、`shaderType` 與 `Def.graphic` 判斷；只以反射替換私有 `cachedGraphic`、其餘欄位不動的模組不在涵蓋範圍。
 
 ## 建議設定
 

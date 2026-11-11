@@ -86,7 +86,7 @@ namespace FasterGameLoading
         // ── 延遲佇列 ──
         // 原版流程中生產者與消費者皆在主執行緒；仍用 ConcurrentQueue 是為防禦其他 mod 在背景執行緒
         // 觸發 ResolveReferences／PostLoad，成本與原本的 lock 包裝相當，且不必手寫同步。
-        private readonly ConcurrentQueue<(ThingDef def, Action run)> graphicsToLoad = new();
+        private readonly ConcurrentQueue<DeferredGraphic> graphicsToLoad = new();
 
         private readonly ConcurrentQueue<(BuildableDef def, Action run)> iconsToLoad = new();
 
@@ -102,7 +102,8 @@ namespace FasterGameLoading
 
         internal int SubSoundDefToResolveCount => pendingSubSounds.Count;
 
-        public void EnqueueGraphic(ThingDef def, Action action) => graphicsToLoad.Enqueue((def, action));
+        internal void EnqueueGraphic(ThingDef def, Action action, GraphicSnapshot snapshot)
+            => graphicsToLoad.Enqueue(new DeferredGraphic(def, action, snapshot));
 
         public void EnqueueIcon(BuildableDef def, Action action) => iconsToLoad.Enqueue((def, action));
 
@@ -285,7 +286,7 @@ namespace FasterGameLoading
         internal IEnumerator LoadDeferredGraphicsCoroutine(ICollection<ThingDef> loadedDefs)
         {
             FGLLog.Message($"Starting deferred graphics: {GraphicsToLoadCount.ToString(CultureInfo.InvariantCulture)}");
-            var drain = DrainQueue(graphicsToLoad, item => LoadOneGraphic(item.def, item.run, loadedDefs));
+            var drain = DrainQueue(graphicsToLoad, item => LoadOneGraphic(item, loadedDefs));
             while (drain.MoveNext())
             {
                 yield return drain.Current;
@@ -297,13 +298,28 @@ namespace FasterGameLoading
         /// 執行單一 ThingDef 的延遲圖形載入動作。
         /// UI 圖示交給延遲圖示佇列裡的原版回呼（ResolveIcon 另外會設定顏色、UI 材質與角度），這裡不自行填入。
         /// 個別 def 的例外只記錄不外傳，避免中斷整個延遲載入協程。
+        /// 若圖形輸入在排入後被其他 Mod 改寫，動作照常執行（建立 def.graphic），但不插入靜態圖集：
+        /// 原版此時插入的是改寫前的貼圖，改寫後的圖形本來就不在圖集裡（詳見 <see cref="GraphicSnapshot"/>）。
         /// </summary>
-        private static void LoadOneGraphic(ThingDef def, Action action, ICollection<ThingDef> loadedDefs)
+        private static void LoadOneGraphic(DeferredGraphic graphic, ICollection<ThingDef> loadedDefs)
         {
+            var def = graphic.Def;
             bool graphicActionSucceeded = false;
+            bool skipStaticAtlas = graphic.Snapshot.IsOutdated(def);
+            if (skipStaticAtlas)
+            {
+                FGLLog.Message($"Graphic of {def} was changed after PostLoad; skipping static atlas insertion");
+            }
             try
             {
-                action();
+                if (skipStaticAtlas)
+                {
+                    DeferredGraphicAtlasSkip.RunWithoutStaticAtlas(graphic.Run);
+                }
+                else
+                {
+                    graphic.Run();
+                }
                 loadedDefs.Add(def);
                 graphicActionSucceeded = true;
             }

@@ -101,6 +101,20 @@ public class TextureResizerTests
     }
 
     [Test]
+    public void TryGetResizeTarget_RaceWithoutGraphicDataUsesPawnTarget()
+    {
+        // 原版種族 Def 沒有 graphicData，身體圖形的 drawSize 由掃描階段依生命階段篩選。
+        var def = Uninitialized<ThingDef>();
+        def.race = Uninitialized<RaceProperties>();
+        int targetSize;
+
+        var result = TextureResizer.TryGetResizeTarget(texture: null, def: def, targetSize: out targetSize);
+
+        Assert.That(result, Is.True);
+        Assert.That(targetSize, Is.EqualTo(256));
+    }
+
+    [Test]
     public void TryGetResizeTarget_ItemUsesItemTarget()
     {
         var def = Uninitialized<ThingDef>();

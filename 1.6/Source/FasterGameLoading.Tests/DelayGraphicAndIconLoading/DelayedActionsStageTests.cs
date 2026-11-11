@@ -18,6 +18,9 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
         private static Texture2D mockBadTex;
         private DelayedActions delayedActions;
 
+        // 佇列項目要帶排入當下的圖形快照；這裡的假 Def 沒有 GraphicData，快照內容為空（永不判定為改寫）。
+        private void QueueGraphic(ThingDef def, Action action) => delayedActions.EnqueueGraphic(def, action, GraphicSnapshot.Capture(def));
+
         private static bool PrefixSkip() => false;
         private static bool mockIsInMainThread = true;
         private static bool MockIsInMainThread(ref bool __result)
@@ -117,8 +120,8 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
             bool act1Executed = false;
             bool act2Executed = false;
 
-            delayedActions.EnqueueGraphic(def1, () => act1Executed = true);
-            delayedActions.EnqueueGraphic(def2, () => act2Executed = true);
+            QueueGraphic(def1, () => act1Executed = true);
+            QueueGraphic(def2, () => act2Executed = true);
 
             var loadedDefs = new List<ThingDef>();
             var coroutine = delayedActions.LoadDeferredGraphicsCoroutine(loadedDefs);
@@ -139,7 +142,7 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
             def.uiIcon = mockBadTex;
             def.uiIconPath = "Things/Item/TestIcon";
             bool iconActionExecuted = false;
-            delayedActions.EnqueueGraphic(def, () => { });
+            QueueGraphic(def, () => { });
             delayedActions.EnqueueIcon(def, () => iconActionExecuted = true);
 
             var graphics = delayedActions.LoadDeferredGraphicsCoroutine(new List<ThingDef>());
@@ -161,9 +164,9 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
             bool act1Executed = false;
             bool act3Executed = false;
 
-            delayedActions.EnqueueGraphic(def1, () => act1Executed = true);
-            delayedActions.EnqueueGraphic(def2, () => throw new InvalidOperationException("Simulated load error"));
-            delayedActions.EnqueueGraphic(def3, () => act3Executed = true);
+            QueueGraphic(def1, () => act1Executed = true);
+            QueueGraphic(def2, () => throw new InvalidOperationException("Simulated load error"));
+            QueueGraphic(def3, () => act3Executed = true);
 
             var loadedDefs = new List<ThingDef>();
             var coroutine = delayedActions.LoadDeferredGraphicsCoroutine(loadedDefs);
@@ -191,7 +194,7 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
             var plantField = AccessTools.Field(typeof(ThingDef), "plant");
             plantField?.SetValue(defSuccess, plantPropObj);
 
-            delayedActions.EnqueueGraphic(defSuccess, () => { });
+            QueueGraphic(defSuccess, () => { });
 
             var loadedDefs = new List<ThingDef>();
             var coroutine = delayedActions.LoadDeferredGraphicsCoroutine(loadedDefs);
@@ -205,7 +208,7 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
             var defFailure = CreateMockThingDef("DefPlantFailure");
             plantField?.SetValue(defFailure, plantPropObj);
 
-            delayedActions.EnqueueGraphic(defFailure, () => throw new InvalidOperationException("Failed"));
+            QueueGraphic(defFailure, () => throw new InvalidOperationException("Failed"));
             coroutine = delayedActions.LoadDeferredGraphicsCoroutine(loadedDefs);
 
             while (coroutine.MoveNext()) { }
@@ -310,8 +313,8 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
             var def1 = CreateMockThingDef("TestDef1");
             var def2 = CreateMockThingDef("TestDef2");
 
-            delayedActions.EnqueueGraphic(def1, () => { });
-            delayedActions.EnqueueGraphic(def2, () => { });
+            QueueGraphic(def1, () => { });
+            QueueGraphic(def2, () => { });
 
             var getter = AccessTools.PropertyGetter(typeof(DelayedActions), nameof(DelayedActions.IsOverBudget));
             var patch = new HarmonyMethod(AccessTools.Method(typeof(DelayedActionsStageTests), nameof(MockOverBudgetTrue)));
@@ -365,7 +368,7 @@ namespace FasterGameLoading.Tests.DelayGraphicAndIconLoading
         public void LoadDeferredGraphicsCoroutine_WhenNotInMainThread_YieldsAndContinues()
         {
             var def = CreateMockThingDef("TestDef");
-            delayedActions.EnqueueGraphic(def, () => { });
+            QueueGraphic(def, () => { });
 
             mockIsInMainThread = false;
             TestSetup.IsInMainThreadOverride = () => false;

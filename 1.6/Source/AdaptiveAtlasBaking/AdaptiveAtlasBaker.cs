@@ -408,7 +408,9 @@ namespace FasterGameLoading
                 atlas.colorTexture = null;
             }
 
-            if (atlas.maskTexture != null && !atlas.textures.Contains(atlas.maskTexture))
+            // 單紋理批次直接沿用 mod 的原始遮罩（存在 masks 而非 textures），不可銷毀。
+            if (atlas.maskTexture != null && !atlas.textures.Contains(atlas.maskTexture)
+                && !atlas.masks.ContainsValue(atlas.maskTexture))
             {
                 UnityEngine.Object.Destroy(atlas.maskTexture);
                 atlas.maskTexture = null;

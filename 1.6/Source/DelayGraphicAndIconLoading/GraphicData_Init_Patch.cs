@@ -40,7 +40,8 @@ namespace FasterGameLoading
                 {
                     foreach (var item in graphicDatas)
                     {
-                        if (IsSameGraphicData(__instance, item) && item.cachedGraphic != null)
+                        // 同一物件再次 Init()（例如 mod 修改欄位後以反射重建）時不可與自己比對，否則會沿用舊圖形。
+                        if (!ReferenceEquals(item, __instance) && IsSameGraphicData(__instance, item) && item.cachedGraphic != null)
                         {
                             __instance.cachedGraphic = item.cachedGraphic;
                             return false;
@@ -59,7 +60,7 @@ namespace FasterGameLoading
             {
                 lock (graphicDatas)
                 {
-                    if (graphicDatas.Count < 10)
+                    if (graphicDatas.Count < 10 && !graphicDatas.Contains(__instance))
                     {
                         graphicDatas.Add(__instance);
                     }

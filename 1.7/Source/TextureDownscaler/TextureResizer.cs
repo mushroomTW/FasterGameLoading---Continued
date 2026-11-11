@@ -25,12 +25,19 @@ public static class TextureResizer
     /// <summary>
     /// 判斷是否應該對此紋理進行降質。
     /// 只對 drawSize 總和 ≤ 8 的 Def 進行降質（避免影響大型物件外觀）。
+    /// 種族 Def 沒有 graphicData，身體圖形的 drawSize 在生命階段上，已由 <see cref="TextureScanner"/> 掃描時篩選。
     /// </summary>
     public static bool TryGetResizeTarget(Texture texture, BuildableDef def, out int targetSize)
     {
         if (def is TerrainDef)
         {
             targetSize = targetSizes[TextureResize.TextureType.Terrain];
+            return true;
+        }
+
+        if (def is ThingDef { race: not null, graphicData: null })
+        {
+            targetSize = targetSizes[TextureResize.TextureType.Pawn];
             return true;
         }
 

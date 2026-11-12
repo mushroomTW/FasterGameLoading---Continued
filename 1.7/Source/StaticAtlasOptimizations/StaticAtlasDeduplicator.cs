@@ -23,8 +23,6 @@ public static class StaticAtlasDeduplicator
 
     // 以反射讀取私有的 buildQueue：Publicizer 只讓編譯通過，直接存取在 .NET 10（CoreCLR）上會拋 FieldAccessException（單元測試已實測），
     // 因此不依賴遊戲執行環境是否放寬存取檢查。
-    // Reads the private buildQueue by reflection: the Publicizer only makes it compile, and direct access throws
-    // FieldAccessException on .NET 10 (CoreCLR; confirmed by the unit tests), so this does not depend on the game's runtime relaxing access checks.
     private static readonly FieldInfo BuildQueueField = AccessTools.Field(typeof(GlobalTextureAtlasManager), nameof(GlobalTextureAtlasManager.buildQueue));
 
     private static readonly HashSet<(Texture2D texture, TextureAtlasGroup group)> droppedCopies = new();
@@ -32,18 +30,23 @@ public static class StaticAtlasDeduplicator
     static StaticAtlasDeduplicator()
     {
         // 切換語言會重新載入紋理並重新烘焙，舊的組合已不適用。
-        // A language change reloads the textures and bakes again, so the old pairs no longer apply.
         SessionLifecycle.On(LifecyclePhase.LanguageReloading, static () => droppedCopies.Clear());
     }
 
-    // 本次載入從建置佇列移除的（紋理, 群組）組合。
+    /// <summary>
+    /// 本次載入從建置佇列移除的（紋理, 群組）組合。
+    /// </summary>
     public static IReadOnlyCollection<(Texture2D texture, TextureAtlasGroup group)> DroppedCopies => droppedCopies;
 
-    // 這個組合是否在烘焙前被移除。
+    /// <summary>
+    /// 這個組合是否在烘焙前被移除。
+    /// </summary>
     public static bool IsDroppedCopy(Texture2D texture, TextureAtlasGroup group)
         => droppedCopies.Count > 0 && droppedCopies.Contains((texture, group));
 
-    // 在確定會執行的烘焙之前呼叫：原版烘焙由 <see cref="GlobalTextureAtlasManager_BakeStaticAtlases_DeduplicatePatch"/> 呼叫。重複呼叫是安全的，第二次不會再找到重複項目。
+    /// <summary>
+    /// 在確定會執行的烘焙之前呼叫：原版烘焙由 <see cref="GlobalTextureAtlasManager_BakeStaticAtlases_DeduplicatePatch"/> 呼叫。重複呼叫是安全的，第二次不會再找到重複項目。
+    /// </summary>
     public static void RemoveDuplicateCopies()
     {
         if (!FasterGameLoadingSettings.DeduplicateStaticAtlases)

@@ -3,7 +3,9 @@ using Verse;
 
 namespace FasterGameLoading;
 
-// 攔截 LanguageDatabase.SelectLanguage，在切換語言時自動重置所有快取。
+/// <summary>
+/// 攔截 LanguageDatabase.SelectLanguage，在切換語言時自動重置所有快取。
+/// </summary>
 [HarmonyPatch(typeof(LanguageDatabase), nameof(LanguageDatabase.SelectLanguage))]
 public static class LanguageDatabase_SelectLanguage_Patch
 {

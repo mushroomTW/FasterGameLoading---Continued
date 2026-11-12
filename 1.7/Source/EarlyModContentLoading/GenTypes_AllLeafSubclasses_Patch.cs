@@ -46,7 +46,9 @@ public static class GenTypes_AllLeafSubclasses_Patch
     }
 }
 
-// 原版型別快取清除後（組件載入、語言重載的 ClearDestroy），同步使 FGL 的名稱查詢快取失效。
+/// <summary>
+/// 原版型別快取清除後（組件載入、語言重載的 ClearDestroy），同步使 FGL 的名稱查詢快取失效。
+/// </summary>
 [HarmonyPatch(typeof(GenTypes), nameof(GenTypes.ClearCache))]
 public static class GenTypes_ClearCache_Patch
 {

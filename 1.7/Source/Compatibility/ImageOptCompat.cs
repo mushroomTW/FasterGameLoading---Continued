@@ -6,12 +6,17 @@ using Verse;
 
 namespace FasterGameLoading;
 
-// Image Opt 相容性檢查器。
+/// <summary>
+/// Image Opt 相容性檢查器。
+/// </summary>
 public static class ImageOptCompat
 {
     private static readonly byte[] ddsMagic = [(byte)'D', (byte)'D', (byte)'S', (byte)' '];
     private static readonly byte[] zstdMagic = [0x28, 0xB5, 0x2F, 0xFD];
 
+    /// <summary>
+    /// 清理指定根目錄下無效或損毀的 DDS/ZSTD 快取檔案。
+    /// </summary>
     public static int CleanupInvalidDdsZstdCaches(IEnumerable<string> roots)
     {
         if (roots == null) return 0;

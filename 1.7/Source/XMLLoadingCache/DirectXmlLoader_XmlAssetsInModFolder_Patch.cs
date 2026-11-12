@@ -8,7 +8,9 @@ using Verse;
 
 namespace FasterGameLoading;
 
-// 並行解析 XML，但保留 RimWorld 原版的檔案收集與覆蓋順序。
+/// <summary>
+/// 並行解析 XML，但保留 RimWorld 原版的檔案收集與覆蓋順序。
+/// </summary>
 [HarmonyPatch(typeof(DirectXmlLoader), "XmlAssetsInModFolder")]
 public static class DirectXmlLoader_XmlAssetsInModFolder_Patch
 {

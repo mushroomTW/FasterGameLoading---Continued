@@ -105,7 +105,9 @@ public static class GenTypes_GetTypeInAnyAssemblyInt_Patch
         }
     }
 
-    // 前置處理：優先使用執行期型別快取或跨 session 快取比對，命中時返回並跳過原方法。
+    /// <summary>
+    /// 前置處理：優先使用執行期型別快取或跨 session 快取比對，命中時返回並跳過原方法。
+    /// </summary>
     public static bool Prefix(ref Type __result, out (string originalTypeName, string namespaceIfAmbiguous, string cacheKey, bool isCached, bool usedSessionMapping) __state, ref string typeName, string namespaceIfAmbiguous)
     {
         // 原版先以原名查詢，完整名稱命中與命名空間提示無關。

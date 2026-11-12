@@ -37,7 +37,9 @@ public static class StaticTextureAtlas_CalcRectsForAtlasNew_Patch
 
     public static void Finalizer() => depth--;
 
-    // 最上方紋理止於第 <paramref name="usedRows"/> 列時，裁切後的圖集高度。
+    /// <summary>
+    /// 最上方紋理止於第 <paramref name="usedRows"/> 列時，裁切後的圖集高度。
+    /// </summary>
     public static int TrimmedHeight(int usedRows, int mipCount)
     {
         int lastMip = Math.Max(0, mipCount - 1);
@@ -47,7 +49,9 @@ public static class StaticTextureAtlas_CalcRectsForAtlasNew_Patch
         return (usedRows + keptEmptyRows + step - 1) / step * step;
     }
 
-    // 把以舊高度正規化的 UV 矩形換算成以新高度正規化，列的位置與高度（以像素計）不變。
+    /// <summary>
+    /// 把以舊高度正規化的 UV 矩形換算成以新高度正規化，列的位置與高度（以像素計）不變。
+    /// </summary>
     public static Rect RescaleRows(Rect rect, int oldHeight, int newHeight)
         => new Rect(
             rect.x,

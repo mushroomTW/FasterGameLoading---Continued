@@ -11,10 +11,14 @@ using Color = UnityEngine.Color;
 
 namespace FasterGameLoading;
 
-// 紋理降質的整合調度器。協同 CacheManager、Scanner、Resizer 及 PngUtils 執行降質流程。
+/// <summary>
+/// 紋理降質的整合調度器。協同 CacheManager、Scanner、Resizer 及 PngUtils 執行降質流程。
+/// </summary>
 public class TextureResize
 {
-    // 紋理分類，用於決定降質目標尺寸。
+    /// <summary>
+    /// 紋理分類，用於決定降質目標尺寸。
+    /// </summary>
     public enum TextureType
     {
         None, Building, Pawn, Weapon, Apparel, Item, Plant, Tree, Terrain, Mote, Filth, Projectile,
@@ -26,7 +30,9 @@ public class TextureResize
     private long lastOriginalPixelCount;
     private long lastDownscaledPixelCount;
 
-    // 單一紋理的縮放候選資訊。
+    /// <summary>
+    /// 單一紋理的縮放候選資訊。
+    /// </summary>
     internal struct TextureResizeCandidate
     {
         public Texture source;
@@ -328,7 +334,9 @@ public class TextureResize
         }
     }
 
-    // 在主執行緒解碼 <see cref="ReadOriginalBytes"/> 讀到的原圖。失敗時回傳 false，由呼叫端使用記憶體中的版本。
+    /// <summary>
+    /// 在主執行緒解碼 <see cref="ReadOriginalBytes"/> 讀到的原圖。失敗時回傳 false，由呼叫端使用記憶體中的版本。
+    /// </summary>
     private static bool TryDecodeOriginalTexture(string path, byte[] data, out Texture2D texture)
     {
         texture = null;
@@ -398,14 +406,18 @@ public class TextureResize
         return true;
     }
 
-    // 判斷此服裝是否需要以 pack 模式渲染（Utility 層預設為 true）。
+    /// <summary>
+    /// 判斷此服裝是否需要以 pack 模式渲染（Utility 層預設為 true）。
+    /// </summary>
     public static bool RenderAsPack(ThingDef def) => def.apparel.LastLayer.IsUtilityLayer && (def.apparel.wornGraphicData?.renderUtilityAsPack ?? true);
 
     // ════════════════════════════════════════════════════════════════
     //  紋理類型判斷
     // ════════════════════════════════════════════════════════════════
 
-    // 根據 ThingDef 的屬性判斷其紋理類型。
+    /// <summary>
+    /// 根據 ThingDef 的屬性判斷其紋理類型。
+    /// </summary>
     internal static TextureType GetTextureType(ThingDef thingDef)
     {
         if (thingDef.building != null) return TextureType.Building;

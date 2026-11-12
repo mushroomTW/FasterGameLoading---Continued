@@ -41,7 +41,9 @@ public static class LoadedTextureRegistry
         // 語言切換時舊貼圖通常仍活著，殘留條目只會在後續被新條目覆寫或隨 GC 移除，不影響正確性。
     }
 
-    // 登記 <paramref name="fullPath"/> 目前對應的貼圖；同一路徑的舊貼圖會從反向查找表移除。
+    /// <summary>
+    /// 登記 <paramref name="fullPath"/> 目前對應的貼圖；同一路徑的舊貼圖會從反向查找表移除。
+    /// </summary>
     public static void Record(string fullPath, Texture2D texture)
     {
         if (ReferenceEquals(texture, null)) return;
@@ -78,7 +80,9 @@ public static class LoadedTextureRegistry
         return false;
     }
 
-    // 貼圖的來源檔案路徑；非 Texture2D（如 RenderTexture）或未登記的貼圖回傳 false。
+    /// <summary>
+    /// 貼圖的來源檔案路徑；非 Texture2D（如 RenderTexture）或未登記的貼圖回傳 false。
+    /// </summary>
     public static bool TryGetPath(Texture texture, out string fullPath)
     {
         if (texture is Texture2D t2d && !ReferenceEquals(t2d, null) && pathsByTexture.TryGetValue(t2d, out var holder))
@@ -90,7 +94,9 @@ public static class LoadedTextureRegistry
         return false;
     }
 
-    // 所有 C# 物件仍存活的已登記貼圖與其路徑的快照。
+    /// <summary>
+    /// 所有 C# 物件仍存活的已登記貼圖與其路徑的快照。
+    /// </summary>
     public static IReadOnlyList<KeyValuePair<Texture2D, string>> Snapshot()
     {
         List<KeyValuePair<Texture2D, string>> alive = [];
@@ -104,7 +110,9 @@ public static class LoadedTextureRegistry
         return alive;
     }
 
-    // 取消 <paramref name="fullPath"/> 的登記，下次載入同一路徑會重新讀檔。
+    /// <summary>
+    /// 取消 <paramref name="fullPath"/> 的登記，下次載入同一路徑會重新讀檔。
+    /// </summary>
     public static void Forget(string fullPath)
     {
         texturesByPath.TryRemove(fullPath, out _);

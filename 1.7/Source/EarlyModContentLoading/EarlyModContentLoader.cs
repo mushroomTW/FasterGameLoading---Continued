@@ -8,7 +8,9 @@ using Verse;
 
 namespace FasterGameLoading;
 
-// 負責管理與執行 Mod 內容的提早載入邏輯。
+/// <summary>
+/// 負責管理與執行 Mod 內容的提早載入邏輯。
+/// </summary>
 public class EarlyModContentLoader
 {
     private Queue<ModContentPack> pendingEarlyLoads;
@@ -50,17 +52,23 @@ public class EarlyModContentLoader
         SessionLifecycle.On(LifecyclePhase.LanguageReloading, static () => ModClassesCreated = false);
     }
 
-    // 所有 Mod 建構子是否都已執行完畢；由 <see cref="LoadedModManager_LoadModXML_Patch"/> 在事件緒設定。
+    /// <summary>
+    /// 所有 Mod 建構子是否都已執行完畢；由 <see cref="LoadedModManager_LoadModXML_Patch"/> 在事件緒設定。
+    /// </summary>
     internal static bool ModClassesCreated
     {
         get => modClassesCreated;
         set => modClassesCreated = value;
     }
 
-    // 取得 Mod 內容提早載入是否已完成。
+    /// <summary>
+    /// 取得 Mod 內容提早載入是否已完成。
+    /// </summary>
     public bool EarlyLoadingComplete { get; private set; }
 
-    // PlayData 重載前丟棄舊 ModContentPack，讓新的載入輪次依目前的 RunningMods 建立佇列。
+    /// <summary>
+    /// PlayData 重載前丟棄舊 ModContentPack，讓新的載入輪次依目前的 RunningMods 建立佇列。
+    /// </summary>
     internal void ClearPendingLoads()
     {
         pendingEarlyLoads?.Clear();
@@ -69,8 +77,10 @@ public class EarlyModContentLoader
         skipFrames = 0;
     }
 
-    // 每幀執行，利用空閒時間預先載入尚未處理的 Mod 內容。
-    // 參數 delayedActions：延遲動作管理器的實例，用於確認時間預算。
+    /// <summary>
+    /// 每幀執行，利用空閒時間預先載入尚未處理的 Mod 內容。
+    /// </summary>
+    /// <param name="delayedActions">延遲動作管理器的實例，用於確認時間預算。</param>
     public void Update(DelayedActions delayedActions)
     {
         // earlyModContentLoading 採 camelCase 以相容 loading-progress 的反射查詢，詳見 FasterGameLoadingSettings

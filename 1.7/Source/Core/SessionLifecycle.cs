@@ -7,7 +7,9 @@ using Verse;
 
 namespace FasterGameLoading;
 
-// 一次遊戲行程中，FGL 各模組需要收到通知的時間點。
+/// <summary>
+/// 一次遊戲行程中，FGL 各模組需要收到通知的時間點。
+/// </summary>
 public enum LifecyclePhase
 {
     /// <summary>
@@ -36,7 +38,9 @@ public static class SessionLifecycle
         [LifecyclePhase.LanguageReloading] = [],
     };
 
-    // 登記在 <paramref name="phase"/> 時要執行的處理常式；每次進入該階段都會執行。
+    /// <summary>
+    /// 登記在 <paramref name="phase"/> 時要執行的處理常式；每次進入該階段都會執行。
+    /// </summary>
     public static void On(LifecyclePhase phase, Action handler)
     {
         if (handler == null) return;
@@ -46,7 +50,9 @@ public static class SessionLifecycle
         }
     }
 
-    // 依登記順序執行 <paramref name="phase"/> 的所有處理常式。
+    /// <summary>
+    /// 依登記順序執行 <paramref name="phase"/> 的所有處理常式。
+    /// </summary>
     internal static void Raise(LifecyclePhase phase)
     {
         Action[] snapshot;
@@ -88,10 +94,14 @@ public static class SessionLifecycle
 
     private static readonly ConcurrentQueue<MainThreadRaise> pendingMainThreadRaises = new();
 
-    // 非主執行緒等待主執行緒代為觸發階段的上限。可於測試中調低。
+    /// <summary>
+    /// 非主執行緒等待主執行緒代為觸發階段的上限。可於測試中調低。
+    /// </summary>
     internal static int MainThreadRaiseTimeoutMs { get; set; } = 10_000;
 
-    // 主執行緒上次呼叫 <see cref="DrainMainThreadRaises"/> 的 Stopwatch 時間戳；0 代表從未呼叫。
+    /// <summary>
+    /// 主執行緒上次呼叫 <see cref="DrainMainThreadRaises"/> 的 Stopwatch 時間戳；0 代表從未呼叫。
+    /// </summary>
     private static long lastDrainTimestamp;
 
     /// <summary>
@@ -129,7 +139,9 @@ public static class SessionLifecycle
         return true;
     }
 
-    // 主執行緒呼叫（DelayedActions.Update 每幀一次）：執行其他執行緒交付的階段觸發。
+    /// <summary>
+    /// 主執行緒呼叫（DelayedActions.Update 每幀一次）：執行其他執行緒交付的階段觸發。
+    /// </summary>
     internal static void DrainMainThreadRaises()
     {
         Interlocked.Exchange(ref lastDrainTimestamp, Stopwatch.GetTimestamp());

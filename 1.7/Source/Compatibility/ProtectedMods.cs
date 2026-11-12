@@ -65,7 +65,9 @@ public static class ProtectedMods
         });
     }
 
-    // 貼圖路徑是否位於受貼圖保護的 Mod 資料夾內（不降質、不進 registry）。
+    /// <summary>
+    /// 貼圖路徑是否位於受貼圖保護的 Mod 資料夾內（不降質、不進 registry）。
+    /// </summary>
     public static bool IsProtectedTexturePath(string path)
     {
         if (string.IsNullOrEmpty(path)) return false;
@@ -95,7 +97,9 @@ public static class ProtectedMods
         return false;
     }
 
-    // Mod 是否不提早載入、XML 不平行解析。
+    /// <summary>
+    /// Mod 是否不提早載入、XML 不平行解析。
+    /// </summary>
     public static bool ShouldSkipEarlyLoad(ModContentPack mod)
     {
         if (mod == null) return false;
@@ -115,7 +119,9 @@ public static class ProtectedMods
         return shouldSkip;
     }
 
-    // 依 packageId 與相依清單判斷是否不提早載入；<paramref name="metaData"/> 為 ModMetaData 或同形物件。
+    /// <summary>
+    /// 依 packageId 與相依清單判斷是否不提早載入；<paramref name="metaData"/> 為 ModMetaData 或同形物件。
+    /// </summary>
     public static bool ShouldSkipEarlyLoad(string packageId, object metaData = null)
     {
         if (string.IsNullOrEmpty(packageId)) return false;
@@ -173,7 +179,8 @@ public static class ProtectedMods
                     }
                 }
 
-                if (!hasAny) return; // 載入列表尚未初始化完畢（空集合），下次再來
+                // 載入列表尚未初始化完畢（空集合），下次再來
+                if (!hasAny) return;
 
                 if (anyPumpkinTargetProtected)
                 {
@@ -247,13 +254,17 @@ public static class ProtectedMods
         => root.Element(listName)?.Elements("li").Select(static li => li.Value.Trim()).Where(static id => id.Length > 0)
             ?? [];
 
-    // 目前已建立的受貼圖保護根目錄快照（正斜線、無結尾斜線）。
+    /// <summary>
+    /// 目前已建立的受貼圖保護根目錄快照（正斜線、無結尾斜線）。
+    /// </summary>
     internal static IReadOnlyCollection<string> GetProtectedTextureRoots()
     {
         lock (rootsLock) return new List<string>(protectedTextureRoots);
     }
 
-    // 測試用：直接指定受貼圖保護的根目錄並視為已初始化，繞過需要 RunningMods 的探測。
+    /// <summary>
+    /// 測試用：直接指定受貼圖保護的根目錄並視為已初始化，繞過需要 RunningMods 的探測。
+    /// </summary>
     internal static void SetProtectedTextureRootsForTests(params string[] roots)
     {
         lock (rootsLock)

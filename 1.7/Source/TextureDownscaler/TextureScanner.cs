@@ -7,7 +7,9 @@ using Verse;
 
 namespace FasterGameLoading;
 
-// 負責掃描和對照所有已載入的 Mod 紋理與其關聯的 Def 和 ModContentPack。
+/// <summary>
+/// 負責掃描和對照所有已載入的 Mod 紋理與其關聯的 Def 和 ModContentPack。
+/// </summary>
 public class TextureScanner
 {
     // 紋理 → 檔案路徑的對照表。
@@ -161,16 +163,18 @@ public class TextureScanner
     }
 
     /// <summary>
-    /// 遞迴展開 Graphic 物件樹，將所有材質紋理加入條目。
-    /// 支援 Graphic_Multi、Graphic_Appearances、Graphic_Single、
-    /// Graphic_RandomRotated、Graphic_Linked、Graphic_Collection 等類型。
+    /// 將紋理條目加入對照表。
     /// </summary>
-    // 將紋理條目加入對照表。
     private void AddEntry(BuildableDef def, string fullPath, Texture texture)
     {
         texturesByDefs[texture] = new(def, fullPath);
     }
 
+    /// <summary>
+    /// 遞迴展開 Graphic 物件樹，將所有材質紋理加入條目。
+    /// 支援 Graphic_Multi、Graphic_Appearances、Graphic_Single、
+    /// Graphic_RandomRotated、Graphic_Linked、Graphic_Collection 等類型。
+    /// </summary>
     private void AddEntry(BuildableDef def, Graphic graphic)
     {
         switch (graphic)
@@ -223,7 +227,9 @@ public class TextureScanner
         }
     }
 
-    // 根據 Texture 物件尋找其磁碟路徑。先在本地快取查詢，找不到時查已載入貼圖登記的反向表。
+    /// <summary>
+    /// 根據 Texture 物件尋找其磁碟路徑。先在本地快取查詢，找不到時查已載入貼圖登記的反向表。
+    /// </summary>
     public bool TryGetTexturePath(Texture texture, out string fullPath)
     {
         if (!ReferenceEquals(texture, null) && texturesByPaths.TryGetValue(texture, out fullPath))
@@ -240,7 +246,9 @@ public class TextureScanner
         return false;
     }
 
-    // 清理掃描階段的暫存資料。
+    /// <summary>
+    /// 清理掃描階段的暫存資料。
+    /// </summary>
     public void ClearTextureScanData()
     {
         texturesByPaths.Clear();

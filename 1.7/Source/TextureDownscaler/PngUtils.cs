@@ -4,10 +4,14 @@ using System.IO;
 
 namespace FasterGameLoading;
 
-// PNG 二進位檔案解析工具，免載入整張圖即可讀取解析度。
+/// <summary>
+/// PNG 二進位檔案解析工具，免載入整張圖即可讀取解析度。
+/// </summary>
 public static class PngUtils
 {
-    // 嘗試從 PNG 檔案標頭讀取尺寸（不載入完整圖片）。
+    /// <summary>
+    /// 嘗試從 PNG 檔案標頭讀取尺寸（不載入完整圖片）。
+    /// </summary>
     public static bool TryGetImageDimensions(string path, ref int width, ref int height)
     {
         try

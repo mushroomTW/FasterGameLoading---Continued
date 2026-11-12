@@ -6,7 +6,9 @@ using Verse;
 
 namespace FasterGameLoading;
 
-// 負責底層的紋理轉換、大小判定與 Unity 暫存資源釋放。
+/// <summary>
+/// 負責底層的紋理轉換、大小判定與 Unity 暫存資源釋放。
+/// </summary>
 public static class TextureResizer
 {
     // 各紋理類型的降質目標尺寸（較長邊會縮放至此尺寸）。
@@ -51,7 +53,9 @@ public static class TextureResizer
         return false;
     }
 
-    // 安全銷毀暫存 Unity 物件。先嘗試 DestroyImmediate，失敗時改用 Destroy。
+    /// <summary>
+    /// 安全銷毀暫存 Unity 物件。先嘗試 DestroyImmediate，失敗時改用 Destroy。
+    /// </summary>
     public static void DestroyTemporaryUnityObject(UnityEngine.Object obj)
     {
         if (obj == null) return;
@@ -77,7 +81,9 @@ public static class TextureResizer
         }
     }
 
-    // 縮放後讀回的像素：RGBA32，列序與 Texture2D 的原始資料相同。
+    /// <summary>
+    /// 縮放後讀回的像素：RGBA32，列序與 Texture2D 的原始資料相同。
+    /// </summary>
     public readonly struct ResizedPixels(byte[] rgba, GraphicsFormat format, int width, int height)
     {
         public byte[] Rgba { get; } = rgba;

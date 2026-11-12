@@ -14,12 +14,34 @@ namespace FasterGameLoading;
 /// </summary>
 public class FasterGameLoadingMod : Mod
 {
+    /// <summary>
+    /// 模組目前執行的單例實例。
+    /// </summary>
     public static FasterGameLoadingMod Instance { get; private set; }
+
+    /// <summary>
+    /// 本模組使用的 Harmony 實例。
+    /// </summary>
     public static Harmony harmony { get; private set; }
+
+    /// <summary>
+    /// 模組設定實例。
+    /// </summary>
     public static FasterGameLoadingSettings settings { get; private set; }
+
+    /// <summary>
+    /// 延遲動作管理器實例。
+    /// </summary>
     public static DelayedActions delayedActions { get; private set; }
 
+    /// <summary>
+    /// 降質紋理快取管理器。
+    /// </summary>
     public TextureCacheManager CacheManager { get; private set; }
+
+    /// <summary>
+    /// 紋理降質調度器。
+    /// </summary>
     public TextureResize Resizer { get; private set; }
 
     public FasterGameLoadingMod(ModContentPack pack) : base(pack)

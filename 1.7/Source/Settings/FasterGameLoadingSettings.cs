@@ -10,7 +10,9 @@ namespace FasterGameLoading;
 /// </summary>
 public class FasterGameLoadingSettings : ModSettings
 {
-    // 詳細日誌記錄開關（預設關閉）
+    /// <summary>
+    /// 詳細日誌記錄開關（預設關閉）。
+    /// </summary>
     public static bool VerboseLogging { get; set; }
 
 
@@ -29,19 +31,29 @@ public class FasterGameLoadingSettings : ModSettings
     public static bool earlyModContentLoading = true;
 #pragma warning restore MA0069, S1104
 
-    // 把靜態圖集裁到實際用到的高度（預設開啟）；重新啟動遊戲後生效。
+    /// <summary>
+    /// 把靜態圖集裁到實際用到的高度（預設開啟）；重新啟動遊戲後生效。
+    /// </summary>
     public static bool TrimStaticAtlases { get; set; } = true;
 
-    // 不把也排在 Building 的紋理再烘進 Item 與 Misc 圖集（預設開啟）；重新啟動遊戲後生效。
+    /// <summary>
+    /// 不把也排在 Building 的紋理再烘進 Item 與 Misc 圖集（預設開啟）；重新啟動遊戲後生效。
+    /// </summary>
     public static bool DeduplicateStaticAtlases { get; set; } = true;
 
-    // 以不抖色的標準模式壓縮靜態圖集（預設關閉）；重新啟動遊戲後生效。
+    /// <summary>
+    /// 以不抖色的標準模式壓縮靜態圖集（預設關閉）；重新啟動遊戲後生效。
+    /// </summary>
     public static bool FastStaticAtlasCompression { get; set; }
 
-    // 啟用多執行緒預載入（預設開啟）
+    /// <summary>
+    /// 啟用多執行緒預載入（預設開啟）。
+    /// </summary>
     public static bool EnableMultiThreading { get; set; } = true;
 
-    // 型別查詢快取（預設開啟）；重新啟動遊戲後生效。
+    /// <summary>
+    /// 型別查詢快取（預設開啟）；重新啟動遊戲後生效。
+    /// </summary>
     public static bool TypeLookupCache { get; set; } = true;
 
 

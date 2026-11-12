@@ -17,7 +17,9 @@ public static class AccessTools_TypeByName_Patch
 
     internal static ConcurrentDictionary<string, Type> cachedResults { get; } = new(StringComparer.Ordinal);
 
-    // 前置處理：命中執行期快取時直接回傳並跳過原方法。
+    /// <summary>
+    /// 前置處理：命中執行期快取時直接回傳並跳過原方法。
+    /// </summary>
     public static bool Prefix(ref Type __result, string name)
     {
         if (!string.IsNullOrEmpty(name) && cachedResults.TryGetValue(name, out var result))

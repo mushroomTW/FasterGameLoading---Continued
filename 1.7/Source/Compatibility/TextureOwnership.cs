@@ -3,14 +3,22 @@ using Verse;
 
 namespace FasterGameLoading;
 
-// 負責載入 Mod 貼圖的一方。
+/// <summary>
+/// 負責載入 Mod 貼圖的一方。
+/// </summary>
 public enum TextureOwner
 {
-    // 原版載入流程，FGL 的降質快取與貼圖登記生效。
+    /// <summary>
+    /// 原版載入流程，FGL 的降質快取與貼圖登記生效。
+    /// </summary>
     Fgl,
-    // Image Opt 接手（DDS 快取）；FGL 的貼圖補丁完全讓開。
+    /// <summary>
+    /// Image Opt 接手（DDS 快取）；FGL 的貼圖補丁完全讓開。
+    /// </summary>
     ImageOpt,
-    // Graphics Settings+ 接手；FGL 的貼圖補丁完全讓開。
+    /// <summary>
+    /// Graphics Settings+ 接手；FGL 的貼圖補丁完全讓開。
+    /// </summary>
     GraphicsSettings,
 }
 
@@ -20,7 +28,9 @@ public enum TextureOwner
 /// </summary>
 public static class TextureOwnership
 {
-    // Graphics Settings+ 的 Harmony ID；FGL 的 LoadTexture 補丁排在它之前。
+    /// <summary>
+    /// Graphics Settings+ 的 Harmony ID；FGL 的 LoadTexture 補丁排在它之前。
+    /// </summary>
     public const string GraphicsSettingsHarmonyId = "com.telefonmast.graphicssettings.rimworld.mod";
 
     internal const string ImageOptPackageId = "dev.soeur.imageopt";
@@ -28,7 +38,9 @@ public static class TextureOwnership
 
     private static TextureOwner? detected;
 
-    // 目前負責載入 Mod 貼圖的一方；兩個外部工具同時啟用時以 Image Opt 為準。
+    /// <summary>
+    /// 目前負責載入 Mod 貼圖的一方；兩個外部工具同時啟用時以 Image Opt 為準。
+    /// </summary>
     public static TextureOwner Current
     {
         get
@@ -69,10 +81,14 @@ public static class TextureOwnership
     private static bool IsActiveIgnoringSteamSuffix(string packageId)
         => ModLister.GetActiveModWithIdentifier(packageId, ignorePostfix: true) != null;
 
-    // FGL 的降質快取與貼圖登記是否生效。
+    /// <summary>
+    /// FGL 的降質快取與貼圖登記是否生效。
+    /// </summary>
     public static bool FglOwnsTextureLoading => Current is TextureOwner.Fgl;
 
-    // 測試用：直接指定擁有者；傳 null 回到自動偵測。
+    /// <summary>
+    /// 測試用：直接指定擁有者；傳 null 回到自動偵測。
+    /// </summary>
     internal static void OverrideForTests(TextureOwner? owner)
     {
         detected = owner;

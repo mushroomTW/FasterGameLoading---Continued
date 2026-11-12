@@ -12,7 +12,9 @@ namespace FasterGameLoading;
 /// </summary>
 internal static class SessionCache
 {
-    // 上一次 session 中啟用的 mod 列表（packageIdLowerCase）。
+    /// <summary>
+    /// 上一次 session 中啟用的 mod 列表（packageIdLowerCase）。
+    /// </summary>
     internal static List<string> modsInLastSession { get; set; } = new();
 
     /// <summary>

@@ -69,8 +69,10 @@ internal static class FGLProgressReporter
     /// </summary>
     internal static void Postfix(ref bool __result)
     {
-        if (!__result) return;          // 原本就 false → 不用改
-        if (GetIsPaused == null) return; // 找不到 flag → 安全跳過
+        // 原本就 false → 不用改
+        if (!__result) return;
+        // 找不到 flag → 安全跳過
+        if (GetIsPaused == null) return;
 
         // 如果沒有啟用提早載入，或者提早載入已經完成，則不修改 __result，讓進度條可以消失。
         if (!FasterGameLoadingSettings.earlyModContentLoading) return;

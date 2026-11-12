@@ -8,13 +8,17 @@ using System.Threading;
 using Verse;
 namespace FasterGameLoading;
 
-// 管理降質紋理快取的生命週期與對照表。
+/// <summary>
+/// 管理降質紋理快取的生命週期與對照表。
+/// </summary>
 public class TextureCacheManager
 {
     // 原始路徑 → 降質快取路徑的對照表（會透過 Scribe 持久化）。
     internal Dictionary<string, string> resizedTextureCache = new(StringComparer.Ordinal);
 
-    // 原始路徑 → 降質快取路徑的對照表（唯讀檢視；寫入請走 SetCacheEntry）。
+    /// <summary>
+    /// 原始路徑 → 降質快取路徑的對照表（唯讀檢視；寫入請走 SetCacheEntry）。
+    /// </summary>
     public IReadOnlyDictionary<string, string> ResizedTextureCache => resizedTextureCache;
     private readonly Lock cacheLock = new();
     /// <summary>
@@ -24,7 +28,9 @@ public class TextureCacheManager
     private readonly Lock maintenanceLock = new();
     private readonly string baseCacheDir;
 
-    // 紋理快取的根目錄。
+    /// <summary>
+    /// 紋理快取的根目錄。
+    /// </summary>
     public string CacheDirectory => baseCacheDir ?? Path.Combine(GenFilePaths.SaveDataFolderPath, FGLConsts.ModName, FGLConsts.TextureCacheDir);
 
     // 與正式快取目錄同層的兄弟目錄（重建用的暫存目錄）。
@@ -173,7 +179,9 @@ public class TextureCacheManager
             || string.Equals(Path.GetFileName(ComputeCachePathFromKey(key, CacheDirectory)), Path.GetFileName(cachePath), StringComparison.OrdinalIgnoreCase);
     }
 
-    // 移除指定原始路徑的快取項目。
+    /// <summary>
+    /// 移除指定原始路徑的快取項目。
+    /// </summary>
     public void RemoveCachedTexturePath(string originalPath)
     {
         lock (cacheLock)
@@ -222,7 +230,9 @@ public class TextureCacheManager
         }
     }
 
-    // 清除所有紋理快取（檔案 + 記憶體對照表）。會等進行中的背景清理結束，主執行緒呼叫端應放在長事件內。
+    /// <summary>
+    /// 清除所有紋理快取（檔案 + 記憶體對照表）。會等進行中的背景清理結束，主執行緒呼叫端應放在長事件內。
+    /// </summary>
     public void ClearCache()
     {
         lock (maintenanceLock)
@@ -261,13 +271,17 @@ public class TextureCacheManager
 
         internal Dictionary<string, string> Entries { get; } = new(StringComparer.Ordinal);
 
-        // 原始檔對應的暫存快取檔路徑（檔名與升級後的正式路徑相同）。
+        /// <summary>
+        /// 原始檔對應的暫存快取檔路徑（檔名與升級後的正式路徑相同）。
+        /// </summary>
         public string GetCachePath(string originalPath)
         {
             return ComputeCachePathFromKey(GetCacheKey(originalPath), StagingDirectory);
         }
 
-        // 登記一筆已寫入暫存目錄的快取檔。
+        /// <summary>
+        /// 登記一筆已寫入暫存目錄的快取檔。
+        /// </summary>
         public void Add(string originalPath, string cachePath)
         {
             Entries[originalPath] = cachePath;
@@ -390,7 +404,9 @@ public class TextureCacheManager
         }
     }
 
-    // 以讀檔結果取代整份對照表（執行緒安全）；設定檔沒有這份資料時換成空表。
+    /// <summary>
+    /// 以讀檔結果取代整份對照表（執行緒安全）；設定檔沒有這份資料時換成空表。
+    /// </summary>
     internal void ReplaceCacheMap(Dictionary<string, string> cacheMap)
     {
         lock (cacheLock)
@@ -399,7 +415,9 @@ public class TextureCacheManager
         }
     }
 
-    // 提供向內部字典新增項目的執行緒安全介面。
+    /// <summary>
+    /// 提供向內部字典新增項目的執行緒安全介面。
+    /// </summary>
     public void SetCacheEntry(string originalPath, string cachePath)
     {
         lock (cacheLock)
@@ -408,7 +426,9 @@ public class TextureCacheManager
         }
     }
 
-    // 以執行緒安全方式回傳快取對照表的快照副本。
+    /// <summary>
+    /// 以執行緒安全方式回傳快取對照表的快照副本。
+    /// </summary>
     // MA0016: 刻意回傳具體的 Dictionary。回傳的是全新的私有副本，
     // 呼叫端修改它不會影響內部狀態；而設定存檔的 Scribe_Collections.Look
     // 只接受 ref Dictionary，改回唯讀介面只會逼出一次多餘的複製。
@@ -422,7 +442,9 @@ public class TextureCacheManager
         }
     }
 
-    // 清理過期與無效的快取檔案及對照項目。重建或清除進行中時會等它們結束。
+    /// <summary>
+    /// 清理過期與無效的快取檔案及對照項目。重建或清除進行中時會等它們結束。
+    /// </summary>
     public void CleanupObsoleteCacheFiles()
     {
         lock (maintenanceLock)

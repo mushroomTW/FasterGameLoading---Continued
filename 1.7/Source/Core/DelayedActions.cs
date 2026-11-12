@@ -17,10 +17,14 @@ namespace FasterGameLoading;
 public class DelayedActions : MonoBehaviour
 {
     // ── 每幀時間預算 ──
-    // 遊戲中每幀最多佔用 8ms，主選單中最多 50ms。
+    /// <summary>
+    /// 每幀時間預算：遊戲中每幀最多佔用 8ms，主選單中最多 50ms。
+    /// </summary>
     public static float MaxImpactThisFrame => Current.Game != null ? 0.008f : 0.05f;
 
-    // 延後協程是否已跑完；語言切換時重置。
+    /// <summary>
+    /// 延後協程是否已跑完；語言切換時重置。
+    /// </summary>
     public bool DeferredWorkCompleted { get; private set; }
 
     // ── 延遲佇列 ──
@@ -43,7 +47,9 @@ public class DelayedActions : MonoBehaviour
         subSoundDefToResolve.Enqueue(def);
     }
 
-    // PlayData 重載時丟棄尚未執行的延遲動作與舊 ModContentPack 佇列。
+    /// <summary>
+    /// PlayData 重載時丟棄尚未執行的延遲動作與舊 ModContentPack 佇列。
+    /// </summary>
     public void ClearQueues()
     {
         subSoundDefToResolve.Clear();
@@ -58,7 +64,9 @@ public class DelayedActions : MonoBehaviour
 
     public bool earlyLoadingComplete => earlyModContentLoader.EarlyLoadingComplete;
 
-    // 目前幀的時間預算是否已耗盡。
+    /// <summary>
+    /// 目前幀的時間預算是否已耗盡。
+    /// </summary>
     public bool IsOverBudget => (float)stopwatch.ElapsedTicks / Stopwatch.Frequency >= MaxImpactThisFrame;
 
     internal void RestartStopwatch() => stopwatch.Restart();

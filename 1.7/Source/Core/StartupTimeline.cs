@@ -16,7 +16,9 @@ internal sealed class StartupTimeline
 {
     private static readonly Stopwatch sinceLoad = Stopwatch.StartNew();
 
-    // 遊戲使用的時間軸；單元測試可換成假時鐘的實例。
+    /// <summary>
+    /// 遊戲使用的時間軸；單元測試可換成假時鐘的實例。
+    /// </summary>
     internal static StartupTimeline Instance { get; set; } = new(() => sinceLoad.Elapsed.TotalSeconds);
 
     private readonly Func<double> clock;
@@ -29,10 +31,14 @@ internal sealed class StartupTimeline
         this.clock = clock;
     }
 
-    // 摘要尚未輸出（也還沒確定不輸出）；之後不必再每幀觀察。
+    /// <summary>
+    /// 摘要尚未輸出（也還沒確定不輸出）；之後不必再每幀觀察。
+    /// </summary>
     internal bool Pending { get; private set; } = true;
 
-    // 延後協程跑完。
+    /// <summary>
+    /// 延後協程跑完。
+    /// </summary>
     internal void MarkAllReady() => MarkFirst(ref allReady);
 
     private void MarkFirst(ref double mark)
@@ -64,7 +70,9 @@ internal sealed class StartupTimeline
             Math.Max(0, allReady - mainMenu));
     }
 
-    // 主選單已顯示且沒有進行中的長事件。只在主執行緒呼叫。
+    /// <summary>
+    /// 主選單已顯示且沒有進行中的長事件。只在主執行緒呼叫。
+    /// </summary>
     internal static bool MainMenuShown =>
         PlayDataLoader.Loaded && Current.ProgramState is ProgramState.Entry && !LongEventHandler.AnyEventNowOrWaiting && Find.UIRoot != null;
 }
